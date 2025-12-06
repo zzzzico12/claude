@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D テトリス</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #game-container {
+            position: relative;
+        }
+
+        #info-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 25px;
+            border-radius: 20px;
+            font-size: 18px;
+            min-width: 220px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        #info-panel h2 {
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .info-item {
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .info-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .info-item span {
+            color: #00d4ff;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        #info-panel h3 {
+            background: linear-gradient(135deg, #00d4ff 0%, #00ff88 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        #next-piece-canvas {
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 0 20px rgba(0, 212, 255, 0.1);
+        }
+
+        #controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 14px;
+            max-width: 280px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        #controls strong {
+            color: #00d4ff;
+            font-size: 16px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        #controls br {
+            line-height: 1.8;
+        }
+
+        #game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 50px;
+            border-radius: 30px;
+            text-align: center;
+            display: none;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        #game-over h1 {
+            font-size: 56px;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+        }
+
+        #game-over p {
+            margin: 15px 0;
+            font-size: 24px;
+        }
+
+        #restart-btn {
+            margin-top: 30px;
+            padding: 18px 40px;
+            font-size: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        #restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        #restart-btn:active {
+            transform: translateY(-1px);
+        }
+
+        canvas {
+            display: block;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="info-panel">
+            <h2>3D テトリス</h2>
+            <div class="info-item">スコア: <span id="score">0</span></div>
+            <div class="info-item">ライン: <span id="lines">0</span></div>
+            <div class="info-item">レベル: <span id="level">1</span></div>
+            <div style="margin-top: 20px;">
+                <h3 style="color: #00ff88; margin-bottom: 10px;">次のブロック:</h3>
+                <canvas id="next-piece-canvas" width="150" height="150" style="border-radius: 5px; background: rgba(0,0,0,0.3);"></canvas>
+            </div>
+        </div>
+
+        <div id="controls">
+            <strong>操作方法:</strong><br>
+            ← → : 左右移動<br>
+            ↓ : 下に移動<br>
+            A D : 奥行き移動<br>
+            W : 回転(X軸)<br>
+            Q E : 回転(Y軸)<br>
+            R : 回転(Z軸)<br>
+            スペース : 一気に落下
+        </div>
+
+        <div id="game-over">
+            <h1>ゲームオーバー!</h1>
+            <p style="font-size: 24px;">最終スコア: <span id="final-score">0</span></p>
+            <p style="font-size: 24px;">ライン: <span id="final-lines">0</span></p>
+            <button id="restart-btn">再スタート</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // ゲーム設定
+        const BOARD_WIDTH = 10;
+        const BOARD_HEIGHT = 20;
+        const BOARD_DEPTH = 10; // 奥行きを追加
+        const BLOCK_SIZE = 1;
+        
+        // シーン設定
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0a1a);
+        scene.fog = new THREE.Fog(0x0a0a1a, 30, 60);
+        
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(15, 18, 25);
+        camera.lookAt(BOARD_WIDTH / 2, BOARD_HEIGHT / 2, BOARD_DEPTH / 2);
+        
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        document.getElementById('game-container').appendChild(renderer.domElement);
+        
+        // ライト - モダンな照明設定
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+        scene.add(ambientLight);
+        
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(10, 20, 10);
+        directionalLight.castShadow = true;
+        scene.add(directionalLight);
+        
+        // アクセントライト（青紫）
+        const accentLight1 = new THREE.PointLight(0x667eea, 1, 50);
+        accentLight1.position.set(-5, 10, 10);
+        scene.add(accentLight1);
+        
+        // アクセントライト（シアン）
+        const accentLight2 = new THREE.PointLight(0x00d4ff, 1, 50);
+        accentLight2.position.set(15, 10, 10);
+        scene.add(accentLight2);
+        
+        // ゲームボード (3D配列に変更)
+        const board = [];
+        for (let y = 0; y < BOARD_HEIGHT; y++) {
+            board[y] = [];
+            for (let z = 0; z < BOARD_DEPTH; z++) {
+                board[y][z] = [];
+                for (let x = 0; x < BOARD_WIDTH; x++) {
+                    board[y][z][x] = null;
+                }
+            }
+        }
+        
+        // 3Dテトリミノの形状 (x, y, z座標の配列)
+        const SHAPES = [
+            // I字型（縦長）
+            [[0,0,0], [0,1,0], [0,2,0], [0,3,0]],
+            // O字型（立方体）
+            [[0,0,0], [1,0,0], [0,1,0], [1,1,0], [0,0,1], [1,0,1], [0,1,1], [1,1,1]],
+            // T字型
+            [[0,0,0], [1,0,0], [2,0,0], [1,1,0]],
+            // L字型
+            [[0,0,0], [0,1,0], [0,2,0], [1,2,0]],
+            // J字型
+            [[1,0,0], [1,1,0], [1,2,0], [0,2,0]],
+            // S字型
+            [[0,0,0], [1,0,0], [1,1,0], [2,1,0]],
+            // Z字型
+            [[1,0,0], [2,0,0], [0,1,0], [1,1,0]],
+            // 3D L字型
+            [[0,0,0], [0,1,0], [0,0,1], [0,1,1]],
+            // 3Dコーナー
+            [[0,0,0], [1,0,0], [0,1,0], [0,0,1]],
+            // 3D十字
+            [[0,0,0], [1,0,0], [2,0,0], [1,0,1], [1,0,-1]],
+        ];
+        
+        const COLORS = [
+            0x00ffff, // シアン (I)
+            0xffff00, // イエロー (O)
+            0xff00ff, // マゼンタ (T)
+            0xff8800, // オレンジ (L)
+            0x0000ff, // ブルー (J)
+            0x00ff00, // グリーン (S)
+            0xff0000, // レッド (Z)
+            0xff69b4, // ピンク (3D L)
+            0x9370db, // パープル (3Dコーナー)
+            0x00ced1, // ターコイズ (3D十字)
+        ];
+        
+        // ゲーム状態
+        let currentPiece = null;
+        let nextPiece = null; // 次のピースを追加
+        let currentPosition = { x: 0, y: 0, z: 0 }; // z座標を追加
+        let score = 0;
+        let lines = 0;
+        let level = 1;
+        let gameOver = false;
+        let dropSpeed = 1000;
+        let lastDropTime = 0;
+        
+        // 盤面の枠を作成（3D版）- モダンデザイン
+        function createBoardFrame() {
+            const frameMaterial = new THREE.MeshPhongMaterial({ 
+                color: 0x667eea, 
+                transparent: true, 
+                opacity: 0.15,
+                emissive: 0x667eea,
+                emissiveIntensity: 0.2
+            });
+            
+            const thickness = 0.1;
+            
+            // 底
+            const bottom = new THREE.Mesh(
+                new THREE.BoxGeometry(BOARD_WIDTH + thickness * 2, thickness, BOARD_DEPTH + thickness * 2),
+                frameMaterial
+            );
+            bottom.position.set(BOARD_WIDTH / 2, -thickness / 2, BOARD_DEPTH / 2);
+            scene.add(bottom);
+            
+            // グローエッジを追加（底）
+            const bottomEdges = new THREE.EdgesGeometry(bottom.geometry);
+            const bottomLine = new THREE.LineSegments(
+                bottomEdges,
+                new THREE.LineBasicMaterial({ color: 0x00d4ff, linewidth: 2 })
+            );
+            bottom.add(bottomLine);
+            
+            // 左壁
+            const left = new THREE.Mesh(
+                new THREE.BoxGeometry(thickness, BOARD_HEIGHT, BOARD_DEPTH + thickness * 2),
+                frameMaterial
+            );
+            left.position.set(-thickness / 2, BOARD_HEIGHT / 2, BOARD_DEPTH / 2);
+            scene.add(left);
+            
+            const leftEdges = new THREE.EdgesGeometry(left.geometry);
+            const leftLine = new THREE.LineSegments(
+                leftEdges,
+                new THREE.LineBasicMaterial({ color: 0x00d4ff, linewidth: 2 })
+            );
+            left.add(leftLine);
+            
+            // 右壁
+            const right = new THREE.Mesh(
+                new THREE.BoxGeometry(thickness, BOARD_HEIGHT, BOARD_DEPTH + thickness * 2),
+                frameMaterial
+            );
+            right.position.set(BOARD_WIDTH + thickness / 2, BOARD_HEIGHT / 2, BOARD_DEPTH / 2);
+            scene.add(right);
+            
+            const rightEdges = new THREE.EdgesGeometry(right.geometry);
+            const rightLine = new THREE.LineSegments(
+                rightEdges,
+                new THREE.LineBasicMaterial({ color: 0x00d4ff, linewidth: 2 })
+            );
+            right.add(rightLine);
+            
+            // 奥壁
+            const back = new THREE.Mesh(
+                new THREE.BoxGeometry(BOARD_WIDTH + thickness * 2, BOARD_HEIGHT, thickness),
+                frameMaterial
+            );
+            back.position.set(BOARD_WIDTH / 2, BOARD_HEIGHT / 2, -thickness / 2);
+            scene.add(back);
+            
+            const backEdges = new THREE.EdgesGeometry(back.geometry);
+            const backLine = new THREE.LineSegments(
+                backEdges,
+                new THREE.LineBasicMaterial({ color: 0x00d4ff, linewidth: 2 })
+            );
+            back.add(backLine);
+            
+            // 手前壁（半透明で見やすく）
+            const frontMaterial = new THREE.MeshPhongMaterial({ 
+                color: 0x667eea, 
+                transparent: true, 
+                opacity: 0.03,
+                emissive: 0x667eea,
+                emissiveIntensity: 0.1
+            });
+            const front = new THREE.Mesh(
+                new THREE.BoxGeometry(BOARD_WIDTH + thickness * 2, BOARD_HEIGHT, thickness),
+                frontMaterial
+            );
+            front.position.set(BOARD_WIDTH / 2, BOARD_HEIGHT / 2, BOARD_DEPTH + thickness / 2);
+            scene.add(front);
+            
+            // グリッドヘルパー（底面）
+            const gridHelper = new THREE.GridHelper(
+                Math.max(BOARD_WIDTH, BOARD_DEPTH), 
+                Math.max(BOARD_WIDTH, BOARD_DEPTH), 
+                0x00d4ff, 
+                0x1a1a3e
+            );
+            gridHelper.position.set(BOARD_WIDTH / 2, 0, BOARD_DEPTH / 2);
+            gridHelper.material.opacity = 0.3;
+            gridHelper.material.transparent = true;
+            scene.add(gridHelper);
+        }
+        
+        createBoardFrame();
+        
+        // 次のピースのプレビュー用のシーンとカメラ
+        const previewScene = new THREE.Scene();
+        previewScene.background = new THREE.Color(0x0a0a1a);
+        
+        const previewCamera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+        previewCamera.position.set(3, 3, 5);
+        previewCamera.lookAt(0, 0, 0);
+        
+        const previewRenderer = new THREE.WebGLRenderer({ 
+            canvas: document.getElementById('next-piece-canvas'),
+            antialias: true 
+        });
+        previewRenderer.setSize(150, 150);
+        
+        // プレビュー用ライト
+        const previewAmbient = new THREE.AmbientLight(0xffffff, 0.6);
+        previewScene.add(previewAmbient);
+        
+        const previewLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        previewLight.position.set(5, 5, 5);
+        previewScene.add(previewLight);
+        
+        // ブロックを作成（3D位置対応）- モダンデザイン
+        function createBlock(x, y, z, color) {
+            const geometry = new THREE.BoxGeometry(BLOCK_SIZE * 0.9, BLOCK_SIZE * 0.9, BLOCK_SIZE * 0.9);
+            const material = new THREE.MeshPhongMaterial({ 
+                color: color,
+                shininess: 150,
+                specular: 0xffffff,
+                emissive: color,
+                emissiveIntensity: 0.2
+            });
+            const block = new THREE.Mesh(geometry, material);
+            block.position.set(x + BLOCK_SIZE / 2, y + BLOCK_SIZE / 2, z + BLOCK_SIZE / 2);
+            block.castShadow = true;
+            block.receiveShadow = true;
+            
+            // エッジを追加（より明るく）
+            const edges = new THREE.EdgesGeometry(geometry);
+            const line = new THREE.LineSegments(
+                edges,
+                new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 2, opacity: 0.8, transparent: true })
+            );
+            block.add(line);
+            
+            return block;
+        }
+        
+        // 新しいピースのデータを作成（シーンに追加せず）
+        function createPieceData() {
+            const shapeIndex = Math.floor(Math.random() * SHAPES.length);
+            return {
+                shapeIndex: shapeIndex,
+                shape: SHAPES[shapeIndex],
+                color: COLORS[shapeIndex]
+            };
+        }
+        
+        // 新しいピースを作成（3D版）
+        function createNewPiece() {
+            const shapeIndex = Math.floor(Math.random() * SHAPES.length);
+            const shape = SHAPES[shapeIndex];
+            const color = COLORS[shapeIndex];
+            
+            const piece = {
+                shape: shape,
+                color: color,
+                blocks: []
+            };
+            
+            shape.forEach(([x, y, z]) => {
+                const block = createBlock(0, 0, 0, color);
+                piece.blocks.push({ block, offsetX: x, offsetY: y, offsetZ: z });
+                scene.add(block);
+            });
+            
+            return piece;
+        }
+        
+        // ピースデータからピースを作成
+        function createPieceFromData(pieceData) {
+            const piece = {
+                shape: pieceData.shape,
+                color: pieceData.color,
+                blocks: []
+            };
+            
+            pieceData.shape.forEach(([x, y, z]) => {
+                const block = createBlock(0, 0, 0, pieceData.color);
+                piece.blocks.push({ block, offsetX: x, offsetY: y, offsetZ: z });
+                scene.add(block);
+            });
+            
+            return piece;
+        }
+        
+        // 次のピースのプレビューを更新
+        function updateNextPiecePreview() {
+            // 既存のプレビューをクリア
+            while(previewScene.children.length > 2) { // ライト2つを残す
+                previewScene.remove(previewScene.children[2]);
+            }
+            
+            if (!nextPiece) return;
+            
+            // 中心点を計算
+            let centerX = 0, centerY = 0, centerZ = 0;
+            nextPiece.shape.forEach(([x, y, z]) => {
+                centerX += x;
+                centerY += y;
+                centerZ += z;
+            });
+            centerX /= nextPiece.shape.length;
+            centerY /= nextPiece.shape.length;
+            centerZ /= nextPiece.shape.length;
+            
+            // プレビュー用ブロックを作成（モダンデザイン）
+            nextPiece.shape.forEach(([x, y, z]) => {
+                const geometry = new THREE.BoxGeometry(0.8, 0.8, 0.8);
+                const material = new THREE.MeshPhongMaterial({ 
+                    color: nextPiece.color,
+                    shininess: 150,
+                    emissive: nextPiece.color,
+                    emissiveIntensity: 0.3
+                });
+                const block = new THREE.Mesh(geometry, material);
+                
+                // 中心を原点に
+                block.position.set(
+                    (x - centerX) * 0.9,
+                    (y - centerY) * 0.9,
+                    (z - centerZ) * 0.9
+                );
+                
+                const edges = new THREE.EdgesGeometry(geometry);
+                const line = new THREE.LineSegments(
+                    edges,
+                    new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.6, transparent: true })
+                );
+                block.add(line);
+                
+                previewScene.add(block);
+            });
+            
+            // プレビューをレンダリング
+            previewRenderer.render(previewScene, previewCamera);
+        }
+        
+        // ピースの位置を更新（3D版）
+        function updatePiecePosition() {
+            if (!currentPiece) return;
+            
+            currentPiece.blocks.forEach(({ block, offsetX, offsetY, offsetZ }) => {
+                block.position.x = currentPosition.x + offsetX + BLOCK_SIZE / 2;
+                block.position.y = BOARD_HEIGHT - (currentPosition.y + offsetY) - BLOCK_SIZE / 2;
+                block.position.z = currentPosition.z + offsetZ + BLOCK_SIZE / 2;
+            });
+        }
+        
+        // 衝突判定（3D版）
+        function checkCollision(piece, pos) {
+            if (!piece) return true;
+            
+            for (let i = 0; i < piece.blocks.length; i++) {
+                const { offsetX, offsetY, offsetZ } = piece.blocks[i];
+                const newX = pos.x + offsetX;
+                const newY = pos.y + offsetY;
+                const newZ = pos.z + offsetZ;
+                
+                // 境界チェック
+                if (newX < 0 || newX >= BOARD_WIDTH || 
+                    newY >= BOARD_HEIGHT || 
+                    newZ < 0 || newZ >= BOARD_DEPTH) {
+                    return true;
+                }
+                
+                // ボードとの衝突チェック
+                if (newY >= 0 && board[newY][newZ][newX]) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        // ピースを固定（3D版）
+        function lockPiece() {
+            currentPiece.blocks.forEach(({ block, offsetX, offsetY, offsetZ }) => {
+                const boardY = currentPosition.y + offsetY;
+                const boardX = currentPosition.x + offsetX;
+                const boardZ = currentPosition.z + offsetZ;
+                
+                if (boardY >= 0 && boardY < BOARD_HEIGHT && 
+                    boardX >= 0 && boardX < BOARD_WIDTH &&
+                    boardZ >= 0 && boardZ < BOARD_DEPTH) {
+                    board[boardY][boardZ][boardX] = block;
+                }
+            });
+            
+            currentPiece = null;
+            clearLines();
+            spawnNewPiece();
+        }
+        
+        // ラインをクリア（3D版 - 平面をクリア）
+        function clearLines() {
+            let linesCleared = 0;
+            
+            for (let y = BOARD_HEIGHT - 1; y >= 0; y--) {
+                // 平面が完全に埋まっているかチェック
+                let isFull = true;
+                for (let z = 0; z < BOARD_DEPTH; z++) {
+                    for (let x = 0; x < BOARD_WIDTH; x++) {
+                        if (board[y][z][x] === null) {
+                            isFull = false;
+                            break;
+                        }
+                    }
+                    if (!isFull) break;
+                }
+                
+                if (isFull) {
+                    linesCleared++;
+                    
+                    // ブロックを削除
+                    for (let z = 0; z < BOARD_DEPTH; z++) {
+                        for (let x = 0; x < BOARD_WIDTH; x++) {
+                            if (board[y][z][x]) {
+                                scene.remove(board[y][z][x]);
+                            }
+                        }
+                    }
+                    
+                    // 上のブロックを下に移動
+                    for (let moveY = y; moveY > 0; moveY--) {
+                        for (let z = 0; z < BOARD_DEPTH; z++) {
+                            for (let x = 0; x < BOARD_WIDTH; x++) {
+                                board[moveY][z][x] = board[moveY - 1][z][x];
+                                if (board[moveY][z][x]) {
+                                    board[moveY][z][x].position.y -= BLOCK_SIZE;
+                                }
+                            }
+                        }
+                    }
+                    
+                    // 最上段をクリア
+                    for (let z = 0; z < BOARD_DEPTH; z++) {
+                        for (let x = 0; x < BOARD_WIDTH; x++) {
+                            board[0][z][x] = null;
+                        }
+                    }
+                    
+                    y++; // 同じ行を再チェック
+                }
+            }
+            
+            if (linesCleared > 0) {
+                lines += linesCleared;
+                score += linesCleared * linesCleared * 200 * level; // 3Dなのでスコア倍増
+                level = Math.floor(lines / 5) + 1; // レベルアップを早めに
+                dropSpeed = Math.max(100, 1000 - (level - 1) * 100);
+                
+                updateUI();
+            }
+        }
+        
+        // 新しいピースを生成（3D版）
+        function spawnNewPiece() {
+            // nextPieceがあればそれを使用、なければ新規作成
+            if (nextPiece) {
+                currentPiece = createPieceFromData(nextPiece);
+            } else {
+                currentPiece = createNewPiece();
+            }
+            
+            // 次のピースを準備
+            nextPiece = createPieceData();
+            updateNextPiecePreview();
+            
+            // 中央に配置
+            currentPosition = { 
+                x: Math.floor(BOARD_WIDTH / 2) - 1, 
+                y: 0,
+                z: Math.floor(BOARD_DEPTH / 2) - 1
+            };
+            
+            if (checkCollision(currentPiece, currentPosition)) {
+                endGame();
+            } else {
+                updatePiecePosition();
+            }
+        }
+        
+        // UIを更新
+        function updateUI() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('lines').textContent = lines;
+            document.getElementById('level').textContent = level;
+        }
+        
+        // ゲームオーバー
+        function endGame() {
+            gameOver = true;
+            document.getElementById('final-score').textContent = score;
+            document.getElementById('final-lines').textContent = lines;
+            document.getElementById('game-over').style.display = 'block';
+        }
+        
+        // ゲームをリスタート
+        function restartGame() {
+            // ボードをクリア（3D版）
+            for (let y = 0; y < BOARD_HEIGHT; y++) {
+                for (let z = 0; z < BOARD_DEPTH; z++) {
+                    for (let x = 0; x < BOARD_WIDTH; x++) {
+                        if (board[y][z][x]) {
+                            scene.remove(board[y][z][x]);
+                            board[y][z][x] = null;
+                        }
+                    }
+                }
+            }
+            
+            // 現在のピースを削除
+            if (currentPiece) {
+                currentPiece.blocks.forEach(({ block }) => scene.remove(block));
+            }
+            
+            score = 0;
+            lines = 0;
+            level = 1;
+            dropSpeed = 1000;
+            gameOver = false;
+            nextPiece = null; // 次のピースもリセット
+            
+            updateUI();
+            document.getElementById('game-over').style.display = 'none';
+            
+            spawnNewPiece();
+        }
+        
+        // 3D回転関数
+        function rotateX(piece) {
+            piece.blocks.forEach(block => {
+                const y = block.offsetY;
+                const z = block.offsetZ;
+                block.offsetY = -z;
+                block.offsetZ = y;
+            });
+        }
+        
+        function rotateY(piece) {
+            piece.blocks.forEach(block => {
+                const x = block.offsetX;
+                const z = block.offsetZ;
+                block.offsetX = z;
+                block.offsetZ = -x;
+            });
+        }
+        
+        function rotateZ(piece) {
+            piece.blocks.forEach(block => {
+                const x = block.offsetX;
+                const y = block.offsetY;
+                block.offsetX = -y;
+                block.offsetY = x;
+            });
+        }
+        
+        // ピースを回転（3D版）
+        function rotatePiece(axis) {
+            if (!currentPiece || gameOver) return;
+            
+            // 回転前の状態を保存
+            const oldOffsets = currentPiece.blocks.map(b => ({
+                offsetX: b.offsetX,
+                offsetY: b.offsetY,
+                offsetZ: b.offsetZ
+            }));
+            
+            // 指定軸で回転
+            if (axis === 'x') rotateX(currentPiece);
+            else if (axis === 'y') rotateY(currentPiece);
+            else if (axis === 'z') rotateZ(currentPiece);
+            
+            // 衝突チェック
+            if (checkCollision(currentPiece, currentPosition)) {
+                // 衝突する場合は元に戻す
+                currentPiece.blocks.forEach((block, i) => {
+                    block.offsetX = oldOffsets[i].offsetX;
+                    block.offsetY = oldOffsets[i].offsetY;
+                    block.offsetZ = oldOffsets[i].offsetZ;
+                });
+            } else {
+                updatePiecePosition();
+            }
+        }
+        
+        // キーボード入力（3D版）
+        document.addEventListener('keydown', (e) => {
+            if (gameOver) return;
+            
+            switch(e.key) {
+                case 'ArrowLeft':
+                    if (!checkCollision(currentPiece, { x: currentPosition.x - 1, y: currentPosition.y, z: currentPosition.z })) {
+                        currentPosition.x--;
+                        updatePiecePosition();
+                    }
+                    break;
+                    
+                case 'ArrowRight':
+                    if (!checkCollision(currentPiece, { x: currentPosition.x + 1, y: currentPosition.y, z: currentPosition.z })) {
+                        currentPosition.x++;
+                        updatePiecePosition();
+                    }
+                    break;
+                    
+                case 'ArrowDown':
+                    if (!checkCollision(currentPiece, { x: currentPosition.x, y: currentPosition.y + 1, z: currentPosition.z })) {
+                        currentPosition.y++;
+                        updatePiecePosition();
+                        score += 1;
+                        updateUI();
+                    }
+                    break;
+                    
+                // 奥行き移動
+                case 'a':
+                case 'A':
+                    if (!checkCollision(currentPiece, { x: currentPosition.x, y: currentPosition.y, z: currentPosition.z - 1 })) {
+                        currentPosition.z--;
+                        updatePiecePosition();
+                    }
+                    break;
+                    
+                case 'd':
+                case 'D':
+                    if (!checkCollision(currentPiece, { x: currentPosition.x, y: currentPosition.y, z: currentPosition.z + 1 })) {
+                        currentPosition.z++;
+                        updatePiecePosition();
+                    }
+                    break;
+                    
+                // 3D回転
+                case 'w':
+                case 'W':
+                    rotatePiece('x');
+                    break;
+                    
+                case 'q':
+                case 'Q':
+                    rotatePiece('y');
+                    break;
+                    
+                case 'e':
+                case 'E':
+                    rotatePiece('y');
+                    break;
+                    
+                case 'r':
+                case 'R':
+                    rotatePiece('z');
+                    break;
+                    
+                case ' ':
+                    while (!checkCollision(currentPiece, { x: currentPosition.x, y: currentPosition.y + 1, z: currentPosition.z })) {
+                        currentPosition.y++;
+                        score += 2;
+                    }
+                    updatePiecePosition();
+                    updateUI();
+                    lockPiece();
+                    break;
+            }
+        });
+        
+        // リスタートボタン
+        document.getElementById('restart-btn').addEventListener('click', restartGame);
+        
+        // ゲームループ
+        function animate(currentTime) {
+            requestAnimationFrame(animate);
+            
+            if (!gameOver && currentPiece) {
+                if (currentTime - lastDropTime > dropSpeed) {
+                    if (!checkCollision(currentPiece, { x: currentPosition.x, y: currentPosition.y + 1, z: currentPosition.z })) {
+                        currentPosition.y++;
+                        updatePiecePosition();
+                    } else {
+                        lockPiece();
+                    }
+                    lastDropTime = currentTime;
+                }
+            }
+            
+            // カメラを回転
+            const radius = 25;
+            camera.position.x = Math.sin(currentTime * 0.0002) * radius + BOARD_WIDTH / 2;
+            camera.position.z = Math.cos(currentTime * 0.0002) * radius + BOARD_DEPTH / 2;
+            camera.lookAt(BOARD_WIDTH / 2, BOARD_HEIGHT / 2, BOARD_DEPTH / 2);
+            
+            renderer.render(scene, camera);
+        }
+        
+        // ウィンドウリサイズ対応
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        
+        // ゲーム開始
+        spawnNewPiece();
+        animate(0);
+    </script>
+</body>
+</html>
