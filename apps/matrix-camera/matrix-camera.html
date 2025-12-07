@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>マトリックスカメラ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+        }
+
+        #container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 100%;
+            max-height: 100%;
+            z-index: 1;
+            filter: brightness(0.7);
+            display: none;
+        }
+
+        #hiddenCanvas {
+            display: none;
+        }
+
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+
+        #controls {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            background: rgba(0, 255, 0, 0.2);
+            border: 2px solid #0f0;
+            color: #0f0;
+            padding: 12px 24px; /* タッチしやすいサイズに */
+            font-family: 'Courier New', monospace;
+            font-size: 16px; /* モバイルで読みやすく */
+            cursor: pointer;
+            text-shadow: 0 0 5px #0f0;
+            transition: all 0.3s;
+            -webkit-tap-highlight-color: rgba(0, 255, 0, 0.3); /* タップ時のハイライト */
+        }
+
+        button:hover {
+            background: rgba(0, 255, 0, 0.4);
+            box-shadow: 0 0 10px #0f0;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #error {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #f00;
+            font-size: 18px;
+            text-align: center;
+            z-index: 4;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas"></canvas>
+        <canvas id="hiddenCanvas"></canvas>
+        <div id="controls">
+            <button id="startBtn">カメラ起動</button>
+            <button id="stopBtn" disabled>停止</button>
+        </div>
+        <div id="error"></div>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const hiddenCanvas = document.getElementById('hiddenCanvas');
+        const hiddenCtx = hiddenCanvas.getContext('2d');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const errorDiv = document.getElementById('error');
+
+        let stream = null;
+        let animationId = null;
+        let columns = [];
+        let fontSize = 8; // フォントサイズをさらに小さくして超高密度に
+        let edgeData = null;
+        let edgeWidth = 0;
+        let edgeHeight = 0;
+        let frameCount = 0;
+        const EDGE_SCALE = 10; // エッジ検出の解像度をさらに削減
+        const EDGE_DETECT_INTERVAL = 4; // 4フレームに1回だけエッジ検出
+        let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+        // 使用する文字（日本語のカタカナ、数字、記号）
+        const chars = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｦﾝ0123456789+-*/<>[]{}@#$%&';
+
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            // エッジ検出用のキャンバスは低解像度
+            edgeWidth = Math.floor(canvas.width / EDGE_SCALE);
+            edgeHeight = Math.floor(canvas.height / EDGE_SCALE);
+            hiddenCanvas.width = edgeWidth;
+            hiddenCanvas.height = edgeHeight;
+            
+            // エッジデータの配列を事前に確保
+            edgeData = new Uint8ClampedArray(edgeWidth * edgeHeight);
+            
+            const columnCount = Math.floor(canvas.width / fontSize);
+            columns = [];
+            for (let i = 0; i < columnCount; i++) {
+                // 各列に10個のトレイル（超高密度）
+                const trails = [];
+                for (let j = 0; j < 10; j++) {
+                    trails.push({
+                        y: Math.random() * canvas.height,
+                        speed: Math.random() * 1.5 + 0.8,
+                        trailLength: 20 // 各トレイルの長さ（文字数）
+                    });
+                }
+                columns.push({
+                    trails: trails,
+                    char: chars[Math.floor(Math.random() * chars.length)]
+                });
+            }
+        }
+
+        // エッジ検出（最適化版 - 低解像度 + フレームスキップ）
+        function detectEdges() {
+            if (!video.videoWidth || !video.videoHeight) return;
+
+            // 3フレームに1回だけエッジ検出を実行
+            frameCount++;
+            if (frameCount % EDGE_DETECT_INTERVAL !== 0) return;
+
+            // 低解像度でビデオを描画
+            hiddenCtx.drawImage(video, 0, 0, edgeWidth, edgeHeight);
+            const imageData = hiddenCtx.getImageData(0, 0, edgeWidth, edgeHeight);
+            const data = imageData.data;
+            
+            // 簡略化されたエッジ検出（2x2カーネルでさらに高速化）
+            for (let y = 0; y < edgeHeight - 1; y++) {
+                for (let x = 0; x < edgeWidth - 1; x++) {
+                    // 2x2の領域で差分を計算
+                    const idx = (y * edgeWidth + x) * 4;
+                    const idx_right = idx + 4;
+                    const idx_down = ((y + 1) * edgeWidth + x) * 4;
+                    
+                    // 高速グレースケール変換（右と下のピクセルのみ）
+                    const gray = (data[idx] * 77 + data[idx + 1] * 151 + data[idx + 2] * 28) >> 8;
+                    const gray_right = (data[idx_right] * 77 + data[idx_right + 1] * 151 + data[idx_right + 2] * 28) >> 8;
+                    const gray_down = (data[idx_down] * 77 + data[idx_down + 1] * 151 + data[idx_down + 2] * 28) >> 8;
+                    
+                    // 横方向と縦方向の差分
+                    const diff = Math.abs(gray - gray_right) + Math.abs(gray - gray_down);
+                    edgeData[y * edgeWidth + x] = Math.min(255, diff * 2);
+                }
+            }
+        }
+
+        function drawMatrix() {
+            // エッジ検出（4フレームに1回）
+            detectEdges();
+
+            // 半透明の黒で前のフレームを薄く消す
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.08)'; // フェード率を調整して軌跡が見えるように
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.font = `${fontSize}px 'Courier New'`;
+            ctx.textAlign = 'center';
+
+            for (let i = 0; i < columns.length; i++) {
+                const column = columns[i];
+                const x = i * fontSize + fontSize / 2;
+                
+                // 文字の選択を最適化（たまに変更）
+                if (!column.char || Math.random() > 0.99) {
+                    column.char = chars[Math.floor(Math.random() * chars.length)];
+                }
+
+                // 各列の全トレイルを描画
+                for (let t = 0; t < column.trails.length; t++) {
+                    const trail = column.trails[t];
+                    
+                    // トレイル全体を描画（先頭から徐々に暗くなる）
+                    for (let len = 0; len < trail.trailLength; len++) {
+                        const currentY = trail.y - len * fontSize;
+                        
+                        // 画面外は描画しない
+                        if (currentY < -fontSize || currentY > canvas.height) continue;
+                        
+                        // エッジデータから対応する位置の強度を取得
+                        const edgeX = Math.floor(x / EDGE_SCALE);
+                        const edgeY = Math.floor(currentY / EDGE_SCALE);
+                        const edgeIndex = edgeY * edgeWidth + edgeX;
+                        const edgeStrength = edgeData && edgeIndex >= 0 && edgeIndex < edgeData.length 
+                            ? edgeData[edgeIndex] / 255 
+                            : 0;
+
+                        // トレイルの先頭（len=0）が最も明るく、後ろに行くほど暗くなる
+                        const trailFade = 1 - (len / trail.trailLength);
+                        const brightness = Math.max(0.05, edgeStrength * trailFade);
+                        
+                        if (len === 0) {
+                            // トレイルの先頭は最も明るく
+                            if (edgeStrength > 0.3) {
+                                ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(1, brightness * 2)})`;
+                            } else if (edgeStrength > 0.15) {
+                                ctx.fillStyle = `rgba(150, 255, 150, ${brightness * 1.5})`;
+                            } else {
+                                ctx.fillStyle = `rgba(0, 255, 0, ${brightness * 1.3})`;
+                            }
+                        } else {
+                            // トレイルの後ろは徐々に暗く
+                            if (edgeStrength > 0.3) {
+                                ctx.fillStyle = `rgba(200, 255, 200, ${brightness * 1.2})`;
+                            } else if (edgeStrength > 0.15) {
+                                ctx.fillStyle = `rgba(0, 255, 0, ${brightness})`;
+                            } else {
+                                ctx.fillStyle = `rgba(0, 200, 0, ${brightness * 0.8})`;
+                            }
+                        }
+
+                        ctx.fillText(column.char, x, currentY);
+                    }
+
+                    // エッジが強い場所では速度を大幅に遅く（文字が密集）
+                    const edgeX = Math.floor(x / EDGE_SCALE);
+                    const edgeY = Math.floor(trail.y / EDGE_SCALE);
+                    const edgeIndex = edgeY * edgeWidth + edgeX;
+                    const edgeStrength = edgeData && edgeIndex >= 0 && edgeIndex < edgeData.length 
+                        ? edgeData[edgeIndex] / 255 
+                        : 0;
+                    
+                    const speedMultiplier = edgeStrength > 0.18 ? 0.15 : 1; // エッジ部分をさらに遅く
+                    trail.y += trail.speed * speedMultiplier;
+
+                    // 画面下に達したら即座にリセット
+                    if (trail.y - trail.trailLength * fontSize > canvas.height) {
+                        trail.y = -fontSize;
+                        trail.speed = Math.random() * 1.5 + 0.8;
+                    }
+                }
+            }
+
+            animationId = requestAnimationFrame(drawMatrix);
+        }
+
+        async function startCamera() {
+            try {
+                errorDiv.style.display = 'none';
+                
+                // スマホ向けに最適化された設定
+                const constraints = {
+                    video: {
+                        facingMode: isMobile ? 'environment' : 'user', // スマホは背面カメラ
+                        width: { ideal: isMobile ? 480 : 640 }, // スマホは解像度をさらに下げる
+                        height: { ideal: isMobile ? 360 : 480 },
+                        frameRate: { ideal: 24, max: 30 } // フレームレートを下げる
+                    }
+                };
+                
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+                
+                video.srcObject = stream;
+                
+                // ビデオが読み込まれるまで待つ
+                video.onloadedmetadata = () => {
+                    initCanvas();
+                    drawMatrix();
+                };
+                
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+            } catch (err) {
+                console.error('カメラアクセスエラー:', err);
+                errorDiv.textContent = 'カメラにアクセスできませんでした。\nブラウザの設定でカメラの使用を許可してください。';
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            
+            video.srcObject = null;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hiddenCtx.clearRect(0, 0, hiddenCanvas.width, hiddenCanvas.height);
+            
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+        }
+
+        // イベントリスナー
+        startBtn.addEventListener('click', startCamera);
+        stopBtn.addEventListener('click', stopCamera);
+
+        // ウィンドウリサイズ対応
+        window.addEventListener('resize', () => {
+            if (stream) {
+                initCanvas();
+            }
+        });
+
+        // ページ離脱時にカメラを停止
+        window.addEventListener('beforeunload', stopCamera);
+    </script>
+</body>
+</html>

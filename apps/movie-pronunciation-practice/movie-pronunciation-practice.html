@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>映画セリフで英語発音練習</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        .movie-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .movie-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .movie-icon {
+            font-size: 1.5em;
+        }
+
+        .quote-text {
+            font-size: 1.3em;
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 10px;
+            font-style: italic;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .translation {
+            font-size: 0.95em;
+            color: #666;
+            margin-bottom: 20px;
+            padding-left: 19px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px 25px;
+            font-size: 1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-listen {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-listen:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-record {
+            background: #f093fb;
+            color: white;
+        }
+
+        .btn-record:hover {
+            background: #e085e8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(240, 147, 251, 0.4);
+        }
+
+        .btn-record.recording {
+            background: #ff6b6b;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .btn-next {
+            background: #4facfe;
+            color: white;
+        }
+
+        .btn-next:hover {
+            background: #3d9ae6;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .result-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .result-box.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .recognized-text {
+            font-size: 1.2em;
+            color: #667eea;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            min-height: 50px;
+            border: 2px solid #667eea;
+        }
+
+        .feedback {
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1em;
+            line-height: 1.6;
+        }
+
+        .feedback.excellent {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .feedback.good {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 2px solid #bee5eb;
+        }
+
+        .feedback.try-again {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffeaa7;
+        }
+
+        .score {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .progress {
+            background: #e9ecef;
+            height: 8px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.3s;
+            border-radius: 10px;
+        }
+
+        .hint {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .quote-text {
+                font-size: 1.1em;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            button {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 映画セリフで英語発音練習</h1>
+        <p class="subtitle">有名な映画のセリフを使って、楽しく英語の発音を練習しましょう！</p>
+
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="movie-card">
+            <div class="movie-title">
+                <span class="movie-icon" id="movieIcon">🎥</span>
+                <span id="movieTitle"></span>
+            </div>
+            <div class="quote-text" id="quoteText"></div>
+            <div class="translation" id="translation"></div>
+
+            <div class="controls">
+                <button class="btn-listen" id="listenBtn">
+                    <span>🔊</span>
+                    <span>お手本を聞く</span>
+                </button>
+                <button class="btn-record" id="recordBtn">
+                    <span>🎤</span>
+                    <span>録音して練習</span>
+                </button>
+                <button class="btn-next" id="nextBtn">
+                    <span>➡️</span>
+                    <span>次のセリフ</span>
+                </button>
+            </div>
+
+            <div class="hint">
+                💡 <strong>使い方:</strong> まず「お手本を聞く」で発音を確認し、「録音して練習」で自分の発音を試してみましょう。音声認識があなたの発音を評価します！
+            </div>
+
+            <div class="result-box" id="resultBox">
+                <div class="result-title">📊 あなたの発音:</div>
+                <div class="recognized-text" id="recognizedText"></div>
+                <div class="feedback" id="feedback"></div>
+            </div>
+
+            <div class="error-message" id="errorMessage"></div>
+        </div>
+
+        <div class="score" id="scoreDisplay">練習したセリフ: 0</div>
+    </div>
+
+    <script>
+        const movieQuotes = [
+            {
+                movie: "The Shawshank Redemption",
+                icon: "⭐",
+                quote: "Get busy living, or get busy dying.",
+                translation: "忙しく生きるか、忙しく死ぬかだ。",
+                character: "Andy Dufresne"
+            },
+            {
+                movie: "The Shawshank Redemption",
+                icon: "⭐",
+                quote: "Hope is a good thing, maybe the best of things.",
+                translation: "希望は良いものだ、おそらく最高のものだ。",
+                character: "Andy Dufresne"
+            },
+            {
+                movie: "Forrest Gump",
+                icon: "🏃",
+                quote: "Life is like a box of chocolates.",
+                translation: "人生はチョコレートの箱のようなものだ。",
+                character: "Forrest Gump"
+            },
+            {
+                movie: "Forrest Gump",
+                icon: "🏃",
+                quote: "Stupid is as stupid does.",
+                translation: "バカなことをするのがバカだ。",
+                character: "Forrest Gump"
+            },
+            {
+                movie: "Forrest Gump",
+                icon: "🏃",
+                quote: "My mama always said life was like a box of chocolates.",
+                translation: "母さんはいつも言っていた、人生はチョコレートの箱のようだと。",
+                character: "Forrest Gump"
+            },
+            {
+                movie: "The Godfather",
+                icon: "👔",
+                quote: "I'm gonna make him an offer he can't refuse.",
+                translation: "断れない申し出をするつもりだ。",
+                character: "Don Vito Corleone"
+            },
+            {
+                movie: "The Godfather",
+                icon: "👔",
+                quote: "Keep your friends close, but your enemies closer.",
+                translation: "友を近くに、敵はもっと近くに置け。",
+                character: "Michael Corleone"
+            },
+            {
+                movie: "Star Wars",
+                icon: "⚔️",
+                quote: "May the Force be with you.",
+                translation: "フォースと共にあらんことを。",
+                character: "Multiple characters"
+            },
+            {
+                movie: "Star Wars",
+                icon: "⚔️",
+                quote: "I am your father.",
+                translation: "私がお前の父だ。",
+                character: "Darth Vader"
+            },
+            {
+                movie: "Star Wars",
+                icon: "⚔️",
+                quote: "Do or do not. There is no try.",
+                translation: "やるかやらぬかだ。試しなどない。",
+                character: "Yoda"
+            },
+            {
+                movie: "The Terminator",
+                icon: "🤖",
+                quote: "I'll be back.",
+                translation: "また戻ってくる。",
+                character: "The Terminator"
+            },
+            {
+                movie: "Terminator 2",
+                icon: "🤖",
+                quote: "Hasta la vista, baby.",
+                translation: "地獄で会おうぜ、ベイビー。",
+                character: "The Terminator"
+            },
+            {
+                movie: "Jerry Maguire",
+                icon: "💼",
+                quote: "You complete me.",
+                translation: "あなたが私を完全にしてくれる。",
+                character: "Jerry Maguire"
+            },
+            {
+                movie: "Jerry Maguire",
+                icon: "💼",
+                quote: "Show me the money!",
+                translation: "金を見せろ!",
+                character: "Rod Tidwell"
+            },
+            {
+                movie: "Apollo 13",
+                icon: "🚀",
+                quote: "Houston, we have a problem.",
+                translation: "ヒューストン、問題が発生した。",
+                character: "Jim Lovell"
+            },
+            {
+                movie: "The Wizard of Oz",
+                icon: "🌈",
+                quote: "There's no place like home.",
+                translation: "我が家に勝る場所はない。",
+                character: "Dorothy"
+            },
+            {
+                movie: "The Wizard of Oz",
+                icon: "🌈",
+                quote: "Toto, I've a feeling we're not in Kansas anymore.",
+                translation: "トト、もうカンザスにはいないみたいよ。",
+                character: "Dorothy"
+            },
+            {
+                movie: "Rocky",
+                icon: "🥊",
+                quote: "Yo, Adrian!",
+                translation: "よう、エイドリアン!",
+                character: "Rocky Balboa"
+            },
+            {
+                movie: "Rocky",
+                icon: "🥊",
+                quote: "It ain't about how hard you hit.",
+                translation: "どれだけ強く打つかじゃない。",
+                character: "Rocky Balboa"
+            },
+            {
+                movie: "Titanic",
+                icon: "🚢",
+                quote: "I'm the king of the world!",
+                translation: "俺は世界の王だ!",
+                character: "Jack Dawson"
+            },
+            {
+                movie: "Titanic",
+                icon: "🚢",
+                quote: "You jump, I jump.",
+                translation: "あなたが飛ぶなら、私も飛ぶ。",
+                character: "Jack Dawson"
+            },
+            {
+                movie: "The Dark Knight",
+                icon: "🦇",
+                quote: "Why so serious?",
+                translation: "どうしてそんなに真面目なんだ？",
+                character: "The Joker"
+            },
+            {
+                movie: "The Dark Knight",
+                icon: "🦇",
+                quote: "I'm Batman.",
+                translation: "俺はバットマンだ。",
+                character: "Batman"
+            },
+            {
+                movie: "The Matrix",
+                icon: "💊",
+                quote: "There is no spoon.",
+                translation: "スプーンなど存在しない。",
+                character: "Spoon Boy"
+            },
+            {
+                movie: "The Matrix",
+                icon: "💊",
+                quote: "I know kung fu.",
+                translation: "カンフーができるぞ。",
+                character: "Neo"
+            },
+            {
+                movie: "Toy Story",
+                icon: "🤠",
+                quote: "To infinity and beyond!",
+                translation: "無限の彼方へ、さあ行くぞ！",
+                character: "Buzz Lightyear"
+            },
+            {
+                movie: "The Lion King",
+                icon: "🦁",
+                quote: "Hakuna Matata.",
+                translation: "ハクナ・マタタ（心配ないさ）。",
+                character: "Timon and Pumbaa"
+            },
+            {
+                movie: "Finding Nemo",
+                icon: "🐠",
+                quote: "Just keep swimming.",
+                translation: "泳ぎ続けるのよ。",
+                character: "Dory"
+            },
+            {
+                movie: "Frozen",
+                icon: "❄️",
+                quote: "Let it go.",
+                translation: "ありのままで。",
+                character: "Elsa"
+            },
+            {
+                movie: "Cast Away",
+                icon: "🏐",
+                quote: "Wilson!",
+                translation: "ウィルソン！",
+                character: "Chuck Noland"
+            },
+            {
+                movie: "Jaws",
+                icon: "🦈",
+                quote: "You're gonna need a bigger boat.",
+                translation: "もっと大きな船が必要だな。",
+                character: "Martin Brody"
+            },
+            {
+                movie: "E.T.",
+                icon: "👽",
+                quote: "E.T. phone home.",
+                translation: "E.T.おうちに電話する。",
+                character: "E.T."
+            },
+            {
+                movie: "Top Gun",
+                icon: "✈️",
+                quote: "I feel the need, the need for speed.",
+                translation: "感じるんだ、スピードへの欲求を。",
+                character: "Maverick"
+            },
+            {
+                movie: "A Few Good Men",
+                icon: "⚖️",
+                quote: "You can't handle the truth!",
+                translation: "お前に真実は扱えない！",
+                character: "Colonel Jessup"
+            },
+            {
+                movie: "Casablanca",
+                icon: "🎩",
+                quote: "Here's looking at you, kid.",
+                translation: "君の瞳に乾杯。",
+                character: "Rick Blaine"
+            },
+            {
+                movie: "Casablanca",
+                icon: "🎩",
+                quote: "We'll always have Paris.",
+                translation: "パリでの思い出は永遠だ。",
+                character: "Rick Blaine"
+            },
+            {
+                movie: "Gone with the Wind",
+                icon: "🌪️",
+                quote: "Frankly, my dear, I don't give a damn.",
+                translation: "正直言って、もうどうでもいい。",
+                character: "Rhett Butler"
+            },
+            {
+                movie: "The Sixth Sense",
+                icon: "👻",
+                quote: "I see dead people.",
+                translation: "死んだ人が見えるんだ。",
+                character: "Cole Sear"
+            },
+            {
+                movie: "Home Alone",
+                icon: "🏠",
+                quote: "Keep the change, you filthy animal.",
+                translation: "おつりは取っとけ、この汚い動物め。",
+                character: "Gangster Johnny"
+            },
+            {
+                movie: "Gladiator",
+                icon: "⚔️",
+                quote: "My name is Maximus.",
+                translation: "私の名前はマキシマスだ。",
+                character: "Maximus"
+            },
+            {
+                movie: "Braveheart",
+                icon: "🗡️",
+                quote: "Freedom!",
+                translation: "自由だ！",
+                character: "William Wallace"
+            },
+            {
+                movie: "The Princess Bride",
+                icon: "👸",
+                quote: "My name is Inigo Montoya.",
+                translation: "私の名前はイニゴ・モントーヤだ。",
+                character: "Inigo Montoya"
+            },
+            {
+                movie: "The Princess Bride",
+                icon: "👸",
+                quote: "As you wish.",
+                translation: "お望み通りに。",
+                character: "Westley"
+            },
+            {
+                movie: "Back to the Future",
+                icon: "⏰",
+                quote: "Great Scott!",
+                translation: "なんてこった！",
+                character: "Doc Brown"
+            },
+            {
+                movie: "Back to the Future",
+                icon: "⏰",
+                quote: "Where we're going, we don't need roads.",
+                translation: "俺たちが行く場所には道路は要らない。",
+                character: "Doc Brown"
+            },
+            {
+                movie: "Fight Club",
+                icon: "🥊",
+                quote: "The first rule of Fight Club is you do not talk about Fight Club.",
+                translation: "ファイトクラブの最初のルールは、ファイトクラブについて話さないことだ。",
+                character: "Tyler Durden"
+            },
+            {
+                movie: "The Silence of the Lambs",
+                icon: "🦋",
+                quote: "Hello, Clarice.",
+                translation: "こんにちは、クラリス。",
+                character: "Hannibal Lecter"
+            },
+            {
+                movie: "The Breakfast Club",
+                icon: "🎓",
+                quote: "We're all pretty bizarre.",
+                translation: "私たちはみんなかなり変わっている。",
+                character: "Allison"
+            },
+            {
+                movie: "Harry Potter",
+                icon: "⚡",
+                quote: "You're a wizard, Harry.",
+                translation: "君は魔法使いだ、ハリー。",
+                character: "Hagrid"
+            },
+            {
+                movie: "Harry Potter",
+                icon: "⚡",
+                quote: "Always.",
+                translation: "いつも。",
+                character: "Severus Snape"
+            },
+            {
+                movie: "The Lord of the Rings",
+                icon: "💍",
+                quote: "One does not simply walk into Mordor.",
+                translation: "モルドールに簡単に歩いて入れるわけがない。",
+                character: "Boromir"
+            },
+            {
+                movie: "The Lord of the Rings",
+                icon: "💍",
+                quote: "My precious.",
+                translation: "我が愛しいしと。",
+                character: "Gollum"
+            },
+            {
+                movie: "The Lord of the Rings",
+                icon: "💍",
+                quote: "You shall not pass!",
+                translation: "汝、通るべからず！",
+                character: "Gandalf"
+            },
+            {
+                movie: "Inception",
+                icon: "💭",
+                quote: "We need to go deeper.",
+                translation: "もっと深く行かなければならない。",
+                character: "Dom Cobb"
+            },
+            {
+                movie: "Pulp Fiction",
+                icon: "💼",
+                quote: "Say what again!",
+                translation: "もう一度言ってみろ！",
+                character: "Jules Winnfield"
+            },
+            {
+                movie: "The Social Network",
+                icon: "💻",
+                quote: "A million dollars isn't cool.",
+                translation: "100万ドルはクールじゃない。",
+                character: "Sean Parker"
+            },
+            {
+                movie: "Juno",
+                icon: "🤰",
+                quote: "Honest to blog?",
+                translation: "ブログに誓って本当？",
+                character: "Juno"
+            },
+            {
+                movie: "Mean Girls",
+                icon: "👧",
+                quote: "On Wednesdays we wear pink.",
+                translation: "水曜日はピンクを着る。",
+                character: "Karen"
+            },
+            {
+                movie: "Clueless",
+                icon: "💄",
+                quote: "As if!",
+                translation: "ありえない！",
+                character: "Cher"
+            },
+            {
+                movie: "Notting Hill",
+                icon: "💐",
+                quote: "I'm just a girl, standing in front of a boy.",
+                translation: "私はただの女の子、男の子の前に立っている。",
+                character: "Anna Scott"
+            },
+            {
+                movie: "Love Actually",
+                icon: "❤️",
+                quote: "To me, you are perfect.",
+                translation: "僕にとって、君は完璧だ。",
+                character: "Mark"
+            },
+            {
+                movie: "The Notebook",
+                icon: "📓",
+                quote: "If you're a bird, I'm a bird.",
+                translation: "君が鳥なら、僕も鳥だ。",
+                character: "Noah"
+            },
+            {
+                movie: "When Harry Met Sally",
+                icon: "🍽️",
+                quote: "I'll have what she's having.",
+                translation: "彼女と同じものを頂戴。",
+                character: "Customer"
+            },
+            {
+                movie: "Pretty Woman",
+                icon: "👗",
+                quote: "Big mistake. Big. Huge.",
+                translation: "大きな間違いよ。大きな。巨大な。",
+                character: "Vivian"
+            },
+            {
+                movie: "Dirty Dancing",
+                icon: "💃",
+                quote: "Nobody puts Baby in a corner.",
+                translation: "誰もベイビーを隅に追いやったりしない。",
+                character: "Johnny"
+            },
+            {
+                movie: "The Devil Wears Prada",
+                icon: "👠",
+                quote: "That's all.",
+                translation: "以上よ。",
+                character: "Miranda Priestly"
+            },
+            {
+                movie: "Legally Blonde",
+                icon: "💅",
+                quote: "What, like it's hard?",
+                translation: "何よ、難しいとでも？",
+                character: "Elle Woods"
+            },
+            {
+                movie: "The Pursuit of Happyness",
+                icon: "🎯",
+                quote: "Don't ever let somebody tell you you can't do something.",
+                translation: "誰にも君はできないなんて言わせるな。",
+                character: "Chris Gardner"
+            },
+            {
+                movie: "Good Will Hunting",
+                icon: "🧮",
+                quote: "It's not your fault.",
+                translation: "君のせいじゃない。",
+                character: "Sean Maguire"
+            },
+            {
+                movie: "Dead Poets Society",
+                icon: "📚",
+                quote: "Carpe diem. Seize the day.",
+                translation: "カルペ・ディエム。今を生きろ。",
+                character: "John Keating"
+            },
+            {
+                movie: "The Truman Show",
+                icon: "📺",
+                quote: "Good morning, and in case I don't see you, good afternoon, good evening, and good night.",
+                translation: "おはよう、会えない場合に備えて、こんにちは、こんばんは、おやすみ。",
+                character: "Truman Burbank"
+            },
+            {
+                movie: "A Beautiful Mind",
+                icon: "🧠",
+                quote: "I need to believe that something extraordinary is possible.",
+                translation: "何か特別なことが可能だと信じる必要がある。",
+                character: "John Nash"
+            },
+            {
+                movie: "The Green Mile",
+                icon: "🕊️",
+                quote: "I'm tired, boss.",
+                translation: "疲れたよ、ボス。",
+                character: "John Coffey"
+            },
+            {
+                movie: "Saving Private Ryan",
+                icon: "🎖️",
+                quote: "Earn this.",
+                translation: "これに値する人間になれ。",
+                character: "Captain Miller"
+            },
+            {
+                movie: "Schindler's List",
+                icon: "🕯️",
+                quote: "Whoever saves one life, saves the world entire.",
+                translation: "一人の命を救う者は、全世界を救う。",
+                character: "Itzhak Stern"
+            },
+            {
+                movie: "The Avengers",
+                icon: "🦸",
+                quote: "I am Iron Man.",
+                translation: "私がアイアンマンだ。",
+                character: "Tony Stark"
+            },
+            {
+                movie: "The Avengers",
+                icon: "🦸",
+                quote: "Hulk smash!",
+                translation: "ハルク スマッシュ！",
+                character: "Hulk"
+            },
+            {
+                movie: "Black Panther",
+                icon: "🐆",
+                quote: "Wakanda forever!",
+                translation: "ワカンダよ永遠に！",
+                character: "T'Challa"
+            },
+            {
+                movie: "Guardians of the Galaxy",
+                icon: "🚀",
+                quote: "I am Groot.",
+                translation: "私はグルート。",
+                character: "Groot"
+            },
+            {
+                movie: "Spider-Man",
+                icon: "🕷️",
+                quote: "With great power comes great responsibility.",
+                translation: "大いなる力には、大いなる責任が伴う。",
+                character: "Uncle Ben"
+            },
+            {
+                movie: "The Hunger Games",
+                icon: "🏹",
+                quote: "May the odds be ever in your favor.",
+                translation: "幸運を祈ります。",
+                character: "Effie Trinket"
+            },
+            {
+                movie: "Jurassic Park",
+                icon: "🦖",
+                quote: "Life finds a way.",
+                translation: "生命は道を見つける。",
+                character: "Ian Malcolm"
+            },
+            {
+                movie: "Independence Day",
+                icon: "🛸",
+                quote: "Welcome to Earth!",
+                translation: "地球へようこそ！",
+                character: "Captain Steven Hiller"
+            },
+            {
+                movie: "Die Hard",
+                icon: "💥",
+                quote: "Yippee-ki-yay!",
+                translation: "イッピー・カイ・エイ！",
+                character: "John McClane"
+            },
+            {
+                movie: "The Shining",
+                icon: "🪓",
+                quote: "Here's Johnny!",
+                translation: "ジョニーだぞ！",
+                character: "Jack Torrance"
+            },
+            {
+                movie: "Psycho",
+                icon: "🚿",
+                quote: "A boy's best friend is his mother.",
+                translation: "少年の最良の友は母親だ。",
+                character: "Norman Bates"
+            },
+            {
+                movie: "The Exorcist",
+                icon: "😈",
+                quote: "The power of Christ compels you!",
+                translation: "キリストの力が命じる！",
+                character: "Father Merrin"
+            },
+            {
+                movie: "Ghostbusters",
+                icon: "👻",
+                quote: "Who you gonna call? Ghostbusters!",
+                translation: "誰を呼ぶ？ゴーストバスターズ！",
+                character: "Ray Parker Jr."
+            },
+            {
+                movie: "Austin Powers",
+                icon: "🕶️",
+                quote: "Yeah, baby!",
+                translation: "イエー、ベイビー！",
+                character: "Austin Powers"
+            },
+            {
+                movie: "Zoolander",
+                icon: "📸",
+                quote: "Really, really ridiculously good looking.",
+                translation: "本当に、本当に、バカバカしいほどイケメン。",
+                character: "Derek Zoolander"
+            },
+            {
+                movie: "Anchorman",
+                icon: "📰",
+                quote: "I love lamp.",
+                translation: "ランプが好きだ。",
+                character: "Brick Tamland"
+            },
+            {
+                movie: "Elf",
+                icon: "🎅",
+                quote: "The best way to spread Christmas cheer is singing loud for all to hear.",
+                translation: "クリスマスの喜びを広める最良の方法は、みんなに聞こえるよう大声で歌うこと。",
+                character: "Buddy"
+            },
+            {
+                movie: "Mrs. Doubtfire",
+                icon: "👵",
+                quote: "It was a run-by fruiting!",
+                translation: "フルーツの襲撃だった！",
+                character: "Mrs. Doubtfire"
+            },
+            {
+                movie: "The Big Lebowski",
+                icon: "🎳",
+                quote: "The Dude abides.",
+                translation: "デュードは耐える。",
+                character: "The Dude"
+            },
+            {
+                movie: "Scarface",
+                icon: "💰",
+                quote: "Say hello to my little friend!",
+                translation: "俺の小さな友達に挨拶しろ！",
+                character: "Tony Montana"
+            },
+            {
+                movie: "Taxi Driver",
+                icon: "🚕",
+                quote: "You talkin' to me?",
+                translation: "俺に言ってるのか？",
+                character: "Travis Bickle"
+            },
+            {
+                movie: "The Graduate",
+                icon: "🎓",
+                quote: "Mrs. Robinson, you're trying to seduce me.",
+                translation: "ロビンソン夫人、僕を誘惑しようとしているんですね。",
+                character: "Benjamin Braddock"
+            },
+            {
+                movie: "Cool Hand Luke",
+                icon: "⛓️",
+                quote: "What we've got here is failure to communicate.",
+                translation: "ここにあるのはコミュニケーションの失敗だ。",
+                character: "Captain"
+            },
+            {
+                movie: "Wall Street",
+                icon: "💼",
+                quote: "Greed is good.",
+                translation: "強欲は善だ。",
+                character: "Gordon Gekko"
+            },
+            {
+                movie: "Field of Dreams",
+                icon: "⚾",
+                quote: "If you build it, he will come.",
+                translation: "作れば、彼が来る。",
+                character: "Voice"
+            },
+            {
+                movie: "Jerry Maguire",
+                icon: "💼",
+                quote: "You had me at hello.",
+                translation: "最初の挨拶で心を掴まれたわ。",
+                character: "Dorothy Boyd"
+            },
+            {
+                movie: "Interstellar",
+                icon: "🌌",
+                quote: "Do not go gentle into that good night.",
+                translation: "穏やかにその良き夜に入るな。",
+                character: "Dylan Thomas poem"
+            },
+            {
+                movie: "Gravity",
+                icon: "🛰️",
+                quote: "I'm gonna get out of this.",
+                translation: "ここから抜け出す。",
+                character: "Dr. Ryan Stone"
+            },
+            {
+                movie: "Avatar",
+                icon: "🌿",
+                quote: "I see you.",
+                translation: "あなたが見える。",
+                character: "Jake Sully"
+            },
+            {
+                movie: "Frozen",
+                icon: "❄️",
+                quote: "Some people are worth melting for.",
+                translation: "溶けてしまう価値がある人もいる。",
+                character: "Olaf"
+            },
+            {
+                movie: "Up",
+                icon: "🎈",
+                quote: "Adventure is out there!",
+                translation: "冒険はそこにある！",
+                character: "Charles Muntz"
+            }
+        ];
+
+        let currentQuoteIndex = 0;
+        let practiceCount = 0;
+        let recognition;
+        let isRecording = false;
+
+        // 音声認識のセットアップ
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+        }
+
+        function loadQuote() {
+            const quote = movieQuotes[currentQuoteIndex];
+            document.getElementById('movieIcon').textContent = quote.icon;
+            document.getElementById('movieTitle').textContent = quote.movie;
+            document.getElementById('quoteText').textContent = quote.quote;
+            document.getElementById('translation').textContent = `🇯🇵 ${quote.translation}`;
+            document.getElementById('resultBox').classList.remove('show');
+            
+            const progress = ((currentQuoteIndex + 1) / movieQuotes.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function speakText(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            speechSynthesis.speak(utterance);
+        }
+
+        function calculateSimilarity(str1, str2) {
+            const s1 = str1.toLowerCase().replace(/[^\w\s]/g, '');
+            const s2 = str2.toLowerCase().replace(/[^\w\s]/g, '');
+            
+            const words1 = s1.split(/\s+/);
+            const words2 = s2.split(/\s+/);
+            
+            let matches = 0;
+            words1.forEach(word => {
+                if (words2.includes(word)) matches++;
+            });
+            
+            return matches / Math.max(words1.length, words2.length);
+        }
+
+        function showFeedback(recognized, original) {
+            const resultBox = document.getElementById('resultBox');
+            const recognizedText = document.getElementById('recognizedText');
+            const feedback = document.getElementById('feedback');
+            
+            recognizedText.textContent = recognized || '(認識できませんでした)';
+            resultBox.classList.add('show');
+            
+            const similarity = calculateSimilarity(recognized, original);
+            
+            feedback.className = 'feedback';
+            
+            if (similarity > 0.8) {
+                feedback.classList.add('excellent');
+                feedback.innerHTML = '🎉 <strong>素晴らしい!</strong><br>完璧な発音です。この調子で頑張りましょう!';
+            } else if (similarity > 0.5) {
+                feedback.classList.add('good');
+                feedback.innerHTML = '👍 <strong>良いですね!</strong><br>もう少し練習すれば完璧です。もう一度挑戦してみましょう!';
+            } else {
+                feedback.classList.add('try-again');
+                feedback.innerHTML = '💪 <strong>もう一度チャレンジ!</strong><br>お手本をよく聞いて、ゆっくり発音してみましょう。';
+            }
+        }
+
+        function showError(message) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = message;
+            errorElement.classList.add('show');
+            setTimeout(() => {
+                errorElement.classList.remove('show');
+            }, 4000);
+        }
+
+        document.getElementById('listenBtn').addEventListener('click', () => {
+            const quote = movieQuotes[currentQuoteIndex];
+            speakText(quote.quote);
+        });
+
+        document.getElementById('recordBtn').addEventListener('click', () => {
+            if (!recognition) {
+                showError('❌ お使いのブラウザは音声認識に対応していません。Chrome、Edge、Safariをお試しください。');
+                return;
+            }
+
+            const recordBtn = document.getElementById('recordBtn');
+            
+            if (!isRecording) {
+                isRecording = true;
+                recordBtn.classList.add('recording');
+                recordBtn.innerHTML = '<span>⏹️</span><span>停止</span>';
+                
+                recognition.start();
+                
+                recognition.onresult = (event) => {
+                    const recognized = event.results[0][0].transcript;
+                    const original = movieQuotes[currentQuoteIndex].quote;
+                    showFeedback(recognized, original);
+                    practiceCount++;
+                    document.getElementById('scoreDisplay').textContent = `練習したセリフ: ${practiceCount}`;
+                };
+                
+                recognition.onerror = (event) => {
+                    console.error('Recognition error:', event.error);
+                    if (event.error === 'no-speech') {
+                        showError('⚠️ 音声が検出されませんでした。マイクに向かって話してください。');
+                    } else if (event.error === 'not-allowed') {
+                        showError('❌ マイクへのアクセスが拒否されました。ブラウザの設定を確認してください。');
+                    } else {
+                        showError('❌ 音声認識エラーが発生しました。もう一度お試しください。');
+                    }
+                    isRecording = false;
+                    recordBtn.classList.remove('recording');
+                    recordBtn.innerHTML = '<span>🎤</span><span>録音して練習</span>';
+                };
+                
+                recognition.onend = () => {
+                    isRecording = false;
+                    recordBtn.classList.remove('recording');
+                    recordBtn.innerHTML = '<span>🎤</span><span>録音して練習</span>';
+                };
+            } else {
+                recognition.stop();
+            }
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            currentQuoteIndex = (currentQuoteIndex + 1) % movieQuotes.length;
+            loadQuote();
+        });
+
+        // 初期化
+        loadQuote();
+    </script>
+</body>
+</html>
