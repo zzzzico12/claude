@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta name="referrer" content="no-referrer">
+<title>ヒット＆ブロー</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f5f4f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;display:flex;justify-content:center;padding:2rem 1rem}
+#g{width:100%;max-width:520px}
+h2{font-size:20px;font-weight:500;color:#1a1a1a;margin-bottom:4px}
+.sub{font-size:13px;color:#666;margin-bottom:1rem}
+.top-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:1rem;padding:10px 14px;background:#fff;border:0.5px solid rgba(0,0,0,0.1);border-radius:12px}
+#top-msg{font-size:13px;flex:1;min-width:0}
+.section-label{font-size:11px;font-weight:500;color:#888;letter-spacing:0.04em;margin-bottom:6px;text-transform:uppercase}
+.panel{background:#fff;border:0.5px solid rgba(0,0,0,0.1);border-radius:12px;padding:14px 16px;margin-bottom:1rem}
+.slots{display:flex;gap:8px}
+.slot{width:52px;height:62px;border-radius:8px;border:1.5px solid #ccc;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;user-select:none;background:#f5f4f0;color:#1a1a1a;transition:border-color 0.1s,background 0.1s}
+.slot-num{font-size:26px;font-weight:500;line-height:1}
+.slot-pos{font-size:10px;font-weight:500;margin-top:3px;opacity:0.6}
+.slot.my-empty{background:#f5f4f0;border-color:#ccc;color:#aaa}
+.slot.my-active{border-color:#534AB7;background:#EEEDFE;color:#3C3489;border-width:2px;outline:3px solid #AFA9EC;outline-offset:1px}
+.slot.my-active .slot-pos{opacity:1}
+.slot.my-filled{background:#EEEDFE;border-color:#534AB7;color:#3C3489}
+.slot.my-filled-active{background:#EEEDFE;border-color:#534AB7;color:#3C3489;border-width:2px;outline:3px solid #AFA9EC;outline-offset:1px}
+.slot.my-filled-active .slot-pos{opacity:1}
+.slot.my-set{background:#EEEDFE;border-color:#534AB7;color:#3C3489}
+.slot.g-empty{background:#f5f4f0;border-color:#ccc;color:#aaa}
+.slot.g-active{border-color:#378ADD;background:#E6F1FB;color:#0C447C;border-width:2px;outline:3px solid #B5D4F4;outline-offset:1px}
+.slot.g-active .slot-pos{opacity:1}
+.slot.g-filled{background:#E6F1FB;border-color:#185FA5;color:#0C447C}
+.slot.g-filled-active{background:#E6F1FB;border-color:#378ADD;color:#0C447C;border-width:2px;outline:3px solid #B5D4F4;outline-offset:1px}
+.slot.g-filled-active .slot-pos{opacity:1}
+.numpad{display:flex;flex-wrap:wrap;gap:5px}
+.numpad button{width:42px;height:38px;font-size:15px;font-weight:500;border-radius:8px;border:0.5px solid #ccc;background:transparent;color:#1a1a1a;cursor:pointer}
+.numpad button:hover{background:#f5f4f0}
+.numpad button.used{opacity:0.22;pointer-events:none}
+.numpad button.current-val-purple{background:#EEEDFE;border-color:#534AB7;color:#3C3489;border-width:1.5px}
+.numpad button.current-val-blue{background:#E6F1FB;border-color:#185FA5;color:#0C447C;border-width:1.5px}
+.badge{display:inline-flex;align-items:center;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:500;white-space:nowrap}
+.b-hr{background:#EAF3DE;color:#27500A}
+.b-hit{background:#FAEEDA;color:#633806}
+.b-info{background:#EEEDFE;color:#3C3489}
+.b-win{background:#EAF3DE;color:#27500A}
+.b-lose{background:#FAECE7;color:#712B13}
+.b-draw{background:#eee;color:#555}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.logs-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-bottom:1rem}
+.log-panel{background:#fff;border:0.5px solid rgba(0,0,0,0.1);border-radius:12px;padding:10px 12px}
+.log-scroll{max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:5px}
+.log-entry{display:flex;align-items:center;gap:6px;padding:5px 6px;border-radius:6px;background:#f5f4f0}
+.log-nums{display:flex;gap:3px}
+.lc{width:26px;height:30px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;border:0.5px solid #ddd;background:#fff;color:#1a1a1a}
+.lc.hr{background:#EAF3DE;border-color:#3B6D11;color:#27500A}
+.log-sc{display:flex;gap:4px;margin-left:auto}
+button.ctrl-btn{padding:8px 14px;border-radius:8px;border:0.5px solid #ccc;background:transparent;color:#1a1a1a;font-size:13px;cursor:pointer}
+button.ctrl-btn:hover{background:#f5f4f0}
+button.ctrl-btn:disabled{opacity:0.35;cursor:default}
+button.send-btn{padding:8px 16px;border-radius:8px;border:0.5px solid #ccc;background:transparent;color:#1a1a1a;font-size:13px;cursor:pointer}
+button.send-btn:hover{background:#f5f4f0}
+button.send-btn:disabled{opacity:0.35;cursor:default}
+.empty-log{font-size:12px;color:#aaa;text-align:center;padding:10px 0}
+.reveal-bar{background:#f5f4f0;border-radius:8px;padding:8px 12px;font-size:13px;color:#666;text-align:center;margin-bottom:1rem}
+#wrap{position:relative}
+.overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.52);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity 0.35s}
+.overlay.show{opacity:1;pointer-events:auto}
+.overlay-card{background:#fff;border-radius:12px;padding:2rem;text-align:center;max-width:300px;width:90%;transform:scale(0.88);transition:transform 0.35s}
+.overlay.show .overlay-card{transform:scale(1)}
+.overlay-title{font-size:24px;font-weight:500;margin-bottom:8px;line-height:1.3}
+.overlay-sub{font-size:13px;color:#666;margin-bottom:1.4rem;line-height:1.7;white-space:pre-line}
+.overlay-btn{padding:10px 28px;border-radius:8px;border:0.5px solid #ccc;background:transparent;color:#1a1a1a;font-size:14px;cursor:pointer}
+.overlay-btn:hover{background:#f5f4f0}
+.win-title{color:#27500A}
+.lose-title{color:#712B13}
+.draw-title{color:#3C3489}
+</style>
+</head>
+<body>
+<div id="g">
+  <h2>ヒット＆ブロー</h2>
+  <p class="sub">3桁の数字（0〜9、重複なし）を隠してお互いに当て合う。3ヒットで勝ち。<br>位置も数字も合っていれば <strong>Hit</strong>、数字だけ合っていれば <strong>Blow</strong>。</p>
+
+  <div id="wrap">
+    <div class="top-bar">
+      <span id="top-msg"></span>
+      <button class="ctrl-btn" id="new-btn">新ゲーム</button>
+    </div>
+
+    <div class="panel" id="secret-panel">
+      <div class="section-label">自分の秘密の数字</div>
+      <div class="row" style="margin-bottom:8px">
+        <div class="slots" id="secret-slots">
+          <div class="slot my-active" id="ss0"></div>
+          <div class="slot my-empty" id="ss1"></div>
+          <div class="slot my-empty" id="ss2"></div>
+        </div>
+        <div class="numpad" id="secret-numpad"></div>
+        <button class="ctrl-btn" id="confirm-btn" disabled>決定</button>
+      </div>
+      <div id="secret-hint" style="font-size:12px;color:#888"></div>
+    </div>
+
+    <div class="panel" id="guess-panel" style="opacity:0.4;pointer-events:none">
+      <div class="section-label">AIの数字を予想する</div>
+      <div class="row" style="margin-bottom:10px">
+        <div class="slots" id="guess-slots">
+          <div class="slot g-empty" id="gs0"></div>
+          <div class="slot g-empty" id="gs1"></div>
+          <div class="slot g-empty" id="gs2"></div>
+        </div>
+        <div class="numpad" id="guess-numpad"></div>
+        <button class="send-btn" id="send-btn" disabled>予想を送る</button>
+      </div>
+      <div class="row" id="you-result" style="min-height:24px"></div>
+    </div>
+
+    <div class="reveal-bar" id="reveal-bar" style="display:none"></div>
+
+    <div class="logs-row">
+      <div class="log-panel">
+        <div class="section-label" style="margin-bottom:8px">あなたの予想履歴</div>
+        <div class="log-scroll" id="you-log"><div class="empty-log">まだ予想なし</div></div>
+      </div>
+      <div class="log-panel">
+        <div class="section-label" style="margin-bottom:8px">AIの予想履歴</div>
+        <div class="log-scroll" id="ai-log"><div class="empty-log">まだ予想なし</div></div>
+      </div>
+    </div>
+
+    <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="overlay-title">
+      <div class="overlay-card">
+        <div class="overlay-title" id="overlay-title"></div>
+        <div class="overlay-sub" id="overlay-sub"></div>
+        <button class="overlay-btn" id="overlay-btn">もう一度遊ぶ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+const posLabel=['1桁目','2桁目','3桁目'];
+let aiSecret,phase,mySecret,guessArr,selSecret,selGuess,aiCands,turnNum,secret;
+
+function rnd3(){
+  const d=[0,1,2,3,4,5,6,7,8,9];
+  for(let i=d.length-1;i>0;i--){
+    const j=Math.floor(crypto.getRandomValues(new Uint32Array(1))[0]/(0xFFFFFFFF+1)*(i+1));
+    [d[i],d[j]]=[d[j],d[i]];
+  }
+  return d.slice(0,3);
+}
+function calcScore(sec,g){let hr=0,hit=0;for(let i=0;i<3;i++){if(g[i]===sec[i])hr++;else if(sec.includes(g[i]))hit++;}return{hr,hit};}
+function allCands(){const l=[];for(let a=0;a<10;a++)for(let b=0;b<10;b++)for(let c=0;c<10;c++)if(a!==b&&b!==c&&a!==c)l.push([a,b,c]);return l;}
+function filterCands(cands,g,hr,hit){return cands.filter(function(c){const s=calcScore(c,g);return s.hr===hr&&s.hit===hit;});}
+function makeBadge(cls,text){const s=document.createElement('span');s.className='badge '+cls;s.textContent=text;return s;}
+function setMsg(cls,text){const el=document.getElementById('top-msg');el.innerHTML='';el.appendChild(makeBadge(cls,text));}
+function renderSlot(el,cls,num,pos){
+  el.className='slot '+cls;el.innerHTML='';
+  const n=document.createElement('span');n.className='slot-num';n.textContent=num!==null?String(num):'?';
+  const p=document.createElement('span');p.className='slot-pos';p.textContent=posLabel[pos];
+  el.appendChild(n);el.appendChild(p);
+}
+
+function newGame(){
+  aiSecret=rnd3();aiCands=allCands();
+  mySecret=[null,null,null];guessArr=[null,null,null];
+  selSecret=0;selGuess=0;phase='set-secret';turnNum=0;
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('reveal-bar').style.display='none';
+  document.getElementById('guess-panel').style.opacity='0.4';
+  document.getElementById('guess-panel').style.pointerEvents='none';
+  document.getElementById('you-result').innerHTML='';
+  document.getElementById('you-log').innerHTML='<div class="empty-log">まだ予想なし</div>';
+  document.getElementById('ai-log').innerHTML='<div class="empty-log">まだ予想なし</div>';
+  document.getElementById('confirm-btn').disabled=true;
+  document.getElementById('confirm-btn').style.display='';
+  document.getElementById('send-btn').disabled=true;
+  document.getElementById('secret-panel').style.pointerEvents='';
+  document.getElementById('secret-hint').textContent='3つ選んで決定ボタンを押してください';
+  renderSecretSlots();
+  renderNumpad('secret-numpad',mySecret,null,'purple',false,onSecretNum);
+  setMsg('b-info','まず秘密の数字を3つ決めよう');
+}
+
+function renderSecretSlots(){
+  for(let i=0;i<3;i++){
+    const s=document.getElementById('ss'+i);
+    const isActive=i===selSecret,isFilled=mySecret[i]!==null;
+    let cls;
+    if(isActive&&isFilled)cls='my-filled-active';
+    else if(isActive)cls='my-active';
+    else if(isFilled)cls='my-filled';
+    else cls='my-empty';
+    renderSlot(s,cls,mySecret[i],i);
+    s.onclick=(function(idx){return function(){
+      if(phase==='set-secret'){selSecret=idx;renderSecretSlots();renderNumpad('secret-numpad',mySecret,mySecret[idx],'purple',false,onSecretNum);}
+    };})(i);
+  }
+  document.getElementById('confirm-btn').disabled=mySecret.some(function(v){return v===null;});
+}
+
+function renderGuessSlots(){
+  for(let i=0;i<3;i++){
+    const s=document.getElementById('gs'+i);
+    const isActive=i===selGuess,isFilled=guessArr[i]!==null;
+    let cls;
+    if(isActive&&isFilled)cls='g-filled-active';
+    else if(isActive)cls='g-active';
+    else if(isFilled)cls='g-filled';
+    else cls='g-empty';
+    renderSlot(s,cls,guessArr[i],i);
+    s.onclick=(function(idx){return function(){
+      selGuess=idx;renderGuessSlots();renderNumpad('guess-numpad',guessArr,guessArr[idx],'blue',false,onGuessNum);
+    };})(i);
+  }
+  document.getElementById('send-btn').disabled=guessArr.some(function(v){return v===null;});
+}
+
+function renderNumpad(id,usedArr,currentVal,color,disabled,handler){
+  const np=document.getElementById(id);np.innerHTML='';
+  for(let i=0;i<10;i++){
+    const b=document.createElement('button');b.textContent=String(i);
+    const isCV=currentVal!==null&&currentVal===i;
+    const isUsed=usedArr.includes(i)&&!isCV;
+    if(isUsed)b.className='used';
+    else if(isCV)b.className='current-val-'+color;
+    b.disabled=disabled||isUsed;
+    b.addEventListener('click',(function(n){return function(){handler(n);};})(i));
+    np.appendChild(b);
+  }
+}
+
+function onSecretNum(n){
+  mySecret[selSecret]=n;
+  let next=-1;for(let j=0;j<3;j++)if(mySecret[j]===null){next=j;break;}
+  selSecret=next>=0?next:(selSecret<2?selSecret+1:selSecret);
+  renderSecretSlots();
+  renderNumpad('secret-numpad',mySecret,mySecret[selSecret],'purple',false,onSecretNum);
+}
+
+function onGuessNum(n){
+  guessArr[selGuess]=n;
+  let next=-1;for(let j=0;j<3;j++)if(guessArr[j]===null){next=j;break;}
+  selGuess=next>=0?next:(selGuess<2?selGuess+1:selGuess);
+  renderGuessSlots();
+  renderNumpad('guess-numpad',guessArr,guessArr[selGuess],'blue',false,onGuessNum);
+}
+
+function confirmSecret(){
+  secret=mySecret.slice();phase='guess';
+  for(let i=0;i<3;i++){const s=document.getElementById('ss'+i);renderSlot(s,'my-set',secret[i],i);s.onclick=null;}
+  document.getElementById('secret-numpad').innerHTML='';
+  document.getElementById('secret-hint').textContent='';
+  document.getElementById('confirm-btn').style.display='none';
+  document.getElementById('guess-panel').style.opacity='1';
+  document.getElementById('guess-panel').style.pointerEvents='';
+  guessArr=[null,null,null];selGuess=0;
+  renderGuessSlots();
+  renderNumpad('guess-numpad',guessArr,null,'blue',false,onGuessNum);
+  setMsg('b-info','AIの数字を予想しよう（ターン1）');
+}
+
+function submitGuess(){
+  turnNum++;
+  const g=guessArr.slice();
+  const ys=calcScore(aiSecret,g);
+  const yr=document.getElementById('you-result');yr.innerHTML='';
+  yr.appendChild(makeBadge('b-hr','Hit '+ys.hr));yr.appendChild(makeBadge('b-hit','Blow '+ys.hit));
+  addLog('you-log',g,ys.hr,ys.hit);
+  const rnd=crypto.getRandomValues(new Uint32Array(1))[0]/(0xFFFFFFFF+1);
+  const aiG=aiCands[Math.floor(rnd*Math.min(aiCands.length,8))];
+  const as=calcScore(secret,aiG);
+  aiCands=filterCands(aiCands,aiG,as.hr,as.hit);
+  addLog('ai-log',aiG,as.hr,as.hit);
+  if(ys.hr===3||as.hr===3){endGame(ys.hr===3,as.hr===3);return;}
+  guessArr=[null,null,null];selGuess=0;
+  renderGuessSlots();renderNumpad('guess-numpad',guessArr,null,'blue',false,onGuessNum);
+  document.getElementById('send-btn').disabled=true;
+  setMsg('b-info','ターン'+(turnNum+1)+'：続けて予想しよう');
+}
+
+function endGame(youWin,aiWin){
+  phase='end';
+  document.getElementById('send-btn').disabled=true;
+  document.getElementById('guess-panel').style.pointerEvents='none';
+  const rb=document.getElementById('reveal-bar');rb.style.display='';
+  rb.textContent='AIの秘密: '+aiSecret.join('  ')+'　　あなたの秘密: '+secret.join('  ');
+  const title=document.getElementById('overlay-title');
+  const sub=document.getElementById('overlay-sub');
+  if(youWin&&aiWin){title.className='overlay-title draw-title';title.textContent='引き分け！';sub.textContent='お互い同時に正解しました。\nナイス推理！';setMsg('b-draw','引き分け');}
+  else if(youWin){title.className='overlay-title win-title';title.textContent='おめでとうございます！';sub.textContent='AIより先に数字を当てました。\n素晴らしい推理力です！';setMsg('b-win','あなたの勝ち！');}
+  else{title.className='overlay-title lose-title';title.textContent='残念！もう一度トライ！';sub.textContent='今回はAIが先に正解しました。\nヒントを活かしてリベンジしよう！';setMsg('b-lose','AIの勝ち');}
+  setTimeout(function(){document.getElementById('overlay').classList.add('show');},300);
+}
+
+function addLog(id,nums,hr,hit){
+  const log=document.getElementById(id);
+  if(log.querySelector('.empty-log'))log.innerHTML='';
+  const row=document.createElement('div');row.className='log-entry';
+  const nc=document.createElement('div');nc.className='log-nums';
+  nums.forEach(function(n){const c=document.createElement('div');c.className='lc'+(hr===3?' hr':'');c.textContent=String(n);nc.appendChild(c);});
+  row.appendChild(nc);
+  const sc=document.createElement('div');sc.className='log-sc';
+  sc.appendChild(makeBadge('b-hr','Hit '+hr));sc.appendChild(makeBadge('b-hit','Blow '+hit));
+  row.appendChild(sc);log.appendChild(row);log.scrollTop=log.scrollHeight;
+}
+
+document.getElementById('confirm-btn').addEventListener('click',confirmSecret);
+document.getElementById('send-btn').addEventListener('click',submitGuess);
+document.getElementById('new-btn').addEventListener('click',newGame);
+document.getElementById('overlay-btn').addEventListener('click',newGame);
+newGame();
+})();
+</script>
+</body>
+</html>
