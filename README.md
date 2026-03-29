@@ -29,7 +29,8 @@ claude/
     ├── realtime-translator/
     ├── solar-system-3d/
     ├── task-roulette/
-    └── wine-menu/
+    ├── wine-menu/
+    └── hit-and-blow/
 ```
 
 ## 📱 アプリ一覧
@@ -160,6 +161,12 @@ claude/
 - **特徴**: 画像認識、自動情報抽出、フィルタリング
 - **ファイル**: [wine-menu.jsx](apps/wine-menu/wine-menu.jsx)
 
+### 22. [Hit and Blow](apps/hit-and-blow/)
+- **説明**: 数字を当てる推理ゲーム（Bulls and Cows）
+- **技術**: HTML5, JavaScript
+- **特徴**: ヒット＆ブロー判定、履歴表示、リトライ機能
+- **ファイル**: [hit_and_blow.html](apps/hit-and-blow/hit_and_blow.html)
+
 ---
 
 ## 💡 使い方
@@ -182,6 +189,7 @@ claude/
 - Character Prediction
 - Pi Memory Game
 - Flag Quiz Game
+- Hit and Blow
 
 ### AI活用
 - AI Profiling App
