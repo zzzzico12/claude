@@ -26,6 +26,7 @@ h2{font-size:20px;font-weight:500;color:#1a1a1a;margin-bottom:4px}
 .num-card .nc-num{font-size:28px;font-weight:500;color:#1a1a1a;line-height:1}
 .num-card .nc-pos{font-size:10px;font-weight:500;color:#888;margin-top:3px}
 .num-card.used{opacity:0.25;cursor:default;pointer-events:none}
+.num-card.waiting{opacity:0.35;cursor:default;pointer-events:none}
 .ops-row{display:flex;gap:8px;justify-content:center;margin-bottom:1rem;flex-wrap:wrap}
 .op-btn{width:52px;height:44px;border-radius:8px;border:0.5px solid #ccc;background:transparent;color:#1a1a1a;font-size:20px;font-weight:500;cursor:pointer}
 .op-btn:hover{background:#f5f4f0}
@@ -50,7 +51,7 @@ button.act-btn:disabled{opacity:0.35;cursor:default}
 <body>
 <div id="g">
   <h2>Make 10</h2>
-  <p class="sub">4つの数字（0〜9）を四則演算（+−×÷）で組み合わせて 10 を作ろう。すべての数字を1回ずつ使うこと。</p>
+  <p class="sub">4つの数字（0〜9）を四則演算（+−×÷）で組み合わせて 10 を作ろう。数字は左から順番に使うこと。</p>
 
   <div class="top-bar">
     <span id="top-msg"></span>
@@ -91,7 +92,7 @@ wins=0;skips=0;tries=0;
 function rndInt(n){return Math.floor(crypto.getRandomValues(new Uint32Array(1))[0]/(0xFFFFFFFF+1)*n);}
 
 function genPuzzle(){
-  for(let a=0;a<500;a++){
+  for(let a=0;a<2000;a++){
     const p=[];for(let i=0;i<4;i++)p.push(rndInt(10));
     if(hasSolution(p))return p;
   }
@@ -99,51 +100,38 @@ function genPuzzle(){
 }
 
 function hasSolution(ns){
-  const perms=permutations(ns);
   const ops=['+','-','*','/'];
-  for(const p of perms)
-    for(const o1 of ops)for(const o2 of ops)for(const o3 of ops){
-      const fs=[
-        '(('+p[0]+o1+p[1]+')'+o2+p[2]+')'+o3+p[3],
-        '('+p[0]+o1+'('+p[1]+o2+p[2]+'))'+o3+p[3],
-        '('+p[0]+o1+p[1]+')'+o2+'('+p[2]+o3+p[3]+')',
-        p[0]+o1+'(('+p[1]+o2+p[2]+')'+o3+p[3]+')',
-        p[0]+o1+'('+p[1]+o2+'('+p[2]+o3+p[3]+'))',
-      ];
-      for(const f of fs){try{if(Math.abs(evalSafe(f)-10)<1e-9)return true;}catch(e){}}
-    }
+  for(const o1 of ops)for(const o2 of ops)for(const o3 of ops){
+    const fs=[
+      '(('+ns[0]+o1+ns[1]+')'+o2+ns[2]+')'+o3+ns[3],
+      '('+ns[0]+o1+'('+ns[1]+o2+ns[2]+'))'+o3+ns[3],
+      '('+ns[0]+o1+ns[1]+')'+o2+'('+ns[2]+o3+ns[3]+')',
+      ns[0]+o1+'(('+ns[1]+o2+ns[2]+')'+o3+ns[3]+')',
+      ns[0]+o1+'('+ns[1]+o2+'('+ns[2]+o3+ns[3]+'))',
+    ];
+    for(const f of fs){try{if(Math.abs(evalSafe(f)-10)<1e-9)return true;}catch(e){}}
+  }
   return false;
 }
 
 function findSolution(ns){
-  const perms=permutations(ns);
   const ops=['+','-','*','/'];
   const tmpls=[
-    function(p,o1,o2,o3){return'(('+p[0]+o1+p[1]+')'+o2+p[2]+')'+o3+p[3];},
-    function(p,o1,o2,o3){return'('+p[0]+o1+'('+p[1]+o2+p[2]+'))'+o3+p[3];},
-    function(p,o1,o2,o3){return'('+p[0]+o1+p[1]+')'+o2+'('+p[2]+o3+p[3]+')';},
-    function(p,o1,o2,o3){return p[0]+o1+'(('+p[1]+o2+p[2]+')'+o3+p[3]+')';},
-    function(p,o1,o2,o3){return p[0]+o1+'('+p[1]+o2+'('+p[2]+o3+p[3]+'))';},
+    function(o1,o2,o3){return'(('+ns[0]+o1+ns[1]+')'+o2+ns[2]+')'+o3+ns[3];},
+    function(o1,o2,o3){return'('+ns[0]+o1+'('+ns[1]+o2+ns[2]+'))'+o3+ns[3];},
+    function(o1,o2,o3){return'('+ns[0]+o1+ns[1]+')'+o2+'('+ns[2]+o3+ns[3]+')';},
+    function(o1,o2,o3){return ns[0]+o1+'(('+ns[1]+o2+ns[2]+')'+o3+ns[3]+')';},
+    function(o1,o2,o3){return ns[0]+o1+'('+ns[1]+o2+'('+ns[2]+o3+ns[3]+'))';},
   ];
-  for(const p of perms)
-    for(const o1 of ops)for(const o2 of ops)for(const o3 of ops)
-      for(const t of tmpls){
-        const f=t(p,o1,o2,o3);
-        try{if(Math.abs(evalSafe(f)-10)<1e-9)return f.replace(/\*/g,'×').replace(/\//g,'÷').replace(/-/g,'−');}
-        catch(e){}
-      }
+  for(const o1 of ops)for(const o2 of ops)for(const o3 of ops)
+    for(const t of tmpls){
+      const f=t(o1,o2,o3);
+      try{if(Math.abs(evalSafe(f)-10)<1e-9)return f.replace(/\*/g,'×').replace(/\//g,'÷').replace(/-/g,'−');}
+      catch(e){}
+    }
   return null;
 }
 
-function permutations(arr){
-  if(arr.length<=1)return[arr.slice()];
-  const res=[];
-  for(let i=0;i<arr.length;i++){
-    const rest=arr.slice();rest.splice(i,1);
-    for(const p of permutations(rest))res.push([arr[i]].concat(p));
-  }
-  return res;
-}
 
 function evalSafe(expr){
   if(!/^[\d\s\+\-\*\/\(\)\.]+$/.test(expr))throw new Error('unsafe');
@@ -171,9 +159,13 @@ function newGame(){
 
 function renderNums(){
   const row=document.getElementById('nums-row');row.replaceChildren();
+  const nextIdx=usedIdx.length;
   nums.forEach(function(n,i){
+    let cls='num-card';
+    if(usedIdx.includes(i))cls+=' used';
+    else if(i!==nextIdx)cls+=' waiting';
     const d=document.createElement('div');
-    d.className='num-card'+(usedIdx.includes(i)?' used':'');
+    d.className=cls;
     const nt=document.createElement('div');nt.className='nc-num';nt.textContent=String(n);
     const pt=document.createElement('div');pt.className='nc-pos';pt.textContent=(i+1)+'番目';
     d.appendChild(nt);d.appendChild(pt);
@@ -212,6 +204,7 @@ function renderExpr(){
 
 function onNumClick(idx){
   if(usedIdx.includes(idx))return;
+  if(idx!==usedIdx.length)return;
   expr.push({type:'num',val:nums[idx],idx:idx});
   usedIdx.push(idx);
   renderNums();renderExpr();
