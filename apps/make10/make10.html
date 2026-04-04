@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta name="referrer" content="no-referrer">
+<title>Make 10</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f5f4f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;display:flex;justify-content:center;padding:2rem 1rem}
+#g{width:100%;max-width:480px}
+h2{font-size:20px;font-weight:500;color:#1a1a1a;margin-bottom:4px}
+.sub{font-size:13px;color:#666;margin-bottom:1rem}
+.top-bar{display:flex;align-items:center;gap:8px;margin-bottom:1rem;padding:10px 14px;background:#fff;border:0.5px solid rgba(0,0,0,0.1);border-radius:12px;flex-wrap:wrap}
+.top-bar span{font-size:13px;flex:1;min-width:0}
+.badge{display:inline-flex;align-items:center;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:500;white-space:nowrap}
+.b-info{background:#EEEDFE;color:#3C3489}
+.b-win{background:#EAF3DE;color:#27500A}
+.b-err{background:#FCEBEB;color:#791F1F}
+.panel{background:#fff;border:0.5px solid rgba(0,0,0,0.1);border-radius:12px;padding:14px 16px;margin-bottom:1rem}
+.nums-row{display:flex;gap:10px;justify-content:center;margin-bottom:1rem}
+.num-card{width:62px;height:72px;border-radius:10px;border:1.5px solid #ccc;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;user-select:none;background:#f5f4f0;transition:border-color 0.1s,background 0.1s}
+.num-card .nc-num{font-size:28px;font-weight:500;color:#1a1a1a;line-height:1}
+.num-card .nc-pos{font-size:10px;font-weight:500;color:#888;margin-top:3px}
+.num-card.used{opacity:0.25;cursor:default;pointer-events:none}
+.ops-row{display:flex;gap:8px;justify-content:center;margin-bottom:1rem;flex-wrap:wrap}
+.op-btn{width:52px;height:44px;border-radius:8px;border:0.5px solid #ccc;background:transparent;color:#1a1a1a;font-size:20px;font-weight:500;cursor:pointer}
+.op-btn:hover{background:#f5f4f0}
+.expr-area{min-height:48px;padding:10px 14px;background:#f5f4f0;border-radius:8px;font-size:18px;font-weight:500;color:#1a1a1a;letter-spacing:0.02em;margin-bottom:10px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.expr-area span.en{color:#1a1a1a}
+.expr-area span.eo{color:#185FA5;font-size:22px}
+.expr-area span.ep{color:#888}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+button.act-btn{padding:8px 16px;border-radius:8px;border:0.5px solid #ccc;background:transparent;color:#1a1a1a;font-size:13px;cursor:pointer}
+button.act-btn:hover{background:#f5f4f0}
+button.act-btn:disabled{opacity:0.35;cursor:default}
+.hint-box{margin-top:10px;padding:8px 12px;background:#f5f4f0;border-radius:8px;font-size:13px;color:#666;font-family:monospace}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:1rem}
+.stat{background:#fff;border:0.5px solid rgba(0,0,0,0.1);border-radius:8px;padding:8px 10px;text-align:center}
+.stat-l{font-size:11px;color:#888;margin-bottom:2px}
+.stat-v{font-size:20px;font-weight:500;color:#1a1a1a}
+.history{max-height:120px;overflow-y:auto;display:flex;flex-direction:column;gap:4px}
+.hist-row{font-size:12px;color:#666;padding:4px 8px;background:#f5f4f0;border-radius:6px;font-family:monospace}
+.hist-row.hw{color:#27500A;background:#EAF3DE}
+</style>
+</head>
+<body>
+<div id="g">
+  <h2>Make 10</h2>
+  <p class="sub">4つの数字（0〜9）を四則演算（+−×÷）で組み合わせて 10 を作ろう。すべての数字を1回ずつ使うこと。</p>
+
+  <div class="top-bar">
+    <span id="top-msg"></span>
+    <button class="act-btn" id="hint-btn">ヒント</button>
+    <button class="act-btn" id="new-btn">次の問題</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-l">正解数</div><div class="stat-v" id="s-win">0</div></div>
+    <div class="stat"><div class="stat-l">スキップ</div><div class="stat-v" id="s-skip">0</div></div>
+    <div class="stat"><div class="stat-l">試行回数</div><div class="stat-v" id="s-try">0</div></div>
+  </div>
+
+  <div class="panel">
+    <div class="nums-row" id="nums-row"></div>
+    <div class="ops-row" id="ops-row"></div>
+    <div class="expr-area" id="expr-area"></div>
+    <div class="btn-row">
+      <button class="act-btn" id="undo-btn">1つ戻す</button>
+      <button class="act-btn" id="clear-btn">クリア</button>
+      <button class="act-btn" id="check-btn" disabled>答え合わせ</button>
+    </div>
+    <div class="hint-box" id="hint-box" style="display:none"></div>
+  </div>
+
+  <div class="panel" style="padding:12px 14px">
+    <div style="font-size:11px;font-weight:500;color:#888;letter-spacing:0.04em;margin-bottom:8px;text-transform:uppercase">履歴</div>
+    <div class="history" id="history"><div style="font-size:12px;color:#aaa;text-align:center;padding:8px">まだ試行なし</div></div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+let nums,usedIdx,expr,wins,skips,tries;
+wins=0;skips=0;tries=0;
+
+function rndInt(n){return Math.floor(crypto.getRandomValues(new Uint32Array(1))[0]/(0xFFFFFFFF+1)*n);}
+
+function genPuzzle(){
+  for(let a=0;a<500;a++){
+    const p=[];for(let i=0;i<4;i++)p.push(rndInt(10));
+    if(hasSolution(p))return p;
+  }
+  return[1,2,3,4];
+}
+
+function hasSolution(ns){
+  const perms=permutations(ns);
+  const ops=['+','-','*','/'];
+  for(const p of perms)
+    for(const o1 of ops)for(const o2 of ops)for(const o3 of ops){
+      const fs=[
+        '(('+p[0]+o1+p[1]+')'+o2+p[2]+')'+o3+p[3],
+        '('+p[0]+o1+'('+p[1]+o2+p[2]+'))'+o3+p[3],
+        '('+p[0]+o1+p[1]+')'+o2+'('+p[2]+o3+p[3]+')',
+        p[0]+o1+'(('+p[1]+o2+p[2]+')'+o3+p[3]+')',
+        p[0]+o1+'('+p[1]+o2+'('+p[2]+o3+p[3]+'))',
+      ];
+      for(const f of fs){try{if(Math.abs(evalSafe(f)-10)<1e-9)return true;}catch(e){}}
+    }
+  return false;
+}
+
+function findSolution(ns){
+  const perms=permutations(ns);
+  const ops=['+','-','*','/'];
+  const tmpls=[
+    function(p,o1,o2,o3){return'(('+p[0]+o1+p[1]+')'+o2+p[2]+')'+o3+p[3];},
+    function(p,o1,o2,o3){return'('+p[0]+o1+'('+p[1]+o2+p[2]+'))'+o3+p[3];},
+    function(p,o1,o2,o3){return'('+p[0]+o1+p[1]+')'+o2+'('+p[2]+o3+p[3]+')';},
+    function(p,o1,o2,o3){return p[0]+o1+'(('+p[1]+o2+p[2]+')'+o3+p[3]+')';},
+    function(p,o1,o2,o3){return p[0]+o1+'('+p[1]+o2+'('+p[2]+o3+p[3]+'))';},
+  ];
+  for(const p of perms)
+    for(const o1 of ops)for(const o2 of ops)for(const o3 of ops)
+      for(const t of tmpls){
+        const f=t(p,o1,o2,o3);
+        try{if(Math.abs(evalSafe(f)-10)<1e-9)return f.replace(/\*/g,'×').replace(/\//g,'÷').replace(/-/g,'−');}
+        catch(e){}
+      }
+  return null;
+}
+
+function permutations(arr){
+  if(arr.length<=1)return[arr.slice()];
+  const res=[];
+  for(let i=0;i<arr.length;i++){
+    const rest=arr.slice();rest.splice(i,1);
+    for(const p of permutations(rest))res.push([arr[i]].concat(p));
+  }
+  return res;
+}
+
+function evalSafe(expr){
+  if(!/^[\d\s\+\-\*\/\(\)\.]+$/.test(expr))throw new Error('unsafe');
+  const tokens=expr.match(/\d+(\.\d+)?|[\+\-\*\/\(\)]/g);
+  if(!tokens)throw new Error('bad');
+  let pos=0;
+  function parseExpr(){let left=parseTerm();while(pos<tokens.length&&(tokens[pos]==='+'||tokens[pos]==='-')){const op=tokens[pos++];const right=parseTerm();left=op==='+'?left+right:left-right;}return left;}
+  function parseTerm(){let left=parseFactor();while(pos<tokens.length&&(tokens[pos]==='*'||tokens[pos]==='/')){const op=tokens[pos++];const right=parseFactor();if(op==='/'&&Math.abs(right)<1e-12)throw new Error('div0');left=op==='*'?left*right:left/right;}return left;}
+  function parseFactor(){if(tokens[pos]==='('){pos++;const v=parseExpr();pos++;return v;}return parseFloat(tokens[pos++]);}
+  return parseExpr();
+}
+
+function clearExprState(){
+  expr=[];usedIdx=[];
+  renderNums();renderExpr();
+  document.getElementById('hint-box').style.display='none';
+}
+
+function newGame(){
+  nums=genPuzzle();
+  clearExprState();
+  setMsg('b-info','数字と演算子を選んで式を作ろう');
+  document.getElementById('check-btn').disabled=true;
+}
+
+function renderNums(){
+  const row=document.getElementById('nums-row');row.replaceChildren();
+  nums.forEach(function(n,i){
+    const d=document.createElement('div');
+    d.className='num-card'+(usedIdx.includes(i)?' used':'');
+    const nt=document.createElement('div');nt.className='nc-num';nt.textContent=String(n);
+    const pt=document.createElement('div');pt.className='nc-pos';pt.textContent=(i+1)+'番目';
+    d.appendChild(nt);d.appendChild(pt);
+    d.addEventListener('click',(function(idx){return function(){onNumClick(idx);};})(i));
+    row.appendChild(d);
+  });
+}
+
+function renderOps(){
+  const row=document.getElementById('ops-row');row.replaceChildren();
+  ['+','−','×','÷','(',')'].forEach(function(op){
+    const b=document.createElement('button');b.className='op-btn';b.textContent=op;
+    b.addEventListener('click',function(){onOpClick(op);});
+    row.appendChild(b);
+  });
+}
+
+function renderExpr(){
+  const area=document.getElementById('expr-area');area.replaceChildren();
+  if(expr.length===0){
+    const ph=document.createElement('span');
+    ph.style.cssText='color:#aaa;font-size:14px;font-weight:400';
+    ph.textContent='数字→演算子→数字の順にクリック';
+    area.appendChild(ph);return;
+  }
+  expr.forEach(function(tok){
+    const s=document.createElement('span');
+    if(tok.type==='num'){s.className='en';s.textContent=String(tok.val);}
+    else if(tok.type==='op'){s.className='eo';s.textContent=tok.val;}
+    else{s.className='ep';s.textContent=tok.val;}
+    area.appendChild(s);
+  });
+  const allUsed=nums.every(function(_,i){return usedIdx.includes(i);});
+  document.getElementById('check-btn').disabled=!allUsed;
+}
+
+function onNumClick(idx){
+  if(usedIdx.includes(idx))return;
+  expr.push({type:'num',val:nums[idx],idx:idx});
+  usedIdx.push(idx);
+  renderNums();renderExpr();
+}
+
+function onOpClick(op){
+  expr.push(op==='('||op===')'?{type:'paren',val:op}:{type:'op',val:op});
+  renderExpr();
+}
+
+function undo(){
+  if(expr.length===0)return;
+  const last=expr.pop();
+  if(last.type==='num')usedIdx=usedIdx.filter(function(i){return i!==last.idx;});
+  renderNums();renderExpr();
+}
+
+function checkAnswer(){
+  tries++;
+  document.getElementById('s-try').textContent=String(tries);
+  const exprStr=expr.map(function(t){
+    if(t.type==='num')return String(t.val);
+    if(t.type==='op')return t.val==='−'?'-':t.val==='×'?'*':t.val==='÷'?'/':t.val;
+    return t.val;
+  }).join('');
+  let result;
+  try{result=evalSafe(exprStr);}
+  catch(e){
+    setMsg('b-err','式が正しくありません');
+    addHistory(exprStr,'err');
+    setTimeout(function(){clearExprState();setMsg('b-info','もう一度！');},800);
+    return;
+  }
+  const display=expr.map(function(t){return t.val;}).join('');
+  if(Math.abs(result-10)<1e-9){
+    wins++;
+    document.getElementById('s-win').textContent=String(wins);
+    setMsg('b-win','正解！ = 10　次の問題へどうぞ');
+    addHistory(display,'win');
+    setTimeout(function(){newGame();},1200);
+  } else {
+    const r=Number.isInteger(result)?String(result):result.toFixed(2);
+    setMsg('b-err','= '+r+' … もう一度！');
+    addHistory(display+'＝'+r,'err');
+    setTimeout(function(){clearExprState();setMsg('b-info','もう一度！');},800);
+  }
+}
+
+function showHint(){
+  const sol=findSolution(nums);
+  const box=document.getElementById('hint-box');
+  box.style.display='';
+  box.textContent=sol?'ヒント: '+sol:'解が見つかりません';
+}
+
+function addHistory(text,type){
+  const h=document.getElementById('history');
+  const empty=h.querySelector('[style]');
+  if(empty)h.replaceChildren();
+  const row=document.createElement('div');
+  row.className='hist-row'+(type==='win'?' hw':'');
+  row.textContent=(type==='win'?'✓ ':'  ')+text;
+  h.insertBefore(row,h.firstChild);
+}
+
+function setMsg(cls,text){
+  const el=document.getElementById('top-msg');el.replaceChildren();
+  const b=document.createElement('span');b.className='badge '+cls;b.textContent=text;
+  el.appendChild(b);
+}
+
+renderOps();
+document.getElementById('undo-btn').addEventListener('click',undo);
+document.getElementById('clear-btn').addEventListener('click',function(){clearExprState();setMsg('b-info','数字と演算子を選んで式を作ろう');});
+document.getElementById('check-btn').addEventListener('click',checkAnswer);
+document.getElementById('hint-btn').addEventListener('click',showHint);
+document.getElementById('new-btn').addEventListener('click',function(){skips++;document.getElementById('s-skip').textContent=String(skips);newGame();});
+newGame();
+})();
+</script>
+</body>
+</html>

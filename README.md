@@ -30,7 +30,8 @@ claude/
     ├── solar-system-3d/
     ├── task-roulette/
     ├── wine-menu/
-    └── hit-and-blow/
+    ├── hit-and-blow/
+    └── make10/
 ```
 
 ## 📱 アプリ一覧
@@ -167,6 +168,12 @@ claude/
 - **特徴**: ヒット＆ブロー判定、履歴表示、リトライ機能
 - **ファイル**: [hit_and_blow.html](apps/hit-and-blow/hit_and_blow.html)
 
+### 23. [Make 10](apps/make10/)
+- **説明**: 4つの数字（0〜9）を四則演算で10を作るパズルゲーム
+- **技術**: HTML5, JavaScript
+- **特徴**: 解あり問題のみ出題、ヒント機能、正解履歴表示
+- **ファイル**: [make10.html](apps/make10/make10.html)
+
 ---
 
 ## 💡 使い方
@@ -190,6 +197,7 @@ claude/
 - Pi Memory Game
 - Flag Quiz Game
 - Hit and Blow
+- Make 10
 
 ### AI活用
 - AI Profiling App
