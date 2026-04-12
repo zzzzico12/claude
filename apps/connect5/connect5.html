@@ -39,7 +39,6 @@ select{padding:6px 10px;border-radius:8px;border:0.5px solid #ccc;background:#ff
   <p class="sub">列をクリックすると石が一番下（または積まれた石の上）に落ちる。縦・横・斜めに5つ並べたら勝ち。</p>
   <div class="top-bar">
     <span id="msg"></span>
-    <select id="diff"><option value="easy">Easy</option><option value="normal" selected>Normal</option><option value="hard">Hard</option></select>
     <button class="btn" id="new-btn">New game</button>
   </div>
   <div id="board-wrap"><svg id="board-svg"></svg></div>
@@ -113,7 +112,7 @@ function aiMove(){
 }
 
 function chooseAI(){
-  const diff=document.getElementById('diff').value;
+  const diff='hard';
   const valid=[];
   for(let c=0;c<COLS;c++) if(dropRow(c)>=0) valid.push(c);
   if(diff==='easy') return valid[Math.floor(Math.random()*valid.length)];
@@ -225,7 +224,6 @@ function setMsg(cls,text){
 }
 
 document.getElementById('new-btn').addEventListener('click',newGame);
-document.getElementById('diff').addEventListener('change',newGame);
 newGame();
 })();
 </script>
