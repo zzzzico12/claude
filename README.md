@@ -31,7 +31,8 @@ claude/
     ├── task-roulette/
     ├── wine-menu/
     ├── hit-and-blow/
-    └── make10/
+    ├── make10/
+    └── connect5/
 ```
 
 ## 📱 アプリ一覧
@@ -174,6 +175,12 @@ claude/
 - **特徴**: 解あり問題のみ出題、ヒント機能、正解履歴表示
 - **ファイル**: [make10.html](apps/make10/make10.html)
 
+### 24. [Connect 5](apps/connect5/)
+- **説明**: 9×9ボードで縦・横・斜めに5つ並べたら勝ちのゲーム（コンピューター対戦）
+- **技術**: HTML5, SVG, JavaScript
+- **特徴**: 重力付き石落とし、3段階難易度、ゴーストプレビュー
+- **ファイル**: [connect5.html](apps/connect5/connect5.html)
+
 ---
 
 ## 💡 使い方
@@ -198,6 +205,7 @@ claude/
 - Flag Quiz Game
 - Hit and Blow
 - Make 10
+- Connect 5
 
 ### AI活用
 - AI Profiling App

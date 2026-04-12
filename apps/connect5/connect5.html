@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta name="referrer" content="no-referrer">
+<title>Connect 5</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f5f4f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;display:flex;justify-content:center;padding:2rem 1rem}
+#g{width:100%;max-width:480px}
+h2{font-size:20px;font-weight:500;color:#1a1a1a;margin-bottom:4px}
+.sub{font-size:13px;color:#666;margin-bottom:1rem}
+.top-bar{display:flex;align-items:center;gap:8px;margin-bottom:1rem;padding:10px 14px;background:#fff;border:0.5px solid rgba(0,0,0,0.1);border-radius:12px;flex-wrap:wrap}
+.top-bar span{font-size:13px;flex:1;min-width:0}
+.badge{display:inline-flex;align-items:center;padding:3px 12px;border-radius:99px;font-size:12px;font-weight:500;white-space:nowrap}
+.b-you{background:#E6F1FB;color:#0C447C}
+.b-ai{background:#FAECE7;color:#712B13}
+.b-win{background:#EAF3DE;color:#27500A}
+.b-lose{background:#FAECE7;color:#712B13}
+.b-draw{background:#eee;color:#555}
+button.btn{padding:8px 14px;border-radius:8px;border:0.5px solid #ccc;background:transparent;color:#1a1a1a;font-size:13px;cursor:pointer}
+button.btn:hover{background:#f5f4f0}
+select{padding:6px 10px;border-radius:8px;border:0.5px solid #ccc;background:#fff;color:#1a1a1a;font-size:13px;cursor:pointer}
+#board-wrap{background:#fff;border:0.5px solid rgba(0,0,0,0.1);border-radius:12px;padding:12px;display:flex;justify-content:center;margin-bottom:1rem}
+#board-svg{display:block}
+.legend{display:flex;gap:16px;font-size:12px;color:#666;flex-wrap:wrap;align-items:center}
+.legend span{display:flex;align-items:center;gap:5px}
+.dot-you{width:12px;height:12px;border-radius:50%;background:#185FA5;display:inline-block}
+.dot-ai{width:12px;height:12px;border-radius:50%;background:#993C1D;display:inline-block}
+</style>
+</head>
+<body>
+<div id="g">
+  <h2>Connect 5</h2>
+  <p class="sub">列をクリックすると石が一番下（または積まれた石の上）に落ちる。縦・横・斜めに5つ並べたら勝ち。</p>
+  <div class="top-bar">
+    <span id="msg"></span>
+    <select id="diff"><option value="easy">Easy</option><option value="normal" selected>Normal</option><option value="hard">Hard</option></select>
+    <button class="btn" id="new-btn">New game</button>
+  </div>
+  <div id="board-wrap"><svg id="board-svg"></svg></div>
+  <div class="legend">
+    <span><i class="dot-you"></i> You (blue)</span>
+    <span><i class="dot-ai"></i> AI (red)</span>
+    <span style="color:#aaa;font-size:11px">列をクリックして石を置く</span>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+const COLS=9, ROWS=9, WIN=5;
+const CELL=44, PAD=16;
+let board, turn, gameOver, winCells;
+
+function newGame(){
+  board=Array.from({length:ROWS},function(){return Array(COLS).fill(0);});
+  turn='you'; gameOver=false; winCells=[];
+  setMsg('b-you','Your turn (blue)');
+  render();
+}
+
+function dropRow(col){
+  for(let r=ROWS-1;r>=0;r--) if(board[r][col]===0) return r;
+  return -1;
+}
+
+function place(col,who){
+  const r=dropRow(col);
+  if(r<0) return false;
+  board[r][col]=who;
+  return r;
+}
+
+function checkWin(r,c,who){
+  const dirs=[[0,1],[1,0],[1,1],[1,-1]];
+  for(const [dr,dc] of dirs){
+    const cells=[[r,c]];
+    for(let s=1;s<WIN;s++){const nr=r+dr*s,nc=c+dc*s;if(nr<0||nr>=ROWS||nc<0||nc>=COLS||board[nr][nc]!==who)break;cells.push([nr,nc]);}
+    for(let s=1;s<WIN;s++){const nr=r-dr*s,nc=c-dc*s;if(nr<0||nr>=ROWS||nc<0||nc>=COLS||board[nr][nc]!==who)break;cells.push([nr,nc]);}
+    if(cells.length>=WIN){winCells=cells;return true;}
+  }
+  return false;
+}
+
+function isFull(){return board[0].every(function(v){return v!==0;});}
+
+function onColClick(col){
+  if(gameOver||turn!=='you') return;
+  const r=place(col,1);
+  if(r===false) return;
+  if(checkWin(r,col,1)){gameOver=true;setMsg('b-win','You win!');render();return;}
+  if(isFull()){gameOver=true;setMsg('b-draw','Draw');render();return;}
+  turn='ai';
+  setMsg('b-ai','AI is thinking…');
+  render();
+  setTimeout(aiMove,400);
+}
+
+function aiMove(){
+  const col=chooseAI();
+  const r=place(col,2);
+  if(r===false){gameOver=true;setMsg('b-draw','Draw');render();return;}
+  if(checkWin(r,col,2)){gameOver=true;setMsg('b-lose','AI wins');render();return;}
+  if(isFull()){gameOver=true;setMsg('b-draw','Draw');render();return;}
+  turn='you';
+  setMsg('b-you','Your turn (blue)');
+  render();
+}
+
+function chooseAI(){
+  const diff=document.getElementById('diff').value;
+  const valid=[];
+  for(let c=0;c<COLS;c++) if(dropRow(c)>=0) valid.push(c);
+  if(diff==='easy') return valid[Math.floor(Math.random()*valid.length)];
+
+  function score(col,who){
+    const r=dropRow(col);
+    if(r<0) return -999;
+    board[r][col]=who;
+    let s=0;
+    const dirs=[[0,1],[1,0],[1,1],[1,-1]];
+    for(const [dr,dc] of dirs){
+      let cnt=1,open=0;
+      for(let i=1;i<WIN;i++){const nr=r+dr*i,nc=col+dc*i;if(nr<0||nr>=ROWS||nc<0||nc>=COLS)break;if(board[nr][nc]===who)cnt++;else{if(board[nr][nc]===0)open++;break;}}
+      for(let i=1;i<WIN;i++){const nr=r-dr*i,nc=col-dc*i;if(nr<0||nr>=ROWS||nc<0||nc>=COLS)break;if(board[nr][nc]===who)cnt++;else{if(board[nr][nc]===0)open++;break;}}
+      if(cnt>=WIN) s+=100000;
+      else if(cnt===4) s+=who===2?5000:4000;
+      else if(cnt===3) s+=who===2?500:400;
+      else if(cnt===2) s+=who===2?50:40;
+      if(open>0) s+=cnt*10;
+    }
+    board[r][col]=0;
+    return s;
+  }
+
+  const scores=valid.map(function(c){
+    const win=score(c,2);
+    const block=score(c,1);
+    return{c,s:win>=100000?win:block>=100000?block+1:win+block*(diff==='hard'?0.9:0.7)};
+  });
+  scores.sort(function(a,b){return b.s-a.s;});
+  if(diff==='normal'){
+    const top=scores.slice(0,Math.min(3,scores.length));
+    return top[Math.floor(Math.random()*top.length)].c;
+  }
+  return scores[0].c;
+}
+
+function render(){
+  const W=COLS*CELL+PAD*2, H=ROWS*CELL+PAD*2;
+  const ns='http://www.w3.org/2000/svg';
+  const s=document.createElementNS(ns,'svg');
+  s.setAttribute('width',W); s.setAttribute('height',H);
+  s.setAttribute('viewBox','0 0 '+W+' '+H);
+  s.style.display='block';
+
+  function mk(tag,attrs){
+    const e=document.createElementNS(ns,tag);
+    Object.keys(attrs).forEach(function(k){e.setAttribute(k,String(attrs[k]));});
+    return e;
+  }
+
+  s.appendChild(mk('rect',{x:0,y:0,width:W,height:H,fill:'#F5F0E8',rx:8}));
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+    s.appendChild(mk('rect',{x:PAD+c*CELL+2,y:PAD+r*CELL+2,width:CELL-4,height:CELL-4,fill:'transparent',stroke:'rgba(0,0,0,0.1)','stroke-width':0.5,rx:2}));
+  }
+
+  const winSet=new Set(winCells.map(function(wc){return wc[0]*100+wc[1];}));
+
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+    if(board[r][c]===0) continue;
+    const cx=PAD+c*CELL+CELL/2, cy=PAD+r*CELL+CELL/2;
+    const isWin=winSet.has(r*100+c);
+    const fill=board[r][c]===1?(isWin?'#0C447C':'#185FA5'):(isWin?'#712B13':'#993C1D');
+    const stroke=board[r][c]===1?(isWin?'#042C53':'#0C447C'):(isWin?'#4A1B0C':'#712B13');
+    s.appendChild(mk('circle',{cx,cy,r:CELL/2-5,fill,stroke,'stroke-width':isWin?3:1.5}));
+    if(isWin) s.appendChild(mk('circle',{cx,cy,r:CELL/2-9,fill:'none',stroke:'#EF9F27','stroke-width':2}));
+  }
+
+  if(!gameOver){
+    for(let c=0;c<COLS;c++){
+      if(dropRow(c)<0) continue;
+      const hit=mk('rect',{x:PAD+c*CELL,y:0,width:CELL,height:H,fill:'transparent',cursor:'pointer'});
+      hit.dataset.col=String(c);
+      hit.addEventListener('mouseenter',function(){
+        if(turn!=='you'||gameOver) return;
+        const col=parseInt(this.dataset.col);
+        const r=dropRow(col);
+        if(r<0) return;
+        const ghost=document.createElementNS(ns,'circle');
+        ghost.setAttribute('cx',String(PAD+col*CELL+CELL/2));
+        ghost.setAttribute('cy',String(PAD+r*CELL+CELL/2));
+        ghost.setAttribute('r',String(CELL/2-5));
+        ghost.setAttribute('fill','rgba(24,95,165,0.25)');
+        ghost.setAttribute('pointer-events','none');
+        ghost.id='ghost';
+        s.appendChild(ghost);
+      });
+      hit.addEventListener('mouseleave',function(){
+        const g=document.getElementById('ghost');
+        if(g) g.remove();
+      });
+      hit.addEventListener('click',function(){onColClick(parseInt(this.dataset.col));});
+      s.appendChild(hit);
+    }
+  }
+
+  const old=document.getElementById('board-svg');
+  s.id='board-svg';
+  old.replaceWith(s);
+}
+
+function setMsg(cls,text){
+  const el=document.getElementById('msg');
+  el.replaceChildren();
+  const b=document.createElement('span');
+  b.className='badge '+cls;
+  b.textContent=text;
+  el.appendChild(b);
+}
+
+document.getElementById('new-btn').addEventListener('click',newGame);
+document.getElementById('diff').addEventListener('change',newGame);
+newGame();
+})();
+</script>
+</body>
+</html>
