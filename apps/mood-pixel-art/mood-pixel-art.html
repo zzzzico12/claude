@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>気分ドット絵</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic', sans-serif;
+    background: #f5f4f0;
+    color: #1a1a18;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 16px;
+  }
+  #app { width: 100%; max-width: 560px; }
+  h1 { font-size: 18px; font-weight: 500; margin-bottom: 24px; }
+
+  #apikey-bar {
+    display: flex; gap: 8px; align-items: center;
+    padding: 10px 14px; background: #fff;
+    border: 0.5px solid #dddbd0; border-radius: 12px; margin-bottom: 20px;
+  }
+  #apikey-label { font-size: 12px; color: #888780; white-space: nowrap; }
+  #apikey-input {
+    flex: 1; font-size: 13px; font-family: 'Courier New', monospace;
+    border: none; outline: none; background: transparent; color: #1a1a18;
+  }
+  #apikey-status { font-size: 11px; white-space: nowrap; }
+  .status-ok { color: #1d9e75; }
+  .status-ng { color: #e24b4a; }
+
+  #stage-wrap {
+    background: #f0efe8;
+    border: 0.5px solid #dddbd0;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+  }
+  #stage-canvas {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    max-width: 100%;
+    display: block;
+    border-radius: 4px;
+  }
+
+  #mood-desc {
+    font-size: 13px; color: #888780; margin-bottom: 20px;
+    min-height: 20px; text-align: center;
+  }
+
+  #dl-row { display: none; align-items: center; gap: 8px; margin-bottom: 14px; }
+  #dl-btn {
+    flex: 1; padding: 8px; font-size: 13px;
+    border: 0.5px solid #dddbd0; border-radius: 8px;
+    background: #fff; color: #5f5e5a; cursor: pointer;
+    font-family: inherit; transition: background 0.15s;
+  }
+  #dl-btn:hover { background: #f5f4f0; }
+  #dl-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  #dl-loops {
+    width: 48px; font-size: 13px; padding: 4px 6px;
+    border: 0.5px solid #dddbd0; border-radius: 6px; text-align: center;
+  }
+
+  #input-area { display: flex; gap: 8px; margin-bottom: 14px; }
+  #mood-input {
+    flex: 1; padding: 8px 12px; font-size: 15px;
+    border: 0.5px solid #dddbd0; border-radius: 8px;
+    outline: none; background: #fff; color: #1a1a18; font-family: inherit;
+  }
+  #mood-input:focus { border-color: #b4b2a9; }
+  #go-btn {
+    padding: 8px 20px; font-size: 14px; white-space: nowrap;
+    border: 0.5px solid #dddbd0; border-radius: 8px;
+    background: #1a1a18; color: #f5f4f0;
+    cursor: pointer; font-family: inherit; transition: opacity 0.15s;
+  }
+  #go-btn:hover { opacity: 0.85; }
+  #go-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  #examples { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 24px; }
+  .ex-chip {
+    font-size: 12px; padding: 5px 12px; border-radius: 100px;
+    border: 0.5px solid #dddbd0; background: #fff; color: #5f5e5a;
+    cursor: pointer; transition: background 0.15s; font-family: inherit;
+  }
+  .ex-chip:hover { background: #f5f4f0; }
+
+  #history-section { margin-top: 8px; }
+  #history-title {
+    font-size: 12px; color: #888780; margin-bottom: 10px;
+    border-top: 0.5px solid #dddbd0; padding-top: 20px;
+  }
+  #history-list { display: flex; flex-direction: column; gap: 8px; }
+  .hist-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px; border: 0.5px solid #dddbd0;
+    border-radius: 8px; background: #fff; cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .hist-item:hover { border-color: #b4b2a9; }
+  .hist-thumb {
+    width: 56px; height: 56px; flex-shrink: 0;
+    image-rendering: pixelated; border-radius: 4px;
+  }
+  .hist-meta { flex: 1; min-width: 0; }
+  .hist-mood { font-size: 13px; font-weight: 500; color: #1a1a18; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hist-label { font-size: 12px; color: #5f5e5a; margin-top: 3px; }
+  .hist-time { font-size: 11px; color: #888780; margin-top: 2px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>気分ドット絵</h1>
+
+  <div id="apikey-bar">
+    <span id="apikey-label">APIキー</span>
+    <input type="password" id="apikey-input" placeholder="sk-ant-api03-..." oninput="onKeyInput()" />
+    <span id="apikey-status" class="status-ng">未設定</span>
+  </div>
+
+  <div id="stage-wrap">
+    <canvas id="stage-canvas" width="384" height="384"></canvas>
+  </div>
+  <div id="mood-desc"></div>
+
+  <div id="dl-row">
+    <button id="dl-btn" onclick="downloadVideo()">動画でダウンロード (.mp4)</button>
+    <input type="number" id="dl-loops" value="5" min="1" max="20" title="ループ回数" />
+    <span style="font-size:12px;color:#888780;white-space:nowrap">回ループ</span>
+  </div>
+
+  <div id="input-area">
+    <input type="text" id="mood-input" placeholder="今の気持ちを自由に入力..." maxlength="60" />
+    <button id="go-btn" onclick="generate()" disabled>生成</button>
+  </div>
+
+  <div id="examples">
+    <span class="ex-chip" onclick="quickGen('なんか今日テンション爆上がり！')">テンション爆上がり</span>
+    <span class="ex-chip" onclick="quickGen('眠くて死にそう')">眠くて死にそう</span>
+    <span class="ex-chip" onclick="quickGen('推しに会えて感激')">推しに会えて感激</span>
+    <span class="ex-chip" onclick="quickGen('月曜日がつらい')">月曜日がつらい</span>
+    <span class="ex-chip" onclick="quickGen('コーヒーがうまい')">コーヒーがうまい</span>
+    <span class="ex-chip" onclick="quickGen('締め切り明日でやばい')">締め切りやばい</span>
+  </div>
+
+  <div id="history-section" style="display:none">
+    <div id="history-title">これまでの気分</div>
+    <div id="history-list"></div>
+  </div>
+</div>
+
+<script>
+const BLOCK = 24;
+const GRID = 16;
+const BG = '#f0efe8';
+const PIXEL = '#2A2A2A';
+
+let animTimer = null, history = [], currentFrames = [], currentFrame = 0, currentSpeed = 400, apiKey = '';
+const canvas = document.getElementById('stage-canvas');
+const ctx = canvas.getContext('2d');
+const moodDesc = document.getElementById('mood-desc');
+const input = document.getElementById('mood-input');
+const goBtn = document.getElementById('go-btn');
+
+input.addEventListener('keydown', e => { if (e.key === 'Enter' && !goBtn.disabled) generate(); });
+
+function drawGrid(grid, targetCtx = ctx, block = BLOCK) {
+  targetCtx.fillStyle = BG;
+  targetCtx.fillRect(0, 0, GRID * block, GRID * block);
+  targetCtx.fillStyle = PIXEL;
+  for (let r = 0; r < GRID; r++) {
+    for (let c = 0; c < GRID; c++) {
+      if (grid[r] && grid[r][c] === 1) {
+        targetCtx.fillRect(c * block, r * block, block, block);
+      }
+    }
+  }
+}
+
+function drawMessage(text) {
+  ctx.fillStyle = BG;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#888780';
+  ctx.font = '14px -apple-system, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+}
+
+function frameToThumbURL(grid) {
+  const tc = document.createElement('canvas');
+  tc.width = GRID * 4; tc.height = GRID * 4;
+  drawGrid(grid, tc.getContext('2d'), 4);
+  return tc.toDataURL();
+}
+
+function stopAnim() { if (animTimer) { clearInterval(animTimer); animTimer = null; } }
+
+function startAnim(frames, speed) {
+  stopAnim();
+  currentFrames = frames; currentFrame = 0; currentSpeed = speed || 400;
+  drawGrid(frames[0]);
+  animTimer = setInterval(() => {
+    currentFrame = (currentFrame + 1) % currentFrames.length;
+    drawGrid(currentFrames[currentFrame]);
+  }, currentSpeed);
+  document.getElementById('dl-row').style.display = 'flex';
+}
+
+function setLoading(on) {
+  goBtn.disabled = on;
+  if (on) {
+    stopAnim();
+    drawMessage('生成中...');
+    moodDesc.textContent = '';
+  }
+}
+
+function addHistory(mood, frames, speed, label) {
+  history.unshift({ mood, thumb: frameToThumbURL(frames[0]), frames, speed, label, time: new Date() });
+  if (history.length > 5) history.pop();
+  renderHistory();
+}
+
+function renderHistory() {
+  const sec = document.getElementById('history-section');
+  const list = document.getElementById('history-list');
+  if (!history.length) { sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+  list.innerHTML = history.map((h, i) => `
+    <div class="hist-item" onclick="replayHistory(${i})">
+      <img class="hist-thumb" src="${h.thumb}" />
+      <div class="hist-meta">
+        <div class="hist-mood">${esc(h.mood)}</div>
+        <div class="hist-label">${esc(h.label)}</div>
+        <div class="hist-time">${h.time.toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})}</div>
+      </div>
+    </div>`).join('');
+}
+
+function replayHistory(i) {
+  input.value = history[i].mood;
+  moodDesc.textContent = history[i].label;
+  startAnim(history[i].frames, history[i].speed);
+}
+
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+async function quickGen(t) { input.value = t; await generate(); }
+
+function onKeyInput() {
+  const val = document.getElementById('apikey-input').value.trim();
+  apiKey = val;
+  const status = document.getElementById('apikey-status');
+  if (val.startsWith('sk-ant-') && val.length > 20) {
+    status.textContent = '設定済み'; status.className = 'status-ok';
+    goBtn.disabled = false;
+    drawMessage('気持ちを入力して生成してみよう');
+    moodDesc.textContent = '';
+  } else {
+    status.textContent = val.length > 0 ? '形式が違うかも' : '未設定';
+    status.className = 'status-ng';
+    goBtn.disabled = true;
+  }
+}
+
+async function downloadVideo() {
+  if (!currentFrames.length) return;
+  const btn = document.getElementById('dl-btn');
+  const loops = parseInt(document.getElementById('dl-loops').value) || 5;
+  btn.disabled = true;
+  btn.textContent = 'エンコード中...';
+
+  try {
+    const { Muxer, ArrayBufferTarget } = await import('https://esm.sh/mp4-muxer@4');
+
+    const W = GRID * BLOCK, H = GRID * BLOCK;
+    const target = new ArrayBufferTarget();
+    const muxer = new Muxer({
+      target,
+      video: { codec: 'avc', width: W, height: H },
+      fastStart: 'in-memory',
+    });
+
+    const encoder = new VideoEncoder({
+      output: (chunk, meta) => muxer.addVideoChunk(chunk, meta),
+      error: e => { throw e; },
+    });
+    encoder.configure({
+      codec: 'avc1.42001f',
+      width: W, height: H,
+      bitrate: 1_500_000,
+    });
+
+    const vc = document.createElement('canvas');
+    vc.width = W; vc.height = H;
+    const vx = vc.getContext('2d');
+
+    const frameDuration = currentSpeed * 1000;
+    let timestamp = 0;
+    for (let i = 0; i < loops; i++) {
+      for (const frame of currentFrames) {
+        drawGrid(frame, vx, BLOCK);
+        const vf = new VideoFrame(vc, { timestamp, duration: frameDuration });
+        encoder.encode(vf, { keyFrame: timestamp === 0 });
+        vf.close();
+        timestamp += frameDuration;
+      }
+    }
+
+    await encoder.flush();
+    muxer.finalize();
+
+    const blob = new Blob([target.buffer], { type: 'video/mp4' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'mood.mp4'; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  } catch(e) {
+    console.error(e);
+    alert('MP4エンコードに失敗しました: ' + e.message);
+  }
+
+  btn.disabled = false;
+  btn.textContent = '動画でダウンロード (.mp4)';
+}
+
+async function generate() {
+  const mood = input.value.trim();
+  if (!mood || !apiKey) return;
+  setLoading(true);
+
+  const prompt = `ユーザーの気持ち:「${mood}」
+
+この気持ちを表現する16x16モノクロドット絵キャラクターを作ってください。
+必ずJSON形式のみで返してください（コードブロック・説明文不要）:
+{"frames":[フレーム1,フレーム2,フレーム3],"speed":400,"label":"一言コメント"}
+
+ルール:
+- framesは3つのアニメーションフレーム
+- 各フレームは16行×16列の2次元配列（16要素の配列が16個）
+- 各要素は 1（黒ピクセル）または 0（背景）の整数
+- 16x16の中央にキャラクターを配置（頭・胴・腕・足のあるヒューマノイド推奨）
+- 3フレームで動きを表現（歩き・ジャンプ・表情変化など気持ちに合った動き）
+- speed: 感情強度に応じて200〜1200ms（興奮200、普通400、眠い1200）
+- label: 共感コメント20文字以内
+- JSONのみ返す`;
+
+  try {
+    const res = await fetch('/api/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 4000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    const parsed = JSON.parse(data.content[0].text.replace(/```json|```/g,'').trim());
+    startAnim(parsed.frames, parsed.speed || 400);
+    moodDesc.textContent = parsed.label || '';
+    addHistory(mood, parsed.frames, parsed.speed || 400, parsed.label || '');
+  } catch(e) {
+    stopAnim();
+    drawMessage('エラー: ' + e.message.slice(0, 40));
+    moodDesc.textContent = 'もう一度試してみてね';
+  }
+  setLoading(false);
+}
+
+drawMessage('APIキーを入力してね');
+</script>
+</body>
+</html>

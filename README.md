@@ -32,7 +32,8 @@ claude/
     ├── wine-menu/
     ├── hit-and-blow/
     ├── make10/
-    └── connect5/
+    ├── connect5/
+    └── mood-pixel-art/
 ```
 
 ## 📱 アプリ一覧
@@ -175,6 +176,12 @@ claude/
 - **特徴**: 解あり問題のみ出題、ヒント機能、正解履歴表示
 - **ファイル**: [make10.html](apps/make10/make10.html)
 
+### 25. [Mood Pixel Art](apps/mood-pixel-art/)
+- **説明**: 気持ちを入力するとAIが16x16モノクロドット絵キャラクターをアニメーション生成
+- **技術**: HTML5, Claude AI API, Canvas API, WebCodecs API
+- **特徴**: 3フレームアニメーション、MP4ダウンロード、履歴表示
+- **ファイル**: [mood-pixel-art.html](apps/mood-pixel-art/mood-pixel-art.html)
+
 ### 24. [Connect 5](apps/connect5/)
 - **説明**: 9×9ボードで縦・横・斜めに5つ並べたら勝ちのゲーム（コンピューター対戦）
 - **技術**: HTML5, SVG, JavaScript
@@ -214,6 +221,7 @@ claude/
 - Food Waste Visualizer
 - Prompt Optimizer
 - Character Prediction
+- Mood Pixel Art
 
 ### 学習・トレーニング
 - Movie Pronunciation Practice
@@ -232,6 +240,7 @@ claude/
 - Matrix Camera
 - Task Roulette
 - Joke Generator
+- Mood Pixel Art
 
 ### ユーティリティ
 - Mood Tracker
