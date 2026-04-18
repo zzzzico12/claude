@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>気分ドット絵</title>
+<title>Mood Pixel Art</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -120,7 +120,7 @@
 </head>
 <body>
 <div id="app">
-  <h1>気分ドット絵</h1>
+  <h1>Mood Pixel Art</h1>
 
   <div id="apikey-bar">
     <span id="apikey-label">APIキー</span>
@@ -131,7 +131,6 @@
   <div id="stage-wrap">
     <canvas id="stage-canvas" width="384" height="384"></canvas>
   </div>
-  <div id="mood-desc"></div>
 
   <div id="dl-row">
     <button id="dl-btn" onclick="downloadVideo()">動画でダウンロード (.mp4)</button>
@@ -160,27 +159,110 @@
 </div>
 
 <script>
-const BLOCK = 24;
-const GRID = 16;
-const BG = '#f0efe8';
-const PIXEL = '#2A2A2A';
+const BLOCK = 12;
+const GRID = 32;
+const PALETTE = ['#f0efe8', '#d0cfc4', '#888880', '#2A2A2A'];
 
-let animTimer = null, history = [], currentFrames = [], currentFrame = 0, currentSpeed = 400, apiKey = '';
+const PROVIDERS = [
+  {
+    name: 'Anthropic', label: 'Anthropic',
+    pattern: /^sk-ant-/,
+    valid: k => k.startsWith('sk-ant-') && k.length > 20,
+    request(key, prompt) {
+      return {
+        url: '/api/messages',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 8000, messages: [{ role: 'user', content: prompt }] }),
+      };
+    },
+    parse(data) {
+      if (data.error) throw new Error(data.error.message);
+      return data.content[0].text;
+    },
+  },
+  {
+    name: 'OpenAI', label: 'OpenAI',
+    pattern: /^sk-/,
+    valid: k => k.startsWith('sk-') && k.length > 20,
+    request(key, prompt) {
+      return {
+        url: 'https://api.openai.com/v1/chat/completions',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+        body: JSON.stringify({ model: 'gpt-4o', max_tokens: 8000, messages: [{ role: 'user', content: prompt }] }),
+      };
+    },
+    parse(data) {
+      if (data.error) throw new Error(data.error.message);
+      return data.choices[0].message.content;
+    },
+  },
+  {
+    name: 'Gemini', label: 'Google Gemini',
+    pattern: /^AIza/,
+    valid: k => k.startsWith('AIza') && k.length > 20,
+    request(key, prompt) {
+      return {
+        url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { maxOutputTokens: 8000 } }),
+      };
+    },
+    parse(data) {
+      if (data.error) throw new Error(data.error.message);
+      return data.candidates[0].content.parts[0].text;
+    },
+  },
+  {
+    name: 'Groq', label: 'Groq',
+    pattern: /^gsk_/,
+    valid: k => k.startsWith('gsk_') && k.length > 20,
+    request(key, prompt) {
+      return {
+        url: 'https://api.groq.com/openai/v1/chat/completions',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+        body: JSON.stringify({ model: 'llama-3.3-70b-versatile', max_tokens: 8000, messages: [{ role: 'user', content: prompt }] }),
+      };
+    },
+    parse(data) {
+      if (data.error) throw new Error(data.error.message);
+      return data.choices[0].message.content;
+    },
+  },
+  {
+    name: 'OpenRouter', label: 'OpenRouter',
+    pattern: /^sk-or-/,
+    valid: k => k.startsWith('sk-or-') && k.length > 20,
+    request(key, prompt) {
+      return {
+        url: 'https://openrouter.ai/api/v1/chat/completions',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+        body: JSON.stringify({ model: 'anthropic/claude-sonnet-4-5', max_tokens: 8000, messages: [{ role: 'user', content: prompt }] }),
+      };
+    },
+    parse(data) {
+      if (data.error) throw new Error(data.error.message);
+      return data.choices[0].message.content;
+    },
+  },
+];
+
+let animTimer = null, loadingRaf = null, loadingT = 0;
+let history = [], currentFrames = [], currentFrame = 0, currentSpeed = 400, apiKey = '', currentProvider = null;
 const canvas = document.getElementById('stage-canvas');
 const ctx = canvas.getContext('2d');
-const moodDesc = document.getElementById('mood-desc');
 const input = document.getElementById('mood-input');
 const goBtn = document.getElementById('go-btn');
 
 input.addEventListener('keydown', e => { if (e.key === 'Enter' && !goBtn.disabled) generate(); });
 
 function drawGrid(grid, targetCtx = ctx, block = BLOCK) {
-  targetCtx.fillStyle = BG;
+  targetCtx.fillStyle = PALETTE[0];
   targetCtx.fillRect(0, 0, GRID * block, GRID * block);
-  targetCtx.fillStyle = PIXEL;
   for (let r = 0; r < GRID; r++) {
     for (let c = 0; c < GRID; c++) {
-      if (grid[r] && grid[r][c] === 1) {
+      const v = grid[r] && grid[r][c];
+      if (v) {
+        targetCtx.fillStyle = PALETTE[Math.min(v, 3)];
         targetCtx.fillRect(c * block, r * block, block, block);
       }
     }
@@ -188,7 +270,7 @@ function drawGrid(grid, targetCtx = ctx, block = BLOCK) {
 }
 
 function drawMessage(text) {
-  ctx.fillStyle = BG;
+  ctx.fillStyle = PALETTE[0];
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = '#888780';
   ctx.font = '14px -apple-system, sans-serif';
@@ -204,6 +286,32 @@ function frameToThumbURL(grid) {
   tc.width = GRID * 4; tc.height = GRID * 4;
   drawGrid(grid, tc.getContext('2d'), 4);
   return tc.toDataURL();
+}
+
+function stopLoadingAnim() {
+  if (loadingRaf) { cancelAnimationFrame(loadingRaf); loadingRaf = null; }
+}
+
+function startLoadingAnim() {
+  stopLoadingAnim();
+  loadingT = 0;
+  const dotSize = BLOCK * 2;
+  const gap = BLOCK * 3;
+  const totalW = 3 * dotSize + 2 * gap;
+  const startX = Math.round((canvas.width - totalW) / 2);
+  const baseY = canvas.height / 2;
+  function tick() {
+    loadingT++;
+    ctx.fillStyle = PALETTE[0];
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = PALETTE[3];
+    for (let i = 0; i < 3; i++) {
+      const dy = Math.sin((loadingT * 0.06) + i * 1.1) * BLOCK * 2.5;
+      ctx.fillRect(startX + i * (dotSize + gap), Math.round(baseY + dy - dotSize / 2), dotSize, dotSize);
+    }
+    loadingRaf = requestAnimationFrame(tick);
+  }
+  loadingRaf = requestAnimationFrame(tick);
 }
 
 function stopAnim() { if (animTimer) { clearInterval(animTimer); animTimer = null; } }
@@ -223,8 +331,9 @@ function setLoading(on) {
   goBtn.disabled = on;
   if (on) {
     stopAnim();
-    drawMessage('生成中...');
-    moodDesc.textContent = '';
+    startLoadingAnim();
+  } else {
+    stopLoadingAnim();
   }
 }
 
@@ -244,7 +353,7 @@ function renderHistory() {
       <img class="hist-thumb" src="${h.thumb}" />
       <div class="hist-meta">
         <div class="hist-mood">${esc(h.mood)}</div>
-        <div class="hist-label">${esc(h.label)}</div>
+
         <div class="hist-time">${h.time.toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})}</div>
       </div>
     </div>`).join('');
@@ -252,7 +361,6 @@ function renderHistory() {
 
 function replayHistory(i) {
   input.value = history[i].mood;
-  moodDesc.textContent = history[i].label;
   startAnim(history[i].frames, history[i].speed);
 }
 
@@ -263,13 +371,15 @@ function onKeyInput() {
   const val = document.getElementById('apikey-input').value.trim();
   apiKey = val;
   const status = document.getElementById('apikey-status');
-  if (val.startsWith('sk-ant-') && val.length > 20) {
-    status.textContent = '設定済み'; status.className = 'status-ok';
+  const provider = PROVIDERS.find(p => p.valid(val));
+  if (provider) {
+    currentProvider = provider;
+    status.textContent = provider.label; status.className = 'status-ok';
     goBtn.disabled = false;
     drawMessage('気持ちを入力して生成してみよう');
-    moodDesc.textContent = '';
   } else {
-    status.textContent = val.length > 0 ? '形式が違うかも' : '未設定';
+    currentProvider = null;
+    status.textContent = val.length > 0 ? '未対応のキー' : '未設定';
     status.className = 'status-ng';
     goBtn.disabled = true;
   }
@@ -343,44 +453,38 @@ async function generate() {
 
   const prompt = `ユーザーの気持ち:「${mood}」
 
-この気持ちを表現する16x16モノクロドット絵キャラクターを作ってください。
+この気持ちを表現する32x32グレースケールドット絵キャラクターを作ってください。
 必ずJSON形式のみで返してください（コードブロック・説明文不要）:
 {"frames":[フレーム1,フレーム2,フレーム3],"speed":400,"label":"一言コメント"}
 
 ルール:
 - framesは3つのアニメーションフレーム
-- 各フレームは16行×16列の2次元配列（16要素の配列が16個）
-- 各要素は 1（黒ピクセル）または 0（背景）の整数
-- 16x16の中央にキャラクターを配置（頭・胴・腕・足のあるヒューマノイド推奨）
+- 各フレームは32行×32列の2次元配列（32要素の配列が32個）
+- 各要素は以下の整数（4段階グレースケール）:
+  0 = 背景（透明）
+  1 = ハイライト（明るいグレー）— 光が当たる面・明るい部分
+  2 = ミッドトーン（中間グレー）— 側面・影の境界
+  3 = ダーク（黒に近い）— アウトライン・最も暗い影
+- シェーディングを活用して立体感を表現（光源を左上として影を付ける）
+- キャラクターは32x32グリッドをほぼ全体に使って大きく描く（上下左右1〜2ピクセルの余白のみ）
 - 3フレームで動きを表現（歩き・ジャンプ・表情変化など気持ちに合った動き）
 - speed: 感情強度に応じて200〜1200ms（興奮200、普通400、眠い1200）
 - label: 共感コメント20文字以内
 - JSONのみ返す`;
 
   try {
-    const res = await fetch('/api/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 4000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
+    const { url, headers, body } = currentProvider.request(apiKey, prompt);
+    const res = await fetch(url, { method: 'POST', headers, body });
     const data = await res.json();
-    if (data.error) throw new Error(data.error.message);
-    const parsed = JSON.parse(data.content[0].text.replace(/```json|```/g,'').trim());
+    const text = currentProvider.parse(data);
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('JSONが見つかりません');
+    const parsed = JSON.parse(jsonMatch[0]);
     startAnim(parsed.frames, parsed.speed || 400);
-    moodDesc.textContent = parsed.label || '';
     addHistory(mood, parsed.frames, parsed.speed || 400, parsed.label || '');
   } catch(e) {
     stopAnim();
     drawMessage('エラー: ' + e.message.slice(0, 40));
-    moodDesc.textContent = 'もう一度試してみてね';
   }
   setLoading(false);
 }
