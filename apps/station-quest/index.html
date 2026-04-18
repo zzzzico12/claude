@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Station Quest</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; overflow:hidden;
+  font-family:'Hiragino Kaku Gothic ProN','Yu Gothic UI',Meiryo,sans-serif; }
+#hud {
+  position:fixed; inset:0; pointer-events:none; user-select:none;
+}
+#crosshair {
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  color:rgba(255,255,255,0.7); font-size:22px; font-weight:200;
+  text-shadow:0 0 4px rgba(0,0,0,0.8);
+}
+#floor-label {
+  position:absolute; top:14px; left:50%; transform:translateX(-50%);
+  background:rgba(0,55,28,0.90); color:#fff; font-weight:bold;
+  padding:5px 18px; border-radius:3px; font-size:14px; letter-spacing:2px;
+  border:1px solid rgba(0,180,80,0.5);
+}
+#quest-box {
+  position:absolute; bottom:72px; left:50%; transform:translateX(-50%);
+  background:rgba(0,12,6,0.95); color:#00ee88;
+  padding:12px 26px; border-radius:6px; font-size:14px;
+  text-align:center; border:1.5px solid #00dd77;
+  line-height:1.7; white-space:pre-line; max-width:400px;
+  display:none; transition:opacity 0.5s;
+}
+#minimap {
+  position:absolute; bottom:14px; right:14px;
+  border:1px solid rgba(0,160,70,0.4); border-radius:3px;
+}
+#hint {
+  position:absolute; bottom:14px; left:14px;
+  color:rgba(160,190,160,0.55); font-size:11px; line-height:2.0;
+}
+#progress {
+  position:absolute; top:14px; right:14px;
+  background:rgba(0,0,0,0.72); color:#99aabb; font-size:11px;
+  padding:8px 12px; border-radius:4px; border:1px solid #223;
+  line-height:1.9;
+}
+#start-screen {
+  position:fixed; inset:0; background:rgba(0,0,0,0.96);
+  display:flex; align-items:center; justify-content:center;
+  flex-direction:column; color:#fff; pointer-events:auto; z-index:100;
+  padding:20px;
+}
+#start-screen h1 {
+  font-size:46px; color:#ffee44; margin-bottom:4px;
+  text-shadow:0 0 28px #005b2e; letter-spacing:3px;
+}
+.sq-tagline { color:#556677; font-size:12px; letter-spacing:3px; margin-bottom:28px; }
+.sq-steps { width:100%; max-width:480px; }
+.sq-step { display:none; flex-direction:column; align-items:center; width:100%; }
+.sq-step.active { display:flex; }
+.sq-step-label { font-size:11px; color:#445566; letter-spacing:2px; margin-bottom:6px; text-transform:uppercase; }
+.sq-step h2 { font-size:20px; color:#aaccbb; margin-bottom:14px; font-weight:normal; }
+.sq-dots { display:flex; gap:8px; margin-bottom:26px; }
+.sq-dot { width:8px; height:8px; border-radius:50%; background:#223; border:1px solid #334; }
+.sq-dot.active { background:#00cc66; border-color:#00cc66; }
+.sq-dot.done   { background:#005b2e; border-color:#005b2e; }
+.sq-list { display:flex; flex-direction:column; gap:7px; width:100%; max-height:280px; overflow-y:auto; }
+.sq-item {
+  background:rgba(255,255,255,0.04); border:1.5px solid rgba(255,255,255,0.08);
+  border-radius:7px; padding:12px 16px; cursor:pointer; text-align:left;
+  color:#aabbcc; transition:all .15s; font-size:14px;
+}
+.sq-item:hover { background:rgba(0,120,60,0.2); border-color:#00aa55; color:#ddeedd; }
+.sq-item.selected { background:rgba(0,100,50,0.35); border-color:#00dd77; color:#fff; }
+.sq-item .item-name { font-weight:bold; font-size:15px; }
+.sq-item .item-sub  { font-size:11px; color:#556677; margin-top:3px; }
+.sq-item.selected .item-sub { color:#88aa88; }
+.sq-nav { display:flex; gap:10px; margin-top:20px; }
+.sq-back {
+  padding:10px 22px; font-size:13px; background:rgba(255,255,255,0.06);
+  color:#778; border:1px solid #334; border-radius:5px; cursor:pointer;
+}
+.sq-back:hover { background:rgba(255,255,255,0.12); color:#aab; }
+.sq-next, .sq-start {
+  padding:11px 28px; font-size:14px; font-weight:bold;
+  background:#003d1e; color:#556; border:1px solid #224;
+  border-radius:5px; cursor:default; transition:all .2s;
+}
+.sq-next.on, .sq-start.on {
+  background:#005b2e; color:#fff; border-color:#006633; cursor:pointer;
+}
+.sq-next.on:hover, .sq-start.on:hover { background:#007a40; }
+#goal-screen {
+  position:fixed; inset:0; background:rgba(0,0,0,0.90);
+  display:none; align-items:center; justify-content:center;
+  flex-direction:column; color:#fff; z-index:100; pointer-events:auto;
+}
+#goal-screen h2 { font-size:52px; color:#ffee44; text-shadow:0 0 30px #ffaa00; margin-bottom:10px; }
+#goal-time { font-size:22px; color:#88ccaa; margin-bottom:6px; }
+#goal-exit-name { font-size:16px; color:#556677; margin-bottom:28px; }
+#goal-retry { padding:12px 36px; font-size:15px; font-weight:bold; background:#005b2e; color:#fff; border:none; border-radius:5px; cursor:pointer; }
+#goal-retry:hover { background:#007a40; }
+#stair-hint {
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%, 60px);
+  background:rgba(0,80,160,0.85); color:#fff;
+  padding:7px 18px; border-radius:4px; font-size:13px;
+  display:none; border:1px solid rgba(100,160,255,0.5);
+}
+</style>
+</head>
+<body>
+
+<div id="hud">
+  <div id="crosshair">+</div>
+  <div id="floor-label">B1F コンコース</div>
+  <div id="quest-box"></div>
+  <canvas id="minimap" width="165" height="130"></canvas>
+  <div id="hint">
+    WASD: 移動 ｜ マウス: 視点<br>
+    Shift: 走る ｜ 階段エリア: 自動移動
+  </div>
+  <div id="progress"></div>
+  <div id="stair-hint">▲ 階段 — 自動でフロア移動します</div>
+</div>
+
+<div id="start-screen">
+  <h1>Station Quest</h1>
+  <div class="sq-tagline">駅ナビゲーションゲーム</div>
+
+  <div class="sq-dots">
+    <div class="sq-dot active" id="dot1"></div>
+    <div class="sq-dot"        id="dot2"></div>
+    <div class="sq-dot"        id="dot3"></div>
+  </div>
+
+  <div class="sq-steps">
+    <!-- Step 1: 駅選択 -->
+    <div class="sq-step active" id="sq-step1">
+      <div class="sq-step-label">Step 1 / 3</div>
+      <h2>駅を選択してください</h2>
+      <div class="sq-list" id="sq-station-list"></div>
+      <div class="sq-nav">
+        <button class="sq-next" id="sq-next1" onclick="sqGoStep(2)">スタート地点を選ぶ →</button>
+      </div>
+    </div>
+
+    <!-- Step 2: スタート改札選択 -->
+    <div class="sq-step" id="sq-step2">
+      <div class="sq-step-label">Step 2 / 3</div>
+      <h2>スタート地点（改札）を選択</h2>
+      <div class="sq-list" id="sq-gate-list"></div>
+      <div class="sq-nav">
+        <button class="sq-back" onclick="sqGoStep(1)">← 戻る</button>
+        <button class="sq-next" id="sq-next2" onclick="sqGoStep(3)">ゴールを選ぶ →</button>
+      </div>
+    </div>
+
+    <!-- Step 3: ゴール出口選択 -->
+    <div class="sq-step" id="sq-step3">
+      <div class="sq-step-label">Step 3 / 3</div>
+      <h2>ゴール（出口）を選択</h2>
+      <div class="sq-list" id="sq-exit-list"></div>
+      <div class="sq-nav">
+        <button class="sq-back" onclick="sqGoStep(2)">← 戻る</button>
+        <button class="sq-start" id="sq-start-btn" onclick="window.startGame()">ゲームスタート ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:18px; color:#223333; font-size:11px; text-align:center">
+    WASD: 移動 ｜ マウス: 視点 ｜ Shift: 走る ｜ 階段: 自動移動<br>
+    クリックでポインターをキャプチャ / ESCで解除
+  </div>
+</div>
+
+<div id="goal-screen">
+  <h2>GOAL!</h2>
+  <div id="goal-exit-name"></div>
+  <div id="goal-time"></div>
+  <button id="goal-retry" onclick="location.reload()">もう一度プレイ</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script>
+
+// ═══════════════════════════════════════════════════════════════════
+// MAP CONSTANTS  1 セル = 2m
+// ═══════════════════════════════════════════════════════════════════
+const CELL = 2;
+const GW = 260, GH = 180;  // grid (520m × 360m)
+const OX = 130, OZ = 110;  // world (0,0) = grid cell [OZ][OX]
+
+const T_EMPTY    = 0;
+const T_WALK     = 1;
+const T_PLATFORM = 2;
+const T_STAIRS   = 3;
+const T_GATE     = 4;
+
+function makeGrid() { return Array.from({length:GH}, ()=>new Uint8Array(GW)); }
+
+function fill(g, wx, wz, ww, wd, val=T_WALK) {
+  const c0 = Math.max(0, Math.floor(wx/CELL)+OX);
+  const r0 = Math.max(0, Math.floor(wz/CELL)+OZ);
+  const c1 = Math.min(GW, c0 + Math.ceil(ww/CELL));
+  const r1 = Math.min(GH, r0 + Math.ceil(wd/CELL));
+  for(let r=r0; r<r1; r++) for(let c=c0; c<c1; c++) g[r][c] = val;
+}
+function worldX(col) { return (col - OX) * CELL; }
+function worldZ(row) { return (row - OZ) * CELL; }
+
+// ─── B1F MAP ── 北コンコース ─────────────────────────────────────
+// 実際の新宿駅B1F: 東西380m、南北18m の地下通路
+// ホームは1F z=-54〜+54 に配置されるため、B1Fコンコースは z=-73〜-55 (北側)
+const B1F = makeGrid();
+fill(B1F, -190, -73, 380, 18);          // 東西メインコンコース（380m×18m）
+fill(B1F, -222, -71,  34, 16);          // 西口通路
+fill(B1F,  190, -71,  42, 16);          // 東口通路
+fill(B1F,  230, -69,  24, 12);          // 東口延長
+fill(B1F, -130, -93,  28, 22);          // 北西延長（丸ノ内線方面）
+fill(B1F,  -12, -93,  50, 22);          // 北中延長（副都心線方面）
+fill(B1F,  100, -93,  28, 22);          // 北東延長
+// 改札 (T_GATE)
+fill(B1F, -186, -67,  16,  4, T_GATE); // 西改札
+fill(B1F,  162, -67,  16,  4, T_GATE); // 東改札
+fill(B1F,  -78, -61,  20,  4, T_GATE); // 中央西改札
+fill(B1F,   44, -61,  20,  4, T_GATE); // 中央東改札
+// B1F→1F 階段（南端 z=-57 付近に3クラスタ）
+fill(B1F, -113, -57,   6,  6, T_STAIRS); // クラスタA（西）
+fill(B1F,   -3, -57,   6,  6, T_STAIRS); // クラスタB（中央）
+fill(B1F,  107, -57,   6,  6, T_STAIRS); // クラスタC（東）
+// 地下鉄連絡（北方向 → B2F）
+fill(B1F, -130, -83,   6,  6, T_STAIRS);
+fill(B1F,   -3, -83,   6,  6, T_STAIRS);
+
+// ─── 1F MAP ── 8島ホーム（1〜16番線） ───────────────────────────
+// 実際: 8島ホームが南北方向に14m間隔で並ぶ
+// 各島: 東西270m × 南北10m (z は各島中心±5m)
+// 中心Z: 1-2=-49, 3-4=-35, 5-6=-21, 7-8=-7, 9-10=+7, 11-12=+21, 13-14=+35, 15-16=+49
+const G1F = makeGrid();
+// 8島ホーム
+fill(G1F, -135, -54, 270, 10, T_PLATFORM); // 1-2番線 埼京線
+fill(G1F, -135, -40, 270, 10, T_PLATFORM); // 3-4番線 埼京線/湘南新宿
+fill(G1F, -135, -26, 240, 10, T_PLATFORM); // 5-6番線 N'EX/特急
+fill(G1F, -135, -12, 200, 10, T_PLATFORM); // 7-8番線 中央線快速（東京方面）
+fill(G1F, -135,  +2, 200, 10, T_PLATFORM); // 9-10番線 中央線特急
+fill(G1F, -135, +16, 200, 10, T_PLATFORM); // 11-12番線 中央線快速（高尾方面）
+fill(G1F, -135, +30, 230, 10, T_PLATFORM); // 13番線 山手線内回り
+fill(G1F, -135, +44, 230, 10, T_PLATFORM); // 14番線 山手線外回り
+// 東西端の縦断通路（ホーム端）
+fill(G1F, -145, -54,  10, 108, T_WALK);   // 西端バッファ
+fill(G1F,  135, -54,  10, 108, T_WALK);   // 東端バッファ
+// 中央横断通路（3か所 x≈-109, -5, +109）
+fill(G1F, -115, -54,   8, 108, T_WALK);   // 横断路A（西）
+fill(G1F,   -5, -54,   8, 108, T_WALK);   // 横断路B（中央）
+fill(G1F,  105, -54,   8, 108, T_WALK);   // 横断路C（東）
+// 1F→B1F 階段（北端 z=-54 付近）
+fill(G1F, -113, -54,   6,  6, T_STAIRS);
+fill(G1F,   -3, -54,   6,  6, T_STAIRS);
+fill(G1F,  107, -54,   6,  6, T_STAIRS);
+// 1F→2F 階段（南端 z=+54 付近）
+fill(G1F, -113, +48,   6,  6, T_STAIRS);
+fill(G1F,   -3, +48,   6,  6, T_STAIRS);
+fill(G1F,  107, +48,   6,  6, T_STAIRS);
+
+// ─── 2F MAP ── 南コンコース（橋上構造）────────────────────────
+// 実際: ホーム南端の上空+6mに架かる橋上コンコース（東西250m）
+// 南改札・東南改札・甲州街道改札・新南改札・ミライナタワー改札 が並ぶ
+const G2F = makeGrid();
+fill(G2F, -130, +57, 250, 25);           // 南コンコース本体（250m×25m）
+fill(G2F, -170, +60,  42, 18);           // 西延長（LUMINE 1方面）
+fill(G2F,  110, +60,  40, 18);           // 東延長（NEWoMan/ミライナタワー）
+// 改札 (T_GATE)
+fill(G2F,  -92, +79,  20,  4, T_GATE);  // 南改札
+fill(G2F,  -48, +79,  16,  4, T_GATE);  // 甲州街道改札
+fill(G2F,   14, +79,  20,  4, T_GATE);  // 東南改札
+fill(G2F,   54, +79,  20,  4, T_GATE);  // 新南改札
+fill(G2F,   90, +79,  20,  4, T_GATE);  // ミライナタワー改札
+// 2F→1F 階段（北端 z=+57 付近）
+fill(G2F, -113, +57,   6,  6, T_STAIRS);
+fill(G2F,   -3, +57,   6,  6, T_STAIRS);
+fill(G2F,  107, +57,   6,  6, T_STAIRS);
+
+// ─── AKIHABARA 1F ── 山手線・京浜東北線ホーム（地上）──────────────
+// 実際: 南北250m・2島ホーム（4番線）。中央部に東西コンコースが架かる
+const AKB1F = makeGrid();
+fill(AKB1F,  -60, -25,  52,  50);                  // 西コンコース（電気街口）
+fill(AKB1F,  -80, -10,  20,  20);                  // 西口通路
+fill(AKB1F,   -8,-125,  14, 250, T_PLATFORM);       // 1-2番線 山手線
+fill(AKB1F,    6, -25,  14,  50);                   // ホーム間通路（乗換）
+fill(AKB1F,   20,-125,  14, 250, T_PLATFORM);       // 3-4番線 京浜東北線
+fill(AKB1F,   34, -25,  46,  50);                   // 東コンコース（昭和通り口）
+fill(AKB1F,   80, -10,  20,  20);                   // 東口通路
+fill(AKB1F,  -62,  -8,   4,  16, T_GATE);           // 電気街口改札
+fill(AKB1F,   78,  -8,   4,  16, T_GATE);           // 昭和通り口改札
+fill(AKB1F,   -6, -14,   6,   6, T_STAIRS);         // 2F行き階段（西）
+fill(AKB1F,   22, -14,   6,   6, T_STAIRS);         // 2F行き階段（東）
+fill(AKB1F,   -4,-128,  10,   8, T_STAIRS);         // TX・地下鉄方面
+
+// ─── AKIHABARA 2F ── 中央・総武線ホーム（高架）──────────────────
+// 実際: 東西160m・2線（5番線=西行、6番線=東行）。1F上空を横断
+const AKB2F = makeGrid();
+fill(AKB2F,  -80, -14, 160,  28);                  // 中央コンコース
+fill(AKB2F,  -80, -24, 160,  10, T_PLATFORM);      // 5番線（西行 御茶ノ水・新宿方面）
+fill(AKB2F,  -80,  14, 160,  10, T_PLATFORM);      // 6番線（東行 浅草橋・千葉方面）
+fill(AKB2F,  -82, -14,   4,  28, T_GATE);          // 西端改札
+fill(AKB2F,   78, -14,   4,  28, T_GATE);          // 東端改札
+fill(AKB2F,   -6, -12,   6,   6, T_STAIRS);        // 1F行き階段（西）
+fill(AKB2F,   22, -12,   6,   6, T_STAIRS);        // 1F行き階段（東）
+
+// ─── FLOOR METADATA ───────────────────────────────────────────────
+const FLOORS = {
+  'B1F': {
+    grid: B1F, y: -5.0, wallH: 4.2,
+    label: 'B1F 北コンコース',
+    // 床: 明るいベージュタイル、天井: 暗いチャコール（明確なコントラスト）
+    floorCol: { walk:0xc8c0b0, platform:0xb8b4a8, gate:0xc8d0e0, stairs:0x8898c8 },
+    wallCol: 0xf0ebe0, ceilCol: 0x1a1c24,
+    ceilEmissive: 0x101018, ceilEmissiveIntensity: 0.40,
+  },
+  '1F': {
+    grid: G1F, y: 0.0, wallH: 7.0,
+    label: '1F プラットホーム',
+    // 床: 明るいコンクリートグレー、天井: 非常に暗い
+    floorCol: { walk:0xb0ac9c, platform:0xa8a898, gate:0xb8c0d0, stairs:0x8898c8 },
+    wallCol: 0xd8d4c8, ceilCol: 0x101010,
+    ceilEmissive: 0x080808, ceilEmissiveIntensity: 0.50,
+  },
+  '2F': {
+    grid: G2F, y: 6.0, wallH: 4.5,
+    label: '2F 南コンコース',
+    floorCol: { walk:0xd0c8b8, platform:0xc4bca8, gate:0xc8cce0, stairs:0x8898c8 },
+    wallCol: 0xf0ece4, ceilCol: 0x3a5c8a,
+    ceilEmissive: 0x182848, ceilEmissiveIntensity: 0.35,
+  },
+  // ── 秋葉原駅 ──────────────────────────────────────────────────────
+  'AKB_1F': {
+    grid: AKB1F, y: 0.0, wallH: 5.5,
+    label: '1F 山手線・京浜東北線',
+    floorCol: { walk:0xc4beb0, platform:0xb0ac9c, gate:0xc0cad8, stairs:0x8898c8 },
+    wallCol: 0xe8e4dc, ceilCol: 0x0e1018,
+    ceilEmissive: 0x060608, ceilEmissiveIntensity: 0.40,
+  },
+  'AKB_2F': {
+    grid: AKB2F, y: 8.0, wallH: 5.0,
+    label: '2F 中央・総武線',
+    floorCol: { walk:0xbcb8aa, platform:0xa8a494, gate:0xb4c0cc, stairs:0x8898c8 },
+    wallCol: 0xe0dcd4, ceilCol: 0x121820,
+    ceilEmissive: 0x060810, ceilEmissiveIntensity: 0.35,
+  },
+};
+
+// ─── STAIR_PAIRS ── ペアベース階段テレポート ──────────────────────
+// a ↔ b: どちらの端に乗っても反対側へ移動
+const STAIR_PAIRS = [
+  // B1F ↔ 1F（3クラスタ）
+  { a:{floor:'B1F',x:-110,z:-54}, b:{floor:'1F',x:-110,z:-48} },
+  { a:{floor:'B1F',x:   0,z:-54}, b:{floor:'1F',x:   0,z:-48} },
+  { a:{floor:'B1F',x: 110,z:-54}, b:{floor:'1F',x: 110,z:-48} },
+  // 1F ↔ 2F（3クラスタ）
+  { a:{floor:'1F', x:-110,z:+50}, b:{floor:'2F',x:-110,z:+62} },
+  { a:{floor:'1F', x:   0,z:+50}, b:{floor:'2F',x:   0,z:+62} },
+  { a:{floor:'1F', x: 110,z:+50}, b:{floor:'2F',x: 110,z:+62} },
+  // 秋葉原 AKB_1F ↔ AKB_2F（2クラスタ）
+  { a:{floor:'AKB_1F',x: -3,z:-11}, b:{floor:'AKB_2F',x: -3,z: -9} },
+  { a:{floor:'AKB_1F',x: 25,z:-11}, b:{floor:'AKB_2F',x: 25,z: -9} },
+];
+
+// ─── QUESTS ── 17個（B1F×6, 1F×8, 2F×3）────────────────────────
+const QUESTS = [
+  // B1F
+  { id:'q_gate_ce', floor:'B1F', x: +52, z:-59, r:8,
+    text:'中央東改札  Central East Gate\nSuica/PASMOでIC改札を通過！\n東口・コンコース方面' },
+  { id:'q_gate_cw', floor:'B1F', x: -68, z:-59, r:8,
+    text:'中央西改札  Central West Gate\n中央線・山手線方面改札\n西新宿・小田急方面へ' },
+  { id:'q_west',    floor:'B1F', x:-200, z:-63, r:10,
+    text:'西口  West Exit\nNishi-Shinjuku\n小田急・京王・丸ノ内線 乗換' },
+  { id:'q_east',    floor:'B1F', x: 208, z:-63, r:10,
+    text:'東口  East Exit\nHigashi-Shinjuku\nALTA・歌舞伎町・副都心線' },
+  { id:'q_metro_w', floor:'B1F', x:-120, z:-82, r:8,
+    text:'丸ノ内線連絡口\n東京メトロ 丸ノ内線\nTokyo Metro Marunouchi Line' },
+  { id:'q_metro_e', floor:'B1F', x:  10, z:-82, r:8,
+    text:'副都心線連絡口\n東京メトロ 副都心線\n新宿三丁目・渋谷方面' },
+  // 1F — 各番線ホーム
+  { id:'q_p12',   floor:'1F', x:0, z:-49, r:10,
+    text:'1・2番線\n埼京線・湘南新宿ライン\n大宮・川越・横浜・逗子方面' },
+  { id:'q_p34',   floor:'1F', x:0, z:-35, r:10,
+    text:'3・4番線\n埼京線・湘南新宿ライン\n新木場・小田原方面' },
+  { id:'q_p56',   floor:'1F', x:0, z:-21, r:10,
+    text:'5・6番線\n特急ホーム\nあずさ・かいじ・成田エクスプレス(N\'EX) 等' },
+  { id:'q_p78',   floor:'1F', x:0, z: -7, r:10,
+    text:'7・8番線\n中央線快速（東京方面）\n御茶ノ水・東京 E233系オレンジ' },
+  { id:'q_p910',  floor:'1F', x:0, z: +7, r:10,
+    text:'9・10番線\n中央線特急\nあずさ・かいじ・富士回遊 E353系\n（特急専用ホーム）' },
+  { id:'q_p1112', floor:'1F', x:0, z:+21, r:10,
+    text:'11・12番線\n中央線快速（高尾方面）\n立川・八王子・高尾 E233系' },
+  { id:'q_p13',   floor:'1F', x:0, z:+35, r:10,
+    text:'13番線\n山手線 内回り\n渋谷・品川・東京方面 E235系' },
+  { id:'q_p14',   floor:'1F', x:0, z:+49, r:10,
+    text:'14番線\n山手線 外回り\n池袋・上野・東京方面 E235系' },
+  // 2F
+  { id:'q_south_2f', floor:'2F', x: -82, z:+74, r:8,
+    text:'南改札  South Gate (2F)\nSouth Exit → サザンテラス\nLUMINE 1・2 / 小田急ミロード' },
+  { id:'q_newsouth',  floor:'2F', x: +64, z:+74, r:8,
+    text:'新南改札  New South Gate\nバスタ新宿（高速バスターミナル）\nNEWoMan Shinjuku' },
+  { id:'q_miraina',   floor:'2F', x:+100, z:+74, r:8,
+    text:'ミライナタワー改札\nNEWoMan・ホテルメトロポリタン\nMiraina Tower direction' },
+  // ── 秋葉原 ──────────────────────────────────────────────────────
+  { id:'q_akb_p12',  floor:'AKB_1F', x:  -1, z:   0, r:8,
+    text:'1・2番線\n山手線\n1番線: 外回り（上野・池袋・新宿方面）\n2番線: 内回り（神田・品川方面）E235系' },
+  { id:'q_akb_p34',  floor:'AKB_1F', x:  27, z:   0, r:8,
+    text:'3・4番線\n京浜東北線\n3番線: 南行（東京・横浜方面）\n4番線: 北行（上野・大宮方面）E233系' },
+  { id:'q_akb_ge',   floor:'AKB_1F', x: -60, z:   0, r:8,
+    text:'電気街口改札  Electric Town Gate\nSuica/PASMO 対応\nヨドバシカメラ・UDX・電気街方面' },
+  { id:'q_akb_gsh',  floor:'AKB_1F', x:  80, z:   0, r:8,
+    text:'昭和通り口改札  Showa-dori Gate\nSuica/PASMO 対応\n昭和通り・両国・御徒町方面' },
+  { id:'q_akb_tx',   floor:'AKB_1F', x:   1, z:-124, r:10,
+    text:'つくばエクスプレス 秋葉原駅\nTsukuba Express Akihabara\n秋葉原→つくばまで約45分' },
+  { id:'q_akb_p5',   floor:'AKB_2F', x:   0, z: -19, r:8,
+    text:'5番線\n中央・総武線 各駅停車 西行\n御茶ノ水・新宿・三鷹方面 E231系' },
+  { id:'q_akb_p6',   floor:'AKB_2F', x:   0, z: +19, r:8,
+    text:'6番線\n中央・総武線 各駅停車 東行\n浅草橋・錦糸町・千葉方面 E231系' },
+];
+
+// ═══════════════════════════════════════════════════════════════════
+// STATIONS — 駅ごとのメタ情報（将来追加対応）
+// ═══════════════════════════════════════════════════════════════════
+const STATIONS = [
+  {
+    id: 'shinjuku',
+    name: '新宿駅',
+    nameEn: 'Shinjuku Station',
+    desc: '世界最大の乗降客数を誇るターミナル駅',
+    floors: ['B1F', '1F', '2F'],
+    gates: [
+      { id: 'gate_ce',    label: '中央東改札',       labelEn: 'Central East Gate',  floor: 'B1F', x:  52, z: -59 },
+      { id: 'gate_cw',    label: '中央西改札',       labelEn: 'Central West Gate',  floor: 'B1F', x: -68, z: -59 },
+      { id: 'gate_south', label: '南改札',           labelEn: 'South Gate',         floor: '2F',  x: -82, z:  74 },
+      { id: 'gate_ns',    label: '新南改札',         labelEn: 'New South Gate',     floor: '2F',  x:  64, z:  74 },
+    ],
+    exits: [
+      { id: 'exit_west',     label: '西口',           labelEn: 'West Exit',          floor: 'B1F', x: -210, z: -63 },
+      { id: 'exit_east',     label: '東口',           labelEn: 'East Exit',          floor: 'B1F', x:  218, z: -63 },
+      { id: 'exit_metro_w',  label: '丸ノ内線連絡口', labelEn: 'Marunouchi Line',    floor: 'B1F', x: -120, z: -88 },
+      { id: 'exit_metro_e',  label: '副都心線連絡口', labelEn: 'Fukutoshin Line',    floor: 'B1F', x:   10, z: -88 },
+      { id: 'exit_south',    label: '南口',           labelEn: 'South Exit',         floor: '2F',  x:  -82, z:  84 },
+      { id: 'exit_newsouth', label: '新南口',         labelEn: 'New South Exit',     floor: '2F',  x:   64, z:  84 },
+      { id: 'exit_miraina',  label: 'ミライナタワー口', labelEn: 'Miraina Tower',    floor: '2F',  x:  100, z:  84 },
+    ],
+  },
+  {
+    id: 'akihabara',
+    name: '秋葉原駅',
+    nameEn: 'Akihabara Station',
+    desc: '電気街・アニメ・ゲームの聖地。山手線・京浜東北線・中央総武線の乗換駅',
+    floors: ['AKB_1F', 'AKB_2F'],
+    gates: [
+      { id: 'gate_akb_e',  label: '電気街口改札',        labelEn: 'Electric Town Gate',    floor: 'AKB_1F', x: -60, z:   0 },
+      { id: 'gate_akb_sh', label: '昭和通り口改札',      labelEn: 'Showa-dori Gate',       floor: 'AKB_1F', x:  80, z:   0 },
+      { id: 'gate_akb_2f', label: '中央・総武線改札(2F)', labelEn: 'Sobu Line Gate 2F',    floor: 'AKB_2F', x: -78, z:   0 },
+    ],
+    exits: [
+      { id: 'exit_akb_e',  label: '電気街口',            labelEn: 'Electric Town Exit',    floor: 'AKB_1F', x: -76, z:   0 },
+      { id: 'exit_akb_sh', label: '昭和通り口',          labelEn: 'Showa-dori Exit',       floor: 'AKB_1F', x:  96, z:   0 },
+      { id: 'exit_akb_tx', label: 'つくばエクスプレス',  labelEn: 'Tsukuba Express',       floor: 'AKB_1F', x:   1, z: -128 },
+      { id: 'exit_akb_2f', label: '中央・総武線ホーム(2F)', labelEn: 'Sobu Line Platform', floor: 'AKB_2F', x:   0, z:   0 },
+    ],
+  },
+];
+
+// ─── EXITS ─────────────────────────────────────────────────────────
+const EXITS = [
+  // B1F
+  { floor:'B1F', x:-210, z:-63, lines:['西口','West Exit','小田急・京王・丸ノ内線'] },
+  { floor:'B1F', x: 218, z:-63, lines:['東口','East Exit','ALTA・歌舞伎町'] },
+  { floor:'B1F', x:-120, z:-88, lines:['丸ノ内線連絡口','東京メトロ','Marunouchi Line'] },
+  { floor:'B1F', x:  10, z:-88, lines:['副都心線連絡口','Tokyo Metro','Fukutoshin Line'] },
+  // 2F
+  { floor:'2F',  x: -82, z:+84, lines:['南口','South Exit','サザンテラス・LUMINE'] },
+  { floor:'2F',  x: -40, z:+84, lines:['甲州街道口','Koshu-Kaido Exit','高島屋・タカシマヤ'] },
+  { floor:'2F',  x: +24, z:+84, lines:['東南口','Southeast Exit','NEWoMan East'] },
+  { floor:'2F',  x: +64, z:+84, lines:['新南口','New South Exit','バスタ新宿・NEWoMan'] },
+  { floor:'2F',  x:+100, z:+84, lines:['ミライナタワー口','Miraina Tower','NEWoMan/バスタ'] },
+  // 秋葉原
+  { floor:'AKB_1F', x: -76, z:   0, lines:['電気街口','Electric Town Exit','ヨドバシ・UDX方面'] },
+  { floor:'AKB_1F', x:  96, z:   0, lines:['昭和通り口','Showa-dori Exit','昭和通り・両国方面'] },
+  { floor:'AKB_1F', x:   1, z:-128, lines:['TX 秋葉原','Tsukuba Express','つくば・北千住方面'] },
+  { floor:'AKB_2F', x: -78, z:   0, lines:['中央・総武線','Sobu Line','御茶ノ水・千葉方面'] },
+];
+
+// ═══════════════════════════════════════════════════════════════════
+// THREE.JS INIT
+// ═══════════════════════════════════════════════════════════════════
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = false;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x2a2e3a);
+scene.fog = new THREE.FogExp2(0x2a2e3a, 0.006);
+
+const camera = new THREE.PerspectiveCamera(72, innerWidth/innerHeight, 0.1, 200);
+
+addEventListener('resize', ()=>{
+  renderer.setSize(innerWidth, innerHeight);
+  camera.aspect = innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+});
+
+// Lighting — 全体光量を適度に保ちつつ、蛍光灯ポイントライトで床/天井のコントラストを出す
+scene.add(new THREE.AmbientLight(0xfff8f0, 0.18));
+scene.add(new THREE.HemisphereLight(0xfff4e0, 0x445566, 0.35));
+const sunLight = new THREE.DirectionalLight(0xfff8e8, 0.10);
+sunLight.position.set(0, 1, 0);
+scene.add(sunLight);
+
+// ═══════════════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════════════
+function makeSignTex(lines, bg='#005b2e', fg='#ffffff', w=256, h=72) {
+  const cv = document.createElement('canvas'); cv.width=w; cv.height=h;
+  const x  = cv.getContext('2d');
+  x.fillStyle = bg; x.fillRect(0,0,w,h);
+  x.strokeStyle = 'rgba(255,255,255,0.28)'; x.lineWidth = 2;
+  x.strokeRect(2,2,w-4,h-4);
+  x.fillStyle = fg; x.textAlign = 'center'; x.textBaseline = 'middle';
+  const sz = lines.length===1 ? 20 : lines.length===2 ? 15 : 11;
+  x.font = `bold ${sz}px Meiryo,sans-serif`;
+  const step = h / (lines.length + 1);
+  lines.forEach((l,i) => x.fillText(l, w/2, step*(i+1)));
+  const t = new THREE.CanvasTexture(cv); t.needsUpdate = true; return t;
+}
+
+function addSign(group, pos, lines, bgColor, w=4.5, h=1.4) {
+  const tex = makeSignTex(lines, bgColor||'#005b2e');
+  const m   = new THREE.Mesh(
+    new THREE.PlaneGeometry(w, h),
+    new THREE.MeshBasicMaterial({map:tex, side:THREE.DoubleSide})
+  );
+  m.position.copy(pos);
+  group.add(m);
+}
+
+function addHangingSign(group, x, z, floorY, wallH, lines, bg) {
+  const sy = floorY + wallH - 0.8;
+  // Wires
+  const wireMat = new THREE.MeshBasicMaterial({color:0x888888});
+  const wireGeo = new THREE.CylinderGeometry(0.012, 0.012, 0.65, 4);
+  [-1.8, 1.8].forEach(ox => {
+    const w = new THREE.Mesh(wireGeo, wireMat);
+    w.position.set(x+ox, sy+0.42, z); group.add(w);
+  });
+  addSign(group, new THREE.Vector3(x, sy, z), lines, bg);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// FLOOR GENERATION
+// ═══════════════════════════════════════════════════════════════════
+const floorGroups = {};
+
+function generateFloor(id) {
+  const fd   = FLOORS[id];
+  const grid = fd.grid;
+  const fy   = fd.y;
+  const wh   = fd.wallH;
+  const group = new THREE.Group();
+  group.visible = false;
+  scene.add(group);
+  floorGroups[id] = group;
+
+  // ── Build merged geometry ──────────────────────────────────────
+  // Separate vertex arrays per surface type for vertex-colour floor
+  const fPos=[], fNrm=[], fCol=[], fIdx=[];  // floor
+  const wPos=[], wNrm=[], wIdx=[];            // walls
+  const cPos=[], cNrm=[], cIdx=[];            // ceiling
+  let fi=0, wi=0, ci=0;
+
+  const colMap = fd.floorCol;
+
+  function hexToRgb(h) {
+    return [(h>>16&0xff)/255, (h>>8&0xff)/255, (h&0xff)/255];
+  }
+  // タイル目地: セル端の頂点を少し暗くしてグリッド感を出す
+  function groutShade(r, c, cr, cc, base) {
+    // cr,cc: corner offset (0 or 1) — セル境界は暗め
+    const edge = (cr===0||cc===0) ? 0.90 : 1.0;
+    return base.map(v => v*edge);
+  }
+
+  for(let r=0; r<GH; r++) {
+    for(let c=0; c<GW; c++) {
+      const t = grid[r][c];
+      if(t === T_EMPTY) continue;
+
+      const x0 = worldX(c),   x1 = worldX(c+1);
+      const z0 = worldZ(r),   z1 = worldZ(r+1);
+
+      // Floor (タイル目地: 頂点ごとに端部を暗く)
+      const fc = hexToRgb(t===T_PLATFORM?colMap.platform:t===T_GATE?colMap.gate:t===T_STAIRS?colMap.stairs:colMap.walk);
+      // 各頂点に目地シェーディング (角は少し暗く)
+      const corners = [[0,0],[1,0],[1,1],[0,1]];
+      fPos.push(x0,fy,z0, x1,fy,z0, x1,fy,z1, x0,fy,z1);
+      fNrm.push(0,1,0, 0,1,0, 0,1,0, 0,1,0);
+      for(const [cr,cc] of corners) fCol.push(...groutShade(r,c,cr,cc,fc));
+      fIdx.push(fi,fi+2,fi+1, fi,fi+3,fi+2); fi+=4;  // 法線+Y（上向き）になるよう修正
+
+      // Ceiling
+      cPos.push(x0,fy+wh,z0, x1,fy+wh,z0, x1,fy+wh,z1, x0,fy+wh,z1);
+      cNrm.push(0,-1,0, 0,-1,0, 0,-1,0, 0,-1,0);
+      cIdx.push(ci,ci+1,ci+2, ci,ci+2,ci+3); ci+=4;  // 法線-Y（下向き）になるよう修正
+
+      // Walls on boundary
+      function addWall(ax0,ay0,az0, ax1,ay1,az1, ax2,ay2,az2, ax3,ay3,az3, front) {
+        wPos.push(ax0,ay0,az0, ax1,ay1,az1, ax2,ay2,az2, ax3,ay3,az3);
+        const nx = front ? [0,0,1,0,0,1,0,0,1,0,0,1] : [0,0,-1,0,0,-1,0,0,-1,0,0,-1];
+        wNrm.push(...nx);
+        if(front) wIdx.push(wi,wi+1,wi+2, wi,wi+2,wi+3);
+        else      wIdx.push(wi,wi+2,wi+1, wi,wi+3,wi+2);
+        wi+=4;
+      }
+
+      const empty = (dr,dc) => {
+        const nr=r+dr, nc=c+dc;
+        if(nr<0||nr>=GH||nc<0||nc>=GW) return true;
+        return grid[nr][nc]===T_EMPTY;
+      };
+      if(empty(-1,0)) addWall(x0,fy,z0, x1,fy,z0, x1,fy+wh,z0, x0,fy+wh,z0, false);
+      if(empty( 1,0)) addWall(x0,fy,z1, x1,fy,z1, x1,fy+wh,z1, x0,fy+wh,z1, true);
+      if(empty(0,-1)) addWall(x0,fy,z0, x0,fy,z1, x0,fy+wh,z1, x0,fy+wh,z0, false);
+      if(empty(0, 1)) addWall(x1,fy,z0, x1,fy,z1, x1,fy+wh,z1, x1,fy+wh,z0, true);
+    }
+  }
+
+  // Build floor mesh (vertex colors)
+  const fGeo = new THREE.BufferGeometry();
+  fGeo.setAttribute('position', new THREE.Float32BufferAttribute(fPos,3));
+  fGeo.setAttribute('normal',   new THREE.Float32BufferAttribute(fNrm,3));
+  fGeo.setAttribute('color',    new THREE.Float32BufferAttribute(fCol,3));
+  fGeo.setIndex(fIdx);
+  group.add(new THREE.Mesh(fGeo,
+    new THREE.MeshLambertMaterial({vertexColors:true})));
+
+  // Wall mesh
+  const wGeo = new THREE.BufferGeometry();
+  wGeo.setAttribute('position', new THREE.Float32BufferAttribute(wPos,3));
+  wGeo.setAttribute('normal',   new THREE.Float32BufferAttribute(wNrm,3));
+  wGeo.setIndex(wIdx);
+  const wallEmissiveCol = 0x080808;
+  const wallEmissiveInt = 0.02;
+  group.add(new THREE.Mesh(wGeo,
+    new THREE.MeshLambertMaterial({
+      color: fd.wallCol,
+      emissive: new THREE.Color(wallEmissiveCol),
+      emissiveIntensity: wallEmissiveInt,
+    })));
+
+  // Ceiling mesh
+  const cGeo = new THREE.BufferGeometry();
+  cGeo.setAttribute('position', new THREE.Float32BufferAttribute(cPos,3));
+  cGeo.setAttribute('normal',   new THREE.Float32BufferAttribute(cNrm,3));
+  cGeo.setIndex(cIdx);
+  group.add(new THREE.Mesh(cGeo,
+    new THREE.MeshLambertMaterial({ color: fd.ceilCol })));
+
+  // ── Ceiling lights (fluorescent strips) ──────────────────────
+  const tubeMat = new THREE.MeshBasicMaterial({color:0xfff5e0});
+  const tubeGeo = new THREE.BoxGeometry(0.65, 0.07, 1.9);
+  for(let r=4; r<GH-4; r+=6) {
+    for(let c=4; c<GW-4; c+=6) {
+      if(grid[r][c]===T_EMPTY) continue;
+      const lx = worldX(c)+CELL/2, lz = worldZ(r)+CELL/2;
+      const tube = new THREE.Mesh(tubeGeo, tubeMat);
+      tube.position.set(lx, fy+wh-0.05, lz); group.add(tube);
+      // Sparse point lights (only every ~20m)
+      if(r%10===4 && c%10===4) {
+        const pl = new THREE.PointLight(0xfff8e8, 2.2, 18);
+        pl.position.set(lx, fy+wh-0.6, lz); group.add(pl);
+      }
+    }
+  }
+
+  // ── Structural pillars ────────────────────────────────────────
+  const pilGeo = new THREE.BoxGeometry(0.7, wh, 0.7);
+  // 柱色: B1Fは白大理石調、1Fはコンクリート系
+  const pilColor = id==='B1F' ? 0xeceae4 : 0xc8c4bc;
+  const pilMat = new THREE.MeshLambertMaterial({color:pilColor});
+  for(let r=8; r<GH-8; r+=14) {
+    for(let c=8; c<GW-8; c+=14) {
+      if(grid[r][c]===T_EMPTY) continue;
+      const px = worldX(c)+CELL/2, pz = worldZ(r)+CELL/2;
+      const pil = new THREE.Mesh(pilGeo, pilMat);
+      pil.position.set(px, fy+wh/2, pz); group.add(pil);
+      // Route color stripe (JR green for Yamanote)
+      if(id==='1F' || id==='B1F') {
+        const stripGeo = new THREE.BoxGeometry(0.72, 0.18, 0.72);
+        const stripMat = new THREE.MeshBasicMaterial({color:0x7dc050});
+        const strip = new THREE.Mesh(stripGeo, stripMat);
+        strip.position.set(px, fy+1.0, pz); group.add(strip);
+      }
+    }
+  }
+
+  // ── Stair markers ─────────────────────────────────────────────
+  const stairMat = new THREE.MeshBasicMaterial({color:0x5070a0, transparent:true, opacity:0.65});
+  const stairGeo = new THREE.BoxGeometry(CELL*0.85, 0.12, CELL*0.85);
+  const FLOOR_LABELS = {
+    'B1F':'B1F コンコース', '1F':'1F ホーム', '2F':'2F 南コンコース',
+    'AKB_1F':'1F 山手線・京浜東北線', 'AKB_2F':'2F 中央・総武線',
+  };
+  for(let r=0; r<GH; r++) {
+    for(let c=0; c<GW; c++) {
+      if(grid[r][c]!==T_STAIRS) continue;
+      const sx = worldX(c)+CELL/2, sz = worldZ(r)+CELL/2;
+      const sm = new THREE.Mesh(stairGeo, stairMat);
+      sm.position.set(sx, fy+0.06, sz); group.add(sm);
+      // STAIR_PAIRS から行き先を検索
+      let destLabel = '階段';
+      for(const pair of STAIR_PAIRS) {
+        for(const side of ['a','b']) {
+          const s = pair[side];
+          if(s.floor !== id) continue;
+          if(Math.abs(sx - s.x) < 10 && Math.abs(sz - s.z) < 10) {
+            const dest = side==='a' ? pair.b : pair.a;
+            const destY = (FLOORS[dest.floor]||{y:0}).y;
+            const arr   = destY > fy ? '↑' : destY < fy ? '↓' : '↕';
+            destLabel = `${arr} ${FLOOR_LABELS[dest.floor]||dest.floor}`;
+          }
+        }
+      }
+      addSign(group, new THREE.Vector3(sx, fy+2.4, sz),
+        ['▲ 階段', destLabel, 'Stairs'], '#334466', 2.8, 1.0);
+    }
+  }
+
+  // ── Quest markers ─────────────────────────────────────────────
+  for(const q of QUESTS) {
+    if(q.floor !== id) continue;
+    const gc = Math.floor(q.x/CELL)+OX, gr = Math.floor(q.z/CELL)+OZ;
+    if(gr<0||gr>=GH||gc<0||gc>=GW||grid[gr][gc]===T_EMPTY) continue;
+    // Floor disc
+    const discGeo = new THREE.CylinderGeometry(1.2, 1.2, 0.1, 24);
+    const discMat = new THREE.MeshBasicMaterial({color:0xffee44, transparent:true, opacity:0.85});
+    const disc = new THREE.Mesh(discGeo, discMat);
+    disc.position.set(q.x, fy+0.05, q.z);
+    disc.name = 'quest_disc_'+q.id; group.add(disc);
+    // Vertical beam
+    const beamGeo = new THREE.CylinderGeometry(0.07, 0.07, wh*0.55, 8);
+    const beamMat = new THREE.MeshBasicMaterial({color:0xffee44, transparent:true, opacity:0.25});
+    const beam = new THREE.Mesh(beamGeo, beamMat);
+    beam.position.set(q.x, fy+wh*0.28, q.z);
+    beam.name = 'quest_beam_'+q.id; group.add(beam);
+  }
+
+  // ── Exit pillars & signs ──────────────────────────────────────
+  for(const ex of EXITS) {
+    if(ex.floor !== id) continue;
+    const gc=Math.floor(ex.x/CELL)+OX, gr=Math.floor(ex.z/CELL)+OZ;
+    if(gr<0||gr>=GH||gc<0||gc>=GW||grid[gr][gc]===T_EMPTY) continue;
+    // Green pillar
+    const ep = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.22,0.22,wh,12),
+      new THREE.MeshLambertMaterial({color:0x005b2e})
+    );
+    ep.position.set(ex.x, fy+wh/2, ex.z); group.add(ep);
+    addSign(group, new THREE.Vector3(ex.x, fy+wh-0.75, ex.z), ex.lines, '#005b2e', 3.2, 1.3);
+  }
+
+  // ── Floor-specific decorations ────────────────────────────────
+  if(id === 'B1F') _decorateB1F(group, fy, wh);
+  if(id === '1F')  _decorate1F (group, fy, wh);
+  if(id === '2F')  _decorate2F (group, fy, wh);
+
+  return group;
+}
+
+// ─── B1F decorations ──────────────────────────────────────────────
+// B1F北コンコース: メイン通路 z=-73〜-55 (center z=-64), x=-190〜+190
+function _decorateB1F(g, fy, wh) {
+  // Hanging direction signs
+  const signs = [
+    { x:-160, z:-64, lines:['← 西改札  West Gate','西口・小田急・京王'] },
+    { x: -78, z:-64, lines:['← 中央西改札','Central West Gate'] },
+    { x:  52, z:-64, lines:['中央東改札 →','Central East Gate'] },
+    { x: 160, z:-64, lines:['東改札 →  East Gate','東口・アルタ方面'] },
+    { x: -65, z:-88, lines:['← 地下鉄連絡口','丸ノ内線方面'] },
+    { x:   8, z:-88, lines:['地下鉄連絡口 ↓','副都心線・都営新宿線'] },
+    { x:   0, z:-60, lines:['↓ ホームへ','To Platforms 1-16'] },
+  ];
+  for(const s of signs) addHangingSign(g, s.x, s.z, fy, wh, s.lines);
+
+  // IC gate machines — 中央東改札 (x=44〜64, z=-61)
+  const gateMachMat = new THREE.MeshLambertMaterial({color:0x0a1428});
+  const gateLedMat  = new THREE.MeshBasicMaterial({color:0x00aacc});
+  const gateRows = [
+    { cx:54,  cz:-59, n:6, bg:'中央東改札  Central East Gate' },
+    { cx:-68, cz:-59, n:6, bg:'中央西改札  Central West Gate' },
+  ];
+  for(const row of gateRows) {
+    for(let i=0; i<row.n; i++) {
+      const gx = row.cx + (i - row.n/2 + 0.5) * 2.8;
+      const gm = new THREE.Mesh(new THREE.BoxGeometry(0.28,1.05,0.85), gateMachMat);
+      gm.position.set(gx, fy+0.52, row.cz); g.add(gm);
+      const led = new THREE.Mesh(new THREE.BoxGeometry(0.22,0.24,0.1), gateLedMat);
+      led.position.set(gx, fy+0.78, row.cz-0.42); g.add(led);
+    }
+    addSign(g, new THREE.Vector3(row.cx, fy+wh-0.5, row.cz-0.5),
+      [row.bg, 'Suica / PASMO / IC'], '#0a1840', 6, 1.1);
+  }
+
+  // Benches along concourse
+  const benchMat = new THREE.MeshLambertMaterial({color:0x3a2a1a});
+  const legMat   = new THREE.MeshLambertMaterial({color:0x555});
+  for(const [bx,bz] of [[-80,-67],[-20,-67],[40,-67],[100,-67],[-100,-67]]) {
+    const seat = new THREE.Mesh(new THREE.BoxGeometry(2.2,0.12,0.55), benchMat);
+    seat.position.set(bx, fy+0.42, bz); g.add(seat);
+    const leg  = new THREE.Mesh(new THREE.BoxGeometry(2.1,0.38,0.1), legMat);
+    leg.position.set(bx, fy+0.19, bz); g.add(leg);
+  }
+
+  // Shop fronts (north wall, z=-72)
+  const shopDefs = [
+    { x:-120, w:7, col:0xc42020, lines:['NewDays','JR東日本コンビニ'] },
+    { x: -95, w:6, col:0x155225, lines:['Starbucks','スターバックス'] },
+    { x: -68, w:7, col:0x3a1055, lines:['LUMINE EST','ルミネエスト'] },
+    { x: -40, w:6, col:0xb84000, lines:['崎陽軒','シウマイ弁当'] },
+    { x:  -8, w:6, col:0x003080, lines:['小田急OX','スーパー'] },
+    { x:  25, w:7, col:0x800000, lines:['紀伊國屋書店','Kinokuniya Books'] },
+    { x:  60, w:6, col:0xbb2200, lines:['富士そば','立ち食いそば'] },
+    { x:  92, w:7, col:0x0055aa, lines:['マツモトキヨシ','Matsumoto Kiyoshi'] },
+    { x: 125, w:6, col:0x1a2840, lines:['BEAMS','ファッション'] },
+  ];
+  for(const s of shopDefs) {
+    const sw = new THREE.Mesh(
+      new THREE.BoxGeometry(s.w, wh*0.7, 0.1),
+      new THREE.MeshLambertMaterial({color:s.col})
+    );
+    sw.position.set(s.x, fy+wh*0.35, -72); g.add(sw);
+    addSign(g, new THREE.Vector3(s.x, fy+wh*0.55, -71.9),
+      s.lines, '#'+s.col.toString(16).padStart(6,'0'), s.w*0.85, 0.9);
+  }
+
+  // Vending machines
+  const vmMat = new THREE.MeshLambertMaterial({color:0xcc1111});
+  for(const [vx,vz] of [[-155,-66],[-150,-66],[155,-66],[150,-66]]) {
+    const vm = new THREE.Mesh(new THREE.BoxGeometry(0.6, wh*0.65, 0.55), vmMat);
+    vm.position.set(vx, fy+wh*0.32, vz); g.add(vm);
+    const disp = new THREE.Mesh(new THREE.BoxGeometry(0.5, wh*0.28, 0.04),
+      new THREE.MeshBasicMaterial({color:0xffd866}));
+    disp.position.set(vx, fy+wh*0.45, vz+0.28); g.add(disp);
+  }
+}
+
+// ─── 1F decorations ───────────────────────────────────────────────
+// 8島16番線: PLATFORM_CENTERS[i] = 各島の中心z
+// 北→南: 1-2(埼京), 3-4(湘南), 5-6(N'EX), 7-8(中央快), 9-10(中央特), 11-12(中央快), 13-14(山手内), 15-16(山手外)
+const PLATFORM_CENTERS = [-49, -35, -21, -7, +7, +21, +35, +49];
+const PLATFORM_INFO = [
+  { nums:'1・2番線', line:'埼京線・湘南新宿ライン', dir:'大宮・川越方面',    col:'#006030', stripe:0x009966, len:270 },
+  { nums:'3・4番線', line:'湘南新宿ライン・埼京線', dir:'横浜・鎌倉方面',    col:'#006030', stripe:0x009966, len:270 },
+  { nums:'5・6番線', line:'成田エクスプレス・特急', dir:'成田空港・松本方面', col:'#404040', stripe:0x808080, len:240 },
+  { nums:'7・8番線', line:'中央線快速',            dir:'東京・千葉方面',      col:'#882200', stripe:0xf06030, len:200 },
+  { nums:'9・10番線',line:'中央線特急・快速',       dir:'高尾・松本方面',      col:'#882200', stripe:0xf06030, len:200 },
+  { nums:'11・12番線',line:'中央線快速',            dir:'高尾・八王子方面',    col:'#882200', stripe:0xf06030, len:200 },
+  { nums:'13・14番線',line:'山手線 内回り',         dir:'渋谷・品川方面',      col:'#006030', stripe:0x7dc050, len:230 },
+  { nums:'15・16番線',line:'山手線 外回り',         dir:'池袋・上野方面',      col:'#006030', stripe:0x7dc050, len:230 },
+];
+// Track centers between each pair of islands
+const TRACK_CENTERS = [-42, -28, -14, 0, +14, +28, +42];
+
+function _decorate1F(g, fy, wh) {
+  const ballastMat = new THREE.MeshLambertMaterial({
+    color:0x4a4844, emissive:new THREE.Color(0x080808), emissiveIntensity:0.35
+  });
+  const railMat    = new THREE.MeshLambertMaterial({color:0x9a9898});
+  const safetyMat  = new THREE.MeshBasicMaterial({color:0xe8c000});
+
+  // ── Ballast strips + rails between platforms ──────────────────────
+  for(const tz of TRACK_CENTERS) {
+    const idx = TRACK_CENTERS.indexOf(tz);
+    const pLen = Math.max(PLATFORM_INFO[idx]?.len||200, PLATFORM_INFO[idx+1]?.len||200);
+    // ballast
+    const ballast = new THREE.Mesh(new THREE.BoxGeometry(pLen, 0.08, 7), ballastMat);
+    ballast.position.set(0, fy+0.04, tz); g.add(ballast);
+    // rails (2 per track)
+    const gauge = 1.435; // 標準軌
+    [-gauge/2, gauge/2].forEach(off => {
+      const rail = new THREE.Mesh(new THREE.BoxGeometry(pLen, 0.13, 0.1), railMat);
+      rail.position.set(0, fy+0.12, tz+off); g.add(rail);
+    });
+  }
+
+  // ── Yellow safety lines + platform signs ─────────────────────────
+  for(let i=0; i<PLATFORM_CENTERS.length; i++) {
+    const pz  = PLATFORM_CENTERS[i];
+    const inf = PLATFORM_INFO[i];
+    const plen = inf.len;
+    // Safety lines on both edges of island (±4m from center)
+    [-4.5, +4.5].forEach(off => {
+      const sl = new THREE.Mesh(new THREE.BoxGeometry(plen, 0.04, 0.22), safetyMat);
+      sl.position.set(0, fy+0.02, pz+off); g.add(sl);
+    });
+    // Hanging platform signs at 3 positions along platform
+    for(const sx of [-plen/2+30, 0, plen/2-30]) {
+      addHangingSign(g, sx, pz, fy, wh,
+        [inf.nums, inf.line, inf.dir], inf.col);
+    }
+  }
+
+  // ── Trains (1 per island) ─────────────────────────────────────────
+  for(let i=0; i<PLATFORM_CENTERS.length; i++) {
+    const pz  = PLATFORM_CENTERS[i];
+    const inf = PLATFORM_INFO[i];
+    // Offset train to south side of island (track between this and next island)
+    const trackOff = i < PLATFORM_CENTERS.length-1 ? +4.5 : -4.5;
+    _addTrain(g, fy, 0, pz+trackOff, inf.len-20, inf.stripe);
+  }
+
+  // ── Direction signs at cross-passages ────────────────────────────
+  for(const sx of [-110, 0, 110]) {
+    addHangingSign(g, sx, -5, fy, wh, ['↑ B1F 北コンコース','North Concourse / 改札口']);
+    addHangingSign(g, sx, +5, fy, wh, ['↓ 2F 南コンコース', 'South Concourse / 改札口']);
+  }
+}
+
+function _addTrain(g, fy, cx, cz, len, stripe=0x7dc050) {
+  const bh=3.8, bw=2.85;
+  // Body
+  const body = new THREE.Mesh(
+    new THREE.BoxGeometry(len, bh, bw),
+    new THREE.MeshLambertMaterial({color:0xe8e8e8})
+  );
+  body.position.set(cx, fy+bh/2, cz); g.add(body);
+  // Stripe
+  const st = new THREE.Mesh(
+    new THREE.BoxGeometry(len, 0.48, bw+0.02),
+    new THREE.MeshBasicMaterial({color:stripe})
+  );
+  st.position.set(cx, fy+2.0, cz); g.add(st);
+  // Windows row
+  const winMat = new THREE.MeshLambertMaterial({color:0x90b8cc});
+  for(let wx=-len/2+8; wx<len/2-4; wx+=10.5) {
+    const win = new THREE.Mesh(new THREE.BoxGeometry(5.5,1.0,bw+0.02), winMat);
+    win.position.set(cx+wx+2.5, fy+2.9, cz); g.add(win);
+    // Reflection strip
+    const ref = new THREE.Mesh(new THREE.BoxGeometry(1.4,0.9,bw+0.04),
+      new THREE.MeshBasicMaterial({color:0xd0e8f0,transparent:true,opacity:0.35}));
+    ref.position.set(cx+wx+0.5, fy+2.9, cz); g.add(ref);
+  }
+  // Doors
+  const doorMat = new THREE.MeshLambertMaterial({color:0xd4d4d4});
+  for(let dx=-len/2+15; dx<len/2-10; dx+=25) {
+    const dr = new THREE.Mesh(new THREE.BoxGeometry(1.5,bh-0.05,bw+0.02), doorMat);
+    dr.position.set(cx+dx, fy+bh/2, cz); g.add(dr);
+  }
+  // Undercarriage
+  const uc = new THREE.Mesh(
+    new THREE.BoxGeometry(len, 0.55, bw*0.7),
+    new THREE.MeshLambertMaterial({color:0x333})
+  );
+  uc.position.set(cx, fy+0.27, cz); g.add(uc);
+}
+
+// ─── 2F decorations ───────────────────────────────────────────────
+// 2F南コンコース: z=+57〜+82, x=-130〜+120 (center z≈+69)
+function _decorate2F(g, fy, wh) {
+  // Gate signs (5 gates along south wall z≈+79)
+  const gateSigns = [
+    { x: -82, lines:['南改札  South Gate',   '甲州街道・新宿三丁目方面'] },
+    { x: -40, lines:['甲州街道改札',          'Koushuu-Kaido Gate'] },
+    { x:  24, lines:['東南改札  Tonan Gate', '新宿御苑・四谷方面'] },
+    { x:  64, lines:['新南改札  Shin-Nan Gate','バスタ新宿 NEWoMan'] },
+    { x: 100, lines:['ミライナタワー改札',     'Miraina Tower / NEWoMan'] },
+  ];
+  for(const s of gateSigns) addHangingSign(g, s.x, +73, fy, wh, s.lines);
+
+  // Gate machines (south wall)
+  const gateMachMat = new THREE.MeshLambertMaterial({color:0x0a1428});
+  const gateLedMat  = new THREE.MeshBasicMaterial({color:0x00aacc});
+  for(const gs of gateSigns) {
+    for(let i=0; i<5; i++) {
+      const gx = gs.x + (i-2)*2.6;
+      const gm = new THREE.Mesh(new THREE.BoxGeometry(0.28,1.05,0.85), gateMachMat);
+      gm.position.set(gx, fy+0.52, +78); g.add(gm);
+      const led = new THREE.Mesh(new THREE.BoxGeometry(0.22,0.24,0.1), gateLedMat);
+      led.position.set(gx, fy+0.78, +77.6); g.add(led);
+    }
+  }
+
+  // Central directory board
+  addSign(g, new THREE.Vector3(0, fy+wh-0.4, +65),
+    ['新宿駅 南コンコース', '↓ 1F ホーム (1〜16番線)', '← 南改札  新南改札 →', 'ミライナタワー改札 →'],
+    '#002244', 12, 1.8);
+
+  // Platform direction signs near stairs (north end z≈+59)
+  for(const sx of [-110, 0, 110]) {
+    addHangingSign(g, sx, +60, fy, wh,
+      ['↑ 1F ホームへ', 'To Platforms 1-16']);
+  }
+
+  // Benches
+  const benchMat = new THREE.MeshLambertMaterial({color:0x3a2a1a});
+  const legMat   = new THREE.MeshLambertMaterial({color:0x555});
+  for(const [bx,bz] of [[-60,67],[0,67],[60,67],[-80,73],[30,73]]) {
+    const seat = new THREE.Mesh(new THREE.BoxGeometry(2.2,0.12,0.55), benchMat);
+    seat.position.set(bx, fy+0.42, bz); g.add(seat);
+    const leg  = new THREE.Mesh(new THREE.BoxGeometry(2.1,0.38,0.1), legMat);
+    leg.position.set(bx, fy+0.19, bz); g.add(leg);
+  }
+
+  // Shop fronts (NEWoMan, LUMINE)
+  const shopDefs2F = [
+    { x:-145, z:65, w:6, col:0x8a6a20, lines:['LUMINE 1','ルミネ1'] },
+    { x:-130, z:65, w:6, col:0x6a2888, lines:['LUMINE 2','ルミネ2'] },
+    { x: 118, z:65, w:6, col:0x185080, lines:['NEWoMan','ニュウマン'] },
+    { x: 135, z:65, w:6, col:0x802020, lines:['Busta Shinjuku','バスタ新宿'] },
+  ];
+  for(const s of shopDefs2F) {
+    const sw = new THREE.Mesh(
+      new THREE.BoxGeometry(s.w, wh*0.7, 0.1),
+      new THREE.MeshLambertMaterial({color:s.col})
+    );
+    sw.position.set(s.x, fy+wh*0.35, s.z); g.add(sw);
+    addSign(g, new THREE.Vector3(s.x, fy+wh*0.55, s.z+0.06),
+      s.lines, '#'+s.col.toString(16).padStart(6,'0'), s.w*0.85, 0.9);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// PLAYER
+// ═══════════════════════════════════════════════════════════════════
+const player = {
+  floor: 'B1F',
+  x: 30, z: -62,
+  yaw: 0, pitch: 0,
+  speed: 4.2,
+};
+const PLAYER_R = 0.45;
+const PLAYER_H = 1.72;
+
+function isWalkable(floorId, wx, wz) {
+  const g = FLOORS[floorId].grid;
+  const c = Math.floor(wx/CELL)+OX;
+  const r = Math.floor(wz/CELL)+OZ;
+  if(c<1||c>=GW-1||r<1||r>=GH-1) return false;
+  return g[r][c] !== T_EMPTY;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// INPUT
+// ═══════════════════════════════════════════════════════════════════
+const keys = new Set();
+addEventListener('keydown', e=>{
+  keys.add(e.code);
+  if(e.code==='Space'||e.code.startsWith('Arrow')) e.preventDefault();
+});
+addEventListener('keyup',   e=> keys.delete(e.code));
+
+let pLocked=false, mdx=0, mdy=0;
+document.addEventListener('pointerlockchange', ()=>{
+  pLocked = document.pointerLockElement === renderer.domElement;
+});
+document.addEventListener('mousemove', e=>{
+  if(!pLocked) return; mdx+=e.movementX; mdy+=e.movementY;
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// MOVEMENT
+// ═══════════════════════════════════════════════════════════════════
+function movePlayer(dt) {
+  if(!running) return;
+
+  // マウス視点（ポインターロック時のみ）
+  if(pLocked) {
+    const sens = 0.0018;
+    player.yaw   -= mdx*sens;
+    player.pitch  = Math.max(-1.1, Math.min(1.1, player.pitch - mdy*sens));
+    mdx=0; mdy=0;
+  }
+
+  // 矢印キー左右で旋回（ポインターロック不要）
+  const turnSpd = 1.8;
+  if(keys.has('ArrowLeft'))  player.yaw += turnSpd * dt;
+  if(keys.has('ArrowRight')) player.yaw -= turnSpd * dt;
+
+  const run = keys.has('ShiftLeft')||keys.has('ShiftRight');
+  const spd = player.speed * (run?2.1:1.0);
+  const cos = Math.cos(player.yaw), sin = Math.sin(player.yaw);
+  let fx=0, fz=0;
+  if(keys.has('KeyW')||keys.has('ArrowDown')) { fx+=sin; fz+=cos; }
+  if(keys.has('KeyS')||keys.has('ArrowUp'))   { fx-=sin; fz-=cos; }
+  if(keys.has('KeyA')) { fx+=cos; fz-=sin; }
+  if(keys.has('KeyD')) { fx-=cos; fz+=sin; }
+  if(fx||fz) { const l=Math.hypot(fx,fz); fx=fx/l*spd*dt; fz=fz/l*spd*dt; }
+
+  const nx=player.x+fx, nz=player.z+fz;
+  if(isWalkable(player.floor,nx+PLAYER_R,player.z)&&
+     isWalkable(player.floor,nx-PLAYER_R,player.z)) player.x=nx;
+  if(isWalkable(player.floor,player.x,nz+PLAYER_R)&&
+     isWalkable(player.floor,player.x,nz-PLAYER_R)) player.z=nz;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// STAIRS
+// ═══════════════════════════════════════════════════════════════════
+let stairCD=0;
+const stairHint = document.getElementById('stair-hint');
+
+function checkStairs() {
+  const g=FLOORS[player.floor].grid;
+  const c=Math.floor(player.x/CELL)+OX, r=Math.floor(player.z/CELL)+OZ;
+  if(c<0||c>=GW||r<0||r>=GH) return;
+  const onStair = g[r][c]===T_STAIRS;
+  stairHint.style.display = onStair ? 'block' : 'none';
+  if(!onStair||stairCD>0) return;
+  stairCD=140;
+  // Find nearest stair pair endpoint on this floor
+  let bestDist=Infinity, dest=null;
+  for(const pair of STAIR_PAIRS) {
+    for(const [side, other] of [['a','b'],['b','a']]) {
+      const s=pair[side], o=pair[other];
+      if(s.floor !== player.floor) continue;
+      const d=Math.hypot(player.x-s.x, player.z-s.z);
+      if(d<bestDist) { bestDist=d; dest=o; }
+    }
+  }
+  if(dest) switchFloor(dest.floor, dest.x, dest.z);
+}
+
+function switchFloor(id, tx, tz) {
+  if(floorGroups[player.floor]) floorGroups[player.floor].visible=false;
+  if(floorGroups[id])           floorGroups[id].visible=true;
+  player.floor=id; player.x=tx; player.z=tz;
+  document.getElementById('floor-label').textContent=FLOORS[id].label;
+  const fogSettings = {
+    'B1F':    {sky:0x2a2e3a, fog:0.007},
+    '1F':     {sky:0x303848, fog:0.004},
+    '2F':     {sky:0x5070a0, fog:0.003},
+    'AKB_1F': {sky:0x1a2028, fog:0.010},
+    'AKB_2F': {sky:0x2a3848, fog:0.006},
+  };
+  const fs = fogSettings[id] || fogSettings['1F'];
+  scene.background.set(fs.sky);
+  scene.fog.density = fs.fog;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// QUESTS
+// ═══════════════════════════════════════════════════════════════════
+const done = new Set();
+let questTimer=0;
+
+function checkQuests() {
+  for(const q of QUESTS) {
+    if(done.has(q.id)||q.floor!==player.floor) continue;
+    if(Math.hypot(player.x-q.x, player.z-q.z)<q.r) {
+      done.add(q.id);
+      showQuest(q.text);
+      // Hide marker
+      const grp=floorGroups[q.floor];
+      if(grp) {
+        ['disc','beam'].forEach(k=>{
+          const m=grp.getObjectByName('quest_'+k+'_'+q.id);
+          if(m) m.visible=false;
+        });
+      }
+      updateProgress();
+    }
+  }
+}
+
+function showQuest(text) {
+  const el=document.getElementById('quest-box');
+  el.textContent=text; el.style.display='block'; el.style.opacity='1';
+  questTimer=220;
+}
+
+function updateProgress() {
+  document.getElementById('progress').innerHTML =
+    `クエスト: ${done.size}/${QUESTS.length}<br>`+
+    QUESTS.map(q=>`<span style="color:${done.has(q.id)?'#00ee88':'#334'}">${done.has(q.id)?'✓':'○'}</span>`).join(' ');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// MINIMAP
+// ═══════════════════════════════════════════════════════════════════
+const mm = document.getElementById('minimap');
+const mx = mm.getContext('2d');
+const MMW=165, MMH=130, VIEW=80;
+
+function drawMinimap() {
+  mx.clearRect(0,0,MMW,MMH);
+  mx.fillStyle='rgba(0,0,0,0.78)'; mx.fillRect(0,0,MMW,MMH);
+  const grid=FLOORS[player.floor].grid;
+  const ppm=MMW/(VIEW*2);
+  for(let r=0;r<GH;r++) {
+    for(let c=0;c<GW;c++) {
+      const t=grid[r][c]; if(t===T_EMPTY) continue;
+      const wx=(c-OX)*CELL, wz=(r-OZ)*CELL;
+      const sx=(wx-player.x+VIEW)*ppm, sz=(wz-player.z+(MMH/ppm/2))*ppm;
+      const sw=CELL*ppm+0.8, sh=CELL*ppm+0.8;
+      if(sx+sw<0||sx>MMW||sz+sh<0||sz>MMH) continue;
+      mx.fillStyle=t===T_PLATFORM?'#3a4050':t===T_GATE?'#1a2850':t===T_STAIRS?'#4060a0':'#252d3a';
+      mx.fillRect(sx,sz,sw,sh);
+    }
+  }
+  // Quest dots
+  for(const q of QUESTS) {
+    if(q.floor!==player.floor) continue;
+    const sx=(q.x-player.x+VIEW)*ppm, sz=(q.z-player.z+(MMH/ppm/2))*ppm;
+    if(sx<0||sx>MMW||sz<0||sz>MMH) continue;
+    mx.fillStyle=done.has(q.id)?'#00cc66':'#ffee44';
+    mx.beginPath(); mx.arc(sx,sz,3,0,Math.PI*2); mx.fill();
+  }
+  // Player arrow
+  mx.save(); mx.translate(MMW/2, MMH/2); mx.rotate(-player.yaw);
+  mx.fillStyle='#ff5566';
+  mx.beginPath(); mx.moveTo(0,-8); mx.lineTo(4,5); mx.lineTo(0,2); mx.lineTo(-4,5);
+  mx.closePath(); mx.fill(); mx.restore();
+  // Border + label
+  mx.strokeStyle='rgba(0,160,70,0.4)'; mx.lineWidth=1;
+  mx.strokeRect(0,0,MMW,MMH);
+  mx.fillStyle='rgba(0,160,70,0.75)'; mx.font='10px sans-serif';
+  mx.textAlign='left'; mx.fillText(FLOORS[player.floor].label,4,MMH-4);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ANIMATION LOOP
+// ═══════════════════════════════════════════════════════════════════
+let last=performance.now(), fc=0, running=false;
+
+function loop(now) {
+  if(!running) return;
+  requestAnimationFrame(loop);
+  const dt=Math.min((now-last)/1000, 0.05); last=now; fc++;
+
+  if(stairCD>0) stairCD--;
+  if(questTimer>0) {
+    if(--questTimer===0) {
+      const el=document.getElementById('quest-box');
+      el.style.opacity='0';
+      setTimeout(()=>{ el.style.display='none'; el.style.opacity='1'; },500);
+    }
+  }
+
+  movePlayer(dt);
+  if(fc%5===0)  checkStairs();
+  if(fc%8===0)  checkQuests();
+  if(fc%3===0)  drawMinimap();
+
+  // Animate quest discs / goal marker (pulse + rotate)
+  const t=now*0.001;
+  const grp=floorGroups[player.floor];
+  if(grp) {
+    const sc=1+0.14*Math.sin(t*3.0);
+    for(const q of QUESTS) {
+      if(q.floor!==player.floor||done.has(q.id)) continue;
+      const d=grp.getObjectByName('quest_disc_'+q.id);
+      if(d){ d.scale.setScalar(sc); d.rotation.y=t*1.2; }
+    }
+    const gd=grp.getObjectByName('goal_disc');
+    if(gd){ gd.scale.setScalar(1+0.18*Math.sin(t*2.5)); gd.rotation.y=t*1.8; }
+  }
+  checkGoal();
+
+  // Camera
+  const fd=FLOORS[player.floor];
+  camera.position.set(player.x, fd.y+PLAYER_H, player.z);
+  camera.rotation.order='YXZ';
+  camera.rotation.y=player.yaw;
+  camera.rotation.x=player.pitch;
+
+  renderer.render(scene, camera);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// MENU SELECTION STATE
+// ═══════════════════════════════════════════════════════════════════
+let sqStation = null;
+let sqGate    = null;
+let sqExit    = null;
+let sqStep    = 1;
+let gameStartTime = 0;
+let goalReached = false;
+
+function sqGoStep(n) {
+  if(n===2 && !sqStation) return;
+  if(n===3 && !sqGate)    return;
+  sqStep = n;
+  [1,2,3].forEach(i => {
+    document.getElementById('sq-step'+i).classList.toggle('active', i===n);
+    const dot = document.getElementById('dot'+i);
+    dot.classList.toggle('active', i===n);
+    dot.classList.toggle('done',   i<n);
+  });
+  if(n===2) renderGateList();
+  if(n===3) renderExitList();
+}
+
+function sqSelect(type, obj, el) {
+  const list = el.closest('.sq-list');
+  list.querySelectorAll('.sq-item').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  if(type==='station') { sqStation=obj; sqGate=null; sqExit=null; }
+  if(type==='gate')    { sqGate=obj; sqExit=null; }
+  if(type==='exit')    { sqExit=obj; }
+  updateNextBtns();
+}
+
+function updateNextBtns() {
+  document.getElementById('sq-next1').classList.toggle('on', !!sqStation);
+  document.getElementById('sq-next2').classList.toggle('on', !!sqGate);
+  document.getElementById('sq-start-btn').classList.toggle('on', !!sqExit);
+}
+
+function renderStationList() {
+  const el = document.getElementById('sq-station-list');
+  el.innerHTML = STATIONS.map(st => `
+    <div class="sq-item" onclick="sqSelect('station', STATIONS.find(s=>s.id==='${st.id}'), this)">
+      <div class="item-name">${st.name} <span style="color:#445566;font-size:12px;font-weight:normal">${st.nameEn}</span></div>
+      <div class="item-sub">${st.desc}</div>
+    </div>`).join('');
+}
+
+function renderGateList() {
+  if(!sqStation) return;
+  const el = document.getElementById('sq-gate-list');
+  el.innerHTML = sqStation.gates.map(g => `
+    <div class="sq-item" onclick="sqSelect('gate', sqStation.gates.find(x=>x.id==='${g.id}'), this)">
+      <div class="item-name">${g.label}</div>
+      <div class="item-sub">${g.labelEn} — ${g.floor}</div>
+    </div>`).join('');
+}
+
+function renderExitList() {
+  if(!sqStation) return;
+  const el = document.getElementById('sq-exit-list');
+  // スタートと同じIDの出口は除外（同地点のgate/exitがある場合）
+  const exits = sqStation.exits.filter(e => !(sqGate && e.floor===sqGate.floor && Math.hypot(e.x-sqGate.x, e.z-sqGate.z)<15));
+  el.innerHTML = exits.map(e => `
+    <div class="sq-item" onclick="sqSelect('exit', sqStation.exits.find(x=>x.id==='${e.id}'), this)">
+      <div class="item-name">${e.label}</div>
+      <div class="item-sub">${e.labelEn} — ${e.floor}</div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// GOAL
+// ═══════════════════════════════════════════════════════════════════
+function addGoalMarker(floorId, gx, gz) {
+  const grp = floorGroups[floorId];
+  if(!grp) return;
+  const fy = FLOORS[floorId].y;
+  const wh = FLOORS[floorId].wallH;
+  const discGeo = new THREE.CylinderGeometry(1.6, 1.6, 0.12, 32);
+  const disc = new THREE.Mesh(discGeo, new THREE.MeshBasicMaterial({color:0x00ffaa, transparent:true, opacity:0.90}));
+  disc.position.set(gx, fy+0.06, gz);
+  disc.name = 'goal_disc'; grp.add(disc);
+  const beamGeo = new THREE.CylinderGeometry(0.10, 0.10, wh*0.7, 8);
+  const beam = new THREE.Mesh(beamGeo, new THREE.MeshBasicMaterial({color:0x00ffaa, transparent:true, opacity:0.30}));
+  beam.position.set(gx, fy+wh*0.35, gz);
+  beam.name = 'goal_beam'; grp.add(beam);
+}
+
+function checkGoal() {
+  if(goalReached || !sqExit) return;
+  if(player.floor !== sqExit.floor) return;
+  if(Math.hypot(player.x - sqExit.x, player.z - sqExit.z) < 10) {
+    goalReached = true;
+    const elapsed = ((performance.now() - gameStartTime) / 1000).toFixed(1);
+    const m = Math.floor(elapsed/60), s = (elapsed%60).toFixed(1);
+    document.getElementById('goal-exit-name').textContent = sqExit.label + ' ' + sqExit.labelEn;
+    document.getElementById('goal-time').textContent = `クリアタイム：${m>0?m+'分':'' }${s}秒`;
+    document.getElementById('goal-screen').style.display = 'flex';
+    if(document.pointerLockElement) document.exitPointerLock();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// START
+// ═══════════════════════════════════════════════════════════════════
+window.startGame = function() {
+  if(!sqStation || !sqGate || !sqExit) return;
+  document.getElementById('start-screen').style.display='none';
+  renderer.domElement.requestPointerLock();
+  if(!running) {
+    sqStation.floors.forEach(f => generateFloor(f));
+    // スタート地点
+    const sf = sqGate.floor;
+    Object.values(floorGroups).forEach(g => g.visible=false);
+    floorGroups[sf].visible = true;
+    player.floor = sf; player.x = sqGate.x; player.z = sqGate.z;
+    document.getElementById('floor-label').textContent = FLOORS[sf].label;
+    // ゴールマーカー
+    addGoalMarker(sqExit.floor, sqExit.x, sqExit.z);
+    updateProgress();
+    gameStartTime = performance.now();
+    goalReached = false;
+    running = true;
+    last = performance.now();
+    requestAnimationFrame(loop);
+  }
+};
+
+// Re-lock
+renderer.domElement.addEventListener('click', ()=>{
+  if(running && !pLocked && !goalReached) renderer.domElement.requestPointerLock();
+});
+
+// 初期化
+renderStationList();
+
+</script>
+</body>
+</html>
