@@ -140,7 +140,7 @@
 
   <div id="input-area">
     <input type="text" id="mood-input" placeholder="今の気持ちを自由に入力..." maxlength="60" />
-    <button id="go-btn" onclick="generate()" disabled>生成</button>
+<button id="go-btn" onclick="generate()" disabled>生成</button>
   </div>
 
   <div id="examples">
@@ -172,7 +172,7 @@ const PROVIDERS = [
       return {
         url: '/api/messages',
         headers: { 'Content-Type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01' },
-        body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 8000, messages: [{ role: 'user', content: prompt }] }),
+        body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 16000, messages: [{ role: 'user', content: prompt }] }),
       };
     },
     parse(data) {
@@ -188,7 +188,7 @@ const PROVIDERS = [
       return {
         url: 'https://api.openai.com/v1/chat/completions',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
-        body: JSON.stringify({ model: 'gpt-4o', max_tokens: 8000, messages: [{ role: 'user', content: prompt }] }),
+        body: JSON.stringify({ model: 'gpt-4o', max_tokens: 16000, messages: [{ role: 'user', content: prompt }] }),
       };
     },
     parse(data) {
@@ -204,7 +204,7 @@ const PROVIDERS = [
       return {
         url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { maxOutputTokens: 8000 } }),
+        body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { maxOutputTokens: 16000 } }),
       };
     },
     parse(data) {
@@ -220,7 +220,7 @@ const PROVIDERS = [
       return {
         url: 'https://api.groq.com/openai/v1/chat/completions',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
-        body: JSON.stringify({ model: 'llama-3.3-70b-versatile', max_tokens: 8000, messages: [{ role: 'user', content: prompt }] }),
+        body: JSON.stringify({ model: 'llama-3.3-70b-versatile', max_tokens: 16000, messages: [{ role: 'user', content: prompt }] }),
       };
     },
     parse(data) {
@@ -236,7 +236,7 @@ const PROVIDERS = [
       return {
         url: 'https://openrouter.ai/api/v1/chat/completions',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
-        body: JSON.stringify({ model: 'anthropic/claude-sonnet-4-5', max_tokens: 8000, messages: [{ role: 'user', content: prompt }] }),
+        body: JSON.stringify({ model: 'anthropic/claude-sonnet-4-5', max_tokens: 16000, messages: [{ role: 'user', content: prompt }] }),
       };
     },
     parse(data) {
@@ -255,16 +255,15 @@ const goBtn = document.getElementById('go-btn');
 
 input.addEventListener('keydown', e => { if (e.key === 'Enter' && !goBtn.disabled) generate(); });
 
-function drawGrid(grid, targetCtx = ctx, block = BLOCK) {
+function drawGrid(frame, targetCtx = ctx, block = BLOCK) {
   targetCtx.fillStyle = PALETTE[0];
   targetCtx.fillRect(0, 0, GRID * block, GRID * block);
-  for (let r = 0; r < GRID; r++) {
-    for (let c = 0; c < GRID; c++) {
-      const v = grid[r] && grid[r][c];
-      if (v) {
-        targetCtx.fillStyle = PALETTE[Math.min(v, 3)];
-        targetCtx.fillRect(c * block, r * block, block, block);
-      }
+  const pixels = frame.p ?? frame;
+  for (const px of pixels) {
+    const [r, c, v] = px;
+    if (v >= 1 && v <= 3) {
+      targetCtx.fillStyle = PALETTE[v];
+      targetCtx.fillRect(c * block, r * block, block, block);
     }
   }
 }
@@ -364,7 +363,22 @@ function replayHistory(i) {
   startAnim(history[i].frames, history[i].speed);
 }
 
-function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function sanitizeMood(s) {
+  return s.replace(/[\u0000-\u001f\u007f」「\`]/g, '').slice(0, 60);
+}
+function validateFrames(frames) {
+  if (!Array.isArray(frames) || frames.length < 1) throw new Error('framesが不正です');
+  for (const frame of frames) {
+    const pixels = frame.p ?? frame;
+    if (!Array.isArray(pixels)) throw new Error('フレーム形式が不正です');
+    for (const px of pixels) {
+      if (!Array.isArray(px) || px.length !== 3) throw new Error('ピクセル形式が不正です');
+      const [r, c, v] = px;
+      if (r < 0 || r >= GRID || c < 0 || c >= GRID || v < 1 || v > 3) throw new Error('ピクセル値が範囲外です');
+    }
+  }
+}
 async function quickGen(t) { input.value = t; await generate(); }
 
 function onKeyInput() {
@@ -447,7 +461,7 @@ async function downloadVideo() {
 }
 
 async function generate() {
-  const mood = input.value.trim();
+  const mood = sanitizeMood(input.value.trim());
   if (!mood || !apiKey) return;
   setLoading(true);
 
@@ -455,21 +469,38 @@ async function generate() {
 
 この気持ちを表現する32x32グレースケールドット絵キャラクターを作ってください。
 必ずJSON形式のみで返してください（コードブロック・説明文不要）:
-{"frames":[フレーム1,フレーム2,フレーム3],"speed":400,"label":"一言コメント"}
+{"frames":[{"p":[[行,列,値],...]},...],"speed":150,"label":"一言コメント"}
 
 ルール:
-- framesは3つのアニメーションフレーム
-- 各フレームは32行×32列の2次元配列（32要素の配列が32個）
-- 各要素は以下の整数（4段階グレースケール）:
-  0 = 背景（透明）
-  1 = ハイライト（明るいグレー）— 光が当たる面・明るい部分
-  2 = ミッドトーン（中間グレー）— 側面・影の境界
-  3 = ダーク（黒に近い）— アウトライン・最も暗い影
-- シェーディングを活用して立体感を表現（光源を左上として影を付ける）
-- キャラクターは32x32グリッドをほぼ全体に使って大きく描く（上下左右1〜2ピクセルの余白のみ）
-- 3フレームで動きを表現（歩き・ジャンプ・表情変化など気持ちに合った動き）
-- speed: 感情強度に応じて200〜1200ms（興奮200、普通400、眠い1200）
+- framesは5つのアニメーションフレーム（ループ再生される）
+- 各フレームは {"p": [[行,列,値], ...]} の形式（スパース形式）
+  ・行・列は0〜31の整数
+  ・値: 1=ハイライト（明るいグレー）、2=ミッドトーン（中間グレー）、3=ダーク（黒に近い）
+  ・背景(0)のピクセルは省略する（記述しない）
+- シェーディングで立体感を表現（光源を左上として影を付ける）
+- 必ず以下のテンプレートに従ったちびキャラを描くこと:
+
+【体の配置（固定）】
+  頭部輪郭: row2〜row15, col8〜col23（縦14px × 横16px の大きな丸い頭）
+  胴体:     row16〜row22, col11〜col20
+  左腕:     row17〜row21, col7〜col10
+  右腕:     row17〜row21, col21〜col24
+  左足:     row23〜row29, col10〜col14
+  右足:     row23〜row29, col17〜col21
+
+【顔のパーツ（必須・感情に合わせて形を変える）】
+  左目:  row7〜row9, col11〜col13 — 喜び=丸く大きい, 悲しみ=細い, 怒り=斜め眉
+  右目:  row7〜row9, col19〜col21 — 同上
+  口:    row12〜row13, col13〜col19 — 喜び=Uの字, 悲しみ=逆U, 驚き=O型, 怒り=への字
+  眉:    row5〜row6, col11〜col21 — 感情を眉の角度で強調
+
+【アニメーション（5フレームで1ループ）】
+  腕・足のみ動かす（頭と胴体の位置はフレーム間で変えない）
+  各フレームで腕を3〜6px、足を3〜5px動かしてダイナミックに
+  感情に合った動き: 喜び=両腕バンザイ往復, 悲しみ=うなだれ, 怒り=腕ぶんぶん
+- speed: 感情強度に応じて100〜800ms（興奮100、普通200、眠い800）
 - label: 共感コメント20文字以内
+- 改行・スペース・インデントなしの1行コンパクトJSONで返す
 - JSONのみ返す`;
 
   try {
@@ -480,8 +511,10 @@ async function generate() {
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (!jsonMatch) throw new Error('JSONが見つかりません');
     const parsed = JSON.parse(jsonMatch[0]);
-    startAnim(parsed.frames, parsed.speed || 400);
-    addHistory(mood, parsed.frames, parsed.speed || 400, parsed.label || '');
+    validateFrames(parsed.frames);
+    const speed = typeof parsed.speed === 'number' && parsed.speed > 0 ? parsed.speed : 400;
+    startAnim(parsed.frames, speed);
+    addHistory(mood, parsed.frames, speed, typeof parsed.label === 'string' ? parsed.label.slice(0, 40) : '');
   } catch(e) {
     stopAnim();
     drawMessage('エラー: ' + e.message.slice(0, 40));
