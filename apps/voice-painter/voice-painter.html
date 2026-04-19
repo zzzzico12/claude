@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>声で絵を描く — Voice Painter</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #f0efe9;
+    --border: rgba(0,0,0,0.1);
+    --text: #1a1a18;
+    --text2: #666660;
+    --text3: #999993;
+    --info-bg: #e6f1fb;
+    --info-text: #0c447c;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111110;
+      --surface: #1c1c1a;
+      --surface2: #242422;
+      --border: rgba(255,255,255,0.1);
+      --text: #f0efe9;
+      --text2: #999993;
+      --text3: #5f5e5a;
+      --info-bg: #0c447c;
+      --info-text: #b5d4f4;
+    }
+    #draw-canvas { background: #1a1a18 !important; }
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px;
+    gap: 0;
+  }
+
+  h1 {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  #canvas-wrap {
+    position: relative;
+    border-radius: var(--radius-lg);
+    border: 0.5px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    width: 100%;
+    max-width: 800px;
+  }
+
+  #draw-canvas {
+    display: block;
+    width: 100%;
+    background: #fafaf8;
+  }
+
+  #overlay-canvas {
+    display: block;
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+  }
+
+  #params {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+    width: 100%;
+    max-width: 800px;
+  }
+
+  @media (max-width: 500px) {
+    #params { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .param-card {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--border);
+    padding: 10px 12px;
+  }
+
+  .param-label {
+    font-size: 11px;
+    color: var(--text3);
+    margin-bottom: 5px;
+    letter-spacing: 0.02em;
+  }
+
+  .param-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .param-val {
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .param-sub {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 3px;
+  }
+
+  #color-swatch {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 0.5px solid var(--border);
+    flex-shrink: 0;
+    background: #aaa;
+    transition: background 0.1s;
+  }
+
+  #controls {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+  }
+
+  button {
+    padding: 7px 16px;
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.12s;
+  }
+
+  button:hover { background: var(--surface2); }
+
+  #toggleBtn {
+    background: var(--info-bg);
+    color: var(--info-text);
+    border-color: transparent;
+    font-weight: 500;
+  }
+
+  #toggleBtn.active {
+    background: var(--surface2);
+    color: var(--text);
+    border-color: var(--border);
+    font-weight: 400;
+  }
+
+  #mic-status {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: var(--text2);
+    margin-left: auto;
+  }
+
+  #mic-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--text3);
+    flex-shrink: 0;
+  }
+
+  #mic-dot.on {
+    background: #4CAF50;
+    animation: blink 1s infinite;
+  }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  #legend {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    width: 100%;
+    max-width: 800px;
+  }
+
+  .leg {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--text3);
+  }
+
+  .leg-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  #hint {
+    font-size: 12px;
+    color: var(--text3);
+    margin-top: 10px;
+    width: 100%;
+    max-width: 800px;
+    line-height: 1.6;
+  }
+
+  #volume-wrap {
+    flex: 1;
+    min-width: 60px;
+    height: 5px;
+    background: var(--surface2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  #volume-bar {
+    height: 5px;
+    width: 0%;
+    background: #5DCAA5;
+    border-radius: 3px;
+    transition: width 0.04s, background 0.1s;
+  }
+</style>
+</head>
+<body>
+
+<h1>声で絵を描く</h1>
+
+<div id="canvas-wrap">
+  <canvas id="draw-canvas"></canvas>
+  <canvas id="overlay-canvas"></canvas>
+</div>
+
+<div id="params">
+  <div class="param-card">
+    <div class="param-label">色相 — 音程</div>
+    <div class="param-row">
+      <div id="color-swatch"></div>
+      <div class="param-val" id="p-pitch">—</div>
+    </div>
+    <div class="param-sub" id="p-pitch-name">低音=赤 / 高音=紫</div>
+  </div>
+  <div class="param-card">
+    <div class="param-label">方向 — 音程×音色</div>
+    <div class="param-val" id="p-dir">—°</div>
+    <div class="param-sub" id="p-dir-name">高音=上 / 低音=下 / 音色=左右</div>
+  </div>
+  <div class="param-card">
+    <div class="param-label">太さ — 音量</div>
+    <div class="param-val" id="p-thick">—px</div>
+    <div class="param-sub">大声=太い / 小声=細い</div>
+  </div>
+  <div class="param-card">
+    <div class="param-label">長さ — 持続時間</div>
+    <div class="param-val" id="p-len">—</div>
+    <div class="param-sub">長く出す=長い線</div>
+  </div>
+</div>
+
+<div id="controls">
+  <button id="toggleBtn">マイクをオン</button>
+  <button id="clearBtn">クリア</button>
+  <button id="undoBtn">もどす</button>
+  <div id="volume-wrap"><div id="volume-bar"></div></div>
+  <div id="mic-status"><div id="mic-dot"></div><span id="status-txt">停止中</span></div>
+</div>
+
+<div id="legend">
+  <div class="leg"><div class="leg-dot" style="background:#E24B4A;"></div>低音（赤）</div>
+  <div class="leg"><div class="leg-dot" style="background:#EF9F27;"></div>中低音（橙）</div>
+  <div class="leg"><div class="leg-dot" style="background:#639922;"></div>中音（緑）</div>
+  <div class="leg"><div class="leg-dot" style="background:#378ADD;"></div>中高音（青）</div>
+  <div class="leg"><div class="leg-dot" style="background:#7F77DD;"></div>高音（紫）</div>
+</div>
+
+<div id="hint">
+  声を出すと線が引かれ、黙ると1本の筆跡として確定されます。<br>
+  スペクトルを円にマッピングし、エネルギー重心の向きに進みます。純音=一定方向 / ノイズ=ランダム
+</div>
+
+<script>
+const drawCanvas = document.getElementById('draw-canvas');
+const overlayCanvas = document.getElementById('overlay-canvas');
+const dc = drawCanvas.getContext('2d');
+const oc = overlayCanvas.getContext('2d');
+
+const toggleBtn = document.getElementById('toggleBtn');
+const clearBtn = document.getElementById('clearBtn');
+const undoBtn = document.getElementById('undoBtn');
+const micDot = document.getElementById('mic-dot');
+const statusTxt = document.getElementById('status-txt');
+const colorSwatch = document.getElementById('color-swatch');
+const pPitch = document.getElementById('p-pitch');
+const pPitchName = document.getElementById('p-pitch-name');
+const pDir = document.getElementById('p-dir');
+const pDirName = document.getElementById('p-dir-name');
+const pThick = document.getElementById('p-thick');
+const pLen = document.getElementById('p-len');
+const volumeBar = document.getElementById('volume-bar');
+
+let W, H;
+
+function resize() {
+  const wrap = document.getElementById('canvas-wrap');
+  W = wrap.clientWidth;
+  H = Math.round(W * 0.56);
+  drawCanvas.width = W;
+  drawCanvas.height = H;
+  overlayCanvas.width = W;
+  overlayCanvas.height = H;
+  dc.fillStyle = window.matchMedia('(prefers-color-scheme: dark)').matches ? '#1a1a18' : '#fafaf8';
+  dc.fillRect(0, 0, W, H);
+}
+
+resize();
+window.addEventListener('resize', () => { resize(); snapshots = [drawCanvas.toDataURL()]; });
+
+let audioCtx, analyser, running = false;
+let dataTime, dataFreq;
+let snapshots = [drawCanvas.toDataURL()];
+
+function saveSnapshot() {
+  snapshots.push(drawCanvas.toDataURL());
+  if (snapshots.length > 40) snapshots.shift();
+}
+
+clearBtn.addEventListener('click', () => {
+  saveSnapshot();
+  dc.fillStyle = window.matchMedia('(prefers-color-scheme: dark)').matches ? '#1a1a18' : '#fafaf8';
+  dc.fillRect(0, 0, W, H);
+});
+
+undoBtn.addEventListener('click', () => {
+  if (snapshots.length < 2) return;
+  snapshots.pop();
+  const img = new Image();
+  img.onload = () => { dc.clearRect(0, 0, W, H); dc.drawImage(img, 0, 0); };
+  img.src = snapshots[snapshots.length - 1];
+});
+
+toggleBtn.addEventListener('click', async () => {
+  if (!running) {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 4096;
+      analyser.smoothingTimeConstant = 0.6;
+      const src = audioCtx.createMediaStreamSource(stream);
+      src.connect(analyser);
+      dataTime = new Uint8Array(analyser.fftSize);
+      dataFreq = new Uint8Array(analyser.frequencyBinCount);
+      running = true;
+      micDot.classList.add('on');
+      statusTxt.textContent = '収音中';
+      toggleBtn.textContent = '停止';
+      toggleBtn.classList.add('active');
+      curX = W / 2;
+      curY = H / 2;
+      loop();
+    } catch (e) {
+      statusTxt.textContent = 'マイク許可が必要です';
+    }
+  } else {
+    running = false;
+    if (audioCtx) audioCtx.close();
+    micDot.classList.remove('on');
+    statusTxt.textContent = '停止中';
+    toggleBtn.textContent = 'マイクをオン';
+    toggleBtn.classList.remove('active');
+    volumeBar.style.width = '0%';
+    oc.clearRect(0, 0, W, H);
+    if (currentStroke.length > 1) commitStroke();
+  }
+});
+
+function getVolume() {
+  analyser.getByteTimeDomainData(dataTime);
+  let sum = 0;
+  for (let i = 0; i < dataTime.length; i++) sum += (dataTime[i] - 128) ** 2;
+  return Math.sqrt(sum / dataTime.length) / 128;
+}
+
+function getDominantPitch() {
+  analyser.getByteFrequencyData(dataFreq);
+  const nyq = audioCtx.sampleRate / 2;
+  let maxVal = 0, maxIdx = 4;
+  const lo = Math.floor(80 / nyq * dataFreq.length);
+  const hi = Math.floor(1400 / nyq * dataFreq.length);
+  for (let i = lo; i < hi; i++) {
+    if (dataFreq[i] > maxVal) { maxVal = dataFreq[i]; maxIdx = i; }
+  }
+  const freq = maxIdx / dataFreq.length * nyq;
+  return { freq, strength: maxVal / 255 };
+}
+
+let baseVx = 0, baseVy = 0;
+
+function getSpectrumVector(speaking) {
+  analyser.getByteFrequencyData(dataFreq);
+  const nyq = audioCtx.sampleRate / 2;
+  const loHz = 80, hiHz = 4000;
+  let vx = 0, vy = 0, total = 0;
+  for (let i = 0; i < dataFreq.length; i++) {
+    const hz = (i / dataFreq.length) * nyq;
+    if (hz < loHz || hz > hiHz) continue;
+    const t = Math.log(hz / loHz) / Math.log(hiHz / loHz);
+    const angle = t * Math.PI * 2;
+    const energy = dataFreq[i] / 255;
+    vx += Math.cos(angle) * energy;
+    vy += Math.sin(angle) * energy;
+    total += energy;
+  }
+  if (total < 0.01) return { angle: 0, concentration: 0 };
+  const nx = vx / total, ny = vy / total;
+  if (speaking) {
+    baseVx += (nx - baseVx) * 0.002;
+    baseVy += (ny - baseVy) * 0.002;
+  }
+  const rx = nx - baseVx, ry = ny - baseVy;
+  const mag = Math.sqrt(rx * rx + ry * ry);
+  return { angle: Math.atan2(ry, rx), concentration: Math.min(1, mag * 5) };
+}
+
+function freqToHue(freq) {
+  const lo = 80, hi = 900;
+  const t = Math.max(0, Math.min(1, (freq - lo) / (hi - lo)));
+  return t * 270;
+}
+
+function hueToCSS(hue, alpha) {
+  return `hsla(${Math.round(hue)},72%,50%,${alpha})`;
+}
+
+function pitchName(freq) {
+  if (freq < 160) return '低音域';
+  if (freq < 320) return '中低音域';
+  if (freq < 520) return '中音域';
+  if (freq < 750) return '中高音域';
+  return '高音域';
+}
+
+function angleName(deg) {
+  const dirs = ['→ 右','↗ 右上','↑ 上','↖ 左上','← 左','↙ 左下','↓ 下','↘ 右下'];
+  const idx = Math.round(((deg % 360) + 360) % 360 / 45) % 8;
+  return dirs[idx];
+}
+
+let currentStroke = [];
+let strokeActive = false;
+let strokeStartTime = 0;
+let strokeDuration = 0;
+let curX, curY;
+let curAngle = 0;
+let curColor = '#999';
+let curThickness = 2;
+let silenceFrames = 0;
+const SILENCE_THRESH = 0.012;
+const SILENCE_TIMEOUT = 14;
+let frame = 0;
+
+curX = W / 2;
+curY = H / 2;
+
+function commitStroke() {
+  if (currentStroke.length < 2) { currentStroke = []; return; }
+  dc.save();
+  dc.lineCap = 'round';
+  dc.lineJoin = 'round';
+  for (let i = 1; i < currentStroke.length; i++) {
+    const a = currentStroke[i - 1], b = currentStroke[i];
+    dc.beginPath();
+    dc.moveTo(a.x, a.y);
+    dc.lineTo(b.x, b.y);
+    dc.strokeStyle = b.color;
+    dc.lineWidth = b.thickness;
+    dc.stroke();
+  }
+  dc.restore();
+  saveSnapshot();
+  currentStroke = [];
+  strokeActive = false;
+  strokeDuration = 0;
+}
+
+function loop() {
+  if (!running) return;
+  requestAnimationFrame(loop);
+  frame++;
+
+  const vol = getVolume();
+  const { freq, strength } = getDominantPitch();
+  const isSpeaking = vol > SILENCE_THRESH && strength > 0.05;
+  const specVec = getSpectrumVector(isSpeaking);
+
+  const vol100 = Math.min(100, Math.round(vol * 280));
+  volumeBar.style.width = vol100 + '%';
+  volumeBar.style.background = vol100 > 72 ? '#D85A30' : vol100 > 42 ? '#FAC775' : '#5DCAA5';
+
+  if (isSpeaking) {
+    silenceFrames = 0;
+    if (!strokeActive) {
+      strokeActive = true;
+      strokeStartTime = Date.now();
+      curX = Math.max(30, Math.min(W - 30, curX + (Math.random() - 0.5) * 50));
+      curY = Math.max(30, Math.min(H - 30, curY + (Math.random() - 0.5) * 50));
+      currentStroke.push({ x: curX, y: curY, color: curColor, thickness: curThickness });
+    }
+
+    const hue = freqToHue(freq);
+    curColor = hueToCSS(hue, 0.88);
+    curThickness = Math.max(1.5, Math.min(30, vol * 180));
+    curAngle = specVec.angle;
+    strokeDuration = (Date.now() - strokeStartTime) / 1000;
+
+    const stepLen = Math.max(2, vol * 35 + 2);
+    const spread = Math.PI * (1 - specVec.concentration) * 0.2;
+    const wobble = (Math.random() - 0.5) * spread;
+    const effAngle = curAngle + wobble;
+    curX += Math.cos(effAngle) * stepLen;
+    curY += Math.sin(effAngle) * stepLen;
+    curX = Math.max(6, Math.min(W - 6, curX));
+    curY = Math.max(6, Math.min(H - 6, curY));
+
+    currentStroke.push({ x: curX, y: curY, color: curColor, thickness: curThickness });
+
+    colorSwatch.style.background = curColor;
+    pPitch.textContent = Math.round(freq) + ' Hz';
+    pPitchName.textContent = pitchName(freq);
+    const degDisplay = Math.round(((curAngle * 180 / Math.PI) % 360 + 360) % 360);
+    pDir.textContent = degDisplay + '°';
+    pDirName.textContent = angleName(degDisplay) + '  集中度' + Math.round(specVec.concentration * 100) + '%';
+    pThick.textContent = Math.round(curThickness) + ' px';
+    pLen.textContent = strokeDuration.toFixed(1) + ' 秒';
+  } else {
+    silenceFrames++;
+    if (silenceFrames === SILENCE_TIMEOUT && currentStroke.length > 1) {
+      commitStroke();
+    }
+  }
+
+  oc.clearRect(0, 0, W, H);
+  if (strokeActive && currentStroke.length > 0) {
+    const last = currentStroke[currentStroke.length - 1];
+    oc.save();
+    oc.beginPath();
+    oc.arc(last.x, last.y, curThickness / 2 + 5, 0, Math.PI * 2);
+    oc.strokeStyle = curColor;
+    oc.lineWidth = 1.5;
+    oc.stroke();
+    const ex = last.x + Math.cos(curAngle) * 28;
+    const ey = last.y + Math.sin(curAngle) * 28;
+    oc.beginPath();
+    oc.moveTo(last.x, last.y);
+    oc.lineTo(ex, ey);
+    oc.strokeStyle = curColor;
+    oc.lineWidth = 1;
+    oc.setLineDash([3, 3]);
+    oc.stroke();
+    oc.setLineDash([]);
+    oc.restore();
+  }
+
+  if (frame % 30 === 0 && currentStroke.length > 1) {
+    dc.save();
+    dc.lineCap = 'round';
+    dc.lineJoin = 'round';
+    for (let i = 1; i < currentStroke.length; i++) {
+      const a = currentStroke[i - 1], b = currentStroke[i];
+      dc.beginPath();
+      dc.moveTo(a.x, a.y);
+      dc.lineTo(b.x, b.y);
+      dc.strokeStyle = b.color;
+      dc.lineWidth = b.thickness;
+      dc.stroke();
+    }
+    dc.restore();
+    currentStroke = [currentStroke[currentStroke.length - 1]];
+  }
+}
+</script>
+</body>
+</html>

@@ -34,6 +34,7 @@ claude/
     ├── solar-system-3d/
     ├── station-quest/
     ├── task-roulette/
+    ├── voice-painter/
     └── wine-menu/
 ```
 
@@ -189,7 +190,13 @@ claude/
 - **特徴**: アニメーション、データ保存、ランダム選択
 - **ファイル**: [task-roulette.html](apps/task-roulette/task-roulette.html)
 
-### 26. [Wine Menu](apps/wine-menu/)
+### 26. [Voice Painter](apps/voice-painter/)
+- **説明**: 声で絵を描くアプリ。音声のスペクトルをベクトル変換し、方向・色・太さに反映
+- **技術**: HTML5, Web Audio API, Canvas API
+- **特徴**: スペクトルベクトルの角度で進行方向、音量で線の太さ、音程で色を決定。適応的ベースラインで声の個人差を自動補正
+- **ファイル**: [voice-painter.html](apps/voice-painter/voice-painter.html)
+
+### 27. [Wine Menu](apps/wine-menu/)
 - **説明**: ワインメニューをAIで解析・管理するアプリケーション
 - **技術**: React (JSX), Claude AI API
 - **特徴**: 画像認識、自動情報抽出、フィルタリング
@@ -247,6 +254,7 @@ claude/
 - Matrix Camera
 - Mood Pixel Art
 - Task Roulette
+- Voice Painter
 
 ### ユーティリティ
 - Idle Time Tracker
