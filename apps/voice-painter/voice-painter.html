@@ -127,9 +127,12 @@
     padding: 8px 20px; font-size: 14px;
   }
   #toggleBtn.active {
-    background: var(--surface2); color: var(--text);
-    border-color: var(--border); font-weight: 500;
+    background: #fde8e8; color: #b91c1c;
+    border-color: transparent; font-weight: 600;
     padding: 8px 20px; font-size: 14px;
+  }
+  @media (prefers-color-scheme: dark) {
+    #toggleBtn.active { background: #4a1c1c; color: #fca5a5; }
   }
 
   .brush-btn {
