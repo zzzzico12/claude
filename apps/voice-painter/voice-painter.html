@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Voice Painter</title>
-<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -121,9 +120,6 @@
     transition: background 0.12s;
   }
   button:hover { background: var(--surface2); }
-  button:disabled { opacity: 0.4; cursor: default; }
-  button:disabled:hover { background: transparent; }
-
   #toggleBtn {
     background: var(--info-bg); color: var(--info-text);
     border-color: transparent; font-weight: 500;
@@ -152,32 +148,6 @@
 
   #volume-wrap { flex: 1; min-width: 60px; height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
   #volume-bar { height: 5px; width: 0%; background: #5DCAA5; border-radius: 3px; transition: width 0.04s, background 0.1s; }
-
-  #collab-panel {
-    display: none;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 8px;
-    width: 100%;
-    max-width: 800px;
-    background: var(--surface);
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius-md);
-    padding: 12px 14px;
-  }
-  #collab-panel.open { display: flex; }
-  .collab-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text2); flex-wrap: wrap; }
-  #my-peer-id {
-    font-family: 'Courier New', monospace; font-size: 11px;
-    background: var(--surface2); padding: 2px 7px; border-radius: 4px; user-select: all;
-  }
-  #remote-id-input {
-    flex: 1; min-width: 120px; padding: 5px 8px;
-    border: 0.5px solid var(--border); border-radius: 4px;
-    background: var(--surface2); color: var(--text);
-    font-size: 12px; font-family: 'Courier New', monospace; outline: none;
-  }
-  #conn-status { font-size: 11px; color: var(--text3); }
 
   #legend {
     display: flex; gap: 12px; flex-wrap: wrap;
@@ -240,20 +210,6 @@
   <button class="brush-btn" data-mode="ribbon">リボン</button>
   <div style="margin-left:auto;display:flex;gap:6px">
     <button id="saveBtn">PNG保存</button>
-    <button id="collabBtn">共演</button>
-  </div>
-</div>
-
-<div id="collab-panel">
-  <div class="collab-row">
-    <button id="copyLinkBtn" style="padding:5px 14px;font-size:12px">リンクをコピー</button>
-    <div id="conn-status">— リンクを相手に送ってください</div>
-  </div>
-  <div class="collab-row" style="font-size:11px;color:var(--text3);flex-wrap:wrap;gap:6px">
-    ID直接入力：
-    <input id="remote-id-input" placeholder="相手のIDを貼り付け" style="font-size:11px;padding:3px 7px">
-    <button id="connectBtn" style="padding:3px 10px;font-size:11px">接続</button>
-    <code id="my-peer-id" style="margin-left:auto"></code>
   </div>
 </div>
 
@@ -279,7 +235,6 @@ const toggleBtn  = document.getElementById('toggleBtn');
 const clearBtn   = document.getElementById('clearBtn');
 const undoBtn    = document.getElementById('undoBtn');
 const saveBtn    = document.getElementById('saveBtn');
-const collabBtn  = document.getElementById('collabBtn');
 const micDot     = document.getElementById('mic-dot');
 const statusTxt  = document.getElementById('status-txt');
 const colorSwatch= document.getElementById('color-swatch');
@@ -410,85 +365,6 @@ function renderStroke(points, bm) {
   dc.restore();
 }
 
-// ── WebRTC collaboration (PeerJS) ────────────────────────────
-let peer = null, conn = null, remoteStroke = [];
-const connStatus  = document.getElementById('conn-status');
-const myPeerIdEl  = document.getElementById('my-peer-id');
-
-function sendRemote(data) {
-  if (conn && conn.open) conn.send(data);
-}
-
-function handleRemoteData(data) {
-  if (data.type === 'point') {
-    if (data.bm === 'splatter') {
-      renderStroke([data.p], 'splatter');
-    } else {
-      remoteStroke.push(data.p);
-      if (remoteStroke.length > 1) {
-        renderStroke(remoteStroke.slice(-2), data.bm);
-      }
-    }
-  } else if (data.type === 'commit') {
-    if (data.bm !== 'splatter') renderStroke(data.points, data.bm);
-    saveSnapshot(); remoteStroke = [];
-  } else if (data.type === 'clear') {
-    dc.fillStyle = bgColor(); dc.fillRect(0, 0, W, H);
-  }
-}
-
-function setupConn(c) {
-  conn = c;
-  conn.on('open', () => {
-    connStatus.textContent = '接続済み ✓';
-    connStatus.style.color = '#4CAF50';
-  });
-  conn.on('data', handleRemoteData);
-  conn.on('close', () => { connStatus.textContent = '切断されました'; connStatus.style.color = ''; conn = null; });
-  conn.on('error', () => { connStatus.textContent = '接続エラー'; conn = null; });
-}
-
-function initPeer() {
-  if (peer) return;
-  peer = new Peer();
-  peer.on('open', id => {
-    myPeerIdEl.textContent = id;
-    const target = location.hash.slice(1);
-    if (target && target !== id) {
-      connStatus.textContent = '接続中...';
-      setupConn(peer.connect(target, { reliable: true }));
-    } else {
-      connStatus.textContent = '— リンクを相手に送ってください';
-    }
-  });
-  peer.on('connection', c => setupConn(c));
-  peer.on('error', e => { connStatus.textContent = 'PeerJSエラー: ' + e.type; });
-}
-
-collabBtn.addEventListener('click', () => {
-  const panel = document.getElementById('collab-panel');
-  panel.classList.toggle('open');
-  if (panel.classList.contains('open')) initPeer();
-});
-document.getElementById('copyLinkBtn').addEventListener('click', () => {
-  const url = location.href.split('#')[0] + '#' + myPeerIdEl.textContent;
-  navigator.clipboard.writeText(url).catch(() => {});
-  const btn = document.getElementById('copyLinkBtn');
-  btn.textContent = 'コピーしました！';
-  setTimeout(() => { btn.textContent = 'リンクをコピー'; }, 2000);
-});
-document.getElementById('connectBtn').addEventListener('click', () => {
-  const id = document.getElementById('remote-id-input').value.trim();
-  if (!id || !peer) return;
-  connStatus.textContent = '接続中...';
-  setupConn(peer.connect(id, { reliable: true }));
-});
-
-if (location.hash.slice(1)) {
-  document.getElementById('collab-panel').classList.add('open');
-  initPeer();
-}
-
 // ── Audio ────────────────────────────────────────────────────
 toggleBtn.addEventListener('click', async () => {
   if (!running) {
@@ -528,7 +404,6 @@ toggleBtn.addEventListener('click', async () => {
 clearBtn.addEventListener('click', () => {
   saveSnapshot();
   dc.fillStyle = bgColor(); dc.fillRect(0, 0, W, H);
-  sendRemote({ type: 'clear' });
 });
 
 undoBtn.addEventListener('click', () => {
@@ -610,7 +485,6 @@ curX = W / 2; curY = H / 2;
 function commitStroke() {
   if (currentStroke.length < 2) { currentStroke = []; return; }
   if (brushMode !== 'splatter') renderStroke(currentStroke, brushMode);
-  sendRemote({ type: 'commit', points: currentStroke, bm: brushMode });
   saveSnapshot();
   currentStroke = []; strokeActive = false; strokeDuration = 0;
 }
@@ -666,10 +540,8 @@ function loop() {
       }
       dc.restore();
       currentStroke.push(pt);
-      sendRemote({ type: 'point', p: pt, bm: brushMode });
     } else {
       currentStroke.push(pt);
-      sendRemote({ type: 'point', p: pt, bm: brushMode });
     }
 
     colorSwatch.style.background = curColor;
