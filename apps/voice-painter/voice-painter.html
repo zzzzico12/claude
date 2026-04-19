@@ -235,9 +235,9 @@
 <div id="tool-row">
   <span class="tool-label">ブラシ</span>
   <button class="brush-btn active" data-mode="line">線</button>
-  <button class="brush-btn" data-mode="dots">点</button>
+  <button class="brush-btn" data-mode="glow">グロー</button>
   <button class="brush-btn" data-mode="splatter">飛沫</button>
-  <button class="brush-btn" data-mode="calligraphy">筆</button>
+  <button class="brush-btn" data-mode="ribbon">リボン</button>
   <div style="margin-left:auto;display:flex;gap:6px">
     <button id="saveBtn">PNG保存</button>
     <button id="collabBtn">共演</button>
@@ -346,10 +346,45 @@ function renderStroke(points, bm) {
       dc.beginPath(); dc.moveTo(a.x, a.y); dc.lineTo(b.x, b.y);
       dc.strokeStyle = b.color; dc.lineWidth = b.thickness; dc.stroke();
     }
-  } else if (bm === 'dots') {
-    for (const p of points) {
-      dc.beginPath(); dc.arc(p.x, p.y, Math.max(0.5, p.thickness / 2), 0, Math.PI * 2);
-      dc.fillStyle = p.color; dc.fill();
+  } else if (bm === 'glow') {
+    const layers = [
+      { mult: 7,   alpha: 0.03 },
+      { mult: 3.5, alpha: 0.07 },
+      { mult: 2,   alpha: 0.15 },
+      { mult: 1,   alpha: 0.9  },
+    ];
+    for (let i = 1; i < points.length; i++) {
+      const a = points[i-1], b = points[i];
+      for (const { mult, alpha } of layers) {
+        dc.beginPath(); dc.moveTo(a.x, a.y); dc.lineTo(b.x, b.y);
+        dc.strokeStyle = withAlpha(b.color, alpha);
+        dc.lineWidth = b.thickness * mult;
+        dc.stroke();
+      }
+    }
+  } else if (bm === 'ribbon') {
+    for (let i = 1; i < points.length; i++) {
+      const a = points[i-1], b = points[i];
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const len = Math.sqrt(dx*dx + dy*dy) || 1;
+      const nx = -dy/len, ny = dx/len;
+      const hw = Math.max(2, b.thickness * 0.8);
+      const grad = dc.createLinearGradient(
+        b.x + nx*hw, b.y + ny*hw, b.x - nx*hw, b.y - ny*hw
+      );
+      grad.addColorStop(0,    withAlpha(b.color, 0.15));
+      grad.addColorStop(0.25, withAlpha(b.color, 0.85));
+      grad.addColorStop(0.5,  withAlpha(b.color, 1.0));
+      grad.addColorStop(0.75, withAlpha(b.color, 0.85));
+      grad.addColorStop(1,    withAlpha(b.color, 0.15));
+      dc.beginPath();
+      dc.moveTo(a.x + nx*hw, a.y + ny*hw);
+      dc.lineTo(b.x + nx*hw, b.y + ny*hw);
+      dc.lineTo(b.x - nx*hw, b.y - ny*hw);
+      dc.lineTo(a.x - nx*hw, a.y - ny*hw);
+      dc.closePath();
+      dc.fillStyle = grad;
+      dc.fill();
     }
   } else if (bm === 'splatter') {
     for (const p of points) {
@@ -543,6 +578,10 @@ function getSpectrumVector(speaking) {
   const rx = nx - baseVx, ry = ny - baseVy;
   const mag = Math.sqrt(rx * rx + ry * ry);
   return { angle: Math.atan2(ry, rx), concentration: Math.min(1, mag * 5) };
+}
+
+function withAlpha(color, alpha) {
+  return color.replace(/[\d.]+\)$/, alpha + ')');
 }
 
 function freqToHue(freq) {
