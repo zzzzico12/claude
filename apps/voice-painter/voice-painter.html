@@ -123,17 +123,22 @@
   button:hover { background: var(--surface2); }
   #toggleBtn {
     background: var(--info-bg); color: var(--info-text);
-    border-color: transparent; font-weight: 500;
+    border-color: transparent; font-weight: 600;
+    padding: 8px 20px; font-size: 14px;
   }
   #toggleBtn.active {
     background: var(--surface2); color: var(--text);
-    border-color: var(--border); font-weight: 400;
+    border-color: var(--border); font-weight: 500;
+    padding: 8px 20px; font-size: 14px;
   }
 
-  .brush-btn { padding: 5px 11px; font-size: 12px; }
+  .brush-btn {
+    padding: 6px 13px; font-size: 12px;
+    background: var(--surface); border-color: var(--border);
+  }
   .brush-btn.active {
     background: var(--info-bg); color: var(--info-text);
-    border-color: transparent; font-weight: 500;
+    border-color: transparent; font-weight: 600;
   }
 
   #mic-status {
