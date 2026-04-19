@@ -262,16 +262,15 @@
 
 <div id="collab-panel">
   <div class="collab-row">
-    <span>あなたのID：</span>
-    <code id="my-peer-id">接続中...</code>
-    <button id="copyIdBtn" style="padding:3px 10px;font-size:11px">コピー</button>
+    <button id="copyLinkBtn" style="padding:5px 14px;font-size:12px">リンクをコピー</button>
+    <div id="conn-status">— リンクを相手に送ってください</div>
   </div>
-  <div class="collab-row">
-    <span>相手のID：</span>
-    <input id="remote-id-input" placeholder="相手のIDを貼り付け">
-    <button id="connectBtn" style="padding:5px 12px;font-size:12px">接続</button>
+  <div class="collab-row" style="font-size:11px;color:var(--text3);flex-wrap:wrap;gap:6px">
+    ID直接入力：
+    <input id="remote-id-input" placeholder="相手のIDを貼り付け" style="font-size:11px;padding:3px 7px">
+    <button id="connectBtn" style="padding:3px 10px;font-size:11px">接続</button>
+    <code id="my-peer-id" style="margin-left:auto"></code>
   </div>
-  <div id="conn-status">未接続 — IDを相手に伝えてください</div>
 </div>
 
 <div id="legend">
@@ -470,22 +469,33 @@ function setupConn(c) {
 }
 
 function initPeer() {
+  if (peer) return;
   peer = new Peer();
   peer.on('open', id => {
     myPeerIdEl.textContent = id;
-    connStatus.textContent = 'IDを相手に伝えて接続を待ちます';
+    const target = location.hash.slice(1);
+    if (target && target !== id) {
+      connStatus.textContent = '接続中...';
+      setupConn(peer.connect(target, { reliable: true }));
+    } else {
+      connStatus.textContent = '— リンクを相手に送ってください';
+    }
   });
   peer.on('connection', c => setupConn(c));
-  peer.on('error', e => { connStatus.textContent = 'PeerJSエラー: ' + e.type; myPeerIdEl.textContent = '失敗'; });
+  peer.on('error', e => { connStatus.textContent = 'PeerJSエラー: ' + e.type; });
 }
 
 collabBtn.addEventListener('click', () => {
   const panel = document.getElementById('collab-panel');
   panel.classList.toggle('open');
-  if (panel.classList.contains('open') && !peer) initPeer();
+  if (panel.classList.contains('open')) initPeer();
 });
-document.getElementById('copyIdBtn').addEventListener('click', () => {
-  navigator.clipboard.writeText(myPeerIdEl.textContent).catch(() => {});
+document.getElementById('copyLinkBtn').addEventListener('click', () => {
+  const url = location.href.split('#')[0] + '#' + myPeerIdEl.textContent;
+  navigator.clipboard.writeText(url).catch(() => {});
+  const btn = document.getElementById('copyLinkBtn');
+  btn.textContent = 'コピーしました！';
+  setTimeout(() => { btn.textContent = 'リンクをコピー'; }, 2000);
 });
 document.getElementById('connectBtn').addEventListener('click', () => {
   const id = document.getElementById('remote-id-input').value.trim();
@@ -493,6 +503,11 @@ document.getElementById('connectBtn').addEventListener('click', () => {
   connStatus.textContent = '接続中...';
   setupConn(peer.connect(id, { reliable: true }));
 });
+
+if (location.hash.slice(1)) {
+  document.getElementById('collab-panel').classList.add('open');
+  initPeer();
+}
 
 // ── Audio ────────────────────────────────────────────────────
 toggleBtn.addEventListener('click', async () => {
