@@ -70,20 +70,6 @@
     pointer-events: none;
   }
 
-  #replay-indicator {
-    position: absolute;
-    top: 10px; left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0,0,0,0.55);
-    color: #fff;
-    font-size: 12px;
-    padding: 4px 14px;
-    border-radius: 20px;
-    display: none;
-    pointer-events: none;
-    white-space: nowrap;
-  }
-
   #params {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -210,7 +196,6 @@
 <div id="canvas-wrap">
   <canvas id="draw-canvas"></canvas>
   <canvas id="overlay-canvas"></canvas>
-  <div id="replay-indicator">▶ リプレイ中</div>
 </div>
 
 <div id="params">
@@ -255,7 +240,6 @@
   <button class="brush-btn" data-mode="calligraphy">筆</button>
   <div style="margin-left:auto;display:flex;gap:6px">
     <button id="saveBtn">PNG保存</button>
-    <button id="replayBtn" disabled>リプレイ</button>
     <button id="collabBtn">共演</button>
   </div>
 </div>
@@ -295,7 +279,6 @@ const toggleBtn  = document.getElementById('toggleBtn');
 const clearBtn   = document.getElementById('clearBtn');
 const undoBtn    = document.getElementById('undoBtn');
 const saveBtn    = document.getElementById('saveBtn');
-const replayBtn  = document.getElementById('replayBtn');
 const collabBtn  = document.getElementById('collabBtn');
 const micDot     = document.getElementById('mic-dot');
 const statusTxt  = document.getElementById('status-txt');
@@ -307,7 +290,6 @@ const pDirName   = document.getElementById('p-dir-name');
 const pThick     = document.getElementById('p-thick');
 const pLen       = document.getElementById('p-len');
 const volumeBar  = document.getElementById('volume-bar');
-const replayIndicator = document.getElementById('replay-indicator');
 
 let W, H;
 
@@ -392,43 +374,6 @@ function renderStroke(points, bm) {
   }
   dc.restore();
 }
-
-// ── Replay ───────────────────────────────────────────────────
-let replayLog = [];
-let isReplaying = false;
-
-replayBtn.addEventListener('click', () => {
-  if (isReplaying || replayLog.length === 0) return;
-  isReplaying = true;
-  replayBtn.disabled = true;
-  replayIndicator.style.display = 'block';
-
-  dc.fillStyle = bgColor(); dc.fillRect(0, 0, W, H);
-
-  const minT = replayLog[0].points[0].t;
-  const maxT = replayLog[replayLog.length - 1].points.at(-1).t;
-  const totalMs = Math.max(1, maxT - minT);
-  const speed = totalMs / Math.min(20000, totalMs);
-
-  const start = Date.now();
-  let idx = 0;
-
-  (function tick() {
-    const elapsed = (Date.now() - start) * speed;
-    while (idx < replayLog.length && replayLog[idx].points[0].t - minT <= elapsed) {
-      const s = replayLog[idx++];
-      renderStroke(s.points, s.brushMode);
-    }
-    if (idx < replayLog.length) {
-      requestAnimationFrame(tick);
-    } else {
-      isReplaying = false;
-      replayBtn.disabled = false;
-      replayIndicator.style.display = 'none';
-      saveSnapshot();
-    }
-  })();
-});
 
 // ── WebRTC collaboration (PeerJS) ────────────────────────────
 let peer = null, conn = null, remoteStroke = [];
@@ -548,7 +493,6 @@ toggleBtn.addEventListener('click', async () => {
 clearBtn.addEventListener('click', () => {
   saveSnapshot();
   dc.fillStyle = bgColor(); dc.fillRect(0, 0, W, H);
-  replayLog = []; replayBtn.disabled = true;
   sendRemote({ type: 'clear' });
 });
 
@@ -627,10 +571,6 @@ curX = W / 2; curY = H / 2;
 function commitStroke() {
   if (currentStroke.length < 2) { currentStroke = []; return; }
   if (brushMode !== 'splatter') renderStroke(currentStroke, brushMode);
-  if (replayLog.length < 400) {
-    replayLog.push({ points: currentStroke.map(p => ({ ...p })), brushMode });
-    replayBtn.disabled = false;
-  }
   sendRemote({ type: 'commit', points: currentStroke, bm: brushMode });
   saveSnapshot();
   currentStroke = []; strokeActive = false; strokeDuration = 0;
@@ -657,7 +597,7 @@ function loop() {
       strokeStartTime = Date.now();
       curX = Math.max(30, Math.min(W - 30, curX + (Math.random() - 0.5) * 50));
       curY = Math.max(30, Math.min(H - 30, curY + (Math.random() - 0.5) * 50));
-      currentStroke.push({ x: curX, y: curY, color: curColor, thickness: curThickness, t: Date.now() });
+      currentStroke.push({ x: curX, y: curY, color: curColor, thickness: curThickness });
     }
 
     const hue = freqToHue(freq);
@@ -673,7 +613,7 @@ function loop() {
     curX = Math.max(6, Math.min(W - 6, curX));
     curY = Math.max(6, Math.min(H - 6, curY));
 
-    const pt = { x: curX, y: curY, color: curColor, thickness: curThickness, t: Date.now() };
+    const pt = { x: curX, y: curY, color: curColor, thickness: curThickness };
 
     if (brushMode === 'splatter') {
       const n = Math.round(vol * 14) + 2;
