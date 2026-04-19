@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>声で絵を描く — Voice Painter</title>
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -47,12 +48,7 @@
     gap: 0;
   }
 
-  h1 {
-    font-size: 18px;
-    font-weight: 500;
-    margin-bottom: 16px;
-    color: var(--text);
-  }
+  h1 { font-size: 18px; font-weight: 500; margin-bottom: 16px; }
 
   #canvas-wrap {
     position: relative;
@@ -64,11 +60,7 @@
     max-width: 800px;
   }
 
-  #draw-canvas {
-    display: block;
-    width: 100%;
-    background: #fafaf8;
-  }
+  #draw-canvas { display: block; width: 100%; background: #fafaf8; }
 
   #overlay-canvas {
     display: block;
@@ -76,6 +68,20 @@
     top: 0; left: 0;
     width: 100%; height: 100%;
     pointer-events: none;
+  }
+
+  #replay-indicator {
+    position: absolute;
+    top: 10px; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    font-size: 12px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    display: none;
+    pointer-events: none;
+    white-space: nowrap;
   }
 
   #params {
@@ -86,10 +92,7 @@
     width: 100%;
     max-width: 800px;
   }
-
-  @media (max-width: 500px) {
-    #params { grid-template-columns: repeat(2, 1fr); }
-  }
+  @media (max-width: 500px) { #params { grid-template-columns: repeat(2, 1fr); } }
 
   .param-card {
     background: var(--surface);
@@ -97,43 +100,17 @@
     border: 0.5px solid var(--border);
     padding: 10px 12px;
   }
-
-  .param-label {
-    font-size: 11px;
-    color: var(--text3);
-    margin-bottom: 5px;
-    letter-spacing: 0.02em;
-  }
-
-  .param-row {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-
-  .param-val {
-    font-size: 17px;
-    font-weight: 500;
-    color: var(--text);
-    line-height: 1;
-  }
-
-  .param-sub {
-    font-size: 11px;
-    color: var(--text3);
-    margin-top: 3px;
-  }
-
+  .param-label { font-size: 11px; color: var(--text3); margin-bottom: 5px; letter-spacing: 0.02em; }
+  .param-row { display: flex; align-items: center; gap: 7px; }
+  .param-val { font-size: 17px; font-weight: 500; color: var(--text); line-height: 1; }
+  .param-sub { font-size: 11px; color: var(--text3); margin-top: 3px; }
   #color-swatch {
-    width: 18px; height: 18px;
-    border-radius: 50%;
-    border: 0.5px solid var(--border);
-    flex-shrink: 0;
-    background: #aaa;
-    transition: background 0.1s;
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 0.5px solid var(--border); flex-shrink: 0;
+    background: #aaa; transition: background 0.1s;
   }
 
-  #controls {
+  #controls, #tool-row {
     display: flex;
     gap: 8px;
     margin-top: 10px;
@@ -142,6 +119,9 @@
     width: 100%;
     max-width: 800px;
   }
+  #tool-row { gap: 6px; }
+
+  .tool-label { font-size: 11px; color: var(--text3); padding: 0 2px; }
 
   button {
     padding: 7px 16px;
@@ -154,94 +134,73 @@
     font-family: inherit;
     transition: background 0.12s;
   }
-
   button:hover { background: var(--surface2); }
+  button:disabled { opacity: 0.4; cursor: default; }
+  button:disabled:hover { background: transparent; }
 
   #toggleBtn {
-    background: var(--info-bg);
-    color: var(--info-text);
-    border-color: transparent;
-    font-weight: 500;
+    background: var(--info-bg); color: var(--info-text);
+    border-color: transparent; font-weight: 500;
+  }
+  #toggleBtn.active {
+    background: var(--surface2); color: var(--text);
+    border-color: var(--border); font-weight: 400;
   }
 
-  #toggleBtn.active {
-    background: var(--surface2);
-    color: var(--text);
-    border-color: var(--border);
-    font-weight: 400;
+  .brush-btn { padding: 5px 11px; font-size: 12px; }
+  .brush-btn.active {
+    background: var(--info-bg); color: var(--info-text);
+    border-color: transparent; font-weight: 500;
   }
 
   #mic-status {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    font-size: 12px;
-    color: var(--text2);
-    margin-left: auto;
+    display: flex; align-items: center; gap: 7px;
+    font-size: 12px; color: var(--text2); margin-left: auto;
   }
-
   #mic-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--text3);
-    flex-shrink: 0;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--text3); flex-shrink: 0;
   }
-
-  #mic-dot.on {
-    background: #4CAF50;
-    animation: blink 1s infinite;
-  }
-
+  #mic-dot.on { background: #4CAF50; animation: blink 1s infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 
+  #volume-wrap { flex: 1; min-width: 60px; height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+  #volume-bar { height: 5px; width: 0%; background: #5DCAA5; border-radius: 3px; transition: width 0.04s, background 0.1s; }
+
+  #collab-panel {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+    width: 100%;
+    max-width: 800px;
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+  }
+  #collab-panel.open { display: flex; }
+  .collab-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text2); flex-wrap: wrap; }
+  #my-peer-id {
+    font-family: 'Courier New', monospace; font-size: 11px;
+    background: var(--surface2); padding: 2px 7px; border-radius: 4px; user-select: all;
+  }
+  #remote-id-input {
+    flex: 1; min-width: 120px; padding: 5px 8px;
+    border: 0.5px solid var(--border); border-radius: 4px;
+    background: var(--surface2); color: var(--text);
+    font-size: 12px; font-family: 'Courier New', monospace; outline: none;
+  }
+  #conn-status { font-size: 11px; color: var(--text3); }
+
   #legend {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-top: 10px;
-    width: 100%;
-    max-width: 800px;
+    display: flex; gap: 12px; flex-wrap: wrap;
+    margin-top: 10px; width: 100%; max-width: 800px;
   }
+  .leg { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text3); }
+  .leg-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
-  .leg {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 11px;
-    color: var(--text3);
-  }
-
-  .leg-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  #hint {
-    font-size: 12px;
-    color: var(--text3);
-    margin-top: 10px;
-    width: 100%;
-    max-width: 800px;
-    line-height: 1.6;
-  }
-
-  #volume-wrap {
-    flex: 1;
-    min-width: 60px;
-    height: 5px;
-    background: var(--surface2);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-
-  #volume-bar {
-    height: 5px;
-    width: 0%;
-    background: #5DCAA5;
-    border-radius: 3px;
-    transition: width 0.04s, background 0.1s;
-  }
+  #hint { font-size: 12px; color: var(--text3); margin-top: 10px; width: 100%; max-width: 800px; line-height: 1.6; }
 </style>
 </head>
 <body>
@@ -251,6 +210,7 @@
 <div id="canvas-wrap">
   <canvas id="draw-canvas"></canvas>
   <canvas id="overlay-canvas"></canvas>
+  <div id="replay-indicator">▶ リプレイ中</div>
 </div>
 
 <div id="params">
@@ -287,6 +247,33 @@
   <div id="mic-status"><div id="mic-dot"></div><span id="status-txt">停止中</span></div>
 </div>
 
+<div id="tool-row">
+  <span class="tool-label">ブラシ</span>
+  <button class="brush-btn active" data-mode="line">線</button>
+  <button class="brush-btn" data-mode="dots">点</button>
+  <button class="brush-btn" data-mode="splatter">飛沫</button>
+  <button class="brush-btn" data-mode="calligraphy">筆</button>
+  <div style="margin-left:auto;display:flex;gap:6px">
+    <button id="saveBtn">PNG保存</button>
+    <button id="replayBtn" disabled>リプレイ</button>
+    <button id="collabBtn">共演</button>
+  </div>
+</div>
+
+<div id="collab-panel">
+  <div class="collab-row">
+    <span>あなたのID：</span>
+    <code id="my-peer-id">接続中...</code>
+    <button id="copyIdBtn" style="padding:3px 10px;font-size:11px">コピー</button>
+  </div>
+  <div class="collab-row">
+    <span>相手のID：</span>
+    <input id="remote-id-input" placeholder="相手のIDを貼り付け">
+    <button id="connectBtn" style="padding:5px 12px;font-size:12px">接続</button>
+  </div>
+  <div id="conn-status">未接続 — IDを相手に伝えてください</div>
+</div>
+
 <div id="legend">
   <div class="leg"><div class="leg-dot" style="background:#E24B4A;"></div>低音（赤）</div>
   <div class="leg"><div class="leg-dot" style="background:#EF9F27;"></div>中低音（橙）</div>
@@ -296,7 +283,6 @@
 </div>
 
 <div id="hint">
-  声を出すと線が引かれ、黙ると1本の筆跡として確定されます。<br>
   スペクトルを円にマッピングし、エネルギー重心の向きに進みます。純音=一定方向 / ノイズ=ランダム
 </div>
 
@@ -306,34 +292,38 @@ const overlayCanvas = document.getElementById('overlay-canvas');
 const dc = drawCanvas.getContext('2d');
 const oc = overlayCanvas.getContext('2d');
 
-const toggleBtn = document.getElementById('toggleBtn');
-const clearBtn = document.getElementById('clearBtn');
-const undoBtn = document.getElementById('undoBtn');
-const micDot = document.getElementById('mic-dot');
-const statusTxt = document.getElementById('status-txt');
-const colorSwatch = document.getElementById('color-swatch');
-const pPitch = document.getElementById('p-pitch');
+const toggleBtn  = document.getElementById('toggleBtn');
+const clearBtn   = document.getElementById('clearBtn');
+const undoBtn    = document.getElementById('undoBtn');
+const saveBtn    = document.getElementById('saveBtn');
+const replayBtn  = document.getElementById('replayBtn');
+const collabBtn  = document.getElementById('collabBtn');
+const micDot     = document.getElementById('mic-dot');
+const statusTxt  = document.getElementById('status-txt');
+const colorSwatch= document.getElementById('color-swatch');
+const pPitch     = document.getElementById('p-pitch');
 const pPitchName = document.getElementById('p-pitch-name');
-const pDir = document.getElementById('p-dir');
-const pDirName = document.getElementById('p-dir-name');
-const pThick = document.getElementById('p-thick');
-const pLen = document.getElementById('p-len');
-const volumeBar = document.getElementById('volume-bar');
+const pDir       = document.getElementById('p-dir');
+const pDirName   = document.getElementById('p-dir-name');
+const pThick     = document.getElementById('p-thick');
+const pLen       = document.getElementById('p-len');
+const volumeBar  = document.getElementById('volume-bar');
+const replayIndicator = document.getElementById('replay-indicator');
 
 let W, H;
+
+function bgColor() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? '#1a1a18' : '#fafaf8';
+}
 
 function resize() {
   const wrap = document.getElementById('canvas-wrap');
   W = wrap.clientWidth;
   H = Math.round(W * 0.56);
-  drawCanvas.width = W;
-  drawCanvas.height = H;
-  overlayCanvas.width = W;
-  overlayCanvas.height = H;
-  dc.fillStyle = window.matchMedia('(prefers-color-scheme: dark)').matches ? '#1a1a18' : '#fafaf8';
-  dc.fillRect(0, 0, W, H);
+  drawCanvas.width = W; drawCanvas.height = H;
+  overlayCanvas.width = W; overlayCanvas.height = H;
+  dc.fillStyle = bgColor(); dc.fillRect(0, 0, W, H);
 }
-
 resize();
 window.addEventListener('resize', () => { resize(); snapshots = [drawCanvas.toDataURL()]; });
 
@@ -346,20 +336,165 @@ function saveSnapshot() {
   if (snapshots.length > 40) snapshots.shift();
 }
 
-clearBtn.addEventListener('click', () => {
-  saveSnapshot();
-  dc.fillStyle = window.matchMedia('(prefers-color-scheme: dark)').matches ? '#1a1a18' : '#fafaf8';
-  dc.fillRect(0, 0, W, H);
+// ── Brush mode ──────────────────────────────────────────────
+let brushMode = 'line';
+document.querySelectorAll('.brush-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.brush-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    brushMode = btn.dataset.mode;
+  });
 });
 
-undoBtn.addEventListener('click', () => {
-  if (snapshots.length < 2) return;
-  snapshots.pop();
-  const img = new Image();
-  img.onload = () => { dc.clearRect(0, 0, W, H); dc.drawImage(img, 0, 0); };
-  img.src = snapshots[snapshots.length - 1];
+// ── PNG Save ─────────────────────────────────────────────────
+saveBtn.addEventListener('click', () => {
+  const link = document.createElement('a');
+  link.download = 'voice-painting-' + new Date().toISOString().slice(0, 10) + '.png';
+  link.href = drawCanvas.toDataURL('image/png');
+  link.click();
 });
 
+// ── Render stroke (shared by local / replay / remote) ────────
+function renderStroke(points, bm) {
+  if (!points || points.length < 2) return;
+  dc.save();
+  dc.lineCap = 'round'; dc.lineJoin = 'round';
+  if (bm === 'line') {
+    for (let i = 1; i < points.length; i++) {
+      const a = points[i-1], b = points[i];
+      dc.beginPath(); dc.moveTo(a.x, a.y); dc.lineTo(b.x, b.y);
+      dc.strokeStyle = b.color; dc.lineWidth = b.thickness; dc.stroke();
+    }
+  } else if (bm === 'dots') {
+    for (const p of points) {
+      dc.beginPath(); dc.arc(p.x, p.y, Math.max(0.5, p.thickness / 2), 0, Math.PI * 2);
+      dc.fillStyle = p.color; dc.fill();
+    }
+  } else if (bm === 'splatter') {
+    for (const p of points) {
+      const n = Math.round((p.thickness / 30) * 14) + 2;
+      for (let k = 0; k < n; k++) {
+        const r = Math.random() * p.thickness * 2.5;
+        const a = Math.random() * Math.PI * 2;
+        const sr = Math.random() * p.thickness * 0.35 + 0.5;
+        dc.beginPath(); dc.arc(p.x + Math.cos(a)*r, p.y + Math.sin(a)*r, sr, 0, Math.PI*2);
+        dc.fillStyle = p.color; dc.fill();
+      }
+    }
+  } else if (bm === 'calligraphy') {
+    for (let i = 1; i < points.length; i++) {
+      const a = points[i-1], b = points[i];
+      const angle = Math.atan2(b.y - a.y, b.x - a.x);
+      dc.save(); dc.translate(b.x, b.y); dc.rotate(angle);
+      dc.beginPath();
+      dc.ellipse(0, 0, Math.max(1, b.thickness * 0.65), Math.max(0.5, b.thickness * 0.14 + 0.5), 0, 0, Math.PI * 2);
+      dc.fillStyle = b.color; dc.fill(); dc.restore();
+    }
+  }
+  dc.restore();
+}
+
+// ── Replay ───────────────────────────────────────────────────
+let replayLog = [];
+let isReplaying = false;
+
+replayBtn.addEventListener('click', () => {
+  if (isReplaying || replayLog.length === 0) return;
+  isReplaying = true;
+  replayBtn.disabled = true;
+  replayIndicator.style.display = 'block';
+
+  dc.fillStyle = bgColor(); dc.fillRect(0, 0, W, H);
+
+  const minT = replayLog[0].points[0].t;
+  const maxT = replayLog[replayLog.length - 1].points.at(-1).t;
+  const totalMs = Math.max(1, maxT - minT);
+  const speed = totalMs / Math.min(20000, totalMs);
+
+  const start = Date.now();
+  let idx = 0;
+
+  (function tick() {
+    const elapsed = (Date.now() - start) * speed;
+    while (idx < replayLog.length && replayLog[idx].points[0].t - minT <= elapsed) {
+      const s = replayLog[idx++];
+      renderStroke(s.points, s.brushMode);
+    }
+    if (idx < replayLog.length) {
+      requestAnimationFrame(tick);
+    } else {
+      isReplaying = false;
+      replayBtn.disabled = false;
+      replayIndicator.style.display = 'none';
+      saveSnapshot();
+    }
+  })();
+});
+
+// ── WebRTC collaboration (PeerJS) ────────────────────────────
+let peer = null, conn = null, remoteStroke = [];
+const connStatus  = document.getElementById('conn-status');
+const myPeerIdEl  = document.getElementById('my-peer-id');
+
+function sendRemote(data) {
+  if (conn && conn.open) conn.send(data);
+}
+
+function handleRemoteData(data) {
+  if (data.type === 'point') {
+    if (data.bm === 'splatter') {
+      renderStroke([data.p], 'splatter');
+    } else {
+      remoteStroke.push(data.p);
+      if (remoteStroke.length > 1) {
+        renderStroke(remoteStroke.slice(-2), data.bm);
+      }
+    }
+  } else if (data.type === 'commit') {
+    if (data.bm !== 'splatter') renderStroke(data.points, data.bm);
+    saveSnapshot(); remoteStroke = [];
+  } else if (data.type === 'clear') {
+    dc.fillStyle = bgColor(); dc.fillRect(0, 0, W, H);
+  }
+}
+
+function setupConn(c) {
+  conn = c;
+  conn.on('open', () => {
+    connStatus.textContent = '接続済み ✓';
+    connStatus.style.color = '#4CAF50';
+  });
+  conn.on('data', handleRemoteData);
+  conn.on('close', () => { connStatus.textContent = '切断されました'; connStatus.style.color = ''; conn = null; });
+  conn.on('error', () => { connStatus.textContent = '接続エラー'; conn = null; });
+}
+
+function initPeer() {
+  peer = new Peer();
+  peer.on('open', id => {
+    myPeerIdEl.textContent = id;
+    connStatus.textContent = 'IDを相手に伝えて接続を待ちます';
+  });
+  peer.on('connection', c => setupConn(c));
+  peer.on('error', e => { connStatus.textContent = 'PeerJSエラー: ' + e.type; myPeerIdEl.textContent = '失敗'; });
+}
+
+collabBtn.addEventListener('click', () => {
+  const panel = document.getElementById('collab-panel');
+  panel.classList.toggle('open');
+  if (panel.classList.contains('open') && !peer) initPeer();
+});
+document.getElementById('copyIdBtn').addEventListener('click', () => {
+  navigator.clipboard.writeText(myPeerIdEl.textContent).catch(() => {});
+});
+document.getElementById('connectBtn').addEventListener('click', () => {
+  const id = document.getElementById('remote-id-input').value.trim();
+  if (!id || !peer) return;
+  connStatus.textContent = '接続中...';
+  setupConn(peer.connect(id, { reliable: true }));
+});
+
+// ── Audio ────────────────────────────────────────────────────
 toggleBtn.addEventListener('click', async () => {
   if (!running) {
     try {
@@ -377,8 +512,7 @@ toggleBtn.addEventListener('click', async () => {
       statusTxt.textContent = '収音中';
       toggleBtn.textContent = '停止';
       toggleBtn.classList.add('active');
-      curX = W / 2;
-      curY = H / 2;
+      curX = W / 2; curY = H / 2;
       loop();
     } catch (e) {
       statusTxt.textContent = 'マイク許可が必要です';
@@ -394,6 +528,21 @@ toggleBtn.addEventListener('click', async () => {
     oc.clearRect(0, 0, W, H);
     if (currentStroke.length > 1) commitStroke();
   }
+});
+
+clearBtn.addEventListener('click', () => {
+  saveSnapshot();
+  dc.fillStyle = bgColor(); dc.fillRect(0, 0, W, H);
+  replayLog = []; replayBtn.disabled = true;
+  sendRemote({ type: 'clear' });
+});
+
+undoBtn.addEventListener('click', () => {
+  if (snapshots.length < 2) return;
+  snapshots.pop();
+  const img = new Image();
+  img.onload = () => { dc.clearRect(0, 0, W, H); dc.drawImage(img, 0, 0); };
+  img.src = snapshots[snapshots.length - 1];
 });
 
 function getVolume() {
@@ -412,12 +561,10 @@ function getDominantPitch() {
   for (let i = lo; i < hi; i++) {
     if (dataFreq[i] > maxVal) { maxVal = dataFreq[i]; maxIdx = i; }
   }
-  const freq = maxIdx / dataFreq.length * nyq;
-  return { freq, strength: maxVal / 255 };
+  return { freq: maxIdx / dataFreq.length * nyq, strength: maxVal / 255 };
 }
 
 let baseVx = 0, baseVy = 0;
-
 function getSpectrumVector(speaking) {
   analyser.getByteFrequencyData(dataFreq);
   const nyq = audioCtx.sampleRate / 2;
@@ -429,80 +576,49 @@ function getSpectrumVector(speaking) {
     const t = Math.log(hz / loHz) / Math.log(hiHz / loHz);
     const angle = t * Math.PI * 2;
     const energy = dataFreq[i] / 255;
-    vx += Math.cos(angle) * energy;
-    vy += Math.sin(angle) * energy;
-    total += energy;
+    vx += Math.cos(angle) * energy; vy += Math.sin(angle) * energy; total += energy;
   }
   if (total < 0.01) return { angle: 0, concentration: 0 };
   const nx = vx / total, ny = vy / total;
-  if (speaking) {
-    baseVx += (nx - baseVx) * 0.002;
-    baseVy += (ny - baseVy) * 0.002;
-  }
+  if (speaking) { baseVx += (nx - baseVx) * 0.002; baseVy += (ny - baseVy) * 0.002; }
   const rx = nx - baseVx, ry = ny - baseVy;
   const mag = Math.sqrt(rx * rx + ry * ry);
   return { angle: Math.atan2(ry, rx), concentration: Math.min(1, mag * 5) };
 }
 
 function freqToHue(freq) {
-  const lo = 80, hi = 900;
-  const t = Math.max(0, Math.min(1, (freq - lo) / (hi - lo)));
-  return t * 270;
+  return Math.max(0, Math.min(1, (freq - 80) / (900 - 80))) * 270;
 }
-
-function hueToCSS(hue, alpha) {
-  return `hsla(${Math.round(hue)},72%,50%,${alpha})`;
-}
-
+function hueToCSS(hue, alpha) { return `hsla(${Math.round(hue)},72%,50%,${alpha})`; }
 function pitchName(freq) {
-  if (freq < 160) return '低音域';
-  if (freq < 320) return '中低音域';
-  if (freq < 520) return '中音域';
-  if (freq < 750) return '中高音域';
-  return '高音域';
+  if (freq < 160) return '低音域'; if (freq < 320) return '中低音域';
+  if (freq < 520) return '中音域';  if (freq < 750) return '中高音域'; return '高音域';
 }
-
 function angleName(deg) {
   const dirs = ['→ 右','↗ 右上','↑ 上','↖ 左上','← 左','↙ 左下','↓ 下','↘ 右下'];
-  const idx = Math.round(((deg % 360) + 360) % 360 / 45) % 8;
-  return dirs[idx];
+  return dirs[Math.round(((deg % 360) + 360) % 360 / 45) % 8];
 }
 
-let currentStroke = [];
-let strokeActive = false;
-let strokeStartTime = 0;
-let strokeDuration = 0;
-let curX, curY;
-let curAngle = 0;
-let curColor = '#999';
-let curThickness = 2;
+let currentStroke = [], strokeActive = false;
+let strokeStartTime = 0, strokeDuration = 0;
+let curX = 0, curY = 0, curAngle = 0;
+let curColor = '#999', curThickness = 2;
 let silenceFrames = 0;
-const SILENCE_THRESH = 0.012;
-const SILENCE_TIMEOUT = 14;
+const SILENCE_THRESH = 0.012, SILENCE_TIMEOUT = 14;
 let frame = 0;
 
-curX = W / 2;
-curY = H / 2;
+curX = W / 2; curY = H / 2;
 
 function commitStroke() {
   if (currentStroke.length < 2) { currentStroke = []; return; }
-  dc.save();
-  dc.lineCap = 'round';
-  dc.lineJoin = 'round';
-  for (let i = 1; i < currentStroke.length; i++) {
-    const a = currentStroke[i - 1], b = currentStroke[i];
-    dc.beginPath();
-    dc.moveTo(a.x, a.y);
-    dc.lineTo(b.x, b.y);
-    dc.strokeStyle = b.color;
-    dc.lineWidth = b.thickness;
-    dc.stroke();
+  if (brushMode !== 'splatter') renderStroke(currentStroke, brushMode);
+  if (replayLog.length < 400) {
+    replayLog.push({ points: currentStroke.map(p => ({ ...p })), brushMode });
+    replayBtn.disabled = false;
   }
-  dc.restore();
+  sendRemote({ type: 'commit', points: currentStroke, bm: brushMode });
   saveSnapshot();
-  currentStroke = [];
-  strokeActive = false;
-  strokeDuration = 0;
+  currentStroke = []; strokeActive = false; strokeDuration = 0;
 }
 
 function loop() {
@@ -526,7 +642,7 @@ function loop() {
       strokeStartTime = Date.now();
       curX = Math.max(30, Math.min(W - 30, curX + (Math.random() - 0.5) * 50));
       curY = Math.max(30, Math.min(H - 30, curY + (Math.random() - 0.5) * 50));
-      currentStroke.push({ x: curX, y: curY, color: curColor, thickness: curThickness });
+      currentStroke.push({ x: curX, y: curY, color: curColor, thickness: curThickness, t: Date.now() });
     }
 
     const hue = freqToHue(freq);
@@ -537,66 +653,60 @@ function loop() {
 
     const stepLen = Math.max(2, vol * 35 + 2);
     const spread = Math.PI * (1 - specVec.concentration) * 0.2;
-    const wobble = (Math.random() - 0.5) * spread;
-    const effAngle = curAngle + wobble;
-    curX += Math.cos(effAngle) * stepLen;
-    curY += Math.sin(effAngle) * stepLen;
+    curX += Math.cos(curAngle + (Math.random() - 0.5) * spread) * stepLen;
+    curY += Math.sin(curAngle + (Math.random() - 0.5) * spread) * stepLen;
     curX = Math.max(6, Math.min(W - 6, curX));
     curY = Math.max(6, Math.min(H - 6, curY));
 
-    currentStroke.push({ x: curX, y: curY, color: curColor, thickness: curThickness });
+    const pt = { x: curX, y: curY, color: curColor, thickness: curThickness, t: Date.now() };
+
+    if (brushMode === 'splatter') {
+      const n = Math.round(vol * 14) + 2;
+      dc.save();
+      for (let k = 0; k < n; k++) {
+        const r = Math.random() * curThickness * 2.5;
+        const a = Math.random() * Math.PI * 2;
+        const sr = Math.random() * curThickness * 0.35 + 0.5;
+        dc.beginPath(); dc.arc(curX + Math.cos(a)*r, curY + Math.sin(a)*r, sr, 0, Math.PI*2);
+        dc.fillStyle = curColor; dc.fill();
+      }
+      dc.restore();
+      currentStroke.push(pt);
+      sendRemote({ type: 'point', p: pt, bm: brushMode });
+    } else {
+      currentStroke.push(pt);
+      sendRemote({ type: 'point', p: pt, bm: brushMode });
+    }
 
     colorSwatch.style.background = curColor;
     pPitch.textContent = Math.round(freq) + ' Hz';
     pPitchName.textContent = pitchName(freq);
-    const degDisplay = Math.round(((curAngle * 180 / Math.PI) % 360 + 360) % 360);
-    pDir.textContent = degDisplay + '°';
-    pDirName.textContent = angleName(degDisplay) + '  集中度' + Math.round(specVec.concentration * 100) + '%';
+    const deg = Math.round(((curAngle * 180 / Math.PI) % 360 + 360) % 360);
+    pDir.textContent = deg + '°';
+    pDirName.textContent = angleName(deg) + '  集中度' + Math.round(specVec.concentration * 100) + '%';
     pThick.textContent = Math.round(curThickness) + ' px';
     pLen.textContent = strokeDuration.toFixed(1) + ' 秒';
   } else {
     silenceFrames++;
-    if (silenceFrames === SILENCE_TIMEOUT && currentStroke.length > 1) {
-      commitStroke();
-    }
+    if (silenceFrames === SILENCE_TIMEOUT && currentStroke.length > 1) commitStroke();
   }
 
+  // Overlay: cursor ring + direction arrow
   oc.clearRect(0, 0, W, H);
   if (strokeActive && currentStroke.length > 0) {
     const last = currentStroke[currentStroke.length - 1];
     oc.save();
-    oc.beginPath();
-    oc.arc(last.x, last.y, curThickness / 2 + 5, 0, Math.PI * 2);
-    oc.strokeStyle = curColor;
-    oc.lineWidth = 1.5;
-    oc.stroke();
-    const ex = last.x + Math.cos(curAngle) * 28;
-    const ey = last.y + Math.sin(curAngle) * 28;
-    oc.beginPath();
-    oc.moveTo(last.x, last.y);
-    oc.lineTo(ex, ey);
-    oc.strokeStyle = curColor;
-    oc.lineWidth = 1;
-    oc.setLineDash([3, 3]);
-    oc.stroke();
-    oc.setLineDash([]);
-    oc.restore();
+    oc.beginPath(); oc.arc(last.x, last.y, curThickness / 2 + 5, 0, Math.PI * 2);
+    oc.strokeStyle = curColor; oc.lineWidth = 1.5; oc.stroke();
+    oc.beginPath(); oc.moveTo(last.x, last.y);
+    oc.lineTo(last.x + Math.cos(curAngle) * 28, last.y + Math.sin(curAngle) * 28);
+    oc.strokeStyle = curColor; oc.lineWidth = 1; oc.setLineDash([3, 3]); oc.stroke();
+    oc.setLineDash([]); oc.restore();
   }
 
-  if (frame % 30 === 0 && currentStroke.length > 1) {
-    dc.save();
-    dc.lineCap = 'round';
-    dc.lineJoin = 'round';
-    for (let i = 1; i < currentStroke.length; i++) {
-      const a = currentStroke[i - 1], b = currentStroke[i];
-      dc.beginPath();
-      dc.moveTo(a.x, a.y);
-      dc.lineTo(b.x, b.y);
-      dc.strokeStyle = b.color;
-      dc.lineWidth = b.thickness;
-      dc.stroke();
-    }
-    dc.restore();
+  // Periodic flush to dc (except splatter which draws directly)
+  if (frame % 30 === 0 && currentStroke.length > 1 && brushMode !== 'splatter') {
+    renderStroke(currentStroke, brushMode);
     currentStroke = [currentStroke[currentStroke.length - 1]];
   }
 }
