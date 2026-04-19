@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src blob: mediastream:;">
 <title>Voice Painter</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -263,7 +264,7 @@ function resize() {
 resize();
 window.addEventListener('resize', () => { resize(); snapshots = [drawCanvas.toDataURL()]; });
 
-let audioCtx, analyser, running = false;
+let audioCtx, analyser, micStream = null, running = false;
 let dataTime, dataFreq;
 let snapshots = [drawCanvas.toDataURL()];
 
@@ -352,15 +353,6 @@ function renderStroke(points, bm) {
         dc.fillStyle = p.color; dc.fill();
       }
     }
-  } else if (bm === 'calligraphy') {
-    for (let i = 1; i < points.length; i++) {
-      const a = points[i-1], b = points[i];
-      const angle = Math.atan2(b.y - a.y, b.x - a.x);
-      dc.save(); dc.translate(b.x, b.y); dc.rotate(angle);
-      dc.beginPath();
-      dc.ellipse(0, 0, Math.max(1, b.thickness * 0.65), Math.max(0.5, b.thickness * 0.14 + 0.5), 0, 0, Math.PI * 2);
-      dc.fillStyle = b.color; dc.fill(); dc.restore();
-    }
   }
   dc.restore();
 }
@@ -369,12 +361,12 @@ function renderStroke(points, bm) {
 toggleBtn.addEventListener('click', async () => {
   if (!running) {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       analyser = audioCtx.createAnalyser();
       analyser.fftSize = 4096;
       analyser.smoothingTimeConstant = 0.6;
-      const src = audioCtx.createMediaStreamSource(stream);
+      const src = audioCtx.createMediaStreamSource(micStream);
       src.connect(analyser);
       dataTime = new Uint8Array(analyser.fftSize);
       dataFreq = new Uint8Array(analyser.frequencyBinCount);
@@ -390,7 +382,8 @@ toggleBtn.addEventListener('click', async () => {
     }
   } else {
     running = false;
-    if (audioCtx) audioCtx.close();
+    if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
+    if (audioCtx) { audioCtx.close(); audioCtx = null; }
     micDot.classList.remove('on');
     statusTxt.textContent = '停止中';
     toggleBtn.textContent = 'マイクをオン';
@@ -481,6 +474,11 @@ const SILENCE_THRESH = 0.012, SILENCE_TIMEOUT = 14;
 let frame = 0;
 
 curX = W / 2; curY = H / 2;
+
+window.addEventListener('pagehide', () => {
+  if (micStream) micStream.getTracks().forEach(t => t.stop());
+  if (audioCtx) audioCtx.close();
+});
 
 function commitStroke() {
   if (currentStroke.length < 2) { currentStroke = []; return; }
