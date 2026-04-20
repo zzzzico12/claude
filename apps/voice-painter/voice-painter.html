@@ -522,15 +522,23 @@ function loop() {
     const hue = freqToHue(freq);
     curColor = hueToCSS(hue, 0.88);
     curThickness = Math.max(1.5, Math.min(30, vol * 180));
-    curAngle = specVec.angle;
+    // ステアリング: 音声の角度に向けて少しずつ向きを変える
+    const diff = Math.atan2(Math.sin(specVec.angle - curAngle), Math.cos(specVec.angle - curAngle));
+    curAngle += diff * 0.12;
     strokeDuration = (Date.now() - strokeStartTime) / 1000;
 
     const stepLen = Math.max(2, vol * 35 + 2);
     const spread = Math.PI * (1 - specVec.concentration) * 0.2;
-    curX += Math.cos(curAngle + (Math.random() - 0.5) * spread) * stepLen;
-    curY += Math.sin(curAngle + (Math.random() - 0.5) * spread) * stepLen;
-    curX = Math.max(6, Math.min(W - 6, curX));
-    curY = Math.max(6, Math.min(H - 6, curY));
+    const effAngle = curAngle + (Math.random() - 0.5) * spread;
+    const nx = curX + Math.cos(effAngle) * stepLen;
+    const ny = curY + Math.sin(effAngle) * stepLen;
+
+    // 壁反射
+    if (nx <= 6 || nx >= W - 6) curAngle = Math.PI - curAngle;
+    if (ny <= 6 || ny >= H - 6) curAngle = -curAngle;
+
+    curX = Math.max(6, Math.min(W - 6, nx));
+    curY = Math.max(6, Math.min(H - 6, ny));
 
     const pt = { x: curX, y: curY, color: curColor, thickness: curThickness };
 
