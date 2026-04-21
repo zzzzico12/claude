@@ -1,4 +1,4 @@
-const CACHE = 'voice-painter-v2';
+const CACHE = 'voice-painter-v3';
 const ASSETS = [
   './voice-painter.html',
   './manifest.json',
