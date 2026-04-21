@@ -1,5 +1,10 @@
-const CACHE = 'voice-painter-v1';
-const ASSETS = ['./voice-painter.html', './manifest.json', './icon.svg'];
+const CACHE = 'voice-painter-v2';
+const ASSETS = [
+  './voice-painter.html',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png'
+];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
