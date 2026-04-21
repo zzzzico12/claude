@@ -1,0 +1,19 @@
+{
+  "name": "Voice Painter",
+  "short_name": "Voice Painter",
+  "description": "声で絵を描くアプリ",
+  "start_url": "./voice-painter.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#1a1a18",
+  "theme_color": "#1a1a18",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
