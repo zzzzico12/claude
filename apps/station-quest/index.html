@@ -281,32 +281,57 @@ fill(G2F, -113, +57,   6,  6, T_STAIRS);
 fill(G2F,   -3, +57,   6,  6, T_STAIRS);
 fill(G2F,  107, +57,   6,  6, T_STAIRS);
 
-// ─── AKIHABARA 1F ── 山手線・京浜東北線ホーム（地上）──────────────
-// 実際: 南北250m・2島ホーム（4番線）。中央部に東西コンコースが架かる
+// ─── AKIHABARA 1F ── 京浜東北線・山手線ホーム（地上）─────────────
+// 実際の番線: 1=京浜東北線北行, 2=京浜東北線南行, 3=山手線外回り, 4=山手線内回り
+// ホーム配置（西→東）: 3-4番線島（山手線）, 線路, 1-2番線島（京浜東北線）
+// 橋上コンコースは両島ホームの中央部に架かる
+// TX秋葉原は構外経由（ヨドバシカメラ横 or 中央改札口方面）のため構内に直結しない
 const AKB1F = makeGrid();
-fill(AKB1F,  -60, -25,  52,  50);                  // 西コンコース（電気街口）
-fill(AKB1F,  -80, -10,  20,  20);                  // 西口通路
-fill(AKB1F,   -8,-125,  14, 250, T_PLATFORM);       // 1-2番線 山手線
-fill(AKB1F,    6, -25,  14,  50);                   // ホーム間通路（乗換）
-fill(AKB1F,   20,-125,  14, 250, T_PLATFORM);       // 3-4番線 京浜東北線
-fill(AKB1F,   34, -25,  46,  50);                   // 東コンコース（昭和通り口）
-fill(AKB1F,   80, -10,  20,  20);                   // 東口通路
-fill(AKB1F,  -62,  -8,   4,  16, T_GATE);           // 電気街口改札
-fill(AKB1F,   78,  -8,   4,  16, T_GATE);           // 昭和通り口改札
-fill(AKB1F,   -6, -14,   6,   6, T_STAIRS);         // 2F行き階段（西）
-fill(AKB1F,   22, -14,   6,   6, T_STAIRS);         // 2F行き階段（東）
-fill(AKB1F,   -4,-128,  10,   8, T_STAIRS);         // TX・地下鉄方面
+// ── 橋上コンコース（ホーム中央部に架かる）─────────────────────
+fill(AKB1F,  -68,  -16, 136,  32);                 // 中央コンコース x=-68〜68, z=-16〜16
+// 電気街口方面通路（西方向）
+fill(AKB1F, -102,  -10,  34,  20);                 // 電気街口通路 x=-102〜-68
+// 昭和通り口方面通路（東方向）
+fill(AKB1F,   68,  -10,  34,  20);                 // 昭和通り口通路 x=68〜102
+// 日比谷線方面 南端通路（コンコース南東端）
+fill(AKB1F,   20,   16,  30,  20);                 // 日比谷線連絡口通路
+// ── ホーム（南北方向に延びる島ホーム）────────────────────────
+fill(AKB1F,  -44, -120,  16, 240, T_PLATFORM);     // 1-2番線（西島: 1=KTK北行, 2=山手内回り）
+fill(AKB1F,   28, -120,  16, 240, T_PLATFORM);     // 3-4番線（東島: 3=山手外回り, 4=KTK南行）
+// ── 改札 ──────────────────────────────────────────────────────
+fill(AKB1F,  -88,   -6,   6,  12, T_GATE);         // 電気街口改札（西口）
+fill(AKB1F,   82,   -6,   6,  12, T_GATE);         // 昭和通り口改札（東口）
+fill(AKB1F,  -24,   -6,  16,  12, T_GATE);         // 中央改札（西）
+fill(AKB1F,    8,   -6,  16,  12, T_GATE);         // 中央改札（東）
+// ── 2F（中央・総武線）行き階段 ────────────────────────────────
+fill(AKB1F,  -10,  -14,  20,   8, T_STAIRS);       // 2F行き階段（コンコース中央北端）
+// ── 日比谷線 B1F 行き通路・階段 ──────────────────────────────
+fill(AKB1F,   22,   18,  16,  10, T_STAIRS);       // 日比谷線B1F行き階段
 
 // ─── AKIHABARA 2F ── 中央・総武線ホーム（高架）──────────────────
-// 実際: 東西160m・2線（5番線=西行、6番線=東行）。1F上空を横断
+// 5番線=西行（御茶ノ水・新宿）, 6番線=東行（浅草橋・千葉）
+// 実際: 東西約160m、1Fコンコース上空を横断する高架構造
 const AKB2F = makeGrid();
-fill(AKB2F,  -80, -14, 160,  28);                  // 中央コンコース
-fill(AKB2F,  -80, -24, 160,  10, T_PLATFORM);      // 5番線（西行 御茶ノ水・新宿方面）
-fill(AKB2F,  -80,  14, 160,  10, T_PLATFORM);      // 6番線（東行 浅草橋・千葉方面）
-fill(AKB2F,  -82, -14,   4,  28, T_GATE);          // 西端改札
-fill(AKB2F,   78, -14,   4,  28, T_GATE);          // 東端改札
-fill(AKB2F,   -6, -12,   6,   6, T_STAIRS);        // 1F行き階段（西）
-fill(AKB2F,   22, -12,   6,   6, T_STAIRS);        // 1F行き階段（東）
+fill(AKB2F,  -80,   -8, 160,  16);                 // 橋上コンコース
+fill(AKB2F,  -80,  -26, 160,  18, T_PLATFORM);     // 5番線（西行）
+fill(AKB2F,  -80,    8, 160,  18, T_PLATFORM);     // 6番線（東行）
+fill(AKB2F,  -86,   -8,   6,  16, T_GATE);         // 西改札（御茶ノ水・新宿方面）
+fill(AKB2F,   80,   -8,   6,  16, T_GATE);         // 東改札（浅草橋・千葉方面）
+fill(AKB2F,  -10,   -8,  20,   8, T_STAIRS);       // 1F行き階段
+
+// ─── AKIHABARA B1F ── 東京メトロ日比谷線のみ（地下）──────────
+// TX秋葉原はJR構内と直接地下接続なし（構外経由のため表現しない）
+// 日比谷線H-16秋葉原: 昭和通りに沿って南北方向に走る
+const AKBB1F = makeGrid();
+// JR 1Fからの連絡通路（東コンコース南端 z=+22 から地下へ降りる）
+fill(AKBB1F,   20,  +22,  16,  16);                // JR→日比谷線 連絡コンコース
+fill(AKBB1F,   16,  +36,  20,  18);                // 日比谷線コンコース入口
+fill(AKBB1F,  -20,  +50,  60,  20);                // 日比谷線コンコース（改札前）
+fill(AKBB1F,  -16,  +68,  32,   6, T_GATE);        // 日比谷線改札
+// 日比谷線ホーム（南北方向・H-16 秋葉原）幅8m×長150m
+fill(AKBB1F,   -8,  +74,   8, 150, T_PLATFORM);    // 日比谷線ホーム（北千住/中目黒方面）
+// JR行き階段
+fill(AKBB1F,   22,  +24,  10,  10, T_STAIRS);      // 1F（地上）行き
 
 // ─── FLOOR METADATA ───────────────────────────────────────────────
 const FLOORS = {
@@ -335,18 +360,25 @@ const FLOORS = {
   },
   // ── 秋葉原駅 ──────────────────────────────────────────────────────
   'AKB_1F': {
-    grid: AKB1F, y: 0.0, wallH: 5.5,
-    label: '1F 山手線・京浜東北線',
+    grid: AKB1F, y: 0.0, wallH: 6.0,
+    label: '1F 京浜東北線・山手線',
     floorCol: { walk:0xc4beb0, platform:0xb0ac9c, gate:0xc0cad8, stairs:0x8898c8 },
     wallCol: 0xe8e4dc, ceilCol: 0x0e1018,
     ceilEmissive: 0x060608, ceilEmissiveIntensity: 0.40,
   },
   'AKB_2F': {
-    grid: AKB2F, y: 8.0, wallH: 5.0,
+    grid: AKB2F, y: 9.0, wallH: 5.5,
     label: '2F 中央・総武線',
     floorCol: { walk:0xbcb8aa, platform:0xa8a494, gate:0xb4c0cc, stairs:0x8898c8 },
     wallCol: 0xe0dcd4, ceilCol: 0x121820,
     ceilEmissive: 0x060810, ceilEmissiveIntensity: 0.35,
+  },
+  'AKB_B1F': {
+    grid: AKBB1F, y: -5.0, wallH: 4.5,
+    label: 'B1F 日比谷線 H-16',
+    floorCol: { walk:0xb8b4c0, platform:0xa0a0b8, gate:0xb0bcd0, stairs:0x8898c8 },
+    wallCol: 0xd8d4e0, ceilCol: 0x0a0c14,
+    ceilEmissive: 0x050510, ceilEmissiveIntensity: 0.45,
   },
 };
 
@@ -361,9 +393,11 @@ const STAIR_PAIRS = [
   { a:{floor:'1F', x:-110,z:+50}, b:{floor:'2F',x:-110,z:+62} },
   { a:{floor:'1F', x:   0,z:+50}, b:{floor:'2F',x:   0,z:+62} },
   { a:{floor:'1F', x: 110,z:+50}, b:{floor:'2F',x: 110,z:+62} },
-  // 秋葉原 AKB_1F ↔ AKB_2F（2クラスタ）
-  { a:{floor:'AKB_1F',x: -3,z:-11}, b:{floor:'AKB_2F',x: -3,z: -9} },
-  { a:{floor:'AKB_1F',x: 25,z:-11}, b:{floor:'AKB_2F',x: 25,z: -9} },
+  // 秋葉原 AKB_1F ↔ AKB_2F（北端・総武線へ）
+  { a:{floor:'AKB_1F',x:-10,z:-14}, b:{floor:'AKB_2F',x:-10,z: -2} },
+  { a:{floor:'AKB_1F',x: 10,z:-14}, b:{floor:'AKB_2F',x: 10,z: -2} },
+  // 秋葉原 AKB_1F ↔ AKB_B1F（南端・日比谷線方面）
+  { a:{floor:'AKB_1F',x: 30,z: 23}, b:{floor:'AKB_B1F',x: 27,z: 29} },
 ];
 
 // ─── QUESTS ── 17個（B1F×6, 1F×8, 2F×3）────────────────────────
@@ -405,21 +439,29 @@ const QUESTS = [
     text:'新南改札  New South Gate\nバスタ新宿（高速バスターミナル）\nNEWoMan Shinjuku' },
   { id:'q_miraina',   floor:'2F', x:+100, z:+74, r:8,
     text:'ミライナタワー改札\nNEWoMan・ホテルメトロポリタン\nMiraina Tower direction' },
-  // ── 秋葉原 ──────────────────────────────────────────────────────
-  { id:'q_akb_p12',  floor:'AKB_1F', x:  -1, z:   0, r:8,
-    text:'1・2番線\n山手線\n1番線: 外回り（上野・池袋・新宿方面）\n2番線: 内回り（神田・品川方面）E235系' },
-  { id:'q_akb_p34',  floor:'AKB_1F', x:  27, z:   0, r:8,
-    text:'3・4番線\n京浜東北線\n3番線: 南行（東京・横浜方面）\n4番線: 北行（上野・大宮方面）E233系' },
-  { id:'q_akb_ge',   floor:'AKB_1F', x: -60, z:   0, r:8,
-    text:'電気街口改札  Electric Town Gate\nSuica/PASMO 対応\nヨドバシカメラ・UDX・電気街方面' },
-  { id:'q_akb_gsh',  floor:'AKB_1F', x:  80, z:   0, r:8,
-    text:'昭和通り口改札  Showa-dori Gate\nSuica/PASMO 対応\n昭和通り・両国・御徒町方面' },
-  { id:'q_akb_tx',   floor:'AKB_1F', x:   1, z:-124, r:10,
-    text:'つくばエクスプレス 秋葉原駅\nTsukuba Express Akihabara\n秋葉原→つくばまで約45分' },
-  { id:'q_akb_p5',   floor:'AKB_2F', x:   0, z: -19, r:8,
-    text:'5番線\n中央・総武線 各駅停車 西行\n御茶ノ水・新宿・三鷹方面 E231系' },
-  { id:'q_akb_p6',   floor:'AKB_2F', x:   0, z: +19, r:8,
-    text:'6番線\n中央・総武線 各駅停車 東行\n浅草橋・錦糸町・千葉方面 E231系' },
+  // ── 秋葉原 1F ───────────────────────────────────────────────────
+  { id:'q_akb_p12', floor:'AKB_1F', x: -32, z:   0, r:10,
+    text:'1・2番線  西島ホーム\n1番線: 京浜東北線 北行（上野・大宮方面）\n2番線: 山手線 内回り（品川・渋谷方面）\nE235系/E233系' },
+  { id:'q_akb_p34', floor:'AKB_1F', x:  32, z:   0, r:10,
+    text:'3・4番線  東島ホーム\n3番線: 山手線 外回り（上野・池袋方面）\n4番線: 京浜東北線 南行（東京・横浜方面）\nE235系/E233系' },
+  { id:'q_akb_ge',  floor:'AKB_1F', x: -87, z:   0, r:8,
+    text:'電気街口改札  Electric Town Gate\nSuica/PASMO 対応\nヨドバシカメラ・UDX・ラジオ会館方面' },
+  { id:'q_akb_gsh', floor:'AKB_1F', x:  81, z:   0, r:8,
+    text:'昭和通り口改札  Showa-dori Gate\nSuica/PASMO 対応\n昭和通り・岩本町・東神田方面' },
+  { id:'q_akb_chuo',floor:'AKB_1F', x:   0, z:   0, r:8,
+    text:'中央改札  Central Gate\nSuica/PASMO 対応\nJR改札口 / 日比谷線乗換は地下へ' },
+  { id:'q_akb_hibiya_stairs',floor:'AKB_1F',x: 30, z: 23, r:8,
+    text:'日比谷線 乗換口\n→ 東京メトロ 日比谷線 H-16\n地下へ降りる（B1F）' },
+  // ── 秋葉原 2F ───────────────────────────────────────────────────
+  { id:'q_akb_p5',  floor:'AKB_2F', x:   0, z: -15, r:8,
+    text:'5番線  中央・総武線各駅停車 西行\n御茶ノ水・新宿・三鷹・中野方面\nE231系 10両' },
+  { id:'q_akb_p6',  floor:'AKB_2F', x:   0, z: +11, r:8,
+    text:'6番線  中央・総武線各駅停車 東行\n浅草橋・錦糸町・千葉・津田沼方面\nE231系 10両' },
+  { id:'q_akb_2fgate',floor:'AKB_2F',x: -81, z:   0, r:8,
+    text:'中央・総武線改札（2F）\nJR Sobu Line Gate\n御茶ノ水・千葉方面' },
+  // ── 秋葉原 B1F ──────────────────────────────────────────────────
+  { id:'q_akb_hibiya',floor:'AKB_B1F',x:  -4, z: 150, r:10,
+    text:'東京メトロ 日比谷線  Hibiya Line\n仲御徒町・北千住方面 / 小伝馬町・中目黒方面\nH-16 秋葉原' },
 ];
 
 // ═══════════════════════════════════════════════════════════════════
@@ -452,18 +494,20 @@ const STATIONS = [
     id: 'akihabara',
     name: '秋葉原駅',
     nameEn: 'Akihabara Station',
-    desc: '電気街・アニメ・ゲームの聖地。山手線・京浜東北線・中央総武線の乗換駅',
-    floors: ['AKB_1F', 'AKB_2F'],
+    desc: '電気街・アニメの聖地。山手線・京浜東北線・中央総武線・日比谷線の乗換駅（TX は地上・構外）',
+    floors: ['AKB_1F', 'AKB_2F', 'AKB_B1F'],
     gates: [
-      { id: 'gate_akb_e',  label: '電気街口改札',        labelEn: 'Electric Town Gate',    floor: 'AKB_1F', x: -60, z:   0 },
-      { id: 'gate_akb_sh', label: '昭和通り口改札',      labelEn: 'Showa-dori Gate',       floor: 'AKB_1F', x:  80, z:   0 },
-      { id: 'gate_akb_2f', label: '中央・総武線改札(2F)', labelEn: 'Sobu Line Gate 2F',    floor: 'AKB_2F', x: -78, z:   0 },
+      { id: 'gate_akb_e',   label: '電気街口改札',         labelEn: 'Electric Town Gate',  floor: 'AKB_1F', x: -87, z:   0 },
+      { id: 'gate_akb_sh',  label: '昭和通り口改札',       labelEn: 'Showa-dori Gate',     floor: 'AKB_1F', x:  81, z:   0 },
+      { id: 'gate_akb_c',   label: '中央改札',             labelEn: 'Central Gate',        floor: 'AKB_1F', x:   0, z:   0 },
+      { id: 'gate_akb_2f',  label: '中央・総武線改札(2F)', labelEn: 'Sobu Line Gate 2F',   floor: 'AKB_2F', x: -81, z:   0 },
+      { id: 'gate_akb_hib', label: '日比谷線改札',         labelEn: 'Hibiya Line Gate',    floor: 'AKB_B1F',x:   0, z:  71 },
     ],
     exits: [
-      { id: 'exit_akb_e',  label: '電気街口',            labelEn: 'Electric Town Exit',    floor: 'AKB_1F', x: -76, z:   0 },
-      { id: 'exit_akb_sh', label: '昭和通り口',          labelEn: 'Showa-dori Exit',       floor: 'AKB_1F', x:  96, z:   0 },
-      { id: 'exit_akb_tx', label: 'つくばエクスプレス',  labelEn: 'Tsukuba Express',       floor: 'AKB_1F', x:   1, z: -128 },
-      { id: 'exit_akb_2f', label: '中央・総武線ホーム(2F)', labelEn: 'Sobu Line Platform', floor: 'AKB_2F', x:   0, z:   0 },
+      { id: 'exit_akb_e',   label: '電気街口',             labelEn: 'Electric Town Exit',  floor: 'AKB_1F', x:-100, z:   0 },
+      { id: 'exit_akb_sh',  label: '昭和通り口',           labelEn: 'Showa-dori Exit',     floor: 'AKB_1F', x:  96, z:   0 },
+      { id: 'exit_akb_2f',  label: '中央・総武線ホーム(2F)',labelEn: 'Sobu Line Platform', floor: 'AKB_2F', x:   0, z:   0 },
+      { id: 'exit_akb_hib', label: '日比谷線乗換 H-16',    labelEn: 'Hibiya Line H-16',    floor: 'AKB_B1F',x:  -4, z: 150 },
     ],
   },
 ];
@@ -481,11 +525,14 @@ const EXITS = [
   { floor:'2F',  x: +24, z:+84, lines:['東南口','Southeast Exit','NEWoMan East'] },
   { floor:'2F',  x: +64, z:+84, lines:['新南口','New South Exit','バスタ新宿・NEWoMan'] },
   { floor:'2F',  x:+100, z:+84, lines:['ミライナタワー口','Miraina Tower','NEWoMan/バスタ'] },
-  // 秋葉原
-  { floor:'AKB_1F', x: -76, z:   0, lines:['電気街口','Electric Town Exit','ヨドバシ・UDX方面'] },
-  { floor:'AKB_1F', x:  96, z:   0, lines:['昭和通り口','Showa-dori Exit','昭和通り・両国方面'] },
-  { floor:'AKB_1F', x:   1, z:-128, lines:['TX 秋葉原','Tsukuba Express','つくば・北千住方面'] },
-  { floor:'AKB_2F', x: -78, z:   0, lines:['中央・総武線','Sobu Line','御茶ノ水・千葉方面'] },
+  // 秋葉原 1F
+  { floor:'AKB_1F', x:-100, z:   0, lines:['電気街口','Electric Town Exit','ヨドバシ・UDX・ラジオ会館'] },
+  { floor:'AKB_1F', x:  96, z:   0, lines:['昭和通り口','Showa-dori Exit','岩本町・東神田方面'] },
+  // 秋葉原 2F
+  { floor:'AKB_2F', x: -84, z:   0, lines:['中央・総武線 西改札','御茶ノ水・新宿方面','Sobu Line West'] },
+  { floor:'AKB_2F', x:  84, z:   0, lines:['中央・総武線 東改札','浅草橋・千葉方面','Sobu Line East'] },
+  // 秋葉原 B1F
+  { floor:'AKB_B1F',x:   0, z:  71, lines:['日比谷線 改札','Hibiya Line Gate H-16','← 仲御徒町 / 小伝馬町 →'] },
 ];
 
 // ═══════════════════════════════════════════════════════════════════
@@ -495,6 +542,9 @@ const renderer = new THREE.WebGLRenderer({ antialias:true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.setSize(innerWidth, innerHeight);
 renderer.shadowMap.enabled = false;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
 document.body.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
@@ -509,12 +559,9 @@ addEventListener('resize', ()=>{
   camera.updateProjectionMatrix();
 });
 
-// Lighting — 全体光量を適度に保ちつつ、蛍光灯ポイントライトで床/天井のコントラストを出す
-scene.add(new THREE.AmbientLight(0xfff8f0, 0.18));
-scene.add(new THREE.HemisphereLight(0xfff4e0, 0x445566, 0.35));
-const sunLight = new THREE.DirectionalLight(0xfff8e8, 0.10);
-sunLight.position.set(0, 1, 0);
-scene.add(sunLight);
+// Lighting — PBR向け：蛍光灯の均一拡散光
+scene.add(new THREE.AmbientLight(0xfff0e8, 0.60));
+scene.add(new THREE.HemisphereLight(0xfff8f0, 0x334455, 0.18));
 
 // ═══════════════════════════════════════════════════════════════════
 // HELPERS
@@ -555,6 +602,57 @@ function addHangingSign(group, x, z, floorY, wallH, lines, bg) {
   addSign(group, new THREE.Vector3(x, sy, z), lines, bg);
 }
 
+// ── タイル床テクスチャ ──────────────────────────────────────────────
+const _tileTexCache = {};
+function makeTileTex(tileHex, groutHex=0x706858) {
+  const key = tileHex+'_'+groutHex;
+  if(_tileTexCache[key]) return _tileTexCache[key];
+  const SZ=256;
+  const cv=document.createElement('canvas'); cv.width=cv.height=SZ;
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle='#'+groutHex.toString(16).padStart(6,'0');
+  ctx.fillRect(0,0,SZ,SZ);
+  const gw=5, ht=SZ/2;
+  const r0=(tileHex>>16)&0xff, g0=(tileHex>>8)&0xff, b0=tileHex&0xff;
+  for(let ti=0;ti<2;ti++) for(let tj=0;tj<2;tj++){
+    const v=1+(Math.random()-0.5)*0.07;
+    const r=Math.min(255,r0*v|0), g=Math.min(255,g0*v|0), b=Math.min(255,b0*v|0);
+    const grd=ctx.createLinearGradient(ti*ht,tj*ht,(ti+1)*ht,(tj+1)*ht);
+    grd.addColorStop(0,`rgb(${Math.min(255,r+14)},${Math.min(255,g+14)},${Math.min(255,b+14)})`);
+    grd.addColorStop(1,`rgb(${Math.max(0,r-10)},${Math.max(0,g-10)},${Math.max(0,b-10)})`);
+    ctx.fillStyle=grd;
+    ctx.fillRect(ti*ht+gw,tj*ht+gw,ht-gw*2,ht-gw*2);
+  }
+  const tex=new THREE.CanvasTexture(cv);
+  tex.wrapS=tex.wrapT=THREE.RepeatWrapping;
+  tex.needsUpdate=true;
+  _tileTexCache[key]=tex; return tex;
+}
+
+// ── 電光掲示板テクスチャ ───────────────────────────────────────────
+function makeDepartureTex(track, lineCol, entries) {
+  const W=640, H=entries.length*56+38;
+  const cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle='#080808'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle=lineCol||'#006633'; ctx.fillRect(0,0,W,38);
+  ctx.fillStyle='#fff'; ctx.font='bold 20px Meiryo,sans-serif';
+  ctx.textBaseline='middle'; ctx.fillText(' '+track, 4, 19);
+  entries.forEach(([dest,min,extra],i)=>{
+    const y=38+i*56;
+    ctx.fillStyle=i%2===0?'#0e0e0e':'#131313'; ctx.fillRect(0,y,W,56);
+    const minStr=min===0?'まもなく':min+'分';
+    ctx.fillStyle=min===0?'#ff5555':min<=3?'#ffaa22':'#22ee88';
+    ctx.font='bold 26px monospace'; ctx.textBaseline='middle';
+    ctx.fillText(minStr.padStart(6,' '), 10, y+28);
+    ctx.fillStyle='#eee'; ctx.font='22px Meiryo,sans-serif';
+    ctx.fillText(dest, 128, y+28);
+    if(extra){ ctx.fillStyle='#556677'; ctx.font='14px monospace'; ctx.fillText(extra,W-96,y+28); }
+  });
+  ctx.strokeStyle='#1a1a1a'; ctx.lineWidth=2; ctx.strokeRect(0,0,W,H);
+  const tex=new THREE.CanvasTexture(cv); tex.needsUpdate=true; return tex;
+}
+
 // ═══════════════════════════════════════════════════════════════════
 // FLOOR GENERATION
 // ═══════════════════════════════════════════════════════════════════
@@ -572,9 +670,9 @@ function generateFloor(id) {
 
   // ── Build merged geometry ──────────────────────────────────────
   // Separate vertex arrays per surface type for vertex-colour floor
-  const fPos=[], fNrm=[], fCol=[], fIdx=[];  // floor
-  const wPos=[], wNrm=[], wIdx=[];            // walls
-  const cPos=[], cNrm=[], cIdx=[];            // ceiling
+  const fPos=[], fNrm=[], fCol=[], fUv=[], fIdx=[];  // floor
+  const wPos=[], wNrm=[], wIdx=[];                    // walls
+  const cPos=[], cNrm=[], cIdx=[];                    // ceiling
   let fi=0, wi=0, ci=0;
 
   const colMap = fd.floorCol;
@@ -605,6 +703,9 @@ function generateFloor(id) {
       fNrm.push(0,1,0, 0,1,0, 0,1,0, 0,1,0);
       for(const [cr,cc] of corners) fCol.push(...groutShade(r,c,cr,cc,fc));
       fIdx.push(fi,fi+2,fi+1, fi,fi+3,fi+2); fi+=4;  // 法線+Y（上向き）になるよう修正
+      // UV: world-space tiling (2 UV units per meter → 0.5m tiles)
+      const TS=2.0;
+      fUv.push(x0*TS,z0*TS, x1*TS,z0*TS, x1*TS,z1*TS, x0*TS,z1*TS);
 
       // Ceiling
       cPos.push(x0,fy+wh,z0, x1,fy+wh,z0, x1,fy+wh,z1, x0,fy+wh,z1);
@@ -633,28 +734,24 @@ function generateFloor(id) {
     }
   }
 
-  // Build floor mesh (vertex colors)
+  // Build floor mesh (vertex colors + tile texture + PBR)
   const fGeo = new THREE.BufferGeometry();
   fGeo.setAttribute('position', new THREE.Float32BufferAttribute(fPos,3));
   fGeo.setAttribute('normal',   new THREE.Float32BufferAttribute(fNrm,3));
   fGeo.setAttribute('color',    new THREE.Float32BufferAttribute(fCol,3));
+  fGeo.setAttribute('uv',       new THREE.Float32BufferAttribute(fUv,2));
   fGeo.setIndex(fIdx);
+  const floorTileTex = makeTileTex(fd.floorCol.walk, 0x6a6058);
   group.add(new THREE.Mesh(fGeo,
-    new THREE.MeshLambertMaterial({vertexColors:true})));
+    new THREE.MeshLambertMaterial({vertexColors: true, map: floorTileTex})));
 
   // Wall mesh
   const wGeo = new THREE.BufferGeometry();
   wGeo.setAttribute('position', new THREE.Float32BufferAttribute(wPos,3));
   wGeo.setAttribute('normal',   new THREE.Float32BufferAttribute(wNrm,3));
   wGeo.setIndex(wIdx);
-  const wallEmissiveCol = 0x080808;
-  const wallEmissiveInt = 0.02;
   group.add(new THREE.Mesh(wGeo,
-    new THREE.MeshLambertMaterial({
-      color: fd.wallCol,
-      emissive: new THREE.Color(wallEmissiveCol),
-      emissiveIntensity: wallEmissiveInt,
-    })));
+    new THREE.MeshLambertMaterial({color: fd.wallCol})));
 
   // Ceiling mesh
   const cGeo = new THREE.BufferGeometry();
@@ -662,7 +759,11 @@ function generateFloor(id) {
   cGeo.setAttribute('normal',   new THREE.Float32BufferAttribute(cNrm,3));
   cGeo.setIndex(cIdx);
   group.add(new THREE.Mesh(cGeo,
-    new THREE.MeshLambertMaterial({ color: fd.ceilCol })));
+    new THREE.MeshLambertMaterial({
+      color: fd.ceilCol,
+      emissive: new THREE.Color(fd.ceilEmissive||0x060606),
+      emissiveIntensity: fd.ceilEmissiveIntensity||0.3,
+    })));
 
   // ── Ceiling lights (fluorescent strips) ──────────────────────
   const tubeMat = new THREE.MeshBasicMaterial({color:0xfff5e0});
@@ -673,9 +774,9 @@ function generateFloor(id) {
       const lx = worldX(c)+CELL/2, lz = worldZ(r)+CELL/2;
       const tube = new THREE.Mesh(tubeGeo, tubeMat);
       tube.position.set(lx, fy+wh-0.05, lz); group.add(tube);
-      // Sparse point lights (only every ~20m)
-      if(r%10===4 && c%10===4) {
-        const pl = new THREE.PointLight(0xfff8e8, 2.2, 18);
+      // Sparse point lights (every ~30m)
+      if(r%15===4 && c%15===4) {
+        const pl = new THREE.PointLight(0xfff5e0, 4.5, 32);
         pl.position.set(lx, fy+wh-0.6, lz); group.add(pl);
       }
     }
@@ -683,7 +784,6 @@ function generateFloor(id) {
 
   // ── Structural pillars ────────────────────────────────────────
   const pilGeo = new THREE.BoxGeometry(0.7, wh, 0.7);
-  // 柱色: B1Fは白大理石調、1Fはコンクリート系
   const pilColor = id==='B1F' ? 0xeceae4 : 0xc8c4bc;
   const pilMat = new THREE.MeshLambertMaterial({color:pilColor});
   for(let r=8; r<GH-8; r+=14) {
@@ -708,6 +808,7 @@ function generateFloor(id) {
   const FLOOR_LABELS = {
     'B1F':'B1F コンコース', '1F':'1F ホーム', '2F':'2F 南コンコース',
     'AKB_1F':'1F 山手線・京浜東北線', 'AKB_2F':'2F 中央・総武線',
+    'AKB_B1F':'B1F 日比谷線 H-16',
   };
   for(let r=0; r<GH; r++) {
     for(let c=0; c<GW; c++) {
@@ -768,9 +869,12 @@ function generateFloor(id) {
   }
 
   // ── Floor-specific decorations ────────────────────────────────
-  if(id === 'B1F') _decorateB1F(group, fy, wh);
-  if(id === '1F')  _decorate1F (group, fy, wh);
-  if(id === '2F')  _decorate2F (group, fy, wh);
+  if(id === 'B1F')     _decorateB1F  (group, fy, wh);
+  if(id === '1F')      _decorate1F   (group, fy, wh);
+  if(id === '2F')      _decorate2F   (group, fy, wh);
+  if(id === 'AKB_1F')  _decorateAKB1F(group, fy, wh);
+  if(id === 'AKB_2F')  _decorateAKB2F(group, fy, wh);
+  if(id === 'AKB_B1F') _decorateAKBB1F(group, fy, wh);
 
   return group;
 }
@@ -922,44 +1026,206 @@ function _decorate1F(g, fy, wh) {
     addHangingSign(g, sx, -5, fy, wh, ['↑ B1F 北コンコース','North Concourse / 改札口']);
     addHangingSign(g, sx, +5, fy, wh, ['↓ 2F 南コンコース', 'South Concourse / 改札口']);
   }
+
+  // ── 電光掲示板（発車案内） ────────────────────────────────────────
+  const DEPART_DB = [
+    { z:-49, track:'1・2番線 埼京線', col:'#009966',
+      entries:[['大宮',2,'1番線'],['川越',7,'1番線'],['横浜',4,'2番線']] },
+    { z:-35, track:'3・4番線 湘南新宿ライン', col:'#009966',
+      entries:[['横浜',3,'3番線'],['大宮',6,'4番線'],['小田原',18,'3番線']] },
+    { z:-21, track:'5・6番線 特急', col:'#404040',
+      entries:[['松本 (あずさ)',0,'5番線'],['成田空港 (N\'EX)',38,'6番線']] },
+    { z: -7, track:'7・8番線 中央線快速', col:'#cc4400',
+      entries:[['東京',2,'7番線'],['高尾',3,'8番線'],['東京',10,'7番線']] },
+    { z: +7, track:'9・10番線 中央特急', col:'#cc4400',
+      entries:[['松本 (あずさ)',14,'9番線'],['甲府 (かいじ)',46,'9番線']] },
+    { z:+21, track:'11・12番線 中央線快速', col:'#cc4400',
+      entries:[['高尾',1,'11番線'],['東京',5,'12番線'],['高尾',13,'11番線']] },
+    { z:+35, track:'13番線 山手線 内回り', col:'#7dc050',
+      entries:[['渋谷',1,'13番線'],['渋谷',4,'13番線'],['渋谷',7,'13番線']] },
+    { z:+49, track:'14番線 山手線 外回り', col:'#7dc050',
+      entries:[['池袋',2,'14番線'],['池袋',5,'14番線'],['池袋',8,'14番線']] },
+  ];
+  const frameMat = new THREE.MeshLambertMaterial({color:0x111111});
+  for(const d of DEPART_DB) {
+    const tex = makeDepartureTex(d.track, d.col, d.entries);
+    const bh2 = (d.entries.length*56+38)/640 * 5.2;
+    const bw2 = 5.2;
+    const geo = new THREE.PlaneGeometry(bw2, bh2);
+    for(const bx of [-80, 0, 80]) {
+      const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide}));
+      m.position.set(bx, fy+wh-bh2/2-0.3, d.z);
+      m.rotation.y = Math.PI/2;
+      g.add(m);
+      const frame = new THREE.Mesh(new THREE.BoxGeometry(0.08,bh2+0.12,bw2+0.18), frameMat);
+      frame.position.set(bx, fy+wh-bh2/2-0.3, d.z);
+      frame.rotation.y = Math.PI/2;
+      g.add(frame);
+    }
+  }
+
+  // ── ホーム鉄骨構造（天井トラス・縦梁） ──────────────────────────
+  const beamMat = new THREE.MeshLambertMaterial({color:0x8a8a98});
+  // 横断クロスビーム（各番線・軌道帯にまたがる）
+  for(const bz of [...TRACK_CENTERS, ...PLATFORM_CENTERS]) {
+    for(let bx=-130; bx<=130; bx+=32) {
+      const beam = new THREE.Mesh(new THREE.BoxGeometry(0.22,0.38,15), beamMat);
+      beam.position.set(bx, fy+wh-0.19, bz); g.add(beam);
+    }
+  }
+  // ホーム方向縦梁（プラットホーム上方）
+  for(let i=0; i<PLATFORM_CENTERS.length; i++) {
+    const pz=PLATFORM_CENTERS[i], pLen=PLATFORM_INFO[i].len;
+    [-3.2,0,3.2].forEach(oz=>{
+      const lng = new THREE.Mesh(new THREE.BoxGeometry(pLen+15,0.18,0.18), beamMat);
+      lng.position.set(0, fy+wh-0.19, pz+oz); g.add(lng);
+    });
+  }
+  // ホーム上部の吊り下げ照明バー（線路上）
+  const lightBarMat = new THREE.MeshBasicMaterial({color:0xfff5e0});
+  for(const tz of TRACK_CENTERS) {
+    for(let lx=-100; lx<=100; lx+=32) {
+      const lb = new THREE.Mesh(new THREE.BoxGeometry(0.5,0.06,8), lightBarMat);
+      lb.position.set(lx, fy+wh-0.08, tz); g.add(lb);
+    }
+  }
+
+  // ── ホーム端柵（転落防止フェンス） ──────────────────────────────
+  const fenceMat = new THREE.MeshLambertMaterial({color:0xc8c8c8});
+  for(let i=0; i<PLATFORM_CENTERS.length; i++) {
+    const pz=PLATFORM_CENTERS[i], pLen=PLATFORM_INFO[i].len;
+    [-4.5,4.5].forEach(oz=>{
+      // 横桟
+      const rail = new THREE.Mesh(new THREE.BoxGeometry(pLen,0.06,0.06), fenceMat);
+      rail.position.set(0, fy+1.1, pz+oz); g.add(rail);
+      const rail2 = new THREE.Mesh(new THREE.BoxGeometry(pLen,0.06,0.06), fenceMat);
+      rail2.position.set(0, fy+0.62, pz+oz); g.add(rail2);
+      // 縦柱（等間隔）
+      for(let fx=-pLen/2+8; fx<pLen/2; fx+=12) {
+        const post = new THREE.Mesh(new THREE.BoxGeometry(0.05,1.15,0.05), fenceMat);
+        post.position.set(fx, fy+0.57, pz+oz); g.add(post);
+      }
+    });
+  }
 }
 
 function _addTrain(g, fy, cx, cz, len, stripe=0x7dc050) {
   const bh=3.8, bw=2.85;
-  // Body
-  const body = new THREE.Mesh(
-    new THREE.BoxGeometry(len, bh, bw),
-    new THREE.MeshLambertMaterial({color:0xe8e8e8})
-  );
+  const cabLen=6.5, bodyLen=len-cabLen*2;
+
+  const bodyMat = new THREE.MeshLambertMaterial({color:0xe8e8ec});
+  const winMat  = new THREE.MeshLambertMaterial({color:0x223344});
+  const doorMat = new THREE.MeshLambertMaterial({color:0xd2d2d6});
+  const darkMat = new THREE.MeshLambertMaterial({color:0x1a1a1e});
+  const stMat   = new THREE.MeshBasicMaterial({color:stripe});
+
+  // 中間車体
+  const body = new THREE.Mesh(new THREE.BoxGeometry(bodyLen,bh,bw), bodyMat);
   body.position.set(cx, fy+bh/2, cz); g.add(body);
-  // Stripe
-  const st = new THREE.Mesh(
-    new THREE.BoxGeometry(len, 0.48, bw+0.02),
-    new THREE.MeshBasicMaterial({color:stripe})
-  );
+
+  // 前頭部・後尾部（運転台）
+  for(const side of [-1,1]) {
+    const off = side*(bodyLen/2+cabLen/2);
+    const cab = new THREE.Mesh(new THREE.BoxGeometry(cabLen,bh,bw), bodyMat);
+    cab.position.set(cx+off, fy+bh/2, cz); g.add(cab);
+    // 前面窓（大型フロントウィンドウ）
+    const fw = new THREE.Mesh(new THREE.BoxGeometry(0.08,bh*0.42,bw*0.70), winMat);
+    fw.position.set(cx+off+side*(cabLen/2+0.05), fy+bh*0.64, cz); g.add(fw);
+    // スカート（排障器）
+    const sk = new THREE.Mesh(new THREE.BoxGeometry(0.35,0.28,bw*0.82), darkMat);
+    sk.position.set(cx+off+side*(cabLen/2+0.18), fy+0.14, cz); g.add(sk);
+    // 前照灯
+    const headlightMat = new THREE.MeshBasicMaterial({color:0xffffff});
+    const hlGeo = new THREE.BoxGeometry(0.05,0.22,0.28);
+    [[-0.55],[0.55]].forEach(([oz])=>{
+      const hl = new THREE.Mesh(hlGeo, headlightMat);
+      hl.position.set(cx+off+side*(cabLen/2+0.03), fy+bh*0.35, cz+oz); g.add(hl);
+    });
+  }
+
+  // 帯
+  const st = new THREE.Mesh(new THREE.BoxGeometry(len+0.02,0.52,bw+0.02), stMat);
   st.position.set(cx, fy+2.0, cz); g.add(st);
-  // Windows row
-  const winMat = new THREE.MeshLambertMaterial({color:0x90b8cc});
-  for(let wx=-len/2+8; wx<len/2-4; wx+=10.5) {
-    const win = new THREE.Mesh(new THREE.BoxGeometry(5.5,1.0,bw+0.02), winMat);
-    win.position.set(cx+wx+2.5, fy+2.9, cz); g.add(win);
-    // Reflection strip
-    const ref = new THREE.Mesh(new THREE.BoxGeometry(1.4,0.9,bw+0.04),
-      new THREE.MeshBasicMaterial({color:0xd0e8f0,transparent:true,opacity:0.35}));
-    ref.position.set(cx+wx+0.5, fy+2.9, cz); g.add(ref);
+
+  // 側面窓（車体部分）
+  for(let wx=-bodyLen/2+5; wx<bodyLen/2-3; wx+=8.5) {
+    const win = new THREE.Mesh(new THREE.BoxGeometry(4.8,1.05,bw+0.02), winMat);
+    win.position.set(cx+wx+2.4, fy+2.9, cz); g.add(win);
   }
-  // Doors
-  const doorMat = new THREE.MeshLambertMaterial({color:0xd4d4d4});
-  for(let dx=-len/2+15; dx<len/2-10; dx+=25) {
-    const dr = new THREE.Mesh(new THREE.BoxGeometry(1.5,bh-0.05,bw+0.02), doorMat);
+  // 運転台側面窓
+  for(const side of [-1,1]) {
+    const off = side*(bodyLen/2+cabLen/2);
+    const sw = new THREE.Mesh(new THREE.BoxGeometry(2.5,0.78,bw+0.02), winMat);
+    sw.position.set(cx+off, fy+2.9, cz); g.add(sw);
+  }
+
+  // ドア（ステンレス）
+  const gapMat = new THREE.MeshBasicMaterial({color:0x555555});
+  const gapGeo = new THREE.BoxGeometry(0.04,bh-0.10,bw+0.04);
+  for(let dx=-bodyLen/2+12; dx<bodyLen/2-8; dx+=19) {
+    const dr = new THREE.Mesh(new THREE.BoxGeometry(1.72,bh-0.06,bw+0.02), doorMat);
     dr.position.set(cx+dx, fy+bh/2, cz); g.add(dr);
+    [-0.86,0.86].forEach(ox=>{
+      const gap = new THREE.Mesh(gapGeo, gapMat);
+      gap.position.set(cx+dx+ox, fy+bh/2, cz); g.add(gap);
+    });
+    // ドアボタン
+    const btnMat = new THREE.MeshBasicMaterial({color:0xffaa00});
+    const btn = new THREE.Mesh(new THREE.BoxGeometry(0.08,0.08,bw+0.03), btnMat);
+    btn.position.set(cx+dx, fy+1.2, cz); g.add(btn);
   }
-  // Undercarriage
-  const uc = new THREE.Mesh(
-    new THREE.BoxGeometry(len, 0.55, bw*0.7),
-    new THREE.MeshLambertMaterial({color:0x333})
-  );
+
+  // 床下機器・台車
+  const bogMat = new THREE.MeshLambertMaterial({color:0x181818});
+  const whlMat = new THREE.MeshLambertMaterial({color:0x2a2a30});
+  const whlGeo = new THREE.CylinderGeometry(0.42,0.42,0.18,14);
+  whlGeo.rotateZ(Math.PI/2);
+  const bogGeo = new THREE.BoxGeometry(2.6,0.45,2.45);
+  for(let bx=-len/2+9; bx<len/2; bx+=18) {
+    const bog = new THREE.Mesh(bogGeo, bogMat);
+    bog.position.set(cx+bx, fy+0.22, cz); g.add(bog);
+    [-0.9,0.9].forEach(oz=>[-0.72,0.72].forEach(ox=>{
+      const whl = new THREE.Mesh(whlGeo, whlMat);
+      whl.position.set(cx+bx+ox, fy+0.42, cz+oz); g.add(whl);
+    }));
+    // ブレーキシリンダ
+    const bc = new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.08,0.55,8), bogMat);
+    bc.rotateZ(Math.PI/2);
+    bc.position.set(cx+bx, fy+0.52, cz+0.6); g.add(bc);
+  }
+  // アンダーカバー
+  const uc = new THREE.Mesh(new THREE.BoxGeometry(len,0.55,bw*0.72), darkMat);
   uc.position.set(cx, fy+0.27, cz); g.add(uc);
+  // 床下機器ボックス
+  const eqMat = new THREE.MeshLambertMaterial({color:0x252525});
+  for(let ex=-len/2+18; ex<len/2-10; ex+=24) {
+    const eq = new THREE.Mesh(new THREE.BoxGeometry(8,0.48,bw*0.55), eqMat);
+    eq.position.set(cx+ex, fy+0.55, cz); g.add(eq);
+  }
+
+  // パンタグラフ（菱形）
+  const pantMat = new THREE.MeshLambertMaterial({color:0x3a3a3a});
+  for(let px=-bodyLen/2+18; px<bodyLen/2-10; px+=28) {
+    const pBase = new THREE.Mesh(new THREE.BoxGeometry(1.3,0.08,0.62), pantMat);
+    pBase.position.set(cx+px, fy+bh+0.04, cz); g.add(pBase);
+    // アーム4本
+    const armGeo = new THREE.BoxGeometry(0.035,0.92,0.035);
+    [[-0.38,-0.28],[0.38,-0.28],[-0.38,0.28],[0.38,0.28]].forEach(([ox,oz])=>{
+      const arm = new THREE.Mesh(armGeo, pantMat);
+      arm.position.set(cx+px+ox, fy+bh+0.52, cz+oz);
+      arm.rotation.z = ox>0 ? -0.42 : 0.42;
+      arm.rotation.x = oz>0 ? -0.42 : 0.42;
+      g.add(arm);
+    });
+    // 集電舟（バー）
+    const bar = new THREE.Mesh(new THREE.BoxGeometry(1.7,0.038,0.045), pantMat);
+    bar.position.set(cx+px, fy+bh+0.97, cz); g.add(bar);
+    // 集電舟エンドピース
+    [-0.85,0.85].forEach(ox=>{
+      const ep = new THREE.Mesh(new THREE.BoxGeometry(0.045,0.08,0.045), pantMat);
+      ep.position.set(cx+px+ox, fy+bh+0.94, cz); g.add(ep);
+    });
+  }
 }
 
 // ─── 2F decorations ───────────────────────────────────────────────
@@ -1025,6 +1291,296 @@ function _decorate2F(g, fy, wh) {
     addSign(g, new THREE.Vector3(s.x, fy+wh*0.55, s.z+0.06),
       s.lines, '#'+s.col.toString(16).padStart(6,'0'), s.w*0.85, 0.9);
   }
+}
+
+// ─── 秋葉原 1F decorations ────────────────────────────────────────
+// 京浜東北線（1-2番線, x=24〜40）・山手線（3-4番線, x=-40〜-24）
+// コンコース: 西 x=-72〜-12, 東 x=12〜72, z=-22〜+22
+function _decorateAKB1F(g, fy, wh) {
+  const keihinCol = 0x0099cc; // 京浜東北線ブルー
+  const yamaCol   = 0x7dc050; // 山手線グリーン
+
+  // ── 列車（N-S向き・Z軸方向）──────────────────────────────────
+  // _addTrain はX方向生成 → Y軸90°回転でZ方向（南北）へ
+  // 西島: 1番線(KTK西面x≈-52) + 2番線(山手東面x≈-20)
+  // 東島: 3番線(山手西面x≈+20) + 4番線(KTK東面x≈+52)
+  [[-52, keihinCol],[-20, yamaCol],[20, yamaCol],[52, keihinCol]].forEach(([tx, col])=>{
+    const tw = new THREE.Group();
+    tw.position.set(tx, 0, 0);
+    tw.rotation.y = Math.PI / 2;
+    _addTrain(tw, fy, 0, 0, 240, col);
+    g.add(tw);
+  });
+
+  // ── 番線サイン（吊り下げ、ホーム中央の複数Z位置）────────────
+  for(const sz of [-60, 0, 60]) {
+    addHangingSign(g, -36, sz, fy, wh, ['1・2番線  西島','1番: 京浜東北線 北行（上野・大宮）','2番: 山手線 内回り（品川・渋谷）'], '#'+keihinCol.toString(16).padStart(6,'0'));
+    addHangingSign(g,  36, sz, fy, wh, ['3・4番線  東島','3番: 山手線 外回り（上野・池袋）','4番: 京浜東北線 南行（東京・横浜）'], '#'+yamaCol.toString(16));
+  }
+
+  // ── ホームドア（山手線はホームドア設置済み） ──────────────────
+  const doorMat = new THREE.MeshLambertMaterial({color:0xd8e8f0});
+  const doorPilMat = new THREE.MeshLambertMaterial({color:0x6688aa});
+  for(let dx = -110; dx <= 110; dx += 20) {
+    // 山手線ホームドア
+    [-36,-28].forEach(oz=>{
+      const panel = new THREE.Mesh(new THREE.BoxGeometry(18,1.5,0.08), doorMat);
+      panel.position.set(dx, fy+0.75, oz); g.add(panel);
+      const pil = new THREE.Mesh(new THREE.BoxGeometry(0.12,2.0,0.12), doorPilMat);
+      pil.position.set(dx+9, fy+1.0, oz); g.add(pil);
+    });
+  }
+
+  // ── 改札機 ────────────────────────────────────────────────────
+  const gateMachMat = new THREE.MeshLambertMaterial({color:0x0a1428});
+  const gateLedMat  = new THREE.MeshBasicMaterial({color:0x00aacc});
+  [
+    { cx:-82, cz:0, n:5, label:'電気街口  Electric Town Gate' },
+    { cx: 82, cz:0, n:5, label:'昭和通り口  Showa-dori Gate' },
+    { cx:-16, cz:0, n:3, label:'中央改札（西）  Central Gate West' },
+    { cx: 16, cz:0, n:3, label:'中央改札（東）  Central Gate East' },
+  ].forEach(row=>{
+    for(let i=0;i<row.n;i++){
+      const gx=row.cx+(i-row.n/2+0.5)*2.6;
+      const gm=new THREE.Mesh(new THREE.BoxGeometry(0.28,1.05,0.85),gateMachMat);
+      gm.position.set(gx,fy+0.52,row.cz); g.add(gm);
+      const led=new THREE.Mesh(new THREE.BoxGeometry(0.22,0.24,0.1),gateLedMat);
+      led.position.set(gx,fy+0.78,row.cz+(row.cx<0?0.42:-0.42)); g.add(led);
+    }
+    addSign(g,new THREE.Vector3(row.cx,fy+wh-0.5,row.cz),[row.label,'Suica / PASMO / IC'],'#0a1840',7,1.1);
+  });
+
+  // ── 方向案内サイン ────────────────────────────────────────────
+  const dirSigns = [
+    { x:-40, z:0, lines:['← 電気街口  Electric Town','ヨドバシカメラ・UDX方面'] },
+    { x: 40, z:0, lines:['昭和通り口 →  Showa-dori','岩本町・東神田方面'] },
+    { x:  0, z: 20, lines:['↓ 日比谷線 H-16 乗換','Hibiya Line Transfer','東京メトロ → 地下へ'] },
+    { x:  0, z:-10, lines:['↑ 中央・総武線(2F)','Sobu Line → Stairs'] },
+    { x:  0, z: 10, lines:['TX 秋葉原は構外','Tsukuba Express: outside JR','ヨドバシカメラ横 または 中央改札から'] },
+  ];
+  for(const s of dirSigns) addHangingSign(g, s.x, s.z, fy, wh, s.lines);
+
+  // ── ベンチ（各ホーム上、N-S方向に並ぶ）──────────────────────
+  const benchMat=new THREE.MeshLambertMaterial({color:0x2a3a4a});
+  const legMat=new THREE.MeshLambertMaterial({color:0x444});
+  // 西島(x=-36) と 東島(x=36) にそれぞれ複数設置
+  [[-36,-50],[-36,0],[-36,50],[36,-50],[36,0],[36,50]].forEach(([bx,bz])=>{
+    const seat=new THREE.Mesh(new THREE.BoxGeometry(0.55,0.12,2.2),benchMat);
+    seat.position.set(bx,fy+0.44,bz); g.add(seat);
+    const leg=new THREE.Mesh(new THREE.BoxGeometry(0.1,0.38,2.1),legMat);
+    leg.position.set(bx,fy+0.19,bz); g.add(leg);
+  });
+
+  // ── 黄色安全線（各ホーム端、N-S方向）────────────────────────
+  const safetyMat=new THREE.MeshBasicMaterial({color:0xe8c000});
+  // 西島: x=-44(西端) と x=-28(東端)、東島: x=28(西端) と x=44(東端)
+  [[-44],[-28],[28],[44]].forEach(([ox])=>{
+    const sl=new THREE.Mesh(new THREE.BoxGeometry(0.22,0.04,260),safetyMat);
+    sl.position.set(ox,fy+0.02,0); g.add(sl);
+  });
+
+  // ── 発車案内板（N-S方向ホーム、Z軸沿いに複数設置）────────────
+  const dbData = [
+    { ix:-36, track:'1・2番線 西島', col:'#0077aa',
+      entries:[['上野・大宮（1番/KTK北行）',1,'1番'],['品川・渋谷（2番/山手内回）',2,'2番'],['大宮（1番）',5,'1番']] },
+    { ix: 36, track:'3・4番線 東島', col:'#4a9030',
+      entries:[['上野・池袋（3番/山手外回）',3,'3番'],['東京・横浜（4番/KTK南行）',1,'4番'],['上野（3番）',7,'3番']] },
+  ];
+  const frameMat2=new THREE.MeshLambertMaterial({color:0x111111});
+  for(const d of dbData){
+    const tex=makeDepartureTex(d.track,d.col,d.entries);
+    const bh2=(d.entries.length*56+38)/640*5.2, bw2=5.2;
+    for(const bz of [-60, 0, 60]){
+      const m=new THREE.Mesh(new THREE.PlaneGeometry(bw2,bh2),
+        new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide}));
+      m.position.set(d.ix,fy+wh-bh2/2-0.3,bz); g.add(m);
+      const fr=new THREE.Mesh(new THREE.BoxGeometry(bw2+0.18,bh2+0.12,0.08),frameMat2);
+      fr.position.set(d.ix,fy+wh-bh2/2-0.3,bz); g.add(fr);
+    }
+  }
+
+  // ── コンコース屋根ビーム（E-W方向横断梁）────────────────────
+  const beamMat=new THREE.MeshLambertMaterial({color:0x7a7a88});
+  for(let bz=-100;bz<=100;bz+=25){
+    const beam=new THREE.Mesh(new THREE.BoxGeometry(140,0.35,0.22),beamMat);
+    beam.position.set(0,fy+wh-0.18,bz); g.add(beam);
+  }
+  // ホーム縦梁（N-S方向）
+  [-44,-28,28,44].forEach(ox=>{
+    const lng=new THREE.Mesh(new THREE.BoxGeometry(0.18,0.18,260),beamMat);
+    lng.position.set(ox,fy+wh-0.18,0); g.add(lng);
+  });
+}
+
+// ─── 秋葉原 2F decorations ────────────────────────────────────────
+// 中央・総武線（5番線=西行 z=-22〜-8、6番線=東行 z=8〜22）
+// コンコース: z=-8〜+8, x=-80〜+80
+function _decorateAKB2F(g, fy, wh) {
+  const sobuCol = 0xf0d000; // 中央・総武線イエロー
+
+  // ── 列車 ──────────────────────────────────────────────────────
+  _addTrain(g, fy, 0, -15, 155, sobuCol); // 5番線（西行）
+  _addTrain(g, fy, 0,  11, 155, sobuCol); // 6番線（東行）
+
+  // ── 番線サイン ────────────────────────────────────────────────
+  for(const sx of [-55, 0, 55]) {
+    addHangingSign(g, sx, -15, fy, wh,
+      ['5番線  中央・総武線 各駅停車','西行: 御茶ノ水・新宿・三鷹方面'], '#'+sobuCol.toString(16));
+    addHangingSign(g, sx,  11, fy, wh,
+      ['6番線  中央・総武線 各駅停車','東行: 浅草橋・錦糸町・千葉方面'], '#'+sobuCol.toString(16));
+  }
+
+  // ── 改札機 ────────────────────────────────────────────────────
+  const gateMachMat=new THREE.MeshLambertMaterial({color:0x0a1428});
+  const gateLedMat=new THREE.MeshBasicMaterial({color:0x00aacc});
+  [
+    { cx:-80, cz:0, n:4, label:'中央・総武線 西改札  御茶ノ水・新宿方面' },
+    { cx: 80, cz:0, n:4, label:'中央・総武線 東改札  浅草橋・千葉方面' },
+  ].forEach(row=>{
+    for(let i=0;i<row.n;i++){
+      const gx=row.cx+(i-row.n/2+0.5)*2.5;
+      const gm=new THREE.Mesh(new THREE.BoxGeometry(0.28,1.05,0.85),gateMachMat);
+      gm.position.set(gx,fy+0.52,row.cz); g.add(gm);
+      const led=new THREE.Mesh(new THREE.BoxGeometry(0.22,0.24,0.1),gateLedMat);
+      led.position.set(gx,fy+0.78,row.cz+(row.cx<0?0.42:-0.42)); g.add(led);
+    }
+    addSign(g,new THREE.Vector3(row.cx,fy+wh-0.5,row.cz),[row.label,'Suica / PASMO'],'#0a1840',7.5,1.0);
+  });
+
+  // ── 黄色安全線 ────────────────────────────────────────────────
+  const safetyMat=new THREE.MeshBasicMaterial({color:0xe8c000});
+  [[-22],[-8],[8],[22]].forEach(([oz])=>{
+    const sl=new THREE.Mesh(new THREE.BoxGeometry(162,0.04,0.22),safetyMat);
+    sl.position.set(0,fy+0.02,oz); g.add(sl);
+  });
+
+  // ── 方向サイン ────────────────────────────────────────────────
+  addHangingSign(g,  0, 0, fy, wh, ['↓ 1F 京浜東北線・山手線','To JR Platforms / Electric Town']);
+  addHangingSign(g,-55, 0, fy, wh, ['← 御茶ノ水・新宿 方面','Ochanomizu / Shinjuku →']);
+  addHangingSign(g, 55, 0, fy, wh, ['千葉・浅草橋 方面 →','Chiba / Asakusabashi →']);
+
+  // ── 発車案内板 ────────────────────────────────────────────────
+  const dbData2=[
+    { z:-15, track:'5番線 総武線各停 西行', col:'#b89000',
+      entries:[['新宿',4,'5番線'],['三鷹',4,'5番線'],['御茶ノ水',2,'5番線']] },
+    { z: 11, track:'6番線 総武線各停 東行', col:'#b89000',
+      entries:[['千葉',8,'6番線'],['錦糸町',3,'6番線'],['浅草橋',1,'6番線']] },
+  ];
+  const frameMat2=new THREE.MeshLambertMaterial({color:0x111111});
+  for(const d of dbData2){
+    const tex=makeDepartureTex(d.track,d.col,d.entries);
+    const bh2=(d.entries.length*56+38)/640*5.0, bw2=5.0;
+    for(const bx of [-40,0,40]){
+      const m=new THREE.Mesh(new THREE.PlaneGeometry(bw2,bh2),
+        new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide}));
+      m.position.set(bx,fy+wh-bh2/2-0.25,d.z); m.rotation.y=Math.PI/2; g.add(m);
+      const fr=new THREE.Mesh(new THREE.BoxGeometry(0.08,bh2+0.1,bw2+0.16),frameMat2);
+      fr.position.set(bx,fy+wh-bh2/2-0.25,d.z); fr.rotation.y=Math.PI/2; g.add(fr);
+    }
+  }
+
+  // ── 高架構造ビーム ────────────────────────────────────────────
+  const beamMat=new THREE.MeshLambertMaterial({color:0x556677});
+  for(let bx=-70;bx<=70;bx+=28){
+    const beam=new THREE.Mesh(new THREE.BoxGeometry(0.3,0.5,32),beamMat);
+    beam.position.set(bx,fy+wh-0.25,0); g.add(beam);
+  }
+}
+
+// ─── 秋葉原 B1F decorations ──────────────────────────────────────
+// 日比谷線ホーム H-16（N-S走行, z=74〜224, x=-8〜0）
+// 改札: z=68〜74, x=-16〜16
+// コンコース: z=50〜70, x=-20〜40
+// JR連絡通路: z=22〜38, x=16〜36
+function _decorateAKBB1F(g, fy, wh) {
+  const hibiyaCol = 0xb5a642; // 日比谷線ゴールド
+  const hibiyaHex = '#b5a642';
+
+  // ── 日比谷線列車（N-S向き、昭和通り並行）────────────────────
+  // _addTrain はX方向に生成 → wrapperをY90°回転でZ方向へ
+  const trainWrap = new THREE.Group();
+  trainWrap.position.set(-4, 0, 150); // ホーム中央
+  trainWrap.rotation.y = Math.PI / 2;
+  _addTrain(trainWrap, fy, 0, 0, 100, hibiyaCol);
+  g.add(trainWrap);
+
+  // ── 改札機（z≈71, x=-10〜10）────────────────────────────────
+  const gateMachMat = new THREE.MeshLambertMaterial({color:0x0a1428});
+  const gateLedMat  = new THREE.MeshBasicMaterial({color:0xddaa00});
+  for(let i=0; i<5; i++){
+    const gx = (i-2)*2.6;
+    const gm = new THREE.Mesh(new THREE.BoxGeometry(0.28,1.05,0.85), gateMachMat);
+    gm.position.set(gx, fy+0.52, 71); g.add(gm);
+    const led = new THREE.Mesh(new THREE.BoxGeometry(0.22,0.24,0.1), gateLedMat);
+    led.position.set(gx, fy+0.78, 71.42); g.add(led);
+  }
+  addSign(g, new THREE.Vector3(0, fy+wh-0.5, 71),
+    ['東京メトロ 日比谷線 改札','Tokyo Metro Hibiya Line H-16'], hibiyaHex, 8, 1.1);
+
+  // ── 番線サイン（ホーム上）────────────────────────────────────
+  for(const sz of [100, 140, 180]) {
+    addHangingSign(g, -4, sz, fy, wh,
+      ['東京メトロ 日比谷線  H-16 秋葉原',
+       '← 小伝馬町・銀座・中目黒方面',
+       '仲御徒町・上野・北千住 →'], hibiyaHex);
+  }
+
+  // ── メトロ路線図パネル（改札付近）────────────────────────────
+  const mapTex = makeSignTex(
+    ['H-15 仲御徒町 ←  H-16 秋葉原  → H-17 小伝馬町','日比谷線  Hibiya Line'],
+    '#1a1a2a', '#ffffff', 512, 64);
+  const mapMesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(6.0, 0.75),
+    new THREE.MeshBasicMaterial({map:mapTex, side:THREE.DoubleSide}));
+  mapMesh.position.set(0, fy+wh-0.5, 70);
+  g.add(mapMesh);
+
+  // ── JR連絡通路サイン ──────────────────────────────────────────
+  addHangingSign(g, 27, 30, fy, wh,
+    ['↑ JR 地上へ', '京浜東北線・山手線・総武線','Yamanote / Keihin-Tohoku / Sobu']);
+  addHangingSign(g, 10, 58, fy, wh,
+    ['→ 日比谷線 改札','Hibiya Line Gate','H-16 秋葉原']);
+
+  // ── TX案内（地上への案内として）──────────────────────────────
+  addHangingSign(g, -10, 55, fy, wh,
+    ['つくばエクスプレスは地上・構外','TX Akihabara: exit JR station','ヨドバシカメラ横 または 中央改札から']);
+
+  // ── 壁面カラーラインストライプ（日比谷線ゴールド）────────────
+  const stripeMat = new THREE.MeshLambertMaterial({color:hibiyaCol});
+  // ホーム沿いのゴールドライン
+  for(const sx of [-8, 0]) {
+    const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.25, 150), stripeMat);
+    stripe.position.set(sx, fy+1.6, 149); g.add(stripe);
+  }
+
+  // ── ベンチ（ホーム上）────────────────────────────────────────
+  const benchMat = new THREE.MeshLambertMaterial({color:0x334455});
+  const legMat   = new THREE.MeshLambertMaterial({color:0x333});
+  for(const bz of [100, 130, 160, 190]) {
+    const seat = new THREE.Mesh(new THREE.BoxGeometry(0.50,0.12,2.0), benchMat);
+    seat.position.set(-3, fy+0.44, bz); g.add(seat);
+    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.1,0.36,1.9), legMat);
+    leg.position.set(-3, fy+0.18, bz); g.add(leg);
+  }
+
+  // ── 黄色安全線（ホーム端, N-S方向）──────────────────────────
+  const safetyMat = new THREE.MeshBasicMaterial({color:0xe8c000});
+  [-7.5, 0.5].forEach(ox => {
+    const sl = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.04, 150), safetyMat);
+    sl.position.set(ox, fy+0.02, 149); g.add(sl);
+  });
+
+  // ── 柱（ホーム上, N-S方向に並ぶ）────────────────────────────
+  const pilMat = new THREE.MeshLambertMaterial({color:0x4a4040});
+  for(const pz of [90, 110, 130, 150, 170, 190, 210]) {
+    const pil = new THREE.Mesh(new THREE.BoxGeometry(0.3, wh, 0.3), pilMat);
+    pil.position.set(-14, fy+wh/2, pz); g.add(pil);
+  }
+
+  // ── 照明バー（天井）──────────────────────────────────────────
+  const lightBarMat = new THREE.MeshBasicMaterial({color:0xffeecc});
+  const lb = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.08, 150), lightBarMat);
+  lb.position.set(-4, fy+wh-0.1, 149); g.add(lb);
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -1137,8 +1693,9 @@ function switchFloor(id, tx, tz) {
     'B1F':    {sky:0x2a2e3a, fog:0.007},
     '1F':     {sky:0x303848, fog:0.004},
     '2F':     {sky:0x5070a0, fog:0.003},
-    'AKB_1F': {sky:0x1a2028, fog:0.010},
-    'AKB_2F': {sky:0x2a3848, fog:0.006},
+    'AKB_1F':  {sky:0x1a2028, fog:0.010},
+    'AKB_2F':  {sky:0x2a3848, fog:0.006},
+    'AKB_B1F': {sky:0x0e1018, fog:0.012},
   };
   const fs = fogSettings[id] || fogSettings['1F'];
   scene.background.set(fs.sky);
