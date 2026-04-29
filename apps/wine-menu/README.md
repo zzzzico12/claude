@@ -1,6 +1,6 @@
-# Wine Menu
+# WINE LIST AI
 
-ワインメニューの写真をAIで解析し、データベース化できるアプリケーションです。Claude APIを使用してメニュー画像から情報を自動抽出します。
+ワインメニューの写真をAIで解析し、データベース化できるPWAアプリです。Claude APIを使用してメニュー画像から情報を自動抽出します。
 
 ## 特徴
 
@@ -10,20 +10,23 @@
 - 詳細情報の表示
 - おすすめワインのマーキング機能
 - 美しいカードUIデザイン
+- PWA対応（ホーム画面に追加・オフライン利用可能）
 
 ## 技術スタック
 
-- React (JSX)
+- Vanilla HTML / CSS / JavaScript（スタンドアロン）
+- React 18 (UMD CDN) + Babel Standalone
+- Tailwind CSS (Play CDN)
 - Claude AI API (画像認識・テキスト抽出)
-- Lucide React Icons
-- Base64画像エンコーディング
+- Service Worker (キャッシュ・PWA)
 
 ## 使い方
 
-1. [wine-menu.jsx](wine-menu.jsx)を適切なReact環境にコピー
-2. ワインメニューの写真をアップロード
-3. AIが自動的にメニューを解析
-4. 抽出されたワイン情報を閲覧・管理
+1. [wine-menu.html](wine-menu.html) をブラウザで開く（またはホーム画面に追加）
+2. Claude API キーを入力して保存
+3. ワインメニューの写真をアップロード
+4. AIが自動的にメニューを解析
+5. 抽出されたワイン情報を閲覧・管理
 
 ## 抽出される情報
 
@@ -60,15 +63,7 @@
 
 ## API設定
 
-Claude API キーが必要です。使用する際は、適切にAPI認証を設定してください。
-
-```javascript
-headers: {
-  "Content-Type": "application/json",
-  "x-api-key": "YOUR_API_KEY",
-  "anthropic-version": "2023-06-01"
-}
-```
+アプリ内のAPIキー入力欄にClaude API キーを入力してください。キーはブラウザのlocalStorageに保存されます。
 
 ## ユースケース
 
