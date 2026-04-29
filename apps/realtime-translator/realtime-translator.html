@@ -151,6 +151,7 @@
       const translationTimeoutRef = useRef(null);
       const isInitializedRef = useRef(false);
       const isListeningRef = useRef(false);
+      const langRef = useRef({ sourceLang, targetLang });
 
       // 言語コードマッピング（音声認識用とLibreTranslate API用）
       const languages = [
@@ -167,6 +168,9 @@
       ];
 
       const getCurrentLang = (code) => languages.find(l => l.code === code);
+
+      // レンダーごとに最新の言語設定をrefに反映（onresultの古いクロージャから参照するため）
+      langRef.current = { sourceLang, targetLang };
 
       useEffect(() => {
         if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
@@ -278,19 +282,20 @@
 
         try {
           // MyMemory Translation API（無料、APIキー不要）を使用
-          const srcCode = getCurrentLang(sourceLang)?.apiCode || sourceLang;
-          const tgtCode = getCurrentLang(targetLang)?.apiCode || targetLang;
+          const { sourceLang: src, targetLang: tgt } = langRef.current;
+          const srcCode = getCurrentLang(src)?.apiCode || src;
+          const tgtCode = getCurrentLang(tgt)?.apiCode || tgt;
           const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${srcCode}|${tgtCode}`;
-          
+
           const response = await fetch(url);
           const data = await response.json();
-          
+
           console.log('API レスポンス:', data);
 
           if (data.responseStatus === 200 && data.responseData) {
             const translatedText = data.responseData.translatedText;
             setTranslation(prev => prev + translatedText + ' ');
-            
+
             if (autoSpeak) {
               speakText(translatedText);
             }
@@ -299,8 +304,8 @@
               original: text,
               translated: translatedText,
               timestamp: new Date().toLocaleTimeString(),
-              sourceLang,
-              targetLang
+              sourceLang: src,
+              targetLang: tgt
             }, ...prev].slice(0, 50));
           } else {
             console.error('翻訳エラー:', data);
