@@ -11,9 +11,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="翻訳">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.tailwindcss.com; style-src 'unsafe-inline' https://cdn.tailwindcss.com https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://api.mymemory.translated.net; worker-src 'self'; img-src 'self' blob: data:; manifest-src 'self'">
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -292,8 +293,9 @@
 
           console.log('API レスポンス:', data);
 
-          if (data.responseStatus === 200 && data.responseData) {
-            const translatedText = data.responseData.translatedText;
+          if (data.responseStatus === 200 && data.responseData &&
+              typeof data.responseData.translatedText === 'string') {
+            const translatedText = data.responseData.translatedText.slice(0, 1000);
             setTranslation(prev => prev + translatedText + ' ');
 
             if (autoSpeak) {
