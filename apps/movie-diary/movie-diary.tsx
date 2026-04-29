@@ -1,13 +1,47 @@
-import React, { useState, useEffect } from 'react';
-import { Film, Plus, TrendingUp, Calendar, Heart, Smile, Zap, MapPin, Users, Clock, BarChart3, PieChart, Award, Image } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Film, Plus, TrendingUp, Calendar, Heart, Smile, Zap, MapPin, Users, BarChart3, PieChart, Award } from 'lucide-react';
+
+interface EmotionScores {
+  cried: number;
+  laughed: number;
+  thrilled: number;
+}
+
+interface Movie {
+  id: number;
+  title: string;
+  date: string;
+  location: string;
+  locationType: string;
+  watchedWith: string;
+  mood: string[];
+  genre: string;
+  emotionScores: EmotionScores;
+  memo: string;
+  posterColor: string;
+  year: number;
+}
+
+interface MovieFormData {
+  title: string;
+  date: string;
+  location: string;
+  locationType: string;
+  watchedWith: string;
+  mood: string[];
+  genre: string;
+  emotionScores: EmotionScores;
+  memo: string;
+  posterColor: string;
+}
 
 const MovieDiaryApp = () => {
-  const [movies, setMovies] = useState([]);
+  const [movies, setMovies] = useState<Movie[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [currentView, setCurrentView] = useState('list');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<MovieFormData>({
     title: '',
     date: new Date().toISOString().split('T')[0],
     location: '',
@@ -32,20 +66,20 @@ const MovieDiaryApp = () => {
     loadMovies();
   }, []);
 
-  const loadMovies = async () => {
+  const loadMovies = () => {
     try {
-      const result = await window.storage.get('movie-diary-data');
+      const result = localStorage.getItem('movie-diary-data');
       if (result) {
-        setMovies(JSON.parse(result.value));
+        setMovies(JSON.parse(result));
       }
     } catch (error) {
       console.log('初回起動: データを初期化します');
     }
   };
 
-  const saveMovies = async (updatedMovies) => {
+  const saveMovies = (updatedMovies: Movie[]) => {
     try {
-      await window.storage.set('movie-diary-data', JSON.stringify(updatedMovies));
+      localStorage.setItem('movie-diary-data', JSON.stringify(updatedMovies));
       setMovies(updatedMovies);
     } catch (error) {
       console.error('保存エラー:', error);
@@ -79,12 +113,12 @@ const MovieDiaryApp = () => {
     setShowAddForm(false);
   };
 
-  const handleDeleteMovie = (id) => {
+  const handleDeleteMovie = (id: number) => {
     const updatedMovies = movies.filter(m => m.id !== id);
     saveMovies(updatedMovies);
   };
 
-  const toggleMood = (mood) => {
+  const toggleMood = (mood: string) => {
     const newMoods = formData.mood.includes(mood)
       ? formData.mood.filter(m => m !== mood)
       : [...formData.mood, mood];
@@ -94,10 +128,10 @@ const MovieDiaryApp = () => {
   const getYearlyStats = () => {
     const yearMovies = movies.filter(m => m.year === selectedYear);
     
-    const genreCounts = {};
-    const locationCounts = {};
-    const moodCounts = {};
-    const monthlyCounts = {};
+    const genreCounts: Record<string, number> = {};
+    const locationCounts: Record<string, number> = {};
+    const moodCounts: Record<string, number> = {};
+    const monthlyCounts: Record<number, number> = {};
     let totalCried = 0, totalLaughed = 0, totalThrilled = 0;
 
     // 月別カウントの初期化（1月から12月）
@@ -118,12 +152,12 @@ const MovieDiaryApp = () => {
       monthlyCounts[month]++;
     });
 
-    const mostCriedMovie = yearMovies.reduce((max, m) => 
-      m.emotionScores.cried > (max?.emotionScores.cried || 0) ? m : max, null);
-    const mostLaughedMovie = yearMovies.reduce((max, m) => 
-      m.emotionScores.laughed > (max?.emotionScores.laughed || 0) ? m : max, null);
-    const mostThrilledMovie = yearMovies.reduce((max, m) => 
-      m.emotionScores.thrilled > (max?.emotionScores.thrilled || 0) ? m : max, null);
+    const mostCriedMovie = yearMovies.reduce<Movie | null>((max, m) =>
+      m.emotionScores.cried > (max?.emotionScores.cried ?? 0) ? m : max, null);
+    const mostLaughedMovie = yearMovies.reduce<Movie | null>((max, m) =>
+      m.emotionScores.laughed > (max?.emotionScores.laughed ?? 0) ? m : max, null);
+    const mostThrilledMovie = yearMovies.reduce<Movie | null>((max, m) =>
+      m.emotionScores.thrilled > (max?.emotionScores.thrilled ?? 0) ? m : max, null);
 
     return {
       totalCount: yearMovies.length,
@@ -378,7 +412,7 @@ const MovieDiaryApp = () => {
                   value={formData.memo}
                   onChange={(e) => setFormData({ ...formData, memo: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  rows="3"
+                  rows={3}
                   placeholder="映画を見た直後の余韻を残しましょう..."
                 />
               </div>

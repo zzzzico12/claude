@@ -1,0 +1,24 @@
+{
+  "name": "映画日記",
+  "short_name": "映画日記",
+  "description": "観た映画を記録・感情スコアと統計で振り返るアプリ",
+  "start_url": "./movie-diary.html",
+  "display": "standalone",
+  "background_color": "#2d1b69",
+  "theme_color": "#9333ea",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
