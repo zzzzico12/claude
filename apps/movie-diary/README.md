@@ -13,18 +13,22 @@
 
 ## 技術スタック
 
-- React (TypeScript)
-- Lucide React Icons
+- HTML5（スタンドアロン・ビルド不要）
+- React 18（CDN / UMD版）
+- Tailwind CSS（Play CDN）
+- Babel Standalone（ブラウザ内JSX変換）
 - ローカルストレージAPI
-- Chart/グラフ表示機能
+- PWA（manifest.json・Service Worker）
 
 ## 使い方
 
-1. [movie-diary.tsx](movie-diary.tsx)を適切なReact環境にコピー
-2. 「+」ボタンから新しい映画記録を追加
+1. [movie-diary.html](movie-diary.html)をブラウザで開く
+2. 「記録する」ボタンから新しい映画を追加
 3. 詳細情報を入力して保存
 4. リストで過去の記録を確認
 5. 統計画面で年間の視聴傾向を分析
+
+> TypeScript版は [movie-diary.tsx](movie-diary.tsx) を参照。
 
 ## 記録できる情報
 
@@ -108,6 +112,10 @@
 - 好みのジャンル分析
 - 感情の記録と可視化
 - 映画日記として活用
+
+## PWA対応
+
+HTTPS環境でサーブすると「ホーム画面に追加」が可能。オフラインでも動作します。
 
 ---
 
