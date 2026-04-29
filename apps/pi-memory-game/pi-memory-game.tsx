@@ -7,11 +7,11 @@ const PI_DIGITS = "1415926535897932384626433832795028841971693993751058209749445
 export default function PiMemoryGame() {
   const [input, setInput] = useState('');
   const [gameState, setGameState] = useState('ready'); // ready, playing, finished
-  const [startTime, setStartTime] = useState(null);
-  const [endTime, setEndTime] = useState(null);
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [endTime, setEndTime] = useState<number | null>(null);
   const [correctDigits, setCorrectDigits] = useState(0);
-  const [wrongDigit, setWrongDigit] = useState(null);
-  const inputRef = useRef(null);
+  const [wrongDigit, setWrongDigit] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (gameState === 'playing' && inputRef.current) {
@@ -28,7 +28,7 @@ export default function PiMemoryGame() {
     setWrongDigit(null);
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     
     // 数字のみを許可
@@ -58,7 +58,7 @@ export default function PiMemoryGame() {
     }
   };
 
-  const formatTime = (ms) => {
+  const formatTime = (ms: number) => {
     const seconds = Math.floor(ms / 1000);
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
