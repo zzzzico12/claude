@@ -323,7 +323,7 @@
         }
       };
 
-      const toggleListening = async () => {
+      const toggleListening = () => {
         if (!isSupported) {
           setError('お使いのブラウザは音声認識に対応していません。');
           return;
@@ -345,27 +345,14 @@
           setTranslation('');
           setInterimTranscript('');
           setError('');
-
+          isListeningRef.current = true;
+          setIsListening(true);
           try {
-            await navigator.mediaDevices.getUserMedia({ audio: true });
-
-            isListeningRef.current = true;
-            setIsListening(true);
-
-            setTimeout(() => {
-              try {
-                recognitionRef.current?.start();
-                console.log('音声認識開始成功');
-              } catch (e) {
-                console.error('開始エラー:', e);
-                setError('音声認識の開始に失敗しました: ' + e.message);
-                isListeningRef.current = false;
-                setIsListening(false);
-              }
-            }, 100);
+            recognitionRef.current?.start();
+            console.log('音声認識開始成功');
           } catch (e) {
-            console.error('マイク権限エラー:', e);
-            setError('マイクへのアクセスが拒否されました。ブラウザの設定を確認してください。');
+            console.error('開始エラー:', e);
+            setError('音声認識の開始に失敗しました。マイクの使用を許可してください。');
             isListeningRef.current = false;
             setIsListening(false);
           }
