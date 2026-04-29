@@ -150,6 +150,7 @@
       const recognitionRef = useRef(null);
       const translationTimeoutRef = useRef(null);
       const isInitializedRef = useRef(false);
+      const isListeningRef = useRef(false);
 
       // 言語コードマッピング（音声認識用とLibreTranslate API用）
       const languages = [
@@ -178,7 +179,7 @@
         
         if (!isInitializedRef.current) {
           recognitionRef.current = new SpeechRecognition();
-          recognitionRef.current.continuous = true;
+          recognitionRef.current.continuous = false; // iOSはcontinuous=trueで動作不安定
           recognitionRef.current.interimResults = true;
           isInitializedRef.current = true;
         }
@@ -245,12 +246,13 @@
 
           recognitionRef.current.onend = () => {
             console.log('音声認識終了イベント');
-            if (isListening) {
+            if (isListeningRef.current) {
               try {
                 console.log('音声認識を再開始');
                 recognitionRef.current.start();
               } catch (e) {
                 console.error('再開始エラー:', e);
+                isListeningRef.current = false;
                 setIsListening(false);
               }
             }
@@ -258,7 +260,7 @@
         }
 
         return () => {
-          if (recognitionRef.current && isListening) {
+          if (recognitionRef.current && isListeningRef.current) {
             try {
               recognitionRef.current.stop();
             } catch (e) {
@@ -266,7 +268,7 @@
             }
           }
         };
-      }, [sourceLang, isListening]);
+      }, [sourceLang]);
 
       const translateText = async (text) => {
         if (!text.trim()) return;
@@ -329,13 +331,13 @@
 
         if (isListening) {
           console.log('音声認識を停止');
+          isListeningRef.current = false;
+          setIsListening(false);
+          setError('');
           try {
             recognitionRef.current?.stop();
-            setIsListening(false);
-            setError('');
           } catch (e) {
             console.error('停止エラー:', e);
-            setError('停止中にエラーが発生しました。');
           }
         } else {
           console.log('音声認識を開始');
@@ -343,12 +345,13 @@
           setTranslation('');
           setInterimTranscript('');
           setError('');
-          
+
           try {
             await navigator.mediaDevices.getUserMedia({ audio: true });
-            
+
+            isListeningRef.current = true;
             setIsListening(true);
-            
+
             setTimeout(() => {
               try {
                 recognitionRef.current?.start();
@@ -356,12 +359,14 @@
               } catch (e) {
                 console.error('開始エラー:', e);
                 setError('音声認識の開始に失敗しました: ' + e.message);
+                isListeningRef.current = false;
                 setIsListening(false);
               }
             }, 100);
           } catch (e) {
             console.error('マイク権限エラー:', e);
             setError('マイクへのアクセスが拒否されました。ブラウザの設定を確認してください。');
+            isListeningRef.current = false;
             setIsListening(false);
           }
         }
