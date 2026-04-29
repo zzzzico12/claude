@@ -13,17 +13,21 @@
 
 ## 技術スタック
 
-- React (TypeScript)
-- Lucide React Icons
-- Tailwind CSS
+- HTML5（スタンドアロン・ビルド不要）
+- React 18（CDN / UMD版）
+- Tailwind CSS（Play CDN）
+- Babel Standalone（ブラウザ内JSX変換）
+- PWA（manifest.json・Service Worker）
 
 ## 使い方
 
-1. [pi-memory-game.tsx](pi-memory-game.tsx)を適切なReact環境にコピー
-2. 「スタート」ボタンをクリック
+1. [pi-memory-game.html](pi-memory-game.html)をブラウザで開く
+2. 「ゲームスタート」ボタンをクリック
 3. 円周率の小数点以下を入力
 4. 間違えるまで続ける
 5. 結果を確認してリトライ
+
+> TypeScript版は [pi-memory-game.tsx](pi-memory-game.tsx) を参照。
 
 ## ゲームルール
 
@@ -87,6 +91,10 @@
 ## 世界記録
 
 世界には円周率を数万桁以上暗記している人もいます。あなたはどこまで覚えられますか？
+
+## PWA対応
+
+HTTPS環境でサーブすると「ホーム画面に追加」が可能。オフラインでも動作します。
 
 ---
 
