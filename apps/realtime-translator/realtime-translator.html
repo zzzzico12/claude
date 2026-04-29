@@ -154,16 +154,16 @@
 
       // 言語コードマッピング（音声認識用とLibreTranslate API用）
       const languages = [
-        { code: 'ja', speechCode: 'ja-JP', name: '日本語', flag: '🇯🇵', ttsCode: 'ja-JP' },
-        { code: 'en', speechCode: 'en-US', name: 'English', flag: '🇺🇸', ttsCode: 'en-US' },
-        { code: 'zh', speechCode: 'zh-CN', name: '中文', flag: '🇨🇳', ttsCode: 'zh-CN' },
-        { code: 'ko', speechCode: 'ko-KR', name: '한국어', flag: '🇰🇷', ttsCode: 'ko-KR' },
-        { code: 'es', speechCode: 'es-ES', name: 'Español', flag: '🇪🇸', ttsCode: 'es-ES' },
-        { code: 'fr', speechCode: 'fr-FR', name: 'Français', flag: '🇫🇷', ttsCode: 'fr-FR' },
-        { code: 'de', speechCode: 'de-DE', name: 'Deutsch', flag: '🇩🇪', ttsCode: 'de-DE' },
-        { code: 'it', speechCode: 'it-IT', name: 'Italiano', flag: '🇮🇹', ttsCode: 'it-IT' },
-        { code: 'pt', speechCode: 'pt-BR', name: 'Português', flag: '🇧🇷', ttsCode: 'pt-BR' },
-        { code: 'ru', speechCode: 'ru-RU', name: 'Русский', flag: '🇷🇺', ttsCode: 'ru-RU' },
+        { code: 'ja', speechCode: 'ja-JP', name: '日本語', flag: '🇯🇵', ttsCode: 'ja-JP', apiCode: 'ja' },
+        { code: 'en', speechCode: 'en-US', name: 'English', flag: '🇺🇸', ttsCode: 'en-US', apiCode: 'en' },
+        { code: 'zh', speechCode: 'zh-CN', name: '中文', flag: '🇨🇳', ttsCode: 'zh-CN', apiCode: 'zh-CN' },
+        { code: 'ko', speechCode: 'ko-KR', name: '한국어', flag: '🇰🇷', ttsCode: 'ko-KR', apiCode: 'ko' },
+        { code: 'es', speechCode: 'es-ES', name: 'Español', flag: '🇪🇸', ttsCode: 'es-ES', apiCode: 'es' },
+        { code: 'fr', speechCode: 'fr-FR', name: 'Français', flag: '🇫🇷', ttsCode: 'fr-FR', apiCode: 'fr' },
+        { code: 'de', speechCode: 'de-DE', name: 'Deutsch', flag: '🇩🇪', ttsCode: 'de-DE', apiCode: 'de' },
+        { code: 'it', speechCode: 'it-IT', name: 'Italiano', flag: '🇮🇹', ttsCode: 'it-IT', apiCode: 'it' },
+        { code: 'pt', speechCode: 'pt-BR', name: 'Português', flag: '🇧🇷', ttsCode: 'pt-BR', apiCode: 'pt' },
+        { code: 'ru', speechCode: 'ru-RU', name: 'Русский', flag: '🇷🇺', ttsCode: 'ru-RU', apiCode: 'ru' },
       ];
 
       const getCurrentLang = (code) => languages.find(l => l.code === code);
@@ -278,7 +278,9 @@
 
         try {
           // MyMemory Translation API（無料、APIキー不要）を使用
-          const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLang}|${targetLang}`;
+          const srcCode = getCurrentLang(sourceLang)?.apiCode || sourceLang;
+          const tgtCode = getCurrentLang(targetLang)?.apiCode || targetLang;
+          const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${srcCode}|${tgtCode}`;
           
           const response = await fetch(url);
           const data = await response.json();
