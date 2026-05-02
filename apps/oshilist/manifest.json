@@ -1,0 +1,25 @@
+{
+  "name": "推しリスト",
+  "short_name": "oshilist",
+  "description": "推しの最新情報をTavily APIで検索・保存",
+  "lang": "ja",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f8f6f3",
+  "theme_color": "#f8f6f3",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

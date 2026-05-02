@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#1a1612"/>
+  <!-- 4-pointed star (✦) -->
+  <path d="M256,88 L292,220 L424,256 L292,292 L256,424 L220,292 L88,256 L220,220 Z" fill="#c4a46b"/>
+</svg>

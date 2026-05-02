@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>推しリスト</title>
+  <meta name="theme-color" content="#f8f6f3">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="oshilist">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon.svg">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="header">
+    <h1 class="logo">推しリスト<span class="logo-sub">oshilist</span></h1>
+  </header>
+
+  <nav class="tab-bar">
+    <button class="tab active" data-tab="search">推し検索</button>
+    <button class="tab" data-tab="list">推しリスト</button>
+  </nav>
+
+  <main class="main">
+
+    <!-- ===== 推し検索パネル ===== -->
+    <div id="panel-search" class="panel">
+
+      <section class="search-section">
+        <!-- カテゴリ -->
+        <div class="category-bar">
+          <button class="category-btn active" data-cat="俳優・女優">俳優・女優</button>
+          <button class="category-btn" data-cat="声優">声優</button>
+          <button class="category-btn" data-cat="アイドル">アイドル</button>
+          <button class="category-btn" data-cat="アーティスト">アーティスト</button>
+          <button class="category-btn" data-cat="VTuber">VTuber</button>
+        </div>
+        <!-- ④ トピック絞り込み -->
+        <div class="topic-bar">
+          <button class="topic-btn active" data-topic="すべて">すべて</button>
+          <button class="topic-btn" data-topic="ドラマ">ドラマ</button>
+          <button class="topic-btn" data-topic="映画">映画</button>
+          <button class="topic-btn" data-topic="音楽">音楽</button>
+          <button class="topic-btn" data-topic="舞台">舞台</button>
+          <button class="topic-btn" data-topic="CM">CM</button>
+          <button class="topic-btn" data-topic="イベント">イベント</button>
+        </div>
+        <!-- 検索ボックス -->
+        <div class="search-box">
+          <input
+            type="text"
+            id="searchInput"
+            class="search-input"
+            placeholder="推しの名前を入力（例：高石あかり）"
+            autocomplete="off"
+          >
+          <button id="searchBtn" class="search-btn">調べる</button>
+        </div>
+      </section>
+
+      <section id="results" class="results-section hidden">
+        <div id="loading" class="loading hidden">
+          <div class="spinner"></div>
+          <p class="loading-text">収集中</p>
+        </div>
+        <div id="errorBox" class="error-box hidden"><p id="errorMsg"></p></div>
+
+        <div id="content" class="content hidden">
+          <div class="query-header">
+            <span id="queryLabel" class="query-label"></span>
+            <button id="favBtn" class="fav-btn">
+              <span class="fav-icon">☆</span>
+              <span class="fav-text">お気に入り</span>
+            </button>
+          </div>
+          <div class="block">
+            <p class="block-label">まとめ</p>
+            <p id="aiSummary" class="ai-summary-text"></p>
+          </div>
+          <div class="block">
+            <p class="block-label">検索結果</p>
+            <ul id="newsList" class="news-list"></ul>
+          </div>
+          <div class="block" id="imageBlock" hidden>
+            <p class="block-label">アルバム</p>
+            <div id="imageGrid" class="image-grid"></div>
+          </div>
+        </div>
+      </section>
+
+      <div id="hint" class="hint">
+        <p>名前を入力して調べる</p>
+        <p class="hint-sub">Tavily API でウェブを検索します</p>
+      </div>
+    </div>
+
+    <!-- ===== 推しリストパネル ===== -->
+    <div id="panel-list" class="panel hidden">
+
+      <div id="favEmptyHint" class="hint">
+        <p>推しが登録されていません</p>
+        <p class="hint-sub">推し検索タブでお気に入りに追加してください</p>
+      </div>
+
+      <!-- ② 一括更新 -->
+      <div id="listToolbar" class="list-toolbar hidden">
+        <p class="block-label">推しリスト</p>
+        <button id="bulkBtn" class="bulk-btn">全員を更新</button>
+      </div>
+      <div id="bulkProgress" class="bulk-progress hidden"></div>
+
+      <ul id="favList" class="fav-list hidden"></ul>
+
+      <!-- 個別検索結果 -->
+      <section id="listResults" class="results-section hidden">
+        <div id="listLoading" class="loading hidden">
+          <div class="spinner"></div>
+          <p class="loading-text">収集中</p>
+        </div>
+        <div id="listErrorBox" class="error-box hidden"><p id="listErrorMsg"></p></div>
+
+        <div id="listContent" class="content hidden">
+          <div class="query-header">
+            <span id="listQueryLabel" class="query-label"></span>
+          </div>
+          <div class="block">
+            <p class="block-label">まとめ</p>
+            <p id="listAiSummary" class="ai-summary-text"></p>
+          </div>
+          <div class="block">
+            <p class="block-label">検索結果</p>
+            <ul id="listNewsList" class="news-list"></ul>
+          </div>
+          <div class="block" id="listImageBlock" hidden>
+            <p class="block-label">アルバム</p>
+            <div id="listImageGrid" class="image-grid"></div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <footer class="footer">Powered by <span class="gold">Tavily</span></footer>
+
+  <script src="config.js" onerror="void(0)"></script>
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js');
+    }
+  </script>
+</body>
+</html>
