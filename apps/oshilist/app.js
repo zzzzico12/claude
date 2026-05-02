@@ -1,10 +1,13 @@
 /* ===== 設定 ===== */
-const API_KEY = (typeof CONFIG !== 'undefined' && CONFIG.API_KEY)
-  ? CONFIG.API_KEY
-  : 'YOUR_TAVILY_API_KEY';
-
-const TAVILY_URL = 'https://api.tavily.com/search';
+const TAVILY_URL  = 'https://api.tavily.com/search';
 const STORAGE_KEY = 'oshi-favorites';
+const KEY_STORAGE = 'oshi-api-key';
+
+function getApiKey() {
+  return localStorage.getItem(KEY_STORAGE)
+    || (typeof CONFIG !== 'undefined' && CONFIG.API_KEY)
+    || '';
+}
 
 /* ===== 状態 ===== */
 let selectedCategory = '俳優・女優';
@@ -64,6 +67,40 @@ const favBtn       = document.getElementById('favBtn');
 const bulkBtn      = document.getElementById('bulkBtn');
 const bulkProgress = document.getElementById('bulkProgress');
 
+/* ===== API キー設定画面 ===== */
+const setupScreen = document.getElementById('setupScreen');
+const apiKeyInput = document.getElementById('apiKeyInput');
+const saveKeyBtn  = document.getElementById('saveKeyBtn');
+const settingsBtn = document.getElementById('settingsBtn');
+
+function showSetupScreen() {
+  apiKeyInput.value = localStorage.getItem(KEY_STORAGE) || '';
+  setupScreen.classList.remove('hidden');
+}
+
+function hideSetupScreen() {
+  setupScreen.classList.add('hidden');
+}
+
+saveKeyBtn.addEventListener('click', () => {
+  const key = apiKeyInput.value.trim();
+  if (!key) {
+    apiKeyInput.focus();
+    return;
+  }
+  localStorage.setItem(KEY_STORAGE, key);
+  hideSetupScreen();
+});
+
+apiKeyInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') saveKeyBtn.click();
+});
+
+settingsBtn.addEventListener('click', showSetupScreen);
+
+// 起動時チェック
+if (!getApiKey()) showSetupScreen();
+
 /* ===== タブ切り替え ===== */
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
@@ -110,8 +147,8 @@ async function startSearch() {
   const name = searchInput.value.trim();
   if (!name || isLoading) return;
 
-  if (API_KEY === 'YOUR_TAVILY_API_KEY') {
-    showSearchError('config.js の API_KEY に Tavily のキーを設定してください。');
+  if (!getApiKey()) {
+    showSetupScreen();
     return;
   }
 
@@ -223,7 +260,7 @@ async function searchWithTavily(name, category, topic) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      api_key: API_KEY,
+      api_key: getApiKey(),
       query,
       search_depth: 'advanced',
       include_answer: false,

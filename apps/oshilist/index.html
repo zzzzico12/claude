@@ -16,8 +16,29 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
+  <!-- ===== API キー設定画面 ===== -->
+  <div id="setupScreen" class="setup-screen hidden">
+    <div class="setup-card">
+      <h1 class="logo setup-logo">推しリスト<span class="logo-sub">oshilist</span></h1>
+      <p class="setup-desc">Tavily API キーを入力してください</p>
+      <input
+        type="text"
+        id="apiKeyInput"
+        class="setup-input"
+        placeholder="tvly-xxxxxxxxxxxxxxxx"
+        autocomplete="off"
+        spellcheck="false"
+      >
+      <button id="saveKeyBtn" class="setup-save-btn">保存して始める</button>
+      <a class="setup-link" href="https://app.tavily.com" target="_blank" rel="noopener">
+        APIキーを取得する →
+      </a>
+    </div>
+  </div>
+
   <header class="header">
     <h1 class="logo">推しリスト<span class="logo-sub">oshilist</span></h1>
+    <button id="settingsBtn" class="settings-btn" title="API キー設定">⚙</button>
   </header>
 
   <nav class="tab-bar">
