@@ -4,9 +4,22 @@ const STORAGE_KEY = 'oshi-favorites';
 const KEY_STORAGE = 'oshi-api-key';
 
 function getApiKey() {
-  return localStorage.getItem(KEY_STORAGE)
-    || (typeof CONFIG !== 'undefined' && CONFIG.API_KEY)
-    || '';
+  return localStorage.getItem(KEY_STORAGE) || '';
+}
+
+/* ===== セキュリティユーティリティ ===== */
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// http(s):// のみ許可。javascript: や data: をブロック
+function sanitizeUrl(url) {
+  try {
+    const u = new URL(url);
+    return (u.protocol === 'https:' || u.protocol === 'http:') ? url : '';
+  } catch { return ''; }
 }
 
 /* ===== 状態 ===== */
@@ -68,13 +81,15 @@ const bulkBtn      = document.getElementById('bulkBtn');
 const bulkProgress = document.getElementById('bulkProgress');
 
 /* ===== API キー設定画面 ===== */
-const setupScreen = document.getElementById('setupScreen');
-const apiKeyInput = document.getElementById('apiKeyInput');
-const saveKeyBtn  = document.getElementById('saveKeyBtn');
-const settingsBtn = document.getElementById('settingsBtn');
+const setupScreen  = document.getElementById('setupScreen');
+const apiKeyInput  = document.getElementById('apiKeyInput');
+const saveKeyBtn   = document.getElementById('saveKeyBtn');
+const settingsBtn  = document.getElementById('settingsBtn');
+const apiKeyError  = document.getElementById('apiKeyError');
 
 function showSetupScreen() {
   apiKeyInput.value = localStorage.getItem(KEY_STORAGE) || '';
+  apiKeyError.classList.add('hidden');
   setupScreen.classList.remove('hidden');
 }
 
@@ -84,16 +99,23 @@ function hideSetupScreen() {
 
 saveKeyBtn.addEventListener('click', () => {
   const key = apiKeyInput.value.trim();
-  if (!key) {
+  // tvly- で始まるかチェック
+  if (!key.startsWith('tvly-')) {
+    apiKeyError.classList.remove('hidden');
     apiKeyInput.focus();
     return;
   }
+  apiKeyError.classList.add('hidden');
   localStorage.setItem(KEY_STORAGE, key);
   hideSetupScreen();
 });
 
 apiKeyInput.addEventListener('keydown', e => {
   if (e.key === 'Enter') saveKeyBtn.click();
+});
+
+apiKeyInput.addEventListener('input', () => {
+  apiKeyError.classList.add('hidden');
 });
 
 settingsBtn.addEventListener('click', showSetupScreen);
@@ -122,7 +144,7 @@ document.querySelectorAll('.category-btn').forEach(btn => {
   });
 });
 
-/* ===== ④ トピック切り替え ===== */
+/* ===== トピック切り替え ===== */
 document.querySelectorAll('.topic-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.topic-btn').forEach(b => b.classList.remove('active'));
@@ -139,18 +161,15 @@ favBtn.addEventListener('click', () => {
   if (currentName) toggleFavorite(currentName, currentCategory);
 });
 
-/* ===== ② 一括更新 ===== */
+/* ===== 一括更新 ===== */
 bulkBtn.addEventListener('click', bulkUpdate);
 
 /* ===== 推し検索 ===== */
 async function startSearch() {
-  const name = searchInput.value.trim();
+  const name = searchInput.value.trim().slice(0, 50);
   if (!name || isLoading) return;
 
-  if (!getApiKey()) {
-    showSetupScreen();
-    return;
-  }
+  if (!getApiKey()) { showSetupScreen(); return; }
 
   currentName     = name;
   currentCategory = selectedCategory;
@@ -167,8 +186,8 @@ async function startSearch() {
     const data = await searchWithTavily(name, selectedCategory, selectedTopic);
     renderSearchResults(name, selectedCategory, data);
     contentEl.classList.remove('hidden');
-  } catch (err) {
-    showSearchError(err.message || '情報の取得に失敗しました。');
+  } catch {
+    showSearchError('情報の取得に失敗しました。しばらくしてからお試しください。');
   } finally {
     showSearchLoading(false);
     isLoading = false;
@@ -204,15 +223,15 @@ async function searchFromList(name, category) {
     renderListResults(name, category, data);
     listContentEl.classList.remove('hidden');
     listResultsEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  } catch (err) {
-    showListError(err.message || '情報の取得に失敗しました。');
+  } catch {
+    showListError('情報の取得に失敗しました。しばらくしてからお試しください。');
   } finally {
     listLoadingEl.classList.add('hidden');
     isLoading = false;
   }
 }
 
-/* ===== ② 一括更新 ===== */
+/* ===== 一括更新 ===== */
 async function bulkUpdate() {
   const list = loadFavorites();
   if (list.length === 0 || isBulkUpdating) return;
@@ -265,16 +284,12 @@ async function searchWithTavily(name, category, topic) {
       search_depth: 'advanced',
       include_answer: false,
       include_images: true,
-      include_images: false,
       max_results: 8,
       language: 'ja'
     })
   });
 
-  if (!response.ok) {
-    const err = await response.json().catch(() => ({}));
-    throw new Error(err.detail || err.message || `HTTPエラー ${response.status}`);
-  }
+  if (!response.ok) throw new Error(`${response.status}`);
   return response.json();
 }
 
@@ -310,25 +325,48 @@ function renderListResults(name, category, data) {
 function buildNewsList(listEl, results) {
   listEl.innerHTML = '';
   if (results.length === 0) {
-    listEl.innerHTML = '<li style="color:var(--t3);font-size:0.85rem;">検索結果が見つかりませんでした。</li>';
+    const li = document.createElement('li');
+    li.style.cssText = 'color:var(--t3);font-size:0.85rem;';
+    li.textContent = '検索結果が見つかりませんでした。';
+    listEl.appendChild(li);
     return;
   }
   results.forEach(item => {
-    const date    = item.published_date ? formatDate(item.published_date) : '';
-    const domain  = extractDomain(item.url || '');
-    const snippet = item.content ? item.content.slice(0, 120) + '…' : '';
-    const li = document.createElement('li');
-    li.className = 'news-item';
-    li.innerHTML = `
-      <span class="news-date">${escHtml(date)}</span>
-      <div class="news-body">
-        <a class="news-link" href="${escHtml(item.url || '#')}" target="_blank" rel="noopener">
-          ${escHtml(item.title || '')}
-        </a>
-        <div class="news-snippet">${escHtml(snippet)}</div>
-        <div class="news-source">${escHtml(domain)}</div>
-      </div>
-    `;
+    const safeUrl   = sanitizeUrl(item.url || '');
+    const date      = item.published_date ? formatDate(item.published_date) : '';
+    const domain    = safeUrl ? extractDomain(safeUrl) : '';
+    const snippet   = item.content ? item.content.slice(0, 120) + '…' : '';
+
+    const li        = document.createElement('li');
+    li.className    = 'news-item';
+
+    const dateSpan  = document.createElement('span');
+    dateSpan.className   = 'news-date';
+    dateSpan.textContent = date;
+
+    const body      = document.createElement('div');
+    body.className  = 'news-body';
+
+    const link      = document.createElement('a');
+    link.className  = 'news-link';
+    link.href       = safeUrl || '#';
+    link.target     = '_blank';
+    link.rel        = 'noopener noreferrer';
+    link.textContent = item.title || '';
+
+    const snippetEl = document.createElement('div');
+    snippetEl.className   = 'news-snippet';
+    snippetEl.textContent = snippet;
+
+    const sourceEl  = document.createElement('div');
+    sourceEl.className   = 'news-source';
+    sourceEl.textContent = domain;
+
+    body.appendChild(link);
+    body.appendChild(snippetEl);
+    body.appendChild(sourceEl);
+    li.appendChild(dateSpan);
+    li.appendChild(body);
     listEl.appendChild(li);
   });
 }
@@ -339,26 +377,20 @@ function toggleImageInAlbum(name, category, url) {
   const idx  = list.findIndex(f => f.name === name && f.category === category);
   if (idx === -1) return;
   const album = list[idx].album || [];
-  if (album.includes(url)) {
-    list[idx].album = album.filter(u => u !== url);
-  } else {
-    list[idx].album = [...album, url];
-  }
+  list[idx].album = album.includes(url)
+    ? album.filter(u => u !== url)
+    : [...album, url];
   saveFavorites(list);
 }
 
 /* ===== 画像グリッド描画 ===== */
 function renderImageGrid(gridId, blockId, images, name, category) {
-  const blockEl = document.getElementById(blockId);
-  const gridEl  = document.getElementById(gridId);
+  const blockEl     = document.getElementById(blockId);
+  const gridEl      = document.getElementById(gridId);
+  // https のみ許可
+  const validImages = images.map(sanitizeUrl).filter(Boolean).slice(0, 12);
 
-  // ロード失敗した画像を除外するため、まず全部試す
-  const validImages = images.slice(0, 12);
-
-  if (validImages.length === 0) {
-    blockEl.hidden = true;
-    return;
-  }
+  if (validImages.length === 0) { blockEl.hidden = true; return; }
 
   blockEl.hidden = false;
   gridEl.innerHTML = '';
@@ -370,29 +402,26 @@ function renderImageGrid(gridId, blockId, images, name, category) {
     const card = document.createElement('div');
     card.className = 'image-card';
 
-    const img = document.createElement('img');
-    img.src     = url;
-    img.alt     = '';
-    img.loading = 'lazy';
+    const img     = document.createElement('img');
+    img.src       = url;
+    img.alt       = '';
+    img.loading   = 'lazy';
+    img.referrerPolicy = 'no-referrer';
     img.addEventListener('error', () => card.remove());
+    img.addEventListener('click', () => window.open(url, '_blank', 'noopener,noreferrer'));
 
     const isSaved = album.includes(url);
-    const btn = document.createElement('button');
+    const btn     = document.createElement('button');
     btn.className   = `image-save-btn${isSaved ? ' saved' : ''}`;
     btn.textContent = isSaved ? '✓' : '+';
     btn.title       = isSaved ? 'アルバムから削除' : 'アルバムに追加';
     btn.addEventListener('click', e => {
       e.stopPropagation();
-      // お気に入り未登録なら先に登録
       if (!isFavorite(name, category)) toggleFavorite(name, category);
       toggleImageInAlbum(name, category, url);
       renderImageGrid(gridId, blockId, images, name, category);
       renderFavList();
     });
-
-    // 画像クリックで新タブ表示
-    img.style.cursor = 'pointer';
-    img.addEventListener('click', () => window.open(url, '_blank', 'noopener'));
 
     card.appendChild(img);
     card.appendChild(btn);
@@ -408,7 +437,7 @@ function updateFavBtn(name, category) {
   favBtn.querySelector('.fav-text').textContent = saved ? 'お気に入り済み' : 'お気に入り';
 }
 
-/* ===== ① ③ 推しリスト描画 ===== */
+/* ===== 推しリスト描画 ===== */
 function renderFavList() {
   const list        = loadFavorites();
   const favListEl   = document.getElementById('favList');
@@ -427,7 +456,7 @@ function renderFavList() {
   toolbarEl.classList.remove('hidden');
   favListEl.classList.remove('hidden');
 
-  const activeEl  = document.querySelector('.fav-item.active');
+  const activeEl   = document.querySelector('.fav-item.active');
   const activeName = activeEl?.dataset.name;
   const activeCat  = activeEl?.dataset.category;
 
@@ -440,39 +469,100 @@ function renderFavList() {
     li.dataset.name     = name;
     li.dataset.category = category;
 
-    const checkedStr = lastChecked ? relativeDate(lastChecked) : '';
+    // メインエリア
+    const main = document.createElement('div');
+    main.className = 'fav-item-main';
 
-    li.innerHTML = `
-      <div class="fav-item-main">
-        <div class="fav-item-top">
-          <span class="fav-item-name">${escHtml(name)}</span>
-          <span class="fav-item-cat">${escHtml(category)}</span>
-          ${checkedStr ? `<span class="fav-last-checked">${escHtml(checkedStr)}</span>` : ''}
-        </div>
-        ${lastSummary ? `<div class="fav-summary">${escHtml(lastSummary.slice(0, 100))}…</div>` : ''}
-        <div class="fav-memo-row">
-          <span class="fav-memo ${memo ? '' : 'fav-memo-empty'}">${escHtml(memo || '+ メモを追加')}</span>
-        </div>
-        ${album?.length ? `<div class="album-strip">${album.slice(0, 5).map(u => `<img class="album-thumb" src="${escHtml(u)}" alt="" loading="lazy" onerror="this.remove()">`).join('')}${album.length > 5 ? `<span class="album-more">+${album.length - 5}</span>` : ''}</div>` : ''}
-      </div>
-      <button class="fav-remove-btn" aria-label="削除">✕</button>
-    `;
+    // 上段：名前・カテゴリ・最終確認日
+    const top = document.createElement('div');
+    top.className = 'fav-item-top';
 
-    li.querySelector('.fav-item-main').addEventListener('click', e => {
+    const nameEl = document.createElement('span');
+    nameEl.className   = 'fav-item-name';
+    nameEl.textContent = name;
+
+    const catEl = document.createElement('span');
+    catEl.className   = 'fav-item-cat';
+    catEl.textContent = category;
+
+    top.appendChild(nameEl);
+    top.appendChild(catEl);
+
+    if (lastChecked) {
+      const checkedEl = document.createElement('span');
+      checkedEl.className   = 'fav-last-checked';
+      checkedEl.textContent = relativeDate(lastChecked);
+      top.appendChild(checkedEl);
+    }
+
+    main.appendChild(top);
+
+    // サマリー
+    if (lastSummary) {
+      const summaryEl = document.createElement('div');
+      summaryEl.className   = 'fav-summary';
+      summaryEl.textContent = lastSummary.slice(0, 100) + '…';
+      main.appendChild(summaryEl);
+    }
+
+    // メモ行
+    const memoRow = document.createElement('div');
+    memoRow.className = 'fav-memo-row';
+    const memoSpan = document.createElement('span');
+    memoSpan.className   = `fav-memo${memo ? '' : ' fav-memo-empty'}`;
+    memoSpan.textContent = memo || '+ メモを追加';
+    memoRow.appendChild(memoSpan);
+    main.appendChild(memoRow);
+
+    // アルバムサムネイル（onerror はイベントリスナーで設定）
+    if (album?.length) {
+      const strip = document.createElement('div');
+      strip.className = 'album-strip';
+      album.slice(0, 5).forEach(u => {
+        const safe = sanitizeUrl(u);
+        if (!safe) return;
+        const thumb = document.createElement('img');
+        thumb.className      = 'album-thumb';
+        thumb.src            = safe;
+        thumb.alt            = '';
+        thumb.loading        = 'lazy';
+        thumb.referrerPolicy = 'no-referrer';
+        thumb.addEventListener('error', () => thumb.remove());
+        strip.appendChild(thumb);
+      });
+      if (album.length > 5) {
+        const more = document.createElement('span');
+        more.className   = 'album-more';
+        more.textContent = `+${album.length - 5}`;
+        strip.appendChild(more);
+      }
+      main.appendChild(strip);
+    }
+
+    // 削除ボタン
+    const removeBtn = document.createElement('button');
+    removeBtn.className  = 'fav-remove-btn';
+    removeBtn.setAttribute('aria-label', '削除');
+    removeBtn.textContent = '✕';
+
+    // イベント
+    main.addEventListener('click', e => {
       if (e.target.closest('.fav-memo-row')) return;
       searchFromList(name, category);
     });
 
-    li.querySelector('.fav-memo').addEventListener('click', e => {
+    memoSpan.addEventListener('click', e => {
       e.stopPropagation();
-      openMemoEditor(e.target, name, category, memo || '');
+      openMemoEditor(memoSpan, name, category, memo || '');
     });
 
-    li.querySelector('.fav-remove-btn').addEventListener('click', e => {
+    removeBtn.addEventListener('click', e => {
       e.stopPropagation();
       openRemoveConfirm(li, name, category, name === activeName && category === activeCat);
     });
 
+    li.appendChild(main);
+    li.appendChild(removeBtn);
     favListEl.appendChild(li);
   });
 }
@@ -480,38 +570,46 @@ function renderFavList() {
 /* ===== 削除確認 ===== */
 function openRemoveConfirm(li, name, category, wasActive) {
   const removeBtn = li.querySelector('.fav-remove-btn');
-
-  // すでに確認中なら何もしない
   if (li.querySelector('.fav-confirm')) return;
 
   removeBtn.classList.add('hidden');
 
-  const confirm = document.createElement('div');
-  confirm.className = 'fav-confirm';
-  confirm.innerHTML = `
-    <span class="fav-confirm-text">削除しますか？</span>
-    <button class="fav-confirm-yes">削除</button>
-    <button class="fav-confirm-no">キャンセル</button>
-  `;
+  const confirmEl = document.createElement('div');
+  confirmEl.className = 'fav-confirm';
 
-  removeBtn.insertAdjacentElement('beforebegin', confirm);
+  const label = document.createElement('span');
+  label.className   = 'fav-confirm-text';
+  label.textContent = '削除しますか？';
 
-  confirm.querySelector('.fav-confirm-yes').addEventListener('click', e => {
+  const yesBtn = document.createElement('button');
+  yesBtn.className   = 'fav-confirm-yes';
+  yesBtn.textContent = '削除';
+
+  const noBtn = document.createElement('button');
+  noBtn.className   = 'fav-confirm-no';
+  noBtn.textContent = 'キャンセル';
+
+  confirmEl.appendChild(label);
+  confirmEl.appendChild(yesBtn);
+  confirmEl.appendChild(noBtn);
+  removeBtn.insertAdjacentElement('beforebegin', confirmEl);
+
+  yesBtn.addEventListener('click', e => {
     e.stopPropagation();
     toggleFavorite(name, category);
     if (wasActive) document.getElementById('listResults').classList.add('hidden');
   });
 
-  confirm.querySelector('.fav-confirm-no').addEventListener('click', e => {
+  noBtn.addEventListener('click', e => {
     e.stopPropagation();
-    confirm.remove();
+    confirmEl.remove();
     removeBtn.classList.remove('hidden');
   });
 }
 
-/* ===== ③ メモ編集 ===== */
+/* ===== メモ編集 ===== */
 function openMemoEditor(spanEl, name, category, currentMemo) {
-  const input = document.createElement('input');
+  const input       = document.createElement('input');
   input.type        = 'text';
   input.className   = 'fav-memo-input';
   input.value       = currentMemo;
@@ -549,26 +647,19 @@ function showListError(msg) {
 }
 
 /* ===== ユーティリティ ===== */
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-}
-
 function extractDomain(url) {
   try { return new URL(url).hostname.replace(/^www\./, ''); }
-  catch { return url; }
+  catch { return ''; }
 }
 
 function formatDate(dateStr) {
   try {
     const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return dateStr;
+    if (isNaN(d.getTime())) return '';
     return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
-  } catch { return dateStr; }
+  } catch { return ''; }
 }
 
-/* ① 相対日付 */
 function relativeDate(isoStr) {
   const days = Math.floor((Date.now() - new Date(isoStr).getTime()) / 86400000);
   if (days === 0) return '今日';
@@ -579,3 +670,8 @@ function relativeDate(isoStr) {
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+/* ===== Service Worker 登録 ===== */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js');
+}

@@ -141,6 +141,12 @@ body {
 
 .setup-link:hover { color: var(--gold); }
 
+.setup-error {
+  font-size: 0.75rem;
+  color: #c0392b;
+  margin: -8px 0 4px;
+}
+
 /* ===== Settings Button ===== */
 .header {
   position: relative;

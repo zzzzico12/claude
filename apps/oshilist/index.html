@@ -4,6 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>推しリスト</title>
+  <!-- CSP: 自ドメインのスクリプト・スタイルのみ許可、外部接続はTavilyのみ -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self';
+    style-src 'self' https://fonts.googleapis.com;
+    font-src https://fonts.gstatic.com;
+    img-src https: data:;
+    connect-src https://api.tavily.com;
+  ">
   <meta name="theme-color" content="#f8f6f3">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -28,9 +37,11 @@
         placeholder="tvly-xxxxxxxxxxxxxxxx"
         autocomplete="off"
         spellcheck="false"
+        maxlength="100"
       >
+      <p id="apiKeyError" class="setup-error hidden">tvly- で始まるキーを入力してください</p>
       <button id="saveKeyBtn" class="setup-save-btn">保存して始める</button>
-      <a class="setup-link" href="https://app.tavily.com" target="_blank" rel="noopener">
+      <a class="setup-link" href="https://app.tavily.com" target="_blank" rel="noopener noreferrer">
         APIキーを取得する →
       </a>
     </div>
@@ -52,7 +63,6 @@
     <div id="panel-search" class="panel">
 
       <section class="search-section">
-        <!-- カテゴリ -->
         <div class="category-bar">
           <button class="category-btn active" data-cat="俳優・女優">俳優・女優</button>
           <button class="category-btn" data-cat="声優">声優</button>
@@ -60,7 +70,6 @@
           <button class="category-btn" data-cat="アーティスト">アーティスト</button>
           <button class="category-btn" data-cat="VTuber">VTuber</button>
         </div>
-        <!-- ④ トピック絞り込み -->
         <div class="topic-bar">
           <button class="topic-btn active" data-topic="すべて">すべて</button>
           <button class="topic-btn" data-topic="ドラマ">ドラマ</button>
@@ -70,7 +79,6 @@
           <button class="topic-btn" data-topic="CM">CM</button>
           <button class="topic-btn" data-topic="イベント">イベント</button>
         </div>
-        <!-- 検索ボックス -->
         <div class="search-box">
           <input
             type="text"
@@ -78,6 +86,7 @@
             class="search-input"
             placeholder="推しの名前を入力（例：高石あかり）"
             autocomplete="off"
+            maxlength="50"
           >
           <button id="searchBtn" class="search-btn">調べる</button>
         </div>
@@ -127,7 +136,6 @@
         <p class="hint-sub">推し検索タブでお気に入りに追加してください</p>
       </div>
 
-      <!-- ② 一括更新 -->
       <div id="listToolbar" class="list-toolbar hidden">
         <p class="block-label">推しリスト</p>
         <button id="bulkBtn" class="bulk-btn">全員を更新</button>
@@ -136,7 +144,6 @@
 
       <ul id="favList" class="fav-list hidden"></ul>
 
-      <!-- 個別検索結果 -->
       <section id="listResults" class="results-section hidden">
         <div id="listLoading" class="loading hidden">
           <div class="spinner"></div>
@@ -169,12 +176,6 @@
 
   <footer class="footer">Powered by <span class="gold">Tavily</span></footer>
 
-  <script src="config.js" onerror="void(0)"></script>
   <script src="app.js"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js');
-    }
-  </script>
 </body>
 </html>
