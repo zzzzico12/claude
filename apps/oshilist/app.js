@@ -219,6 +219,7 @@ async function searchFromList(name, category) {
       lastChecked: new Date().toISOString(),
       lastSummary: buildSummary(data.results)
     });
+    autoAddImagesToAlbum(name, category, data.images || []);
     renderFavList();
     renderListResults(name, category, data);
     listContentEl.classList.remove('hidden');
@@ -256,6 +257,7 @@ async function bulkUpdate() {
         lastChecked: new Date().toISOString(),
         lastSummary: buildSummary(data.results)
       });
+      autoAddImagesToAlbum(name, category, data.images || []);
     } catch { /* 個別失敗は無視して続行 */ }
 
     if (itemEl) itemEl.classList.remove('updating');
@@ -310,6 +312,7 @@ function renderSearchResults(name, category, data) {
   document.getElementById('aiSummary').textContent  = buildSummary(data.results);
   buildNewsList(document.getElementById('newsList'), data.results || []);
   renderImageGrid('imageGrid', 'imageBlock', data.images || [], name, category);
+  autoAddImagesToAlbum(name, category, data.images || []);
   updateFavBtn(name, category);
 }
 
@@ -372,14 +375,22 @@ function buildNewsList(listEl, results) {
 }
 
 /* ===== アルバム管理 ===== */
-function toggleImageInAlbum(name, category, url) {
+function autoAddImagesToAlbum(name, category, images) {
   const list = loadFavorites();
   const idx  = list.findIndex(f => f.name === name && f.category === category);
   if (idx === -1) return;
-  const album = list[idx].album || [];
-  list[idx].album = album.includes(url)
-    ? album.filter(u => u !== url)
-    : [...album, url];
+  const album   = list[idx].album || [];
+  const newUrls = images.map(sanitizeUrl).filter(u => u && !album.includes(u));
+  if (newUrls.length === 0) return;
+  list[idx].album = [...album, ...newUrls].slice(0, 50);
+  saveFavorites(list);
+}
+
+function removeFromAlbum(name, category, url) {
+  const list = loadFavorites();
+  const idx  = list.findIndex(f => f.name === name && f.category === category);
+  if (idx === -1) return;
+  list[idx].album = (list[idx].album || []).filter(u => u !== url);
   saveFavorites(list);
 }
 
@@ -387,7 +398,6 @@ function toggleImageInAlbum(name, category, url) {
 function renderImageGrid(gridId, blockId, images, name, category) {
   const blockEl     = document.getElementById(blockId);
   const gridEl      = document.getElementById(gridId);
-  // https のみ許可
   const validImages = images.map(sanitizeUrl).filter(Boolean).slice(0, 12);
 
   if (validImages.length === 0) { blockEl.hidden = true; return; }
@@ -395,37 +405,101 @@ function renderImageGrid(gridId, blockId, images, name, category) {
   blockEl.hidden = false;
   gridEl.innerHTML = '';
 
-  const fav   = loadFavorites().find(f => f.name === name && f.category === category);
-  const album = fav?.album || [];
-
   validImages.forEach(url => {
     const card = document.createElement('div');
     card.className = 'image-card';
 
-    const img     = document.createElement('img');
-    img.src       = url;
-    img.alt       = '';
-    img.loading   = 'lazy';
+    const img = document.createElement('img');
+    img.src   = url;
+    img.alt   = '';
+    img.loading        = 'lazy';
     img.referrerPolicy = 'no-referrer';
     img.addEventListener('error', () => card.remove());
     img.addEventListener('click', () => window.open(url, '_blank', 'noopener,noreferrer'));
 
-    const isSaved = album.includes(url);
-    const btn     = document.createElement('button');
-    btn.className   = `image-save-btn${isSaved ? ' saved' : ''}`;
-    btn.textContent = isSaved ? '✓' : '+';
-    btn.title       = isSaved ? 'アルバムから削除' : 'アルバムに追加';
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      if (!isFavorite(name, category)) toggleFavorite(name, category);
-      toggleImageInAlbum(name, category, url);
-      renderImageGrid(gridId, blockId, images, name, category);
-      renderFavList();
-    });
-
     card.appendChild(img);
-    card.appendChild(btn);
     gridEl.appendChild(card);
+  });
+}
+
+/* ===== アルバムモーダル ===== */
+function openAlbumModal(name, category) {
+  const overlay = document.createElement('div');
+  overlay.className = 'album-modal-overlay';
+
+  const modal = document.createElement('div');
+  modal.className = 'album-modal';
+
+  const header = document.createElement('div');
+  header.className = 'album-modal-header';
+
+  const title = document.createElement('span');
+  title.className = 'album-modal-title';
+
+  const closeBtn = document.createElement('button');
+  closeBtn.className   = 'album-modal-close';
+  closeBtn.textContent = '✕';
+  closeBtn.addEventListener('click', () => overlay.remove());
+
+  header.appendChild(title);
+  header.appendChild(closeBtn);
+
+  const grid = document.createElement('div');
+  grid.className = 'album-modal-grid';
+
+  function renderModalGrid() {
+    grid.innerHTML = '';
+    const fav = loadFavorites().find(f => f.name === name && f.category === category);
+    const album = fav?.album || [];
+
+    title.textContent = `${name}のアルバム（${album.length}枚）`;
+
+    if (album.length === 0) {
+      overlay.remove();
+      return;
+    }
+
+    album.forEach(url => {
+      const safe = sanitizeUrl(url);
+      if (!safe) return;
+
+      const card = document.createElement('div');
+      card.className = 'album-modal-card';
+
+      const img = document.createElement('img');
+      img.src            = safe;
+      img.alt            = '';
+      img.loading        = 'lazy';
+      img.referrerPolicy = 'no-referrer';
+      img.addEventListener('error', () => card.remove());
+      img.addEventListener('click', () => window.open(safe, '_blank', 'noopener,noreferrer'));
+
+      const removeBtn = document.createElement('button');
+      removeBtn.className   = 'album-modal-remove';
+      removeBtn.textContent = '✕';
+      removeBtn.title       = 'アルバムから削除';
+      removeBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        removeFromAlbum(name, category, url);
+        renderModalGrid();
+        renderFavList();
+      });
+
+      card.appendChild(img);
+      card.appendChild(removeBtn);
+      grid.appendChild(card);
+    });
+  }
+
+  renderModalGrid();
+
+  modal.appendChild(header);
+  modal.appendChild(grid);
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.remove();
   });
 }
 
@@ -514,7 +588,7 @@ function renderFavList() {
     memoRow.appendChild(memoSpan);
     main.appendChild(memoRow);
 
-    // アルバムサムネイル（onerror はイベントリスナーで設定）
+    // アルバムサムネイル（タップ→モーダル）
     if (album?.length) {
       const strip = document.createElement('div');
       strip.className = 'album-strip';
@@ -530,12 +604,14 @@ function renderFavList() {
         thumb.addEventListener('error', () => thumb.remove());
         strip.appendChild(thumb);
       });
-      if (album.length > 5) {
-        const more = document.createElement('span');
-        more.className   = 'album-more';
-        more.textContent = `+${album.length - 5}`;
-        strip.appendChild(more);
-      }
+      const more = document.createElement('span');
+      more.className   = 'album-more';
+      more.textContent = album.length > 5 ? `+${album.length - 5}` : `${album.length}枚`;
+      strip.appendChild(more);
+      strip.addEventListener('click', e => {
+        e.stopPropagation();
+        openAlbumModal(name, category);
+      });
       main.appendChild(strip);
     }
 

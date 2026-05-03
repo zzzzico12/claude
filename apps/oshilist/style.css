@@ -746,6 +746,7 @@ body {
   gap: 4px;
   margin-top: 7px;
   align-items: center;
+  cursor: pointer;
 }
 
 .album-thumb {
@@ -765,6 +766,103 @@ body {
   letter-spacing: 0.04em;
   padding-left: 2px;
 }
+
+/* ===== Album Modal ===== */
+.album-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 200;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.album-modal {
+  background: var(--surface);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 480px;
+  margin: auto;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+}
+
+.album-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.album-modal-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--t1);
+}
+
+.album-modal-close {
+  background: none;
+  border: none;
+  font-size: 0.95rem;
+  color: var(--t3);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.album-modal-close:hover { background: var(--surface-2); }
+
+.album-modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  padding: 2px;
+  background: var(--surface-2);
+}
+
+.album-modal-card {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: var(--surface-2);
+}
+
+.album-modal-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.album-modal-card:hover img { transform: scale(1.03); }
+
+.album-modal-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.album-modal-card:hover .album-modal-remove { opacity: 1; }
 
 /* ===== Footer ===== */
 .footer {
