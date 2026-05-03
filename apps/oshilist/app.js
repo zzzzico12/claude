@@ -604,10 +604,12 @@ function renderFavList() {
         thumb.addEventListener('error', () => thumb.remove());
         strip.appendChild(thumb);
       });
-      const more = document.createElement('span');
-      more.className   = 'album-more';
-      more.textContent = album.length > 5 ? `+${album.length - 5}` : `${album.length}枚`;
-      strip.appendChild(more);
+      if (album.length > 5) {
+        const more = document.createElement('span');
+        more.className   = 'album-more';
+        more.textContent = `+${album.length - 5}`;
+        strip.appendChild(more);
+      }
       strip.addEventListener('click', e => {
         e.stopPropagation();
         openAlbumModal(name, category);
