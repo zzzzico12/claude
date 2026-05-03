@@ -452,12 +452,16 @@ function openAlbumModal(name, category) {
     const fav = loadFavorites().find(f => f.name === name && f.category === category);
     const album = fav?.album || [];
 
-    title.textContent = `${name}のアルバム（${album.length}枚）`;
-
     if (album.length === 0) {
       overlay.remove();
       return;
     }
+
+    let visibleCount = album.length;
+    function updateTitle() {
+      title.textContent = `${name}のアルバム（${visibleCount}枚）`;
+    }
+    updateTitle();
 
     album.forEach(url => {
       const safe = sanitizeUrl(url);
@@ -471,7 +475,11 @@ function openAlbumModal(name, category) {
       img.alt            = '';
       img.loading        = 'lazy';
       img.referrerPolicy = 'no-referrer';
-      img.addEventListener('error', () => card.remove());
+      img.addEventListener('error', () => {
+        card.remove();
+        visibleCount--;
+        updateTitle();
+      });
       img.addEventListener('click', () => window.open(safe, '_blank', 'noopener,noreferrer'));
 
       const removeBtn = document.createElement('button');
