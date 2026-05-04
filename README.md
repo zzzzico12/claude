@@ -16,6 +16,7 @@ claude/
     ├── connect5/
     ├── constellation-finder/
     ├── flag-quiz-game/
+    ├── food-log/
     ├── food-waste-visualizer/
     ├── health-life-simulator/
     ├── hit-and-blow/
@@ -83,7 +84,13 @@ claude/
 - **特徴**: 50カ国以上、4択形式、スコア記録
 - **ファイル**: [flag-quiz-game.tsx](apps/flag-quiz-game/flag-quiz-game.tsx)
 
-### 8. [Food Waste Visualizer](apps/food-waste-visualizer/)
+### 8. [ごはん日記](apps/food-log/)
+- **説明**: 自分だけの食べログ。訪問したお店を地図と一覧で管理するPWAアプリ
+- **技術**: React, Leaflet.js, OpenStreetMap, Nominatim
+- **特徴**: 評価★・写真・コメント記録、地図表示、Google マイマップ（KML/CSV）インポート、PWA対応
+- **ファイル**: [food-log.html](apps/food-log/food-log.html)
+
+### 9. [Food Waste Visualizer](apps/food-waste-visualizer/)
 - **説明**: 食品廃棄物の環境影響を可視化
 - **技術**: React (JSX), Claude AI API
 - **特徴**: CO2・水使用量計算、環境影響グラフ
@@ -264,6 +271,7 @@ claude/
 - Voice Painter
 
 ### ユーティリティ
+- ごはん日記
 - Idle Time Tracker
 - Mood Tracker
 - Movie Diary
