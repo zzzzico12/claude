@@ -1,4 +1,4 @@
-const CACHE_NAME = 'movie-diary-v1';
+const CACHE_NAME = 'movie-diary-v2';
 const ASSETS = [
   './movie-diary.html',
   './manifest.json',
