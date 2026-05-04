@@ -132,6 +132,18 @@
         <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
       </Icon>
     );
+    const Pencil = ({ className }) => (
+      <Icon className={className}>
+        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+      </Icon>
+    );
+    const Trash2 = ({ className }) => (
+      <Icon className={className}>
+        <polyline points="3 6 5 6 21 6"/>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+      </Icon>
+    );
 
     // ── メインコンポーネント ──────────────────────────────────────
     const MovieDiaryApp = () => {
@@ -139,6 +151,8 @@
       const [showAddForm, setShowAddForm] = useState(false);
       const [currentView, setCurrentView] = useState('list');
       const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+      const [editingMovieId, setEditingMovieId] = useState(null);
+      const [deleteConfirmId, setDeleteConfirmId] = useState(null);
 
       const emptyForm = () => ({
         title: '',
@@ -184,7 +198,32 @@
         setShowAddForm(false);
       };
 
-      const handleDeleteMovie = (id) => saveMovies(movies.filter(m => m.id !== id));
+      const handleUpdateMovie = () => {
+        if (!formData.title || !formData.date) return;
+        saveMovies(movies.map(m =>
+          m.id === editingMovieId ? { ...m, ...formData, year: new Date(formData.date).getFullYear() } : m
+        ));
+        setFormData(emptyForm());
+        setEditingMovieId(null);
+      };
+
+      const handleEditClick = (movie) => {
+        setFormData({
+          title: movie.title, date: movie.date, location: movie.location,
+          locationType: movie.locationType, watchedWith: movie.watchedWith,
+          mood: [...movie.mood], genre: movie.genre,
+          emotionScores: { ...movie.emotionScores }, memo: movie.memo, posterColor: movie.posterColor,
+        });
+        setEditingMovieId(movie.id);
+        setShowAddForm(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+
+      const handleDeleteClick = (id) => setDeleteConfirmId(id);
+      const confirmDelete = () => {
+        saveMovies(movies.filter(m => m.id !== deleteConfirmId));
+        setDeleteConfirmId(null);
+      };
 
       const toggleMood = (mood) => {
         const newMoods = formData.mood.includes(mood)
@@ -236,7 +275,10 @@
                   </h1>
                 </div>
                 <button
-                  onClick={() => setShowAddForm(!showAddForm)}
+                  onClick={() => {
+                    if (editingMovieId !== null) { setEditingMovieId(null); setFormData(emptyForm()); }
+                    setShowAddForm(s => !s);
+                  }}
                   className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all"
                 >
                   <Plus className="w-5 h-5" />
@@ -257,10 +299,12 @@
               ))}
             </div>
 
-            {/* 追加フォーム */}
-            {showAddForm && (
+            {/* 追加・編集フォーム */}
+            {(showAddForm || editingMovieId !== null) && (
               <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">新しい映画を記録</h2>
+                <h2 className="text-xl font-bold text-gray-800 mb-4">
+                  {editingMovieId !== null ? '映画を編集' : '新しい映画を記録'}
+                </h2>
                 <div className="space-y-4">
 
                   <div>
@@ -379,11 +423,15 @@
                   </div>
 
                   <div className="flex gap-3">
-                    <button onClick={handleAddMovie}
+                    <button onClick={editingMovieId !== null ? handleUpdateMovie : handleAddMovie}
                       className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg font-medium hover:shadow-lg transition-all">
-                      記録を保存
+                      {editingMovieId !== null ? '更新する' : '記録を保存'}
                     </button>
-                    <button onClick={() => setShowAddForm(false)}
+                    <button onClick={() => {
+                      setShowAddForm(false);
+                      setEditingMovieId(null);
+                      setFormData(emptyForm());
+                    }}
                       className="px-6 py-3 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-all">
                       キャンセル
                     </button>
@@ -428,8 +476,16 @@
                                 )}
                               </div>
                             </div>
-                            <button onClick={() => handleDeleteMovie(movie.id)}
-                              className="text-gray-400 hover:text-red-500 transition-colors">削除</button>
+                            <div className="flex items-center gap-2">
+                              <button onClick={() => handleEditClick(movie)}
+                                className="flex items-center gap-1 text-gray-400 hover:text-purple-600 transition-colors text-sm">
+                                <Pencil className="w-4 h-4" />編集
+                              </button>
+                              <button onClick={() => handleDeleteClick(movie.id)}
+                                className="flex items-center gap-1 text-gray-400 hover:text-red-500 transition-colors text-sm">
+                                <Trash2 className="w-4 h-4" />削除
+                              </button>
+                            </div>
                           </div>
 
                           {movie.genre && (
@@ -592,6 +648,30 @@
             )}
 
           </div>
+
+          {/* 削除確認モーダル */}
+          {deleteConfirmId !== null && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-2xl shadow-xl p-6 max-w-sm w-full">
+                <h3 className="text-lg font-bold text-gray-800 mb-2">削除の確認</h3>
+                <p className="text-gray-600 mb-1">
+                  「{movies.find(m => m.id === deleteConfirmId)?.title}」を削除しますか？
+                </p>
+                <p className="text-sm text-gray-400 mb-6">この操作は元に戻せません。</p>
+                <div className="flex gap-3">
+                  <button onClick={confirmDelete}
+                    className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-medium transition-all">
+                    削除する
+                  </button>
+                  <button onClick={() => setDeleteConfirmId(null)}
+                    className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 py-2 rounded-lg font-medium transition-all">
+                    キャンセル
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
       );
     };
