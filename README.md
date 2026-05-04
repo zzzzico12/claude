@@ -28,6 +28,7 @@ claude/
     ├── movie-diary/
     ├── movie-pronunciation-practice/
     ├── music-to-notes/
+    ├── oshilist/
     ├── pi-memory-game/
     ├── prompt-optimizer/
     ├── realtime-translator/
@@ -154,49 +155,55 @@ claude/
 - **特徴**: リアルタイム音程検出、ドレミファソラシド表示
 - **ファイル**: [music_to_notes.html](apps/music-to-notes/music_to_notes.html)
 
-### 20. [Pi Memory Game](apps/pi-memory-game/)
+### 20. [Oshilist（推しリスト）](apps/oshilist/)
+- **説明**: 推しの最新情報を検索・管理するPWAアプリ
+- **技術**: HTML5, JavaScript, Tavily API, Service Worker
+- **特徴**: カテゴリ・トピック絞り込み、お気に入り登録、推しアルバム自動収集、一括更新、メモ機能
+- **ファイル**: [index.html](apps/oshilist/index.html)
+
+### 21. [Pi Memory Game](apps/pi-memory-game/)
 - **説明**: 円周率の小数点以下を暗記するメモリーゲーム
 - **技術**: React (TypeScript)
 - **特徴**: 1000桁収録、タイマー、リアルタイム判定
 - **ファイル**: [pi-memory-game.tsx](apps/pi-memory-game/pi-memory-game.tsx)
 
-### 21. [Prompt Optimizer](apps/prompt-optimizer/)
+### 22. [Prompt Optimizer](apps/prompt-optimizer/)
 - **説明**: Claude 4向けにプロンプトを最適化
 - **技術**: HTML5, Claude AI API
 - **特徴**: 自動最適化、Before/After比較、ベストプラクティス適用
 - **ファイル**: [prompt-optimizer.html](apps/prompt-optimizer/prompt-optimizer.html)
 
-### 22. [Realtime Translator](apps/realtime-translator/)
+### 23. [Realtime Translator](apps/realtime-translator/)
 - **説明**: リアルタイム多言語翻訳アプリ
 - **技術**: React, Tailwind CSS, 翻訳API
 - **特徴**: リアルタイム翻訳、複数言語同時表示
 - **ファイル**: [realtime-translator.html](apps/realtime-translator/realtime-translator.html)
 
-### 23. [Solar System 3D](apps/solar-system-3d/)
+### 24. [Solar System 3D](apps/solar-system-3d/)
 - **説明**: 太陽系の惑星を3Dで可視化
 - **技術**: React (TypeScript), Canvas API
 - **特徴**: 8惑星の公転シミュレーション、ズーム・速度調整
 - **ファイル**: [solar_system_3d.tsx](apps/solar-system-3d/solar_system_3d.tsx)
 
-### 24. [Station Quest](apps/station-quest/)
+### 25. [Station Quest](apps/station-quest/)
 - **説明**: FPS視点で駅構内を探索するゲーム
 - **技術**: HTML5, Canvas API, JavaScript
 - **特徴**: 3D風レイキャスティング、クエスト・ミッションシステム
 - **ファイル**: [index.html](apps/station-quest/index.html)
 
-### 25. [Task Roulette](apps/task-roulette/)
+### 26. [Task Roulette](apps/task-roulette/)
 - **説明**: やることリストからランダムに選択するルーレット
 - **技術**: HTML5, JavaScript, CSS3
 - **特徴**: アニメーション、データ保存、ランダム選択
 - **ファイル**: [task-roulette.html](apps/task-roulette/task-roulette.html)
 
-### 26. [Voice Painter](apps/voice-painter/)
+### 27. [Voice Painter](apps/voice-painter/)
 - **説明**: 声で絵を描くアプリ。音声のスペクトルをベクトル変換し、方向・色・太さに反映
 - **技術**: HTML5, Web Audio API, Canvas API
 - **特徴**: スペクトルベクトルの角度で進行方向、音量で線の太さ、音程で色を決定。適応的ベースラインで声の個人差を自動補正
 - **ファイル**: [voice-painter.html](apps/voice-painter/voice-painter.html)
 
-### 27. [Wine Menu](apps/wine-menu/)
+### 28. [Wine Menu](apps/wine-menu/)
 - **説明**: ワインメニューをAIで解析・管理するアプリケーション
 - **技術**: React (JSX), Claude AI API
 - **特徴**: 画像認識、自動情報抽出、フィルタリング
@@ -260,6 +267,7 @@ claude/
 - Idle Time Tracker
 - Mood Tracker
 - Movie Diary
+- Oshilist（推しリスト）
 - Prompt Optimizer
 - Realtime Translator
 - Task Roulette
