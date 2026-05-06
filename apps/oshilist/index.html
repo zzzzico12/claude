@@ -55,6 +55,7 @@
   <nav class="tab-bar">
     <button class="tab active" data-tab="search">推し検索</button>
     <button class="tab" data-tab="list">推しリスト</button>
+    <button class="tab" data-tab="album">アルバム</button>
   </nav>
 
   <main class="main">
@@ -128,6 +129,16 @@
       </div>
     </div>
 
+    <!-- ===== アルバムパネル ===== -->
+    <div id="panel-album" class="panel hidden">
+      <div id="albumEmpty" class="hint">
+        <p>アルバムがありません</p>
+        <p class="hint-sub">推しを検索・更新すると自動で画像が集まります</p>
+      </div>
+      <div id="albumFilterBar" class="album-filter-bar hidden"></div>
+      <div id="albumContent" class="album-content hidden"></div>
+    </div>
+
     <!-- ===== 推しリストパネル ===== -->
     <div id="panel-list" class="panel hidden">
 
@@ -175,6 +186,20 @@
   </main>
 
   <footer class="footer">Powered by <span class="gold">Tavily</span></footer>
+
+  <!-- ===== ライトボックス ===== -->
+  <div id="lightboxOverlay" class="lightbox-overlay hidden">
+    <button class="lightbox-close" id="lightboxClose">✕</button>
+    <button class="lightbox-prev" id="lightboxPrev">&#8249;</button>
+    <button class="lightbox-next" id="lightboxNext">&#8250;</button>
+    <div class="lightbox-img-wrap">
+      <img id="lightboxImg" src="" alt="" referrerpolicy="no-referrer">
+    </div>
+    <div class="lightbox-footer">
+      <span id="lightboxInfo" class="lightbox-info"></span>
+      <button id="lightboxDelete" class="lightbox-delete-btn">削除</button>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>

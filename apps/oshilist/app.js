@@ -29,6 +29,7 @@ let isLoading        = false;
 let isBulkUpdating   = false;
 let currentName      = '';
 let currentCategory  = '';
+let albumFilter      = null;
 
 /* ===== お気に入りデータ構造 =====
   [{ name, category, memo, lastChecked, lastSummary, album: [] }]
@@ -131,7 +132,9 @@ document.querySelectorAll('.tab').forEach(tab => {
     const target = tab.dataset.tab;
     document.getElementById('panel-search').classList.toggle('hidden', target !== 'search');
     document.getElementById('panel-list').classList.toggle('hidden', target !== 'list');
-    if (target === 'list') renderFavList();
+    document.getElementById('panel-album').classList.toggle('hidden', target !== 'album');
+    if (target === 'list')  renderFavList();
+    if (target === 'album') { albumFilter = null; renderAlbumTab(); }
   });
 });
 
@@ -382,7 +385,7 @@ function autoAddImagesToAlbum(name, category, images) {
   const album   = list[idx].album || [];
   const newUrls = images.map(sanitizeUrl).filter(u => u && !album.includes(u));
   if (newUrls.length === 0) return;
-  list[idx].album = [...album, ...newUrls].slice(0, 50);
+  list[idx].album = [...album, ...newUrls].slice(0, 200);
   saveFavorites(list);
 }
 
@@ -421,6 +424,180 @@ function renderImageGrid(gridId, blockId, images, name, category) {
     gridEl.appendChild(card);
   });
 }
+
+/* ===== アルバム専用タブ ===== */
+function switchToAlbumTab(filterName) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('.tab[data-tab="album"]').classList.add('active');
+  document.getElementById('panel-search').classList.add('hidden');
+  document.getElementById('panel-list').classList.add('hidden');
+  document.getElementById('panel-album').classList.remove('hidden');
+  albumFilter = filterName || null;
+  renderAlbumTab();
+}
+
+function renderAlbumTab() {
+  const list      = loadFavorites();
+  const withAlbum = list.filter(f => (f.album || []).length > 0);
+  const emptyEl   = document.getElementById('albumEmpty');
+  const filterEl  = document.getElementById('albumFilterBar');
+  const contentEl = document.getElementById('albumContent');
+
+  if (withAlbum.length === 0) {
+    emptyEl.classList.remove('hidden');
+    filterEl.classList.add('hidden');
+    contentEl.classList.add('hidden');
+    return;
+  }
+
+  emptyEl.classList.add('hidden');
+  filterEl.classList.remove('hidden');
+  contentEl.classList.remove('hidden');
+
+  // フィルターバー
+  filterEl.innerHTML = '';
+  const allBtn = document.createElement('button');
+  allBtn.className = `album-filter-btn${albumFilter === null ? ' active' : ''}`;
+  allBtn.textContent = '全員';
+  allBtn.addEventListener('click', () => { albumFilter = null; renderAlbumTab(); });
+  filterEl.appendChild(allBtn);
+
+  withAlbum.forEach(({ name }) => {
+    const btn = document.createElement('button');
+    btn.className = `album-filter-btn${albumFilter === name ? ' active' : ''}`;
+    btn.textContent = name;
+    btn.addEventListener('click', () => { albumFilter = name; renderAlbumTab(); });
+    filterEl.appendChild(btn);
+  });
+
+  // コンテンツ
+  contentEl.innerHTML = '';
+  const displayed = albumFilter
+    ? withAlbum.filter(f => f.name === albumFilter)
+    : withAlbum;
+
+  displayed.forEach(({ name, category, album }) => {
+    const validUrls = album.map(sanitizeUrl).filter(Boolean);
+    if (validUrls.length === 0) return;
+
+    const section = document.createElement('section');
+    section.className = 'album-section';
+
+    const header = document.createElement('div');
+    header.className = 'album-section-header';
+
+    const titleEl = document.createElement('span');
+    titleEl.className   = 'album-section-title';
+    titleEl.textContent = name;
+
+    const metaEl = document.createElement('span');
+    metaEl.className   = 'album-section-meta';
+    metaEl.textContent = `${category} · ${validUrls.length}枚`;
+
+    header.appendChild(titleEl);
+    header.appendChild(metaEl);
+
+    const grid = document.createElement('div');
+    grid.className = 'album-tab-grid';
+
+    validUrls.forEach((url, idx) => {
+      const card = document.createElement('div');
+      card.className = 'album-tab-card';
+
+      const img = document.createElement('img');
+      img.src            = url;
+      img.alt            = '';
+      img.loading        = 'lazy';
+      img.referrerPolicy = 'no-referrer';
+      img.addEventListener('error', () => card.remove());
+      img.addEventListener('click', () => openLightbox(name, category, idx));
+
+      card.appendChild(img);
+      grid.appendChild(card);
+    });
+
+    section.appendChild(header);
+    section.appendChild(grid);
+    contentEl.appendChild(section);
+  });
+}
+
+/* ===== ライトボックス ===== */
+let lbState = { name: null, category: null, index: 0, urls: [] };
+let lbTouchStartX = null;
+
+function openLightbox(name, category, index) {
+  const fav = loadFavorites().find(f => f.name === name && f.category === category);
+  if (!fav) return;
+  const urls = (fav.album || []).map(sanitizeUrl).filter(Boolean);
+  if (urls.length === 0) return;
+
+  lbState = { name, category, index, urls };
+  updateLightbox();
+  document.getElementById('lightboxOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightboxOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+function updateLightbox() {
+  const { name, index, urls } = lbState;
+  document.getElementById('lightboxImg').src      = urls[index];
+  document.getElementById('lightboxInfo').textContent = `${name}　${index + 1} / ${urls.length}`;
+  document.getElementById('lightboxPrev').disabled = index === 0;
+  document.getElementById('lightboxNext').disabled = index === urls.length - 1;
+}
+
+function lightboxNav(dir) {
+  const next = lbState.index + dir;
+  if (next < 0 || next >= lbState.urls.length) return;
+  lbState.index = next;
+  updateLightbox();
+}
+
+function lightboxDelete() {
+  const { name, category, urls, index } = lbState;
+  removeFromAlbum(name, category, urls[index]);
+  lbState.urls = lbState.urls.filter((_, i) => i !== index);
+  if (lbState.urls.length === 0) {
+    closeLightbox();
+    renderAlbumTab();
+    return;
+  }
+  lbState.index = Math.min(index, lbState.urls.length - 1);
+  updateLightbox();
+  renderAlbumTab();
+}
+
+// ライトボックスイベント
+document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+document.getElementById('lightboxPrev').addEventListener('click', () => lightboxNav(-1));
+document.getElementById('lightboxNext').addEventListener('click', () => lightboxNav(1));
+document.getElementById('lightboxDelete').addEventListener('click', lightboxDelete);
+document.getElementById('lightboxOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('lightboxOverlay')) closeLightbox();
+});
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('lightboxOverlay').classList.contains('hidden')) return;
+  if (e.key === 'ArrowLeft')  lightboxNav(-1);
+  if (e.key === 'ArrowRight') lightboxNav(1);
+  if (e.key === 'Escape')     closeLightbox();
+});
+
+const lbOverlay = document.getElementById('lightboxOverlay');
+lbOverlay.addEventListener('touchstart', e => {
+  lbTouchStartX = e.touches[0].clientX;
+}, { passive: true });
+lbOverlay.addEventListener('touchend', e => {
+  if (lbTouchStartX === null) return;
+  const delta = e.changedTouches[0].clientX - lbTouchStartX;
+  if (Math.abs(delta) > 50) lightboxNav(delta < 0 ? 1 : -1);
+  lbTouchStartX = null;
+}, { passive: true });
 
 /* ===== アルバムモーダル ===== */
 function openAlbumModal(name, category) {
@@ -620,7 +797,7 @@ function renderFavList() {
       }
       strip.addEventListener('click', e => {
         e.stopPropagation();
-        openAlbumModal(name, category);
+        switchToAlbumTab(name);
       });
       main.appendChild(strip);
     }
