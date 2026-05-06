@@ -55,7 +55,7 @@
   <nav class="tab-bar">
     <button class="tab active" data-tab="search">推し検索</button>
     <button class="tab" data-tab="list">推しリスト</button>
-    <button class="tab" data-tab="album">アルバム</button>
+    <button class="tab" data-tab="album">推しアルバム</button>
   </nav>
 
   <main class="main">
@@ -132,9 +132,14 @@
     <!-- ===== アルバムパネル ===== -->
     <div id="panel-album" class="panel hidden">
       <div id="albumEmpty" class="hint">
-        <p>アルバムがありません</p>
-        <p class="hint-sub">推しを検索・更新すると自動で画像が集まります</p>
+        <p>推しが登録されていません</p>
+        <p class="hint-sub">推し検索タブでお気に入りに追加してください</p>
       </div>
+      <div id="albumToolbar" class="list-toolbar hidden">
+        <p class="block-label">推しアルバム</p>
+        <button id="albumBulkBtn" class="bulk-btn">全員を更新</button>
+      </div>
+      <div id="albumBulkProgress" class="bulk-progress hidden"></div>
       <div id="albumFilterBar" class="album-filter-bar hidden"></div>
       <div id="albumContent" class="album-content hidden"></div>
     </div>

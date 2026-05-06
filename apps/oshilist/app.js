@@ -29,7 +29,9 @@ let isLoading        = false;
 let isBulkUpdating   = false;
 let currentName      = '';
 let currentCategory  = '';
-let albumFilter      = null;
+let albumFilter         = null;
+let albumUpdatingSet    = new Set();
+let isAlbumBulkUpdating = false;
 
 /* ===== お気に入りデータ構造 =====
   [{ name, category, memo, lastChecked, lastSummary, album: [] }]
@@ -437,24 +439,26 @@ function switchToAlbumTab(filterName) {
 }
 
 function renderAlbumTab() {
-  const list      = loadFavorites();
-  const withAlbum = list.filter(f => (f.album || []).length > 0);
+  const allFavs   = loadFavorites();
   const emptyEl   = document.getElementById('albumEmpty');
+  const toolbarEl = document.getElementById('albumToolbar');
   const filterEl  = document.getElementById('albumFilterBar');
   const contentEl = document.getElementById('albumContent');
 
-  if (withAlbum.length === 0) {
+  if (allFavs.length === 0) {
     emptyEl.classList.remove('hidden');
+    toolbarEl.classList.add('hidden');
     filterEl.classList.add('hidden');
     contentEl.classList.add('hidden');
     return;
   }
 
   emptyEl.classList.add('hidden');
+  toolbarEl.classList.remove('hidden');
   filterEl.classList.remove('hidden');
   contentEl.classList.remove('hidden');
 
-  // フィルターバー
+  // フィルターバー（写真なしの推しも含む）
   filterEl.innerHTML = '';
   const allBtn = document.createElement('button');
   allBtn.className = `album-filter-btn${albumFilter === null ? ' active' : ''}`;
@@ -462,7 +466,7 @@ function renderAlbumTab() {
   allBtn.addEventListener('click', () => { albumFilter = null; renderAlbumTab(); });
   filterEl.appendChild(allBtn);
 
-  withAlbum.forEach(({ name }) => {
+  allFavs.forEach(({ name }) => {
     const btn = document.createElement('button');
     btn.className = `album-filter-btn${albumFilter === name ? ' active' : ''}`;
     btn.textContent = name;
@@ -473,16 +477,18 @@ function renderAlbumTab() {
   // コンテンツ
   contentEl.innerHTML = '';
   const displayed = albumFilter
-    ? withAlbum.filter(f => f.name === albumFilter)
-    : withAlbum;
+    ? allFavs.filter(f => f.name === albumFilter)
+    : allFavs;
 
   displayed.forEach(({ name, category, album }) => {
-    const validUrls = album.map(sanitizeUrl).filter(Boolean);
-    if (validUrls.length === 0) return;
+    const validUrls  = (album || []).map(sanitizeUrl).filter(Boolean);
+    const key        = `${name}|${category}`;
+    const isUpdating = albumUpdatingSet.has(key);
 
     const section = document.createElement('section');
     section.className = 'album-section';
 
+    // ヘッダー
     const header = document.createElement('div');
     header.className = 'album-section-header';
 
@@ -492,35 +498,109 @@ function renderAlbumTab() {
 
     const metaEl = document.createElement('span');
     metaEl.className   = 'album-section-meta';
-    metaEl.textContent = `${category} · ${validUrls.length}枚`;
+    metaEl.textContent = validUrls.length > 0
+      ? `${category} · ${validUrls.length}枚`
+      : category;
+
+    const updateBtn = document.createElement('button');
+    updateBtn.className   = 'album-update-btn';
+    updateBtn.textContent = isUpdating ? '更新中…' : '更新';
+    updateBtn.disabled    = isUpdating || isAlbumBulkUpdating;
+    updateBtn.addEventListener('click', () => updateAlbumForOshi(name, category));
 
     header.appendChild(titleEl);
     header.appendChild(metaEl);
-
-    const grid = document.createElement('div');
-    grid.className = 'album-tab-grid';
-
-    validUrls.forEach((url, idx) => {
-      const card = document.createElement('div');
-      card.className = 'album-tab-card';
-
-      const img = document.createElement('img');
-      img.src            = url;
-      img.alt            = '';
-      img.loading        = 'lazy';
-      img.referrerPolicy = 'no-referrer';
-      img.addEventListener('error', () => card.remove());
-      img.addEventListener('click', () => openLightbox(name, category, idx));
-
-      card.appendChild(img);
-      grid.appendChild(card);
-    });
-
+    header.appendChild(updateBtn);
     section.appendChild(header);
-    section.appendChild(grid);
+
+    if (isUpdating) {
+      const loadingEl = document.createElement('div');
+      loadingEl.className = 'album-section-loading';
+      const spinner = document.createElement('div');
+      spinner.className = 'spinner';
+      loadingEl.appendChild(spinner);
+      section.appendChild(loadingEl);
+    } else if (validUrls.length > 0) {
+      const grid = document.createElement('div');
+      grid.className = 'album-tab-grid';
+
+      validUrls.forEach((url, idx) => {
+        const card = document.createElement('div');
+        card.className = 'album-tab-card';
+
+        const img = document.createElement('img');
+        img.src            = url;
+        img.alt            = '';
+        img.loading        = 'lazy';
+        img.referrerPolicy = 'no-referrer';
+        img.addEventListener('error', () => card.remove());
+        img.addEventListener('click', () => openLightbox(name, category, idx));
+
+        card.appendChild(img);
+        grid.appendChild(card);
+      });
+
+      section.appendChild(grid);
+    } else {
+      const emptyPEl = document.createElement('p');
+      emptyPEl.className   = 'album-section-empty';
+      emptyPEl.textContent = '更新して写真を取得してください';
+      section.appendChild(emptyPEl);
+    }
+
     contentEl.appendChild(section);
   });
 }
+
+/* ===== アルバム更新 ===== */
+async function updateAlbumForOshi(name, category) {
+  const key = `${name}|${category}`;
+  if (albumUpdatingSet.has(key) || isAlbumBulkUpdating) return;
+  albumUpdatingSet.add(key);
+  renderAlbumTab();
+
+  try {
+    const data = await searchWithTavily(name, category, 'すべて');
+    autoAddImagesToAlbum(name, category, data.images || []);
+  } catch { /* ignore */ }
+
+  albumUpdatingSet.delete(key);
+  renderAlbumTab();
+}
+
+async function bulkUpdateAlbum() {
+  const list = loadFavorites();
+  if (list.length === 0 || isAlbumBulkUpdating) return;
+
+  isAlbumBulkUpdating = true;
+  document.getElementById('albumBulkBtn').disabled = true;
+  const progressEl = document.getElementById('albumBulkProgress');
+  progressEl.classList.remove('hidden');
+
+  for (let i = 0; i < list.length; i++) {
+    const { name, category } = list[i];
+    progressEl.textContent = `更新中 ${i + 1} / ${list.length}  —  ${name}`;
+    const key = `${name}|${category}`;
+    albumUpdatingSet.add(key);
+    renderAlbumTab();
+
+    try {
+      const data = await searchWithTavily(name, category, 'すべて');
+      autoAddImagesToAlbum(name, category, data.images || []);
+    } catch { /* ignore */ }
+
+    albumUpdatingSet.delete(key);
+    renderAlbumTab();
+    if (i < list.length - 1) await sleep(800);
+  }
+
+  progressEl.textContent = `更新完了（${list.length}件）`;
+  setTimeout(() => progressEl.classList.add('hidden'), 3000);
+  isAlbumBulkUpdating = false;
+  document.getElementById('albumBulkBtn').disabled = false;
+}
+
+document.getElementById('albumBulkBtn').addEventListener('click', bulkUpdateAlbum);
 
 /* ===== ライトボックス ===== */
 let lbState = { name: null, category: null, index: 0, urls: [] };
@@ -772,35 +852,6 @@ function renderFavList() {
     memoSpan.textContent = memo || '+ メモを追加';
     memoRow.appendChild(memoSpan);
     main.appendChild(memoRow);
-
-    // アルバムサムネイル（タップ→モーダル）
-    if (album?.length) {
-      const strip = document.createElement('div');
-      strip.className = 'album-strip';
-      album.slice(0, 5).forEach(u => {
-        const safe = sanitizeUrl(u);
-        if (!safe) return;
-        const thumb = document.createElement('img');
-        thumb.className      = 'album-thumb';
-        thumb.src            = safe;
-        thumb.alt            = '';
-        thumb.loading        = 'lazy';
-        thumb.referrerPolicy = 'no-referrer';
-        thumb.addEventListener('error', () => thumb.remove());
-        strip.appendChild(thumb);
-      });
-      if (album.length > 5) {
-        const more = document.createElement('span');
-        more.className   = 'album-more';
-        more.textContent = `+${album.length - 5}`;
-        strip.appendChild(more);
-      }
-      strip.addEventListener('click', e => {
-        e.stopPropagation();
-        switchToAlbumTab(name);
-      });
-      main.appendChild(strip);
-    }
 
     // 削除ボタン
     const removeBtn = document.createElement('button');
