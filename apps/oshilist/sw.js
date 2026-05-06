@@ -1,4 +1,4 @@
-const CACHE = 'oshilist-v2';
+const CACHE = 'oshilist-v3';
 const SHELL = [
   './index.html',
   './style.css',

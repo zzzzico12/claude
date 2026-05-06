@@ -533,7 +533,7 @@ function renderAlbumTab() {
         img.alt            = '';
         img.loading        = 'lazy';
         img.referrerPolicy = 'no-referrer';
-        img.addEventListener('error', () => card.remove());
+        img.addEventListener('error', () => { card.remove(); removeFromAlbum(name, category, url); });
         img.addEventListener('click', () => openLightbox(name, category, idx));
 
         card.appendChild(img);
@@ -653,6 +653,17 @@ function lightboxDelete() {
 }
 
 // ライトボックスイベント
+document.getElementById('lightboxImg').addEventListener('error', () => {
+  const { name, category, urls, index } = lbState;
+  if (!name) return;
+  removeFromAlbum(name, category, urls[index]);
+  lbState.urls = lbState.urls.filter((_, i) => i !== index);
+  if (lbState.urls.length === 0) { closeLightbox(); renderAlbumTab(); return; }
+  lbState.index = Math.min(index, lbState.urls.length - 1);
+  updateLightbox();
+  renderAlbumTab();
+});
+
 document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
 document.getElementById('lightboxPrev').addEventListener('click', () => lightboxNav(-1));
 document.getElementById('lightboxNext').addEventListener('click', () => lightboxNav(1));
