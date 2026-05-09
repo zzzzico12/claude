@@ -1,0 +1,18 @@
+{
+  "name": "Smash Poker",
+  "short_name": "SmashPoker",
+  "description": "Smash Bros-style Texas Hold'em Poker",
+  "start_url": "./smash.html",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#110022",
+  "theme_color": "#cc0088",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

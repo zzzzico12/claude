@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <!-- Explosion gradient background -->
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ff6600"/>
+      <stop offset="40%" stop-color="#cc0088"/>
+      <stop offset="100%" stop-color="#110022"/>
+    </radialGradient>
+    <!-- Card white glow -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <!-- Star glow -->
+    <filter id="starGlow">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="80" fill="url(#bgGrad)"/>
+
+  <!-- Explosion burst rays -->
+  <g transform="translate(256,256)" opacity="0.85">
+    <line x1="0" y1="0" x2="0" y2="-230" stroke="#FFD700" stroke-width="6" opacity="0.7"/>
+    <line x1="0" y1="0" x2="163" y2="-163" stroke="#FFD700" stroke-width="4" opacity="0.5"/>
+    <line x1="0" y1="0" x2="230" y2="0" stroke="#FFD700" stroke-width="5" opacity="0.6"/>
+    <line x1="0" y1="0" x2="163" y2="163" stroke="#FFD700" stroke-width="4" opacity="0.5"/>
+    <line x1="0" y1="0" x2="0" y2="230" stroke="#FFD700" stroke-width="5" opacity="0.6"/>
+    <line x1="0" y1="0" x2="-163" y2="163" stroke="#FFD700" stroke-width="4" opacity="0.5"/>
+    <line x1="0" y1="0" x2="-230" y2="0" stroke="#FFD700" stroke-width="6" opacity="0.7"/>
+    <line x1="0" y1="0" x2="-163" y2="-163" stroke="#FFD700" stroke-width="4" opacity="0.5"/>
+    <!-- Diagonal rays -->
+    <line x1="0" y1="0" x2="88" y2="-210" stroke="#ff88ff" stroke-width="3" opacity="0.4"/>
+    <line x1="0" y1="0" x2="210" y2="-88" stroke="#ff88ff" stroke-width="3" opacity="0.4"/>
+    <line x1="0" y1="0" x2="210" y2="88" stroke="#ff88ff" stroke-width="3" opacity="0.4"/>
+    <line x1="0" y1="0" x2="88" y2="210" stroke="#ff88ff" stroke-width="3" opacity="0.4"/>
+    <line x1="0" y1="0" x2="-88" y2="210" stroke="#ff88ff" stroke-width="3" opacity="0.4"/>
+    <line x1="0" y1="0" x2="-210" y2="88" stroke="#ff88ff" stroke-width="3" opacity="0.4"/>
+    <line x1="0" y1="0" x2="-210" y2="-88" stroke="#ff88ff" stroke-width="3" opacity="0.4"/>
+    <line x1="0" y1="0" x2="-88" y2="-210" stroke="#ff88ff" stroke-width="3" opacity="0.4"/>
+  </g>
+
+  <!-- Card flying top-left (spade A) -->
+  <g transform="translate(145,178) rotate(-28)" filter="url(#glow)">
+    <rect x="-52" y="-72" width="104" height="144" rx="12" fill="#1a0040" stroke="#bb66ff" stroke-width="3"/>
+    <text x="0" y="12" font-family="Georgia,serif" font-size="56" fill="#cc88ff" text-anchor="middle">♠</text>
+    <text x="-36" y="-44" font-family="Georgia,serif" font-size="22" fill="#cc88ff" font-weight="bold">A</text>
+    <text x="36" y="72" font-family="Georgia,serif" font-size="22" fill="#cc88ff" font-weight="bold" transform="rotate(180,36,64)">A</text>
+  </g>
+
+  <!-- Card flying top-right (heart K) -->
+  <g transform="translate(372,165) rotate(22)" filter="url(#glow)">
+    <rect x="-52" y="-72" width="104" height="144" rx="12" fill="#ffffff" stroke="#dddddd" stroke-width="2"/>
+    <text x="0" y="12" font-family="Georgia,serif" font-size="56" fill="#dd2222" text-anchor="middle">♥</text>
+    <text x="-36" y="-44" font-family="Georgia,serif" font-size="22" fill="#dd2222" font-weight="bold">K</text>
+    <text x="36" y="72" font-family="Georgia,serif" font-size="22" fill="#dd2222" font-weight="bold" transform="rotate(180,36,64)">K</text>
+  </g>
+
+  <!-- Card bottom-left (diamond Q) -->
+  <g transform="translate(138,345) rotate(-15)" filter="url(#glow)">
+    <rect x="-44" y="-62" width="88" height="124" rx="10" fill="#ffffff" stroke="#dddddd" stroke-width="2"/>
+    <text x="0" y="10" font-family="Georgia,serif" font-size="46" fill="#dd2222" text-anchor="middle">♦</text>
+    <text x="-28" y="-36" font-family="Georgia,serif" font-size="18" fill="#dd2222" font-weight="bold">Q</text>
+  </g>
+
+  <!-- Card bottom-right (club J) -->
+  <g transform="translate(374,348) rotate(18)" filter="url(#glow)">
+    <rect x="-44" y="-62" width="88" height="124" rx="10" fill="#1a0040" stroke="#bb66ff" stroke-width="2.5"/>
+    <text x="0" y="10" font-family="Georgia,serif" font-size="46" fill="#cc88ff" text-anchor="middle">♣</text>
+    <text x="-28" y="-36" font-family="Georgia,serif" font-size="18" fill="#cc88ff" font-weight="bold">J</text>
+  </g>
+
+  <!-- Center explosion circle -->
+  <circle cx="256" cy="256" r="42" fill="#FFD700" opacity="0.95" filter="url(#starGlow)"/>
+  <circle cx="256" cy="256" r="30" fill="#ffffff" opacity="0.9"/>
+
+  <!-- Center star -->
+  <g transform="translate(256,256)" filter="url(#starGlow)">
+    <polygon points="0,-36 9,-11 34,-11 15,5 23,30 0,16 -23,30 -15,5 -34,-11 -9,-11" fill="#FFD700"/>
+    <polygon points="0,-20 5,-6 19,-6 8,3 13,17 0,9 -13,17 -8,3 -19,-6 -5,-6" fill="#ffffff"/>
+  </g>
+
+  <!-- Scattered stars around -->
+  <!-- Top -->
+  <g transform="translate(256,50)" filter="url(#starGlow)">
+    <polygon points="0,-22 5,-7 21,-7 9,3 14,19 0,11 -14,19 -9,3 -21,-7 -5,-7" fill="#FFD700"/>
+  </g>
+  <!-- Right -->
+  <g transform="translate(468,220)" filter="url(#starGlow)">
+    <polygon points="0,-18 5,-6 17,-6 8,2 11,15 0,9 -11,15 -8,2 -17,-6 -5,-6" fill="#FFD700"/>
+  </g>
+  <!-- Bottom -->
+  <g transform="translate(256,468)" filter="url(#starGlow)">
+    <polygon points="0,-22 5,-7 21,-7 9,3 14,19 0,11 -14,19 -9,3 -21,-7 -5,-7" fill="#FFD700"/>
+  </g>
+  <!-- Left -->
+  <g transform="translate(44,290)" filter="url(#starGlow)">
+    <polygon points="0,-18 5,-6 17,-6 8,2 11,15 0,9 -11,15 -8,2 -17,-6 -5,-6" fill="#FFD700"/>
+  </g>
+  <!-- Small sparkles -->
+  <g transform="translate(80,140)">
+    <polygon points="0,-14 3,-5 13,-5 6,2 9,12 0,7 -9,12 -6,2 -13,-5 -3,-5" fill="#FFE066" opacity="0.9"/>
+  </g>
+  <g transform="translate(432,140)">
+    <polygon points="0,-14 3,-5 13,-5 6,2 9,12 0,7 -9,12 -6,2 -13,-5 -3,-5" fill="#FFE066" opacity="0.9"/>
+  </g>
+  <g transform="translate(90,400)">
+    <polygon points="0,-12 3,-4 11,-4 5,2 8,10 0,6 -8,10 -5,2 -11,-4 -3,-4" fill="#FFE066" opacity="0.8"/>
+  </g>
+  <g transform="translate(430,395)">
+    <polygon points="0,-12 3,-4 11,-4 5,2 8,10 0,6 -8,10 -5,2 -11,-4 -3,-4" fill="#FFE066" opacity="0.8"/>
+  </g>
+</svg>
