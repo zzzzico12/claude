@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>SMASH POKER – Fighter's Table</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#cc0088">
@@ -14,7 +14,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#03000f;overflow:hidden;font-family:'Rajdhani',sans-serif;color:#fff;height:100vh}
+html{overflow:hidden;height:100%}
+body{background:#03000f;overflow:hidden;font-family:'Rajdhani',sans-serif;color:#fff;height:100%;height:100dvh;position:fixed;width:100%}
 #c{position:fixed;inset:0;z-index:0}
 #fx{position:fixed;inset:0;z-index:1;pointer-events:none}
 /* Flash / vignette overlays */
@@ -56,10 +57,11 @@ body{background:#03000f;overflow:hidden;font-family:'Rajdhani',sans-serif;color:
 .badge-allin{background:#2a0048;color:#ff88ff;border:1px solid #8800cc}
 @keyframes bPop{from{transform:translateX(-50%) scale(0)}to{transform:translateX(-50%) scale(1)}}
 /* ── SMASH HUD ── */
-#smash-hud{position:fixed;bottom:0;left:0;right:0;height:118px;
+#smash-hud{position:fixed;bottom:0;left:0;right:0;
+  height:calc(118px + env(safe-area-inset-bottom,0px));
   display:flex;align-items:center;justify-content:center;gap:6px;
   background:linear-gradient(to top,rgba(0,0,8,.98) 65%,transparent);
-  z-index:50;padding:0 16px 6px}
+  z-index:50;padding:0 16px calc(6px + env(safe-area-inset-bottom,0px))}
 .fc{display:flex;flex-direction:column;align-items:center;gap:2px;
   padding:7px 10px 5px;min-width:86px;
   background:rgba(4,0,18,.85);
@@ -289,12 +291,22 @@ body.mobile #controls{
 body.mobile #raise-area{order:4;width:100%;justify-content:center}
 body.mobile #ballin{order:5;width:100%}
 body.mobile #rslider{width:70px}
-body.mobile .btn{font-size:10px;padding:7px 9px}
-body.mobile #ahint{display:none !important}
+body.mobile .btn{font-size:13px;padding:12px 16px}
+body.mobile #ahint{
+  display:flex !important;
+  bottom:auto;top:8px;left:8px;right:auto;
+  transform:none;padding:4px 10px;
+  border-radius:10px;font-size:9px
+}
 body.mobile #hstrength{top:auto;left:8px;bottom:120px;transform:none;padding:4px 12px}
 body.mobile #hname{font-size:13px;letter-spacing:1.5px}
 body.mobile #hmeter{width:100px;height:4px}
-body.mobile #smash-hud{gap:3px;padding:0 4px 6px;height:104px}
+body.mobile #smash-hud{
+  gap:3px;
+  padding:0 4px;
+  padding-bottom:max(8px,env(safe-area-inset-bottom));
+  height:calc(104px + env(safe-area-inset-bottom,0px))
+}
 body.mobile .fc{min-width:54px;padding:5px 5px 3px}
 body.mobile .fc.you{min-width:62px}
 body.mobile .fc-pct{font-size:20px}
@@ -328,15 +340,15 @@ body.mobile #sdb-0{bottom:112px}
   <div id="dbtn" style="display:none">D</div>
   <div id="ahint"><span id="ahinttxt"></span></div>
   <div id="controls" style="display:none">
-    <button class="btn" id="bfold"  onclick="PA('fold')"  data-tip="逃げる">ESCAPE</button>
-    <button class="btn" id="bcheck" onclick="PA('check')" data-tip="ガード">GUARD</button>
-    <button class="btn" id="bcall"  onclick="PA('call')"  data-tip="カウンター">COUNTER <span id="camt"></span></button>
+    <button class="btn" id="bfold"  onclick="PA('fold')"  data-tip="手を降りる">FOLD</button>
+    <button class="btn" id="bcheck" onclick="PA('check')" data-tip="パス">CHECK</button>
+    <button class="btn" id="bcall"  onclick="PA('call')"  data-tip="コール">CALL <span id="camt"></span></button>
     <div id="raise-area">
-      <button class="btn" id="braise" onclick="PA('raise')" data-tip="攻撃！">SMASH!</button>
+      <button class="btn" id="braise" onclick="PA('raise')" data-tip="レイズ">RAISE</button>
       <input type="range" id="rslider" oninput="updRaise()">
       <span id="ramt">$0</span>
     </div>
-    <button class="btn" id="ballin" onclick="PA('allin')" data-tip="最終奥義！">FINAL<br>SMASH!!!</button>
+    <button class="btn" id="ballin" onclick="PA('allin')" data-tip="全チップを賭ける">ALL IN</button>
   </div>
   <div id="rpanel" style="display:none">
     <h3 id="rtitle"></h3><p id="rdesc"></p>
@@ -1136,6 +1148,10 @@ function initThree(){
 
   buildTable(); buildStarField(); buildEnergyPillars(); buildDeckPile();
 
+  // 縦向き固定
+  if(screen.orientation && screen.orientation.lock){
+    screen.orientation.lock('portrait-primary').catch(()=>{});
+  }
   function applyOrientation(){
     const portrait=innerWidth<innerHeight;
     document.body.classList.toggle('mobile',portrait);
@@ -1310,6 +1326,8 @@ function cardTargetRot(pi){
 async function deal3DCard(pi,card,faceDown){
   return new Promise(res=>{
     const large=pi===0; const mesh=makeCardMesh(card,faceDown,large);
+    if(pi===-1) mesh.renderOrder=2;
+    else if(pi===0) mesh.renderOrder=1;
     mesh.position.copy(DECK_POS); scene.add(mesh);
     if(pi===-1)c3d.community.push(mesh); else c3d.players[pi].push(mesh);
     const ci=pi===-1?c3d.community.length-1:c3d.players[pi].length-1;
@@ -1479,8 +1497,8 @@ function showCtrls(v){$i('controls').style.display=v?'flex':'none';}
 function showAhint(callAmt,chips){
   const h=$i('ahint'),t=$i('ahinttxt');
   t.innerHTML=callAmt<=0
-    ?'<strong>GUARD</strong> でパス ／ <strong>SMASH!</strong> で攻撃 ／ <strong>ESCAPE</strong> で逃げる'
-    :`<strong>COUNTER $${Math.min(callAmt,chips)}</strong> ／ <strong>SMASH!</strong> 上乗せ ／ <strong>ESCAPE</strong>`;
+    ?'<strong>CHECK</strong> でパス ／ <strong>RAISE</strong> で賭ける ／ <strong>FOLD</strong> で降りる'
+    :`<strong>CALL $${Math.min(callAmt,chips)}</strong> ／ <strong>RAISE</strong> 上乗せ ／ <strong>FOLD</strong>`;
   h.style.display='flex';
 }
 function hideAhint(){$i('ahint').style.display='none';}
@@ -1500,14 +1518,14 @@ function actionEffect(pid,action,amount){
   const col=PLAYER_COLS[pid]||'#ffe44d';
   if(action==='fold'){
     sfxHit(0); spawnExplosion(px,py,0,col);
-    showImpactText('ESCAPE!',px,py,'#ff9999',28);
+    showImpactText('FOLD!',px,py,'#ff9999',28);
   } else if(action==='check'){
     sfxHit(1); spawnExplosion(px,py,1,'#44ff88');
-    showImpactText('GUARD!',px,py,'#99ff99',24);
+    showImpactText('CHECK!',px,py,'#99ff99',24);
   } else if(action==='call'){
     sfxHit(2); triggerHitStop(60); spawnExplosion(px,py,2,col);
     particles.push(new Ring(px,py,col,100,5));
-    showImpactText('COUNTER!',px,py,col,30);
+    showImpactText('CALL!',px,py,col,30);
     if(amount)particles.push(new FloatNum(px,py-40,'−$'+amount,col));
     shakeScreen(.5,180); shakeCamera3D(.5,.18);
   } else if(action==='raise'){
@@ -1622,26 +1640,26 @@ function PA(action){
   const idx=st.players.findIndex(p=>p.isHuman),p=st.players[idx];
   resumeAC(); let amount=0;
   if(action==='fold'){
-    st.folded[idx]=true;setFolded(p.id);setBadge(p.id,'fold','ESCAPE');addLog('YOU: Escape');
+    st.folded[idx]=true;setFolded(p.id);setBadge(p.id,'fold','FOLD');addLog('YOU: Fold');
   } else if(action==='check'){
-    setBadge(p.id,'check','GUARD');addLog('YOU: Guard');
+    setBadge(p.id,'check','CHECK');addLog('YOU: Check');
   } else if(action==='call'){
     amount=Math.min(st.curBet-st.bets[idx],p.chips);
     p.chips-=amount;st.bets[idx]+=amount;st.pot+=amount;p.totalBet=(p.totalBet||0)+amount;
     if(p.chips===0)st.allIn[idx]=true;
-    setBadge(p.id,'call','COUNTER $'+amount);addLog('YOU: Counter $'+amount);
+    setBadge(p.id,'call','CALL $'+amount);addLog('YOU: Call $'+amount);
   } else if(action==='raise'){
     const tot=parseInt($i('rslider').value),add=Math.min(tot-st.bets[idx],p.chips);
     amount=add;p.chips-=add;st.bets[idx]+=add;st.pot+=add;st.curBet=st.bets[idx];
     p.totalBet=(p.totalBet||0)+add;
     st.players.forEach((_,i)=>{if(i!==idx)st.acted[i]=false;});
     if(p.chips===0)st.allIn[idx]=true;
-    setBadge(p.id,'raise','SMASH!! $'+st.bets[idx]);addLog('YOU: Smash to $'+st.bets[idx],true);
+    setBadge(p.id,'raise','RAISE $'+st.bets[idx]);addLog('YOU: Raise to $'+st.bets[idx],true);
   } else if(action==='allin'){
     amount=p.chips;st.bets[idx]+=amount;st.pot+=amount;p.chips=0;st.allIn[idx]=true;
     p.totalBet=(p.totalBet||0)+amount;
     if(st.bets[idx]>st.curBet){st.curBet=st.bets[idx];st.players.forEach((_,i)=>{if(i!==idx)st.acted[i]=false;});}
-    setBadge(p.id,'allin','FINAL SMASH!!!');addLog('YOU: FINAL SMASH $'+st.bets[idx],true);
+    setBadge(p.id,'allin','ALL IN $'+st.bets[idx]);addLog('YOU: All In $'+st.bets[idx],true);
     triggerFinalSmash('YOU',p.id);
   }
   actionEffect(p.id,action,amount);
@@ -1666,14 +1684,14 @@ async function aiAct(idx){
 
   let amount=0;
   if(act==='fold'){
-    st.folded[idx]=true;setFolded(p.id);setBadge(p.id,'fold','ESCAPE');addLog(p.name+': Escape');
+    st.folded[idx]=true;setFolded(p.id);setBadge(p.id,'fold','FOLD');addLog(p.name+': Fold');
   } else if(act==='check'){
-    setBadge(p.id,'check','GUARD');addLog(p.name+': Guard');
+    setBadge(p.id,'check','CHECK');addLog(p.name+': Check');
   } else if(act==='call'){
     amount=Math.min(cAmt,p.chips);p.chips-=amount;st.bets[idx]+=amount;st.pot+=amount;
     p.totalBet=(p.totalBet||0)+amount;
     if(p.chips===0)st.allIn[idx]=true;
-    setBadge(p.id,'call','COUNTER $'+amount);addLog(p.name+': Counter $'+amount);
+    setBadge(p.id,'call','CALL $'+amount);addLog(p.name+': Call $'+amount);
   } else if(act==='raise'){
     const rt=Math.min(Math.floor(st.curBet*(1.5+Math.random()*2)),p.chips+st.bets[idx]);
     amount=Math.min(rt-st.bets[idx],p.chips);
@@ -1681,12 +1699,12 @@ async function aiAct(idx){
     p.totalBet=(p.totalBet||0)+amount;
     st.players.forEach((_,i)=>{if(i!==idx)st.acted[i]=false;});
     if(p.chips===0)st.allIn[idx]=true;
-    setBadge(p.id,'raise','SMASH!! $'+st.bets[idx]);addLog(p.name+': Smash to $'+st.bets[idx],true);
+    setBadge(p.id,'raise','RAISE $'+st.bets[idx]);addLog(p.name+': Raise to $'+st.bets[idx],true);
   } else if(act==='allin'){
     amount=p.chips;st.bets[idx]+=amount;st.pot+=amount;p.chips=0;st.allIn[idx]=true;
     p.totalBet=(p.totalBet||0)+amount;
     if(st.bets[idx]>st.curBet){st.curBet=st.bets[idx];st.players.forEach((_,i)=>{if(i!==idx)st.acted[i]=false;});}
-    setBadge(p.id,'allin','FINAL SMASH!!!');addLog(p.name+': FINAL SMASH $'+st.bets[idx],true);
+    setBadge(p.id,'allin','ALL IN $'+st.bets[idx]);addLog(p.name+': All In $'+st.bets[idx],true);
     actionEffect(p.id,act,amount);
     updChips();updPot();showBet(p.id,st.bets[idx]);
     await triggerFinalSmash(p.name,p.id);
