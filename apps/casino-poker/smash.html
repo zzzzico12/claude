@@ -93,11 +93,20 @@ body{background:#03000f;overflow:hidden;font-family:'Rajdhani',sans-serif;color:
   background:linear-gradient(to right,#44ff88,#ffcc22,#ff4400);transition:width .35s}
 .fc-chips{font-size:12px;color:rgba(255,215,0,.85);font-weight:700}
 .fc.you .fc-chips{font-size:14px;color:#ffd700}
-.fc-hand{font-size:11px;font-weight:700;letter-spacing:1px;min-height:14px;line-height:1.3;text-align:center;display:none}
-.fc-hand .hc-r{color:#ff5555}.fc-hand .hc-b{color:#eee}
-.fc-hand .hname{font-size:9px;letter-spacing:1.5px;color:rgba(255,220,80,.9);text-transform:uppercase;margin-top:1px}
-.fc.winner .fc-hand .hname{color:#ffd700}
-.fc.showdown-active .fc-hand{display:block}
+/* ── Showdown bubble (near character) ── */
+.sd-bubble{display:none;background:rgba(0,0,16,.88);border:1px solid rgba(255,215,0,.45);
+  border-radius:8px;padding:4px 9px 5px;text-align:center;margin-top:5px;min-width:74px;
+  pointer-events:none;animation:sdIn .28s ease-out}
+@keyframes sdIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.sd-bubble.show{display:block}
+.sd-bubble .sd-cards{font-size:13px;font-weight:700;letter-spacing:.5px}
+.sd-bubble .sd-cards .hc-r{color:#ff5566}
+.sd-bubble .sd-cards .hc-b{color:#ddeeff}
+.sd-bubble .sd-hname{font-size:9px;letter-spacing:1.5px;color:rgba(255,215,80,.85);text-transform:uppercase;margin-top:2px}
+.sd-bubble.winner-bubble{border-color:#ffd700;box-shadow:0 0 14px rgba(255,215,0,.7)}
+.sd-bubble.winner-bubble .sd-hname{color:#ffd700}
+/* player-0 bubble is fixed above HUD */
+#sdb-0{position:fixed;bottom:132px;left:50%;transform:translateX(-50%);}
 .ko-tag{position:absolute;inset:0;border-radius:9px;background:rgba(180,0,0,.2);
   border:1px solid rgba(255,0,0,.35);display:none;align-items:center;justify-content:center;
   font-family:'Bungee',sans-serif;font-size:14px;color:#ff2200;
@@ -281,10 +290,10 @@ body{background:#03000f;overflow:hidden;font-family:'Rajdhani',sans-serif;color:
 
 <div id="sr">
   <div id="plabel-0" class="plabel"><div class="av" id="av0">😎</div></div>
-  <div id="plabel-1" class="plabel"><div class="av" id="av1">🎩</div></div>
-  <div id="plabel-2" class="plabel"><div class="av" id="av2">🕵️</div></div>
-  <div id="plabel-3" class="plabel"><div class="av" id="av3">💼</div></div>
-  <div id="plabel-4" class="plabel"><div class="av" id="av4">🦊</div></div>
+  <div id="plabel-1" class="plabel"><div class="av" id="av1">🎩</div><div class="sd-bubble" id="sdb-1"></div></div>
+  <div id="plabel-2" class="plabel"><div class="av" id="av2">🕵️</div><div class="sd-bubble" id="sdb-2"></div></div>
+  <div id="plabel-3" class="plabel"><div class="av" id="av3">💼</div><div class="sd-bubble" id="sdb-3"></div></div>
+  <div id="plabel-4" class="plabel"><div class="av" id="av4">🦊</div><div class="sd-bubble" id="sdb-4"></div></div>
   <div id="ginfo">
     <div id="stage-label">FIGHTER'S TABLE</div>
     <div id="stage-info"></div>
@@ -315,12 +324,13 @@ body{background:#03000f;overflow:hidden;font-family:'Rajdhani',sans-serif;color:
 
 <!-- Smash HUD -->
 <div id="smash-hud">
-  <div class="fc you" id="fc-0"><div class="ko-tag">KO!!</div><div class="fc-icon">😎</div><div class="fc-name">YOU</div><div class="fc-pct" id="fp-0">0%</div><div class="fc-bar"><div class="fc-fill" id="fb-0"></div></div><div class="fc-chips" id="fchip-0">$1000</div><div class="fc-hand" id="fhand-0"></div></div>
-  <div class="fc" id="fc-1"><div class="ko-tag">KO!!</div><div class="fc-icon">🎩</div><div class="fc-name">VICTOR</div><div class="fc-pct" id="fp-1">0%</div><div class="fc-bar"><div class="fc-fill" id="fb-1"></div></div><div class="fc-chips" id="fchip-1">$1000</div><div class="fc-hand" id="fhand-1"></div></div>
-  <div class="fc" id="fc-2"><div class="ko-tag">KO!!</div><div class="fc-icon">🕵️</div><div class="fc-name">BLAKE</div><div class="fc-pct" id="fp-2">0%</div><div class="fc-bar"><div class="fc-fill" id="fb-2"></div></div><div class="fc-chips" id="fchip-2">$1000</div><div class="fc-hand" id="fhand-2"></div></div>
-  <div class="fc" id="fc-3"><div class="ko-tag">KO!!</div><div class="fc-icon">💼</div><div class="fc-name">MORGAN</div><div class="fc-pct" id="fp-3">0%</div><div class="fc-bar"><div class="fc-fill" id="fb-3"></div></div><div class="fc-chips" id="fchip-3">$1000</div><div class="fc-hand" id="fhand-3"></div></div>
-  <div class="fc" id="fc-4"><div class="ko-tag">KO!!</div><div class="fc-icon">🦊</div><div class="fc-name">SCARLET</div><div class="fc-pct" id="fp-4">0%</div><div class="fc-bar"><div class="fc-fill" id="fb-4"></div></div><div class="fc-chips" id="fchip-4">$1000</div><div class="fc-hand" id="fhand-4"></div></div>
+  <div class="fc you" id="fc-0"><div class="ko-tag">KO!!</div><div class="fc-icon">😎</div><div class="fc-name">YOU</div><div class="fc-pct" id="fp-0">0%</div><div class="fc-bar"><div class="fc-fill" id="fb-0"></div></div><div class="fc-chips" id="fchip-0">$1000</div></div>
+  <div class="fc" id="fc-1"><div class="ko-tag">KO!!</div><div class="fc-icon">🎩</div><div class="fc-name">VICTOR</div><div class="fc-pct" id="fp-1">0%</div><div class="fc-bar"><div class="fc-fill" id="fb-1"></div></div><div class="fc-chips" id="fchip-1">$1000</div></div>
+  <div class="fc" id="fc-2"><div class="ko-tag">KO!!</div><div class="fc-icon">🕵️</div><div class="fc-name">BLAKE</div><div class="fc-pct" id="fp-2">0%</div><div class="fc-bar"><div class="fc-fill" id="fb-2"></div></div><div class="fc-chips" id="fchip-2">$1000</div></div>
+  <div class="fc" id="fc-3"><div class="ko-tag">KO!!</div><div class="fc-icon">💼</div><div class="fc-name">MORGAN</div><div class="fc-pct" id="fp-3">0%</div><div class="fc-bar"><div class="fc-fill" id="fb-3"></div></div><div class="fc-chips" id="fchip-3">$1000</div></div>
+  <div class="fc" id="fc-4"><div class="ko-tag">KO!!</div><div class="fc-icon">🦊</div><div class="fc-name">SCARLET</div><div class="fc-pct" id="fp-4">0%</div><div class="fc-bar"><div class="fc-fill" id="fb-4"></div></div><div class="fc-chips" id="fchip-4">$1000</div></div>
 </div>
+<div class="sd-bubble" id="sdb-0"></div>
 
 <div id="sscreen">
   <div class="sdeco">⚡🃏⚡</div>
@@ -961,13 +971,9 @@ function resetHudClasses(){
   for(let i=0;i<5;i++){
     const fc=document.getElementById('fc-'+i);if(!fc)continue;
     fc.className='fc'+(i===0?' you':'');
-    const fh=document.getElementById('fhand-'+i);if(fh)fh.innerHTML='';
+    const sdb=document.getElementById('sdb-'+i);
+    if(sdb){sdb.innerHTML='';sdb.className='sd-bubble'+(i===0?'':'')}
   }
-}
-function cardHtml(c){
-  const red=c.suit==='♥'||c.suit==='♦';
-  const cls=red?'hc-r':'hc-b';
-  return `<span class="${cls}">${c.rank}${c.suit}</span>`;
 }
 function showHudHands(active){
   for(const p of active){
@@ -975,16 +981,33 @@ function showHudHands(active){
     const hole=st.hands[idx];
     if(!hole||!hole.length)continue;
     const best=getBestHand([...hole,...st.community]);
-    const fc=document.getElementById('fc-'+p.id);
-    const fh=document.getElementById('fhand-'+p.id);
-    if(!fc||!fh)continue;
-    fc.classList.add('showdown-active');
-    const cardsHtml=hole.map(c=>cardHtml(c)).join(' ');
-    const hnameEl=document.createElement('div');hnameEl.className='hname';
-    hnameEl.textContent=best?HNAMES[best.score[0]]:'';
-    fh.innerHTML=cardsHtml;
-    fh.appendChild(hnameEl);
+    const sdb=document.getElementById('sdb-'+p.id);
+    if(!sdb)continue;
+    sdb.innerHTML='';
+    const cardsDiv=document.createElement('div');
+    cardsDiv.className='sd-cards';
+    hole.forEach((c,i)=>{
+      if(i>0)cardsDiv.appendChild(document.createTextNode(' '));
+      const sp=document.createElement('span');
+      sp.className=(c.suit==='♥'||c.suit==='♦')?'hc-r':'hc-b';
+      sp.textContent=c.rank+c.suit;
+      cardsDiv.appendChild(sp);
+    });
+    sdb.appendChild(cardsDiv);
+    if(best){
+      const hn=document.createElement('div');
+      hn.className='sd-hname';
+      hn.textContent=HNAMES[best.score[0]];
+      sdb.appendChild(hn);
+    }
+    sdb.classList.add('show');
   }
+}
+function markWinnerBubbles(winnerIds){
+  winnerIds.forEach(id=>{
+    const sdb=document.getElementById('sdb-'+id);
+    if(sdb)sdb.classList.add('winner-bubble');
+  });
 }
 function getHudPos(pid){
   const fc=document.getElementById('fc-'+pid);
@@ -1710,6 +1733,7 @@ async function awardPot(winners,handName=''){
   const share=Math.floor(st.pot/winners.length),rem=st.pot-share*winners.length;
   winners.forEach(p=>{p.chips+=share;}); if(rem>0)winners[0].chips+=rem;
   winners.forEach(p=>setWinner(p.id));
+  markWinnerBubbles(winners.map(w=>w.id));
 
   sfxWinSfx(); sfxCrowd(.55);
   triggerHitStop(120); flashScreen('#ffd700',220,.75);
