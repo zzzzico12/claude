@@ -280,33 +280,27 @@ body{background:#03000f;overflow:hidden;font-family:'Rajdhani',sans-serif;color:
 #goscreen p{color:rgba(255,255,255,.35);letter-spacing:3px;font-size:11px}
 
 /* ── Mobile ── */
-@media (max-width:520px){
-  /* コントロールを3行に折り返す（FINAL SMASHは最下段） */
-  #controls{
-    flex-wrap:wrap;justify-content:center;
-    max-width:calc(100vw - 16px);
-    gap:5px;padding:7px 8px;
-  }
-  #raise-area{order:4;width:100%;justify-content:center}
-  #ballin{order:5;width:100%}
-  #rslider{width:70px}
-  .btn{font-size:10px;padding:7px 9px}
-  /* ヒントは省スペースのため非表示 */
-  #ahint{display:none !important}
-  /* 役表示をコミュニティカードより上へ */
-  #hstrength{top:42%}
-  /* HUD を小さく */
-  #smash-hud{gap:3px;padding:0 4px 6px;height:104px}
-  .fc{min-width:54px;padding:5px 5px 3px}
-  .fc.you{min-width:62px}
-  .fc-pct{font-size:20px}
-  .fc-icon{font-size:18px}
-  .fc.you .fc-icon{font-size:24px}
-  .fc-chips{font-size:9px}
-  .fc-name{font-size:7px;letter-spacing:1px}
-  /* player-0 showdown bubble を HUD 上に */
-  #sdb-0{bottom:112px}
+/* ── Mobile layout (toggled by JS via body.mobile) ── */
+body.mobile #controls{
+  flex-wrap:wrap;justify-content:center;
+  max-width:calc(100vw - 16px);
+  gap:5px;padding:7px 8px;
 }
+body.mobile #raise-area{order:4;width:100%;justify-content:center}
+body.mobile #ballin{order:5;width:100%}
+body.mobile #rslider{width:70px}
+body.mobile .btn{font-size:10px;padding:7px 9px}
+body.mobile #ahint{display:none !important}
+body.mobile #hstrength{top:42%}
+body.mobile #smash-hud{gap:3px;padding:0 4px 6px;height:104px}
+body.mobile .fc{min-width:54px;padding:5px 5px 3px}
+body.mobile .fc.you{min-width:62px}
+body.mobile .fc-pct{font-size:20px}
+body.mobile .fc-icon{font-size:18px}
+body.mobile .fc.you .fc-icon{font-size:24px}
+body.mobile .fc-chips{font-size:9px}
+body.mobile .fc-name{font-size:7px;letter-spacing:1px}
+body.mobile #sdb-0{bottom:112px}
 </style>
 </head>
 <body>
@@ -1100,7 +1094,7 @@ let SEAT3D,DECK_POS,tableEdge,energyPillars=[];
 
 function initSeat3D(){
   const portrait=innerWidth<innerHeight;
-  const sx=portrait?.52:1, sz=portrait?.75:1;
+  const sx=portrait?.62:1, sz=portrait?.75:1;
   SEAT3D=[
     new THREE.Vector3(0,.18,2.6*sz),
     new THREE.Vector3(-3.6*sx,.18,.25*sz),
@@ -1118,7 +1112,7 @@ function initThree(){
   scene.background=new THREE.Color(0x03000f);
   scene.fog=new THREE.FogExp2(0x03000f,.035);
 
-  camera=new THREE.PerspectiveCamera(innerWidth<innerHeight?85:50,innerWidth/innerHeight,.1,60);
+  camera=new THREE.PerspectiveCamera(innerWidth<innerHeight?75:50,innerWidth/innerHeight,.1,60);
   camera.position.set(0,2.65,5.3); camera.lookAt(0,.1,-.3);
 
   const canvas=document.getElementById('c');
@@ -1140,11 +1134,15 @@ function initThree(){
 
   buildTable(); buildStarField(); buildEnergyPillars(); buildDeckPile();
 
-  window.addEventListener('resize',()=>{
-    camera.fov=innerWidth<innerHeight?85:50;
+  function applyOrientation(){
+    const portrait=innerWidth<innerHeight;
+    document.body.classList.toggle('mobile',portrait);
+    camera.fov=portrait?75:50;
     camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix();
     renderer.setSize(innerWidth,innerHeight);
-  });
+  }
+  applyOrientation();
+  window.addEventListener('resize',()=>setTimeout(applyOrientation,50));
 
   const camBaseX=0, camBaseY=2.65;
   (function loop(){
@@ -1289,7 +1287,7 @@ function makePlainCard(tex,yOff){
 }
 function cardTargetPos(pi,ci){
   if(pi===-1)return new THREE.Vector3((ci-2)*.75,.08,-.05);
-  if(pi===0){const xs=innerWidth<520?.40:.65;return new THREE.Vector3((ci-.5)*xs,1.05,3.5);}
+  if(pi===0){const xs=document.body.classList.contains('mobile')?.40:.65;return new THREE.Vector3((ci-.5)*xs,1.05,3.5);}
   const sp=SEAT3D[pi];
   // 奥のプレイヤーほど少し高く浮かせる
   const y=0.16+Math.max(0,-sp.z*.025);
@@ -1388,7 +1386,7 @@ function tickAnims(dt){
 
 // ── Labels ──
 function updateLabels(){
-  const mg=30,hudH=innerWidth<520?112:130;
+  const mg=30,hudH=document.body.classList.contains('mobile')?112:130;
   for(let i=0;i<5;i++){
     const el=document.getElementById('plabel-'+i);if(!el)continue;
     const v=SEAT3D[i].clone().project(camera);
