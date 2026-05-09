@@ -291,7 +291,9 @@ body.mobile #ballin{order:5;width:100%}
 body.mobile #rslider{width:70px}
 body.mobile .btn{font-size:10px;padding:7px 9px}
 body.mobile #ahint{display:none !important}
-body.mobile #hstrength{top:42%}
+body.mobile #hstrength{top:auto;left:8px;bottom:120px;transform:none;padding:4px 12px}
+body.mobile #hname{font-size:13px;letter-spacing:1.5px}
+body.mobile #hmeter{width:100px;height:4px}
 body.mobile #smash-hud{gap:3px;padding:0 4px 6px;height:104px}
 body.mobile .fc{min-width:54px;padding:5px 5px 3px}
 body.mobile .fc.you{min-width:62px}
@@ -1286,16 +1288,19 @@ function makePlainCard(tex,yOff){
   const mesh=new THREE.Mesh(g,[edgeMat,edgeMat,m,m,edgeMat,edgeMat]);mesh.position.y=yOff;return mesh;
 }
 function cardTargetPos(pi,ci){
-  if(pi===-1)return new THREE.Vector3((ci-2)*.75,.08,-.05);
+  if(pi===-1){
+    const mob=document.body.classList.contains('mobile');
+    return new THREE.Vector3((ci-2)*(mob?.65:.75),mob?.22:.08,mob?.35:-.05);
+  }
   if(pi===0){const xs=document.body.classList.contains('mobile')?.40:.65;return new THREE.Vector3((ci-.5)*xs,1.05,3.5);}
   const sp=SEAT3D[pi];
   // 奥のプレイヤーほど少し高く浮かせる
   const y=0.16+Math.max(0,-sp.z*.025);
-  return new THREE.Vector3(sp.x*.72+(ci-.5)*.38,y,sp.z*.72);
+  return new THREE.Vector3(sp.x*.72+(ci-.5)*.06,y,sp.z*.72);
 }
 function cardTargetRot(pi){
   if(pi===0)  return new THREE.Euler(Math.PI*.26,0,0);
-  if(pi===-1) return new THREE.Euler(0,(Math.random()-.5)*.06,0); // コミュニティカード
+  if(pi===-1){const tilt=document.body.classList.contains('mobile')?Math.PI*.12:0;return new THREE.Euler(tilt,(Math.random()-.5)*.06,0);}
   const sp=SEAT3D[pi];
   const tiltX=-sp.z*.055;
   const tiltZ= sp.x*.025;
