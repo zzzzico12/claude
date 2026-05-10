@@ -144,7 +144,7 @@ body{background:#03000f;overflow:hidden;font-family:'Rajdhani',sans-serif;color:
 #hmeter{width:160px;height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden}
 #hmfill{height:100%;border-radius:3px;transition:width .5s,background .5s}
 /* ── Dealer button ── */
-#dbtn{position:fixed;top:8px;right:8px;display:none;z-index:30;pointer-events:none;
+#dbtn{position:fixed;top:8px;left:8px;display:none;z-index:30;pointer-events:none;
   align-items:center;gap:5px;
   background:rgba(0,0,12,.8);border:1px solid rgba(255,215,0,.5);
   border-radius:8px;padding:3px 10px;font-size:10px;font-weight:700;color:#ffe44d;
@@ -254,7 +254,7 @@ body{background:#03000f;overflow:hidden;font-family:'Rajdhani',sans-serif;color:
   display:flex;flex-direction:column;align-items:center;gap:6px}
 .fs-line1{font-family:'Bungee',sans-serif;font-size:clamp(30px,13vw,58px);color:#fff;letter-spacing:clamp(2px,1vw,5px);
   text-shadow:5px 5px 0 #440066,-3px -3px 0 #440066,0 0 40px rgba(200,0,255,.9),
-    0 0 80px rgba(200,0,255,.5);white-space:nowrap}
+    0 0 80px rgba(200,0,255,.5);text-align:center;line-height:1.1}
 .fs-line2{font-family:'Bungee',sans-serif;font-size:clamp(12px,4vw,18px);color:#cc88ff;letter-spacing:clamp(3px,2vw,8px);
   text-shadow:2px 2px 0 #440066,0 0 20px rgba(180,100,255,.8);white-space:nowrap}
 /* ── Start screen ── */
@@ -318,6 +318,7 @@ body.mobile .fc.you .fc-icon{font-size:24px}
 body.mobile .fc-chips{font-size:9px}
 body.mobile .fc-name{font-size:7px;letter-spacing:1px}
 body.mobile #sdb-0{bottom:112px}
+body.mobile #dbtn{top:66px}
 /* 座席1(最左)は左揃え、座席4(最右)は右揃えで sd-bubble が画面外に出ない */
 body.mobile #plabel-1{align-items:flex-start}
 </style>
@@ -955,7 +956,7 @@ async function triggerFinalSmash(playerName,playerId){
   // Show Final Smash DOM text
   const fsEl=document.createElement('div'); fsEl.className='fs-popup';
   fsEl.style.cssText=`left:${cx}px;top:${cy}px;`;
-  const fsL1=document.createElement('div'); fsL1.className='fs-line1'; fsL1.textContent='FINAL SMASH!!!';
+  const fsL1=document.createElement('div'); fsL1.className='fs-line1'; fsL1.innerHTML='FINAL<br>SMASH!!!';
   const fsL2=document.createElement('div'); fsL2.className='fs-line2'; fsL2.textContent=playerName.toUpperCase()+' GOES ALL IN';
   fsEl.appendChild(fsL1); fsEl.appendChild(fsL2);
   document.body.appendChild(fsEl); setTimeout(()=>fsEl.remove(),2600);
