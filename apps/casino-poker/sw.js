@@ -1,4 +1,4 @@
-const CACHE = 'smash-poker-v13';
+const CACHE = 'smash-poker-v14';
 const ASSETS = [
   './smash.html',
   './three.min.js',

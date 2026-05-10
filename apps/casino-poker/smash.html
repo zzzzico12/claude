@@ -144,8 +144,9 @@ body{background:#03000f;overflow:hidden;font-family:'Rajdhani',sans-serif;color:
   border-radius:5px;padding:1px 7px;min-width:30px;text-align:center;letter-spacing:0}
 .my-hole.r{color:#dd0000}.my-hole.b{color:#111122}
 #hname{font-family:'Bungee',sans-serif;font-size:20px;letter-spacing:3px;
-  color:#ffe44d;text-shadow:0 0 20px rgba(255,228,77,.8)}
-#hmeter{width:160px;height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden}
+  color:#ffe44d;text-shadow:0 0 20px rgba(255,228,77,.8);opacity:0;transition:opacity .3s}
+#hmeter{width:160px;height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;opacity:0;transition:opacity .3s}
+#hstrength.has-hand #hname,#hstrength.has-hand #hmeter{opacity:1}
 #hmfill{height:100%;border-radius:3px;transition:width .5s,background .5s}
 /* ── Dealer button ── */
 #dbtn{position:fixed;top:8px;left:8px;display:none;z-index:30;pointer-events:none;
@@ -1537,11 +1538,12 @@ function updHandStr(){
   if(!st.hands[0]||!st.hands[0].length)return;
   const hole=st.hands[0];
   $i('myholes').innerHTML=hole.map(c=>`<span class="my-hole ${isRed(c)?'r':'b'}">${c.rank}${c.suit}</span>`).join('');
+  $i('hstrength').classList.add('vis');
   const all=[...hole,...st.community];if(all.length<2)return;
   const best=getBestHand(all);if(!best)return;
   const r=best.score[0];
   $i('hname').textContent=HNAMES[r];$i('hmfill').style.width=HSTR[r]+'%';$i('hmfill').style.background=HCOL[r];
-  $i('hstrength').classList.add('vis');
+  $i('hstrength').classList.add('has-hand');
 }
 
 // ── Action effects ──
@@ -1593,7 +1595,7 @@ function startGame(){
 
 async function newRound(){
   clearWinners(); $i('rpanel').style.display='none';
-  $i('hstrength').classList.remove('vis');
+  $i('hstrength').classList.remove('vis','has-hand');
   clearBets(); clear3DCards();
   const activeIds=st.players.map(p=>p.id);
   [0,1,2,3,4].forEach(id=>{ if(!activeIds.includes(id))setHudKO(id); });
@@ -1622,6 +1624,7 @@ async function newRound(){
       const idx=(st.dealer+1+i)%n,p=st.players[idx],card=st.deck.pop();
       st.hands[idx].push(card);
       await dealCardToEl({id:'hand-'+p.id},card,!p.isHuman);
+      if(idx===0) updHandStr();
       await sleep(45);
     }
   }
