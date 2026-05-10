@@ -144,11 +144,11 @@ body{background:#03000f;overflow:hidden;font-family:'Rajdhani',sans-serif;color:
 #hmeter{width:160px;height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden}
 #hmfill{height:100%;border-radius:3px;transition:width .5s,background .5s}
 /* ── Dealer button ── */
-#dbtn{position:fixed;display:none;z-index:30;pointer-events:none;
-  width:18px;height:18px;border-radius:50%;
-  background:radial-gradient(circle,#ffe44d,#cc9900);border:2px solid #222;
-  font-size:7px;font-weight:900;color:#333;align-items:center;justify-content:center;
-  box-shadow:0 2px 6px rgba(0,0,0,.5)}
+#dbtn{position:fixed;top:8px;right:8px;display:none;z-index:30;pointer-events:none;
+  align-items:center;gap:5px;
+  background:rgba(0,0,12,.8);border:1px solid rgba(255,215,0,.5);
+  border-radius:8px;padding:3px 10px;font-size:10px;font-weight:700;color:#ffe44d;
+  font-family:'Bungee',sans-serif;letter-spacing:1px}
 /* ── Controls ── */
 #controls{position:fixed;bottom:124px;left:50%;transform:translateX(-50%);
   display:flex;gap:7px;align-items:center;
@@ -252,11 +252,11 @@ body{background:#03000f;overflow:hidden;font-family:'Rajdhani',sans-serif;color:
 .fs-popup{position:fixed;pointer-events:none;z-index:470;
   animation:fsAnim 2.5s ease-out forwards;transform:translate(-50%,-50%);
   display:flex;flex-direction:column;align-items:center;gap:6px}
-.fs-line1{font-family:'Bungee',sans-serif;font-size:58px;color:#fff;letter-spacing:5px;
+.fs-line1{font-family:'Bungee',sans-serif;font-size:clamp(30px,13vw,58px);color:#fff;letter-spacing:clamp(2px,1vw,5px);
   text-shadow:5px 5px 0 #440066,-3px -3px 0 #440066,0 0 40px rgba(200,0,255,.9),
-    0 0 80px rgba(200,0,255,.5)}
-.fs-line2{font-family:'Bungee',sans-serif;font-size:18px;color:#cc88ff;letter-spacing:8px;
-  text-shadow:2px 2px 0 #440066,0 0 20px rgba(180,100,255,.8)}
+    0 0 80px rgba(200,0,255,.5);white-space:nowrap}
+.fs-line2{font-family:'Bungee',sans-serif;font-size:clamp(12px,4vw,18px);color:#cc88ff;letter-spacing:clamp(3px,2vw,8px);
+  text-shadow:2px 2px 0 #440066,0 0 20px rgba(180,100,255,.8);white-space:nowrap}
 /* ── Start screen ── */
 #sscreen{position:fixed;inset:0;
   background:radial-gradient(ellipse at 50% 30%,#0f0030,#020008);
@@ -320,7 +320,6 @@ body.mobile .fc-name{font-size:7px;letter-spacing:1px}
 body.mobile #sdb-0{bottom:112px}
 /* 座席1(最左)は左揃え、座席4(最右)は右揃えで sd-bubble が画面外に出ない */
 body.mobile #plabel-1{align-items:flex-start}
-body.mobile #plabel-4{align-items:flex-end}
 </style>
 </head>
 <body>
@@ -821,8 +820,10 @@ function flashScreen(color='#fff',duration=140,alpha=.85){
 }
 
 function showImpactText(text,x,y,color='#ffe44d',size=36){
+  const hw=size*text.length*0.38;
+  const sx=Math.max(hw+8,Math.min(innerWidth-hw-8,x));
   const el=document.createElement('div'); el.className='impact-text';
-  el.textContent=text; el.style.cssText=`left:${x}px;top:${y}px;font-size:${size}px;color:${color};`;
+  el.textContent=text; el.style.cssText=`left:${sx}px;top:${y}px;font-size:${size}px;color:${color};`;
   document.body.appendChild(el); setTimeout(()=>el.remove(),1000);
 }
 
@@ -1122,7 +1123,7 @@ function initSeat3D(){
     new THREE.Vector3(0,.18,-2.9*sz),
     new THREE.Vector3(2.2*sx,.18,-2.3*sz)
   ];
-  DECK_POS=new THREE.Vector3(1.8*sx,.35,1.3*sz);
+  DECK_POS=new THREE.Vector3(portrait?2.6*sx:1.8*sx,.35,1.3*sz);
 }
 let deckPile=null,backTex=null;
 const faceTex=new Map();
@@ -1291,12 +1292,12 @@ function getFaceTex(card){
   // 色
   const col=red?'#dd0000':'#111122';
   c.fillStyle=col;c.textAlign='center';
-  // ランク — 上半分中央に大きく
-  c.font='bold 260px Arial,sans-serif';c.textBaseline='middle';
-  c.fillText(card.rank,256,200);
-  // スート — 下半分中央に大きく
-  c.font='260px serif';c.textBaseline='middle';
-  c.fillText(card.suit,256,520);
+  // ランク — 上半分中央
+  c.font='bold 190px Arial,sans-serif';c.textBaseline='middle';
+  c.fillText(card.rank,256,190);
+  // スート — 下半分中央
+  c.font='200px serif';c.textBaseline='middle';
+  c.fillText(card.suit,256,530);
   const tx=new THREE.CanvasTexture(cv);faceTex.set(key,tx);return tx;
 }
 const edgeMat=new THREE.MeshStandardMaterial({color:0xf0eeff,roughness:.5});
@@ -1315,7 +1316,7 @@ function makePlainCard(tex,yOff){
 function cardTargetPos(pi,ci){
   if(pi===-1){
     const mob=document.body.classList.contains('mobile');
-    return new THREE.Vector3((ci-2)*(mob?.44:.75),mob?.22:.08,mob?.35:-.05);
+    return new THREE.Vector3((ci-2)*(mob?.44:.75),mob?.18:.08,mob?.10:-.05);
   }
   if(pi===0){const xs=document.body.classList.contains('mobile')?.40:.65;return new THREE.Vector3((ci-.5)*xs,1.05,3.5);}
   const sp=SEAT3D[pi];
@@ -1325,7 +1326,7 @@ function cardTargetPos(pi,ci){
 }
 function cardTargetRot(pi){
   if(pi===0)  return new THREE.Euler(Math.PI*.26,0,0);
-  if(pi===-1){const tilt=document.body.classList.contains('mobile')?Math.PI*.20:0;return new THREE.Euler(tilt,(Math.random()-.5)*.06,0);}
+  if(pi===-1){const tilt=document.body.classList.contains('mobile')?Math.PI*.13:0;return new THREE.Euler(tilt,(Math.random()-.5)*.06,0);}
   const sp=SEAT3D[pi];
   const tiltX=-sp.z*.055;
   const tiltZ= sp.x*.025;
@@ -1427,24 +1428,16 @@ function updateLabels(){
     const rawX=(v.x*.5+.5)*innerWidth;
     const rawY=(-v.y*.5+.5)*innerHeight;
     const sy=Math.max(mg,Math.min(innerHeight-hudH,rawY));
-    // 座席1(最左)は左端揃え、座席4(最右)は右端揃え、それ以外は中央揃え
+    // 座席1(最左)は左端揃え、それ以外は中央揃え
     if(mob && i===1){
       el.style.left='8px'; el.style.top=sy+'px';
       el.style.transform='translate(0,-50%)';
-    } else if(mob && i===4){
-      el.style.left=(innerWidth-8)+'px'; el.style.top=sy+'px';
-      el.style.transform='translate(-100%,-50%)';
     } else {
       const sx=Math.max(mgX,Math.min(innerWidth-mgX,rawX));
       el.style.left=sx+'px'; el.style.top=sy+'px';
       el.style.transform='';
     }
     el.style.display='flex';
-  }
-  const db=document.getElementById('dbtn');
-  if(db.style.display!=='none'&&db._sid!==undefined){
-    const v=SEAT3D[db._sid].clone().project(camera);
-    db.style.left=((v.x*.5+.5)*innerWidth+28)+'px'; db.style.top=((-v.y*.5+.5)*innerHeight-28)+'px';
   }
 }
 
@@ -1511,7 +1504,12 @@ function setBadge(id,type,txt){
   let b=av.querySelector('.pbadge');if(!b){b=document.createElement('div');av.appendChild(b);}
   b.className='pbadge badge-'+type;b.textContent=txt;setTimeout(()=>b.remove(),2200);
 }
-function placeDealer(sid){const db=$i('dbtn');db._sid=sid;db.style.display='flex';}
+function placeDealer(sid){
+  const db=$i('dbtn');db._sid=sid;
+  const name=st.players.find(p=>p.id===sid)?.name||('P'+sid);
+  db.innerHTML='D &nbsp;'+name;
+  db.style.display='flex';
+}
 function showCtrls(v){$i('controls').style.display=v?'flex':'none';}
 function showAhint(callAmt,chips){
   const h=$i('ahint'),t=$i('ahinttxt');
