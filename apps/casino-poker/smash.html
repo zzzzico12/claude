@@ -97,14 +97,14 @@ body{background:#03000f;overflow:hidden;font-family:'Rajdhani',sans-serif;color:
 .fc.you .fc-chips{font-size:14px;color:#ffd700}
 /* ── Showdown bubble (near character) ── */
 .sd-bubble{display:none;background:rgba(0,0,16,.88);border:1px solid rgba(255,215,0,.45);
-  border-radius:8px;padding:4px 9px 5px;text-align:center;margin-top:5px;min-width:74px;
+  border-radius:8px;padding:4px 9px 5px;text-align:center;margin-top:5px;min-width:74px;max-width:120px;
   pointer-events:none;animation:sdIn .28s ease-out}
 @keyframes sdIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 .sd-bubble.show{display:block}
 .sd-bubble .sd-cards{font-size:13px;font-weight:700;letter-spacing:.5px}
 .sd-bubble .sd-cards .hc-r{color:#ff5566}
 .sd-bubble .sd-cards .hc-b{color:#ddeeff}
-.sd-bubble .sd-hname{font-size:9px;letter-spacing:1.5px;color:rgba(255,215,80,.85);text-transform:uppercase;margin-top:2px}
+.sd-bubble .sd-hname{font-size:9px;letter-spacing:1.5px;color:rgba(255,215,80,.85);text-transform:uppercase;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sd-bubble.winner-bubble{border-color:#ffd700;box-shadow:0 0 14px rgba(255,215,0,.7)}
 .sd-bubble.winner-bubble .sd-hname{color:#ffd700}
 /* player-0 bubble is fixed above HUD */
@@ -294,11 +294,14 @@ body.mobile #rslider{width:70px}
 body.mobile .btn{font-size:13px;padding:12px 16px}
 body.mobile #ahint{
   display:flex !important;
+  flex-direction:column;align-items:flex-start;gap:3px;
   bottom:auto;top:8px;left:8px;right:auto;
-  transform:none;padding:4px 10px;
-  border-radius:10px;font-size:9px
+  transform:none;padding:6px 11px;
+  border-radius:10px;font-size:10px;line-height:1.4
 }
-body.mobile #hstrength{top:auto;left:8px;bottom:120px;transform:none;padding:4px 12px}
+body.mobile #ahinttxt{display:contents}
+body.mobile #hstrength{top:auto;left:8px;bottom:108px;transform:none;padding:4px 12px}
+body.mobile #rpanel{bottom:190px}
 body.mobile #hname{font-size:13px;letter-spacing:1.5px}
 body.mobile #hmeter{width:100px;height:4px}
 body.mobile #smash-hud{
@@ -1306,7 +1309,7 @@ function makePlainCard(tex,yOff){
 function cardTargetPos(pi,ci){
   if(pi===-1){
     const mob=document.body.classList.contains('mobile');
-    return new THREE.Vector3((ci-2)*(mob?.65:.75),mob?.22:.08,mob?.35:-.05);
+    return new THREE.Vector3((ci-2)*(mob?.44:.75),mob?.22:.08,mob?.35:-.05);
   }
   if(pi===0){const xs=document.body.classList.contains('mobile')?.40:.65;return new THREE.Vector3((ci-.5)*xs,1.05,3.5);}
   const sp=SEAT3D[pi];
@@ -1409,15 +1412,15 @@ function tickAnims(dt){
 
 // ── Labels ──
 function updateLabels(){
-  const mg=30,hudH=document.body.classList.contains('mobile')?112:130;
+  const mob=document.body.classList.contains('mobile');
+  const mg=30,mgX=mob?88:30,hudH=mob?112:130;
   for(let i=0;i<5;i++){
     const el=document.getElementById('plabel-'+i);if(!el)continue;
     const v=SEAT3D[i].clone().project(camera);
     if(v.z>1){el.style.display='none';continue;}
     const rawX=(v.x*.5+.5)*innerWidth;
     const rawY=(-v.y*.5+.5)*innerHeight;
-    // 左にはみ出すプレイヤーのみクランプ。右側は元の投影位置を使う
-    const sx=Math.max(mg,rawX);
+    const sx=Math.max(mgX,Math.min(innerWidth-mgX,rawX));
     const sy=Math.max(mg,Math.min(innerHeight-hudH,rawY));
     el.style.left=sx+'px'; el.style.top=sy+'px';
     el.style.display='flex';
@@ -1496,9 +1499,16 @@ function placeDealer(sid){const db=$i('dbtn');db._sid=sid;db.style.display='flex
 function showCtrls(v){$i('controls').style.display=v?'flex':'none';}
 function showAhint(callAmt,chips){
   const h=$i('ahint'),t=$i('ahinttxt');
-  t.innerHTML=callAmt<=0
-    ?'<strong>CHECK</strong> でパス ／ <strong>RAISE</strong> で賭ける ／ <strong>FOLD</strong> で降りる'
-    :`<strong>CALL $${Math.min(callAmt,chips)}</strong> ／ <strong>RAISE</strong> 上乗せ ／ <strong>FOLD</strong>`;
+  const mob=document.body.classList.contains('mobile');
+  if(mob){
+    t.innerHTML=callAmt<=0
+      ?'<div><strong>CHECK</strong> パス</div><div><strong>RAISE</strong> 賭ける</div><div><strong>FOLD</strong> 降りる</div>'
+      :`<div><strong>CALL</strong> $${Math.min(callAmt,chips)}</div><div><strong>RAISE</strong> 上乗せ</div><div><strong>FOLD</strong> 降りる</div>`;
+  } else {
+    t.innerHTML=callAmt<=0
+      ?'<strong>CHECK</strong> でパス ／ <strong>RAISE</strong> で賭ける ／ <strong>FOLD</strong> で降りる'
+      :`<strong>CALL $${Math.min(callAmt,chips)}</strong> ／ <strong>RAISE</strong> 上乗せ ／ <strong>FOLD</strong>`;
+  }
   h.style.display='flex';
 }
 function hideAhint(){$i('ahint').style.display='none';}
