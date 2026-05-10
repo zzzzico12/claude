@@ -1286,26 +1286,24 @@ function getFaceTex(card){
   const key=card.rank+card.suit; if(faceTex.has(key))return faceTex.get(key);
   const cv=document.createElement('canvas');cv.width=512;cv.height=712;
   const c=cv.getContext('2d'); const red=isRed(card);
-  c.fillStyle='#ffffff';c.roundRect(0,0,512,712,28);c.fill();
-  c.strokeStyle='rgba(80,0,160,.15)';c.lineWidth=5;c.roundRect(8,8,496,696,22);c.stroke();
-  const col=red?'#cc0000':'#000000';
-  c.fillStyle=col;
-  // 左上
-  c.font='bold 96px Georgia,serif';c.textAlign='left';c.textBaseline='top';c.fillText(card.rank,22,12);
-  c.font='72px serif';c.fillText(card.suit,28,112);
-  // 中央スート
-  c.font='220px serif';c.textAlign='center';c.textBaseline='middle';c.fillText(card.suit,256,356);
-  // 右下(180°反転)
-  c.save();c.translate(512,712);c.rotate(Math.PI);c.textAlign='left';c.textBaseline='top';
-  c.font='bold 96px Georgia,serif';c.fillText(card.rank,22,12);
-  c.font='72px serif';c.fillText(card.suit,28,112);c.restore();
+  // 背景
+  c.fillStyle='#ffffff';c.roundRect(0,0,512,712,32);c.fill();
+  // 色
+  const col=red?'#dd0000':'#111122';
+  c.fillStyle=col;c.textAlign='center';
+  // ランク — 上半分中央に大きく
+  c.font='bold 260px Arial,sans-serif';c.textBaseline='middle';
+  c.fillText(card.rank,256,200);
+  // スート — 下半分中央に大きく
+  c.font='260px serif';c.textBaseline='middle';
+  c.fillText(card.suit,256,520);
   const tx=new THREE.CanvasTexture(cv);faceTex.set(key,tx);return tx;
 }
 const edgeMat=new THREE.MeshStandardMaterial({color:0xf0eeff,roughness:.5});
 function makeCardMesh(card,faceDown,large){
   const W=large?.88:.64,H=large?1.22:.9,T=.009;
   const g=new THREE.BoxGeometry(W,T,H);
-  const topM=new THREE.MeshStandardMaterial({map:faceDown?getBackTex():getFaceTex(card),roughness:.2,metalness:.05});
+  const topM=new THREE.MeshStandardMaterial({map:faceDown?getBackTex():getFaceTex(card),roughness:1,metalness:0,emissive:0x888888,emissiveMap:faceDown?getBackTex():getFaceTex(card)});
   const mesh=new THREE.Mesh(g,[edgeMat,edgeMat,topM,new THREE.MeshStandardMaterial({map:getBackTex(),roughness:.55}),edgeMat,edgeMat]);
   mesh.castShadow=true;mesh.receiveShadow=true;mesh.userData={card,faceDown,large};return mesh;
 }
