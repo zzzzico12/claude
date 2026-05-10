@@ -139,6 +139,10 @@ body{background:#03000f;overflow:hidden;font-family:'Rajdhani',sans-serif;color:
   background:rgba(2,0,16,.8);border:1px solid rgba(255,228,77,.35);
   border-radius:14px;padding:6px 20px}
 #hstrength.vis{opacity:1}
+#myholes{display:flex;gap:5px;justify-content:center;margin-bottom:2px}
+.my-hole{font-family:'Bungee',sans-serif;font-size:15px;background:#fff;
+  border-radius:5px;padding:1px 7px;min-width:30px;text-align:center;letter-spacing:0}
+.my-hole.r{color:#dd0000}.my-hole.b{color:#111122}
 #hname{font-family:'Bungee',sans-serif;font-size:20px;letter-spacing:3px;
   color:#ffe44d;text-shadow:0 0 20px rgba(255,228,77,.8)}
 #hmeter{width:160px;height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden}
@@ -301,6 +305,8 @@ body.mobile #ahint{
 }
 body.mobile #ahinttxt{display:contents}
 body.mobile #hstrength{top:auto;left:8px;bottom:108px;transform:none;padding:4px 12px}
+body.mobile #myholes{gap:4px;margin-bottom:1px}
+body.mobile .my-hole{font-size:12px;padding:1px 5px;min-width:24px}
 body.mobile #rpanel{bottom:190px}
 body.mobile #hname{font-size:13px;letter-spacing:1.5px}
 body.mobile #hmeter{width:100px;height:4px}
@@ -342,7 +348,7 @@ body.mobile #plabel-1{align-items:flex-start}
     <div id="stage-info"></div>
     <div id="pot-display"><span class="potlbl">POT</span><span id="pot-amount">$0</span></div>
   </div>
-  <div id="hstrength"><div id="hname"></div><div id="hmeter"><div id="hmfill" style="width:0%"></div></div></div>
+  <div id="hstrength"><div id="myholes"></div><div id="hname"></div><div id="hmeter"><div id="hmfill" style="width:0%"></div></div></div>
   <div id="dbtn" style="display:none">D</div>
   <div id="ahint"><span id="ahinttxt"></span></div>
   <div id="controls" style="display:none">
@@ -1529,7 +1535,9 @@ function showAhint(callAmt,chips){
 function hideAhint(){$i('ahint').style.display='none';}
 function updHandStr(){
   if(!st.hands[0]||!st.hands[0].length)return;
-  const all=[...st.hands[0],...st.community];if(all.length<2)return;
+  const hole=st.hands[0];
+  $i('myholes').innerHTML=hole.map(c=>`<span class="my-hole ${isRed(c)?'r':'b'}">${c.rank}${c.suit}</span>`).join('');
+  const all=[...hole,...st.community];if(all.length<2)return;
   const best=getBestHand(all);if(!best)return;
   const r=best.score[0];
   $i('hname').textContent=HNAMES[r];$i('hmfill').style.width=HSTR[r]+'%';$i('hmfill').style.background=HCOL[r];
