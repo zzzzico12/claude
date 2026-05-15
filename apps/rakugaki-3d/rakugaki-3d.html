@@ -498,24 +498,60 @@ async function removeBackground(imageFile) {
   }
 }
 
-// Canvasベース白背景除去（フォールバック用）
-async function removeWhiteBg(file, threshold = 235) {
+// Canvasベース背景除去 — エッジフラッドフィル方式
+// 四辺から「明るく・低彩度」なピクセルをBFSで辿り背景をマーキングして透明化
+async function removeWhiteBg(file) {
   const bitmap = await createImageBitmap(file);
+  const { width: w, height: h } = bitmap;
   const canvas = document.createElement('canvas');
-  canvas.width = bitmap.width; canvas.height = bitmap.height;
+  canvas.width = w; canvas.height = h;
   const ctx = canvas.getContext('2d');
   ctx.drawImage(bitmap, 0, 0);
   bitmap.close();
-  const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const imgData = ctx.getImageData(0, 0, w, h);
   const d = imgData.data;
-  for (let i = 0; i < d.length; i += 4) {
-    const r = d[i], g = d[i+1], b = d[i+2];
-    const lum = r * 0.299 + g * 0.587 + b * 0.114;
-    const sat = Math.max(r, g, b) - Math.min(r, g, b);
-    if (lum > threshold && sat < 35) {
-      d[i+3] = Math.round(Math.max(0, (threshold - lum) / (threshold - 180) * 255));
+
+  const bgMask = new Uint8Array(w * h);
+  const queue = [];
+
+  function tryAdd(x, y) {
+    if (x < 0 || x >= w || y < 0 || y >= h) return;
+    const idx = y * w + x;
+    if (bgMask[idx]) return;
+    const pi = idx * 4;
+    const lum = d[pi] * 0.299 + d[pi+1] * 0.587 + d[pi+2] * 0.114;
+    const sat = Math.max(d[pi], d[pi+1], d[pi+2]) - Math.min(d[pi], d[pi+1], d[pi+2]);
+    if (lum > 190 && sat < 65) { bgMask[idx] = 1; queue.push(idx); }
+  }
+
+  // 四辺のエッジからシードして内側へBFS
+  for (let x = 0; x < w; x++) { tryAdd(x, 0); tryAdd(x, h - 1); }
+  for (let y = 1; y < h - 1; y++) { tryAdd(0, y); tryAdd(w - 1, y); }
+  let head = 0;
+  while (head < queue.length) {
+    const idx = queue[head++];
+    const x = idx % w, y = (idx / w) | 0;
+    tryAdd(x+1,y); tryAdd(x-1,y); tryAdd(x,y+1); tryAdd(x,y-1);
+  }
+
+  // 背景ピクセルを透明化（端付近はグラデーション）
+  for (let i = 0; i < w * h; i++) {
+    if (!bgMask[i]) continue;
+    d[i * 4 + 3] = 0;
+  }
+  // 背景と隣接する非背景ピクセルのエッジをぼかす（ハロー除去）
+  for (let y = 1; y < h - 1; y++) {
+    for (let x = 1; x < w - 1; x++) {
+      const idx = y * w + x;
+      if (bgMask[idx]) continue;
+      const neighbors = [bgMask[idx-1], bgMask[idx+1], bgMask[idx-w], bgMask[idx+w]];
+      const bgCount = neighbors.reduce((s, v) => s + v, 0);
+      if (bgCount > 0) {
+        d[idx * 4 + 3] = Math.round(d[idx * 4 + 3] * (1 - bgCount * 0.18));
+      }
     }
   }
+
   ctx.putImageData(imgData, 0, 0);
   return new Promise(res => canvas.toBlob(res, 'image/png'));
 }
@@ -929,186 +965,190 @@ function init2DWalker(imageURL) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// THREE.JS — ぷっくり3Dウォーカー（DisplacementMap使用）
+// THREE.JS — 真の3Dウォーカー（深度スライス積層方式）
 // ═══════════════════════════════════════════════════════════
-// アルファ由来の深度マップをMeshStandardMaterialのdisplacementMapに適用し
-// 本物のジオメトリとして「膨らんだ」3Dキャラクターを生成する
+// 深度マップで画素を奥行きに振り分け、12枚のPlaneを重ねることで
+// あらゆる角度から見ても立体に見える「彫刻」を生成する
 async function initInflationWalker(charBlobURL, depthCanvas) {
   const canvas = $('three-canvas');
   const scene = buildScene();
   const { renderer, camera, resize } = buildRenderer(canvas);
 
-  camera.position.set(0, 2.8, 8.0);
-  camera.lookAt(0, 0.9, 0);
-
-  // buildSceneのデフォルトライトを差し替えて3D専用ライティングに
+  // 3D専用ライティング
   scene.children.filter(c => c.isDirectionalLight || c.isAmbientLight)
        .forEach(l => scene.remove(l));
-
-  // アンビエント: 暗めにして影を際立てる
-  scene.add(new THREE.AmbientLight(0xFFEED0, 0.35));
-  // キーライト（太陽）
-  const keyLight = new THREE.DirectionalLight(0xFFF8CC, 3.8);
-  keyLight.position.set(5, 9, 6);
-  keyLight.castShadow = true;
+  scene.add(new THREE.AmbientLight(0xFFEED0, 0.55));
+  const keyLight = new THREE.DirectionalLight(0xFFF5CC, 3.5);
+  keyLight.position.set(5, 9, 5); keyLight.castShadow = true;
   keyLight.shadow.mapSize.set(2048, 2048);
   scene.add(keyLight);
-  // リムライト（背後から）— エッジを光らせて立体感を強調
-  const rimLight = new THREE.DirectionalLight(0x99CCFF, 2.2);
-  rimLight.position.set(0, 4, -7);
-  scene.add(rimLight);
-  // フィルライト（前方柔らか）
-  const fillLight = new THREE.DirectionalLight(0xFFDDCC, 0.9);
-  fillLight.position.set(-5, 1, 8);
-  scene.add(fillLight);
+  const rimLight = new THREE.DirectionalLight(0x88BBFF, 2.0);
+  rimLight.position.set(-1, 3, -6); scene.add(rimLight);
+  const fillLight = new THREE.DirectionalLight(0xFFCCBB, 0.8);
+  fillLight.position.set(-4, 1, 7); scene.add(fillLight);
 
-  const charTexture = await new Promise((res, rej) =>
-    new THREE.TextureLoader().load(charBlobURL, res, undefined, rej)
+  // キャラクター画像を512px以内でcanvasに読み込む（ピクセル操作のため）
+  $('load-status').textContent = '🎨 3Dモデルを構築中...';
+  const img = new Image();
+  img.src = charBlobURL;
+  await new Promise(res => { img.onload = res; });
+  const maxPx = 512;
+  const sc  = Math.min(1, maxPx / Math.max(img.naturalWidth, img.naturalHeight));
+  const cW  = Math.round(img.naturalWidth  * sc);
+  const cH  = Math.round(img.naturalHeight * sc);
+
+  const charCv = document.createElement('canvas');
+  charCv.width = cW; charCv.height = cH;
+  charCv.getContext('2d').drawImage(img, 0, 0, cW, cH);
+
+  const depthCv = document.createElement('canvas');
+  depthCv.width = cW; depthCv.height = cH;
+  depthCv.getContext('2d').drawImage(depthCanvas, 0, 0, cW, cH);
+
+  const charData  = charCv.getContext('2d').getImageData(0, 0, cW, cH).data;
+  const depthData = depthCv.getContext('2d').getImageData(0, 0, cW, cH).data;
+
+  // 12スライスを生成して積み重ねる
+  // スライスiはdepth >= i/N のピクセルを表示し、Z = i/(N-1)*TOTAL_Z の位置に置く
+  // → 前面スライスは「奥の部分」、後ろスライスは「全体」を表示
+  //   前面が後ろを深度テストでブロックするため、正しくレイヤーが剥がれて見える
+  const NUM_LAYERS = 12;
+  const TOTAL_Z    = 1.6;   // キャラクター高さ1.8の約9割の奥行き
+
+  const aspect = cW / cH;
+  const charH3 = 1.8;
+  const charW3 = charH3 * aspect;
+  const baseY  = charH3 / 2 + 0.02;
+
+  const charGroup = new THREE.Group();
+  charGroup.position.set(0, baseY, 0);
+  charGroup.rotation.x = -0.12;
+  scene.add(charGroup);
+
+  for (let li = 0; li < NUM_LAYERS; li++) {
+    const minDepth = li / NUM_LAYERS;
+    const zPos     = (li / (NUM_LAYERS - 1)) * TOTAL_Z;
+
+    const lv = document.createElement('canvas');
+    lv.width = cW; lv.height = cH;
+    const lCtx = lv.getContext('2d');
+    const ld   = lCtx.createImageData(cW, cH);
+
+    for (let i = 0; i < charData.length; i += 4) {
+      if (charData[i + 3] < 20) continue;          // 透明部分はスキップ
+      if (depthData[i] / 255 < minDepth) continue; // このスライスより手前の深度はスキップ
+      ld.data[i]   = charData[i];
+      ld.data[i+1] = charData[i+1];
+      ld.data[i+2] = charData[i+2];
+      ld.data[i+3] = charData[i+3];
+    }
+    lCtx.putImageData(ld, 0, 0);
+
+    const tex = new THREE.CanvasTexture(lv);
+    tex.colorSpace = THREE.SRGBColorSpace;
+
+    const mesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(charW3, charH3),
+      new THREE.MeshLambertMaterial({
+        map: tex, transparent: true, alphaTest: 0.12, depthWrite: true,
+      })
+    );
+    mesh.position.z = zPos;
+    mesh.renderOrder = li;
+    charGroup.add(mesh);
+  }
+
+  // アウトライン（最前面の少し外側にBackSideメッシュ）
+  const frontTex = charGroup.children[NUM_LAYERS - 1].material.map;
+  const outlineMesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(charW3, charH3),
+    new THREE.MeshBasicMaterial({
+      map: frontTex, transparent: true, alphaTest: 0.05,
+      color: new THREE.Color(0x080810), side: THREE.BackSide,
+    })
   );
-  charTexture.colorSpace = THREE.SRGBColorSpace;
+  outlineMesh.position.z = TOTAL_Z + 0.01;
+  outlineMesh.scale.set(1.07, 1.07, 1);
+  outlineMesh.renderOrder = NUM_LAYERS;
+  charGroup.add(outlineMesh);
 
-  const depthTexture  = new THREE.CanvasTexture(depthCanvas);
-  const normalCanvas  = computeNormalMap(depthCanvas);
-  const normalTexture = new THREE.CanvasTexture(normalCanvas);
-
-  const imgW = charTexture.image.width;
-  const imgH = charTexture.image.height;
-  const aspect = imgW / imgH;
-  const h = 1.8;
-  const w = h * aspect;
-
-  // セグメント数を増やして変位を滑らかに
-  const segs = 240;
-  const geo = new THREE.PlaneGeometry(w, h, segs, Math.round(segs / aspect));
-  const mat = new THREE.MeshStandardMaterial({
-    map: charTexture,
-    displacementMap: depthTexture,
-    displacementScale: 1.5,    // 大幅増強: 本物の彫刻のように飛び出す
-    displacementBias: -0.28,
-    normalMap: normalTexture,
-    normalScale: new THREE.Vector2(3.5, 3.5),
-    transparent: true,
-    alphaTest: 0.08,
-    roughness: 0.45,
-    metalness: 0.05,
-    side: THREE.FrontSide,
-  });
-
-  const baseY = h / 2 + 0.02;
-  let character = new THREE.Mesh(geo, mat);
-  character.position.set(0, baseY, 0);
-  character.rotation.x = -0.28;
-  character.castShadow = true;
-  scene.add(character);
-
-  // アウトラインメッシュ（BackSide + 少し拡大）で厚みを演出
-  // 横から見たときにただの薄板にならないようにする
-  const outSegs = 80;
-  const outlineGeo = new THREE.PlaneGeometry(w, h, outSegs, Math.round(outSegs / aspect));
-  const outlineMat = new THREE.MeshStandardMaterial({
-    map: charTexture,
-    displacementMap: depthTexture,
-    displacementScale: 1.5,
-    displacementBias: -0.28,
-    transparent: true,
-    alphaTest: 0.04,
-    color: new THREE.Color(0x080810),
-    roughness: 1.0,
-    metalness: 0.0,
-    side: THREE.BackSide,
-  });
-  const outline = new THREE.Mesh(outlineGeo, outlineMat);
-  outline.position.set(0, baseY, 0);
-  outline.rotation.x = -0.28;
-  outline.scale.set(1.09, 1.09, 1.0);
-  scene.add(outline);
-
-  // シャドウ（楕円形）
-  const sMat = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.18 });
+  // 影
+  const sMat   = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.18 });
   const shadow = new THREE.Mesh(new THREE.CircleGeometry(1, 20), sMat);
   shadow.rotation.x = -Math.PI / 2;
   shadow.position.y = 0.005;
-  shadow.scale.set(w * 0.38, w * 0.14, 1);
+  shadow.scale.set(charW3 * 0.38, charW3 * 0.14, 1);
   scene.add(shadow);
 
-  let charW = w;
-  let walkDir = 1;
-  const walkSpeed = 1.5;
-  const maxX = 4.0;
-  let isJumping = false;
-  let jumpVel = 0;
+  let walkDir  = 1;
+  const walkSpeed = 1.4, maxX = 4.0;
+  let isJumping = false, jumpVel = 0;
   const gravity = -14;
   let spawnT = null;
   const particles = [];
-
   const clock = new THREE.Clock();
-  let prevT = 0;
-  let animId;
+  let prevT = 0, animId;
 
   spawnT = clock.getElapsedTime();
   spawnParticles(scene, particles, 0, baseY, 0);
 
   function animate() {
     animId = requestAnimationFrame(animate);
-    const t = clock.getElapsedTime();
+    const t  = clock.getElapsedTime();
     const dt = Math.min(t - prevT, 0.05);
     prevT = t;
 
     tickClouds(scene.userData.clouds, dt);
     tickParticles(particles, scene, dt);
 
-    // Spawn scale-in
+    // スポーン時のスケールイン
     if (spawnT !== null) {
       const s = ease(Math.min((t - spawnT) / 0.5, 1));
-      character.scale.set(walkDir * s, s, 1);
+      charGroup.scale.set(walkDir * s, s, 1);
       if (t - spawnT >= 0.5) spawnT = null;
     }
 
-    // Jump
+    // ジャンプ物理
     if (isJumping) {
       jumpVel += gravity * dt;
-      character.position.y += jumpVel * dt;
-      if (character.position.y <= baseY) {
-        character.position.y = baseY;
+      charGroup.position.y += jumpVel * dt;
+      if (charGroup.position.y <= baseY) {
+        charGroup.position.y = baseY;
         isJumping = false; jumpVel = 0;
-        spawnParticles(scene, particles, character.position.x, 0.05, 0, 0.5);
+        spawnParticles(scene, particles, charGroup.position.x, 0.05, 0, 0.5);
       }
     }
 
-    // Walk
-    character.position.x += walkDir * walkSpeed * dt;
-    if (character.position.x > maxX) {
-      character.position.x = maxX; walkDir = -1;
-      character.scale.x = -Math.abs(character.scale.x);
+    // 歩行
+    charGroup.position.x += walkDir * walkSpeed * dt;
+    if (charGroup.position.x > maxX) {
+      charGroup.position.x = maxX; walkDir = -1;
+      charGroup.scale.x = -Math.abs(charGroup.scale.x);
     }
-    if (character.position.x < -maxX) {
-      character.position.x = -maxX; walkDir = 1;
-      character.scale.x = Math.abs(character.scale.x);
+    if (charGroup.position.x < -maxX) {
+      charGroup.position.x = -maxX; walkDir = 1;
+      charGroup.scale.x = Math.abs(charGroup.scale.x);
     }
 
     if (!isJumping) {
-      character.position.y = baseY + Math.abs(Math.sin(t * 3.8)) * 0.09;
+      charGroup.position.y = baseY + Math.abs(Math.sin(t * 3.8)) * 0.09;
     }
-    character.rotation.z = -walkDir * 0.06;
-    character.rotation.y = Math.sin(t * 0.35) * 0.22 * walkDir;
+    charGroup.rotation.z = -walkDir * 0.05;
+    // 歩行方向に向かって微回転 → スライスの奥行きが側面から見える
+    charGroup.rotation.y = Math.sin(t * 0.38) * 0.40 * walkDir;
 
-    // アウトラインをキャラクターに完全追従
-    outline.position.copy(character.position);
-    outline.rotation.copy(character.rotation);
-    outline.scale.set(character.scale.x * 1.09, character.scale.y * 1.09, 1.0);
-
-    // Shadow
-    shadow.position.x = character.position.x;
-    const lift = character.position.y - baseY;
-    shadow.scale.set(charW * Math.max(0.1, 0.38 - lift * 0.06), charW * Math.max(0.04, 0.14 - lift * 0.02), 1);
+    // 影
+    shadow.position.x = charGroup.position.x;
+    const lift = charGroup.position.y - baseY;
+    shadow.scale.set(charW3 * Math.max(0.1, 0.38 - lift * 0.06),
+                     charW3 * Math.max(0.04, 0.14 - lift * 0.02), 1);
     shadow.material.opacity = Math.max(0, 0.18 - lift * 0.04);
 
-    // カメラ旋回: ±57° まで広角で回すと側面から深度が丸見えになる
-    const camR = 8.0;
+    // カメラ旋回 ±57°：側面から見るとスライスの積み重ねが丸見えになる
+    const camR     = 8.0;
     const camAngle = Math.sin(t * 0.11) * 1.0;
     camera.position.x = Math.sin(camAngle) * camR;
     camera.position.z = Math.cos(camAngle) * camR;
-    // 側面向きのとき少し高い位置から見ると3/4アングルで深度が映える
     camera.position.y = 2.5 + Math.abs(Math.sin(camAngle)) * 2.5;
     camera.lookAt(0, 0.9, 0);
 
