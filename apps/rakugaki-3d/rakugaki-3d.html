@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>らくがき3D ✨</title>
+<meta http-equiv="Content-Security-Policy" content="default-src https:; script-src 'unsafe-inline' 'wasm-unsafe-eval' https://cdn.jsdelivr.net blob:; style-src 'unsafe-inline'; img-src data: blob: https:; worker-src blob:; connect-src https: http://localhost:* blob:;">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  width: 100vw; height: 100vh; overflow: hidden;
+  font-family: -apple-system, 'Hiragino Sans', 'Yu Gothic', sans-serif;
+  background: #fff;
+}
+
+.screen {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.screen[hidden] { display: none !important; }
+
+/* ═══════════════════════════════════════════
+   UPLOAD SCREEN
+═══════════════════════════════════════════ */
+#screen-upload {
+  background: linear-gradient(160deg, #FFF0FB 0%, #FFF8E8 50%, #F0F8FF 100%);
+}
+
+.upload-deco {
+  position: absolute; pointer-events: none; user-select: none; font-size: 2.8rem; opacity: 0.18;
+}
+
+.app-title {
+  font-size: clamp(2.2rem, 7vw, 3.8rem);
+  font-weight: 900;
+  background: linear-gradient(135deg, #FF69B4, #9B59B6, #3498DB);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  letter-spacing: -2px;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.app-sub {
+  font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+  color: #888; font-weight: 600;
+  margin-bottom: 40px; text-align: center;
+}
+
+.drop-zone {
+  width: clamp(240px, 55vw, 300px);
+  height: clamp(200px, 38vh, 240px);
+  background: white;
+  border: 3px dashed #FFB6C1;
+  border-radius: 28px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 10px; cursor: pointer;
+  transition: all 0.25s;
+  box-shadow: 0 8px 32px rgba(255, 105, 180, 0.15);
+  position: relative; overflow: hidden;
+}
+.drop-zone::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,182,193,0.08), rgba(155,89,182,0.08));
+  opacity: 0; transition: opacity 0.25s;
+}
+.drop-zone:hover, .drop-zone.dragging {
+  transform: scale(1.04);
+  border-color: #FF69B4;
+  box-shadow: 0 16px 48px rgba(255, 105, 180, 0.28);
+}
+.drop-zone:hover::before, .drop-zone.dragging::before { opacity: 1; }
+
+.drop-icon { font-size: 3.8rem; }
+.drop-text { font-size: 1rem; font-weight: 700; color: #FF69B4; }
+.drop-sub { font-size: 0.8rem; color: #CCC; }
+
+.or-row { margin: 18px 0 12px; color: #CCC; font-size: 0.9rem; display: flex; align-items: center; gap: 12px; }
+.or-row::before, .or-row::after { content: ''; flex: 1; height: 1px; background: #EEE; width: 60px; }
+
+.gallery-btn {
+  padding: 11px 28px; border-radius: 50px;
+  border: 2px solid #9B59B6; background: transparent;
+  color: #9B59B6; font-size: 0.95rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+}
+.gallery-btn:hover { background: #9B59B6; color: white; transform: scale(1.03); }
+
+/* ═══════════════════════════════════════════
+   LOADING SCREEN
+═══════════════════════════════════════════ */
+#screen-loading {
+  background: linear-gradient(160deg, #F3E5F5 0%, #E8F5E9 100%);
+}
+
+.magic-icon {
+  font-size: 5rem;
+  animation: magic-float 2s ease-in-out infinite;
+  margin-bottom: 24px;
+}
+@keyframes magic-float {
+  0%,100% { transform: translateY(0) rotate(-8deg); }
+  50%      { transform: translateY(-22px) rotate(8deg); }
+}
+
+.load-status {
+  font-size: 1.3rem; font-weight: 800;
+  color: #7B1FA2; margin-bottom: 14px;
+  min-height: 2rem; text-align: center;
+  transition: opacity 0.3s;
+}
+
+.load-dots { display: flex; gap: 10px; margin-bottom: 20px; }
+.load-dot {
+  width: 13px; height: 13px;
+  background: #CE93D8; border-radius: 50%;
+  animation: dot-bounce 1.2s ease-in-out infinite;
+}
+.load-dot:nth-child(2) { animation-delay: 0.2s; }
+.load-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dot-bounce {
+  0%,100% { transform: translateY(0); background: #CE93D8; }
+  50%      { transform: translateY(-14px); background: #AB47BC; }
+}
+
+.load-bar-wrap {
+  width: 220px; height: 10px;
+  background: #E1BEE7; border-radius: 5px; overflow: hidden;
+}
+.load-bar {
+  height: 100%; width: 0;
+  background: linear-gradient(90deg, #CE93D8, #FF80AB, #FFD54F);
+  border-radius: 5px; transition: width 0.4s ease;
+}
+
+/* ═══════════════════════════════════════════
+   PREVIEW SCREEN (background removed)
+═══════════════════════════════════════════ */
+#screen-preview {
+  background: linear-gradient(160deg, #E3F2FD, #FFF8E1);
+}
+.preview-title {
+  font-size: 1.6rem; font-weight: 900;
+  color: #333; margin-bottom: 6px;
+}
+.preview-sub {
+  font-size: 0.9rem; color: #888;
+  margin-bottom: 20px;
+}
+.preview-img-wrap {
+  width: min(220px, 55vw); height: min(220px, 40vh);
+  background: repeating-conic-gradient(#DDD 0% 25%, white 0% 50%) 0 0 / 16px 16px;
+  border-radius: 20px; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  margin-bottom: 28px;
+}
+.preview-img-wrap img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+.preview-btns { display: flex; flex-direction: column; gap: 12px; width: min(300px, 80vw); }
+.primary-btn {
+  padding: 16px; border-radius: 16px; border: none;
+  background: linear-gradient(135deg, #FF69B4, #9B59B6);
+  color: white; font-size: 1.1rem; font-weight: 800;
+  cursor: pointer; transition: all 0.2s;
+  box-shadow: 0 6px 20px rgba(255,105,180,0.4);
+}
+.primary-btn:hover { transform: scale(1.03); box-shadow: 0 10px 28px rgba(255,105,180,0.5); }
+
+.secondary-btn {
+  padding: 14px; border-radius: 16px;
+  border: 2px solid #9B59B6; background: white;
+  color: #9B59B6; font-size: 1rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+}
+.secondary-btn:hover { background: #F3E5F5; transform: scale(1.02); }
+
+.token-area { margin-top: 18px; text-align: center; }
+
+.token-toggle {
+  background: none; border: none; cursor: pointer;
+  font-size: 0.85rem; color: #AAA; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 12px; border-radius: 50px;
+  transition: all 0.2s;
+}
+.token-toggle:hover { color: #9B59B6; background: rgba(155,89,182,0.08); }
+.token-toggle.active { color: #9B59B6; }
+
+.token-form {
+  margin-top: 10px; display: none;
+  width: min(300px, 85vw);
+}
+.token-form.open { display: block; }
+
+.hf-token-input {
+  width: 100%; padding: 10px 14px;
+  border: 2px solid #EEE; border-radius: 10px;
+  font-size: 0.85rem; color: #555;
+  transition: border-color 0.2s;
+}
+.hf-token-input:focus { outline: none; border-color: #CE93D8; }
+
+.token-save-btn {
+  margin-top: 6px; width: 100%;
+  padding: 9px; border-radius: 10px; border: none;
+  background: linear-gradient(135deg, #CE93D8, #9B59B6);
+  color: white; font-size: 0.9rem; font-weight: 700;
+  cursor: pointer; transition: opacity 0.2s;
+}
+.token-save-btn:hover { opacity: 0.85; }
+
+.token-hint {
+  font-size: 0.72rem; color: #BBB; margin-top: 5px; text-align: center;
+}
+.token-hint a { color: #9B59B6; }
+
+.token-status {
+  font-size: 0.78rem; font-weight: 600;
+  margin-top: 4px; text-align: center;
+}
+
+/* ═══════════════════════════════════════════
+   WALKER SCREEN
+═══════════════════════════════════════════ */
+#screen-walker { padding: 0; }
+#three-canvas { width: 100%; height: 100%; display: block; }
+
+.walker-hud {
+  position: absolute; inset: 0; pointer-events: none;
+}
+.hud-tl {
+  position: absolute; top: 14px; left: 16px;
+  font-size: 0.8rem; font-weight: 700;
+  color: white; opacity: 0.7;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+.hud-tr {
+  position: absolute; top: 12px; right: 14px;
+  display: flex; gap: 8px;
+}
+.hud-btn {
+  pointer-events: all;
+  width: 44px; height: 44px; border-radius: 50%;
+  border: none; cursor: pointer;
+  font-size: 1.15rem;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  transition: transform 0.2s;
+}
+.hud-btn:hover { transform: scale(1.12); }
+
+.jump-hint {
+  position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,0.55); color: white;
+  padding: 9px 22px; border-radius: 50px;
+  font-size: 0.9rem; font-weight: 600;
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+  transition: opacity 1s ease;
+  white-space: nowrap;
+}
+
+.gen-label {
+  position: absolute; bottom: 24px; right: 16px;
+  background: rgba(155,89,182,0.75); color: white;
+  padding: 6px 14px; border-radius: 50px;
+  font-size: 0.75rem; font-weight: 700;
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+</style>
+</head>
+<body>
+
+<!-- ─── SCREEN 1: UPLOAD ─── -->
+<div id="screen-upload" class="screen">
+  <div class="upload-deco" style="top:8px;left:18px;transform:rotate(-18deg)">✏️</div>
+  <div class="upload-deco" style="top:12px;right:24px;transform:rotate(22deg)">🖍️</div>
+  <div class="upload-deco" style="bottom:28px;left:14px;transform:rotate(12deg);font-size:2rem">⭐</div>
+  <div class="upload-deco" style="bottom:18px;right:18px;transform:rotate(-22deg)">✨</div>
+  <div class="upload-deco" style="top:50%;left:8px;transform:translateY(-50%) rotate(-5deg);font-size:2rem">🎨</div>
+  <div class="upload-deco" style="top:50%;right:8px;transform:translateY(-50%) rotate(5deg);font-size:2rem">🖌️</div>
+
+  <h1 class="app-title">らくがき3D</h1>
+  <p class="app-sub">ラクガキが 3Dワールドを歩き出す！✨</p>
+
+  <div class="drop-zone" id="drop-zone">
+    <div class="drop-icon">📷</div>
+    <div class="drop-text">カメラで撮る</div>
+    <div class="drop-sub">または画像をここにドロップ</div>
+  </div>
+
+  <div class="or-row">または</div>
+
+  <button class="gallery-btn" id="gallery-btn">📁 ギャラリーから選ぶ</button>
+
+  <div class="token-area">
+    <button class="token-toggle" id="token-toggle">⚙️ HF Token <span id="token-indicator"></span></button>
+    <div class="token-form" id="token-form">
+      <input type="password" id="hf-token-input" class="hf-token-input" placeholder="hf_xxxxxxxxxxxxxxxxxx">
+      <button class="token-save-btn" id="token-save">保存する</button>
+      <div class="token-hint">
+        設定するとAI深度推定（ぷっくり3D精度アップ）が使えます<br>
+        <a href="https://huggingface.co/settings/tokens" target="_blank">HFトークンを無料取得 →</a>
+      </div>
+      <div class="token-status" id="token-status"></div>
+    </div>
+  </div>
+
+  <input type="file" id="file-cam" accept="image/*" capture="environment" style="display:none">
+  <input type="file" id="file-gal" accept="image/*" style="display:none">
+</div>
+
+<!-- ─── SCREEN 2: LOADING ─── -->
+<div id="screen-loading" class="screen" hidden>
+  <div class="magic-icon">🪄</div>
+  <div class="load-status" id="load-status">魔法をかけてるよ...</div>
+  <div class="load-dots">
+    <div class="load-dot"></div>
+    <div class="load-dot"></div>
+    <div class="load-dot"></div>
+  </div>
+  <div class="load-bar-wrap"><div class="load-bar" id="load-bar"></div></div>
+</div>
+
+<!-- ─── SCREEN 3: PREVIEW ─── -->
+<div id="screen-preview" class="screen" hidden>
+  <div class="preview-title">✂️ 切り抜き完了！</div>
+  <p class="preview-sub">どうやって歩かせる？</p>
+  <div class="preview-img-wrap">
+    <img id="preview-img" src="" alt="キャラクター">
+  </div>
+  <div class="preview-btns">
+    <button class="primary-btn" id="btn-walk-3d">
+      🔮 ぷっくり3Dで歩かせる！
+    </button>
+    <button class="secondary-btn" id="btn-walk-2d">
+      ✨ ペーパーモード（2.5D）
+    </button>
+    <button class="secondary-btn" id="btn-retake">🔄 撮り直す</button>
+  </div>
+</div>
+
+<!-- ─── SCREEN 4: WALKER ─── -->
+<div id="screen-walker" class="screen" hidden>
+  <canvas id="three-canvas"></canvas>
+  <div class="walker-hud">
+    <div class="hud-tl">らくがき3D</div>
+    <div class="hud-tr">
+      <button class="hud-btn" id="btn-screenshot" title="スクリーンショット">📸</button>
+      <button class="hud-btn" id="btn-reset" title="最初に戻る">🔄</button>
+    </div>
+    <div class="jump-hint" id="jump-hint">タップでジャンプ！👆</div>
+    <div class="gen-label" id="gen-label"></div>
+  </div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.min.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/",
+    "onnxruntime-web": "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.21.0/dist/esm/ort.bundle.min.mjs"
+  }
+}
+</script>
+<script type="module">
+// ═══════════════════════════════════════════════════════════
+// IMPORTS
+// ═══════════════════════════════════════════════════════════
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+const state = {
+  charBlobURL: null,
+  charBlob: null,
+  threeApp: null,
+};
+
+// ═══════════════════════════════════════════════════════════
+// SCREEN MANAGEMENT
+// ═══════════════════════════════════════════════════════════
+const $ = id => document.getElementById(id);
+const screens = ['screen-upload','screen-loading','screen-preview','screen-walker'];
+function showScreen(name) {
+  screens.forEach(id => $(id).hidden = id !== name);
+}
+
+// ═══════════════════════════════════════════════════════════
+// TOKEN MANAGEMENT
+// ═══════════════════════════════════════════════════════════
+const TOKEN_KEY = 'hf_token_rakugaki';
+function getToken() { return localStorage.getItem(TOKEN_KEY) || ''; }
+function saveToken(t) {
+  if (t) localStorage.setItem(TOKEN_KEY, t);
+  else localStorage.removeItem(TOKEN_KEY);
+}
+
+// 起動時にトークンをinputに反映
+(function initTokenUI() {
+  const saved = getToken();
+  if (saved) {
+    $('hf-token-input').value = saved;
+    updateTokenIndicator(true);
+  }
+
+  $('token-toggle').addEventListener('click', () => {
+    const form = $('token-form');
+    const open = form.classList.toggle('open');
+    $('token-toggle').classList.toggle('active', open);
+  });
+
+  $('token-save').addEventListener('click', () => {
+    const val = $('hf-token-input').value.trim();
+    saveToken(val);
+    updateTokenIndicator(!!val);
+    $('token-status').textContent = val ? '✅ 保存しました！' : '🗑️ 削除しました';
+    $('token-status').style.color = val ? '#4CAF50' : '#999';
+    setTimeout(() => { $('token-status').textContent = ''; }, 2500);
+  });
+})();
+
+function updateTokenIndicator(hasToken) {
+  const ind = $('token-indicator');
+  ind.textContent = hasToken ? '✅' : '';
+  $('token-toggle').title = hasToken ? 'HFトークン設定済み（AIモード有効）' : 'HFトークンを設定';
+}
+
+// ═══════════════════════════════════════════════════════════
+// HF INFERENCE API — 汎用ヘルパー
+// ═══════════════════════════════════════════════════════════
+// 503はモデルのコールドスタート（通常20秒以内）、estimated_timeで待機
+async function hfInfer(modelId, imageBlob, token, statusPrefix = '') {
+  const url = `https://api-inference.huggingface.co/models/${modelId}`;
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: imageBlob,
+    });
+    if (res.ok) return res.blob();
+    if (res.status === 503) {
+      let wait = 15;
+      try { const j = await res.clone().json(); wait = j.estimated_time || 15; } catch {}
+      wait = Math.min(wait, 25);
+      $('load-status').textContent = `${statusPrefix}モデル起動中...（約${Math.round(wait)}秒）`;
+      await delay(wait * 1000);
+      continue;
+    }
+    const msg = await res.text().catch(() => String(res.status));
+    throw new Error(`HF API ${res.status}: ${msg}`);
+  }
+  throw new Error('HFモデルの起動がタイムアウトしました');
+}
+
+// ═══════════════════════════════════════════════════════════
+// BACKGROUND REMOVAL — @imgly/background-removal WASM → Canvas フォールバック
+// ═══════════════════════════════════════════════════════════
+// HTTPS（GitHub Pages）では WASM ライブラリが動作する。
+// 失敗時は Canvas 閾値処理にフォールバック。
+const IMGLY_CDN = 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.7.0/dist/';
+
+async function removeBackground(imageFile) {
+  $('load-status').textContent = '✂️ AI背景除去中... (初回はモデルDL)';
+  $('load-bar').style.width = '20%';
+
+  try {
+    const { removeBackground: rmbgAI } = await import(IMGLY_CDN + 'index.mjs');
+    $('load-status').textContent = '✂️ AI背景除去処理中...';
+    $('load-bar').style.width = '50%';
+    return await rmbgAI(imageFile, { publicPath: IMGLY_CDN, debug: false });
+  } catch (err) {
+    console.warn('@imgly失敗 → Canvasフォールバック:', err);
+    $('load-status').textContent = '✂️ 背景を消してるよ...';
+    $('load-bar').style.width = '50%';
+    return removeWhiteBg(imageFile);
+  }
+}
+
+// Canvasベース白背景除去（フォールバック用）
+async function removeWhiteBg(file, threshold = 235) {
+  const bitmap = await createImageBitmap(file);
+  const canvas = document.createElement('canvas');
+  canvas.width = bitmap.width; canvas.height = bitmap.height;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(bitmap, 0, 0);
+  bitmap.close();
+  const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const d = imgData.data;
+  for (let i = 0; i < d.length; i += 4) {
+    const r = d[i], g = d[i+1], b = d[i+2];
+    const lum = r * 0.299 + g * 0.587 + b * 0.114;
+    const sat = Math.max(r, g, b) - Math.min(r, g, b);
+    if (lum > threshold && sat < 35) {
+      d[i+3] = Math.round(Math.max(0, (threshold - lum) / (threshold - 180) * 255));
+    }
+  }
+  ctx.putImageData(imgData, 0, 0);
+  return new Promise(res => canvas.toBlob(res, 'image/png'));
+}
+
+// ═══════════════════════════════════════════════════════════
+// DEPTH MAP
+// ═══════════════════════════════════════════════════════════
+// トークンあり → Depth-Anything-V2-Small（AIセマンティック深度）
+// トークンなし → アルファブラーによる膨らみ深度（フォールバック）
+async function computeDepthMap(charBlob, token) {
+  if (token) {
+    $('load-status').textContent = '🔮 AIで奥行きを計算中...';
+    $('load-bar').style.width = '55%';
+    // 白背景版を深度モデルに送る（透明領域は白=遠景として扱わせる）
+    const withBg = await overlayWhite(charBlob);
+    const depthBlob = await hfInfer(
+      'depth-anything/Depth-Anything-V2-Small-hf',
+      withBg, token, '🔮 '
+    );
+    return blobToCanvas(depthBlob);
+  }
+  return computeInflationMap(charBlob);
+}
+
+async function overlayWhite(blob) {
+  const bmp = await createImageBitmap(blob);
+  const c = document.createElement('canvas');
+  c.width = bmp.width; c.height = bmp.height;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = 'white'; ctx.fillRect(0, 0, c.width, c.height);
+  ctx.drawImage(bmp, 0, 0);
+  bmp.close();
+  return new Promise(res => c.toBlob(res, 'image/jpeg', 0.92));
+}
+
+async function blobToCanvas(blob) {
+  const bmp = await createImageBitmap(blob);
+  const c = document.createElement('canvas');
+  c.width = bmp.width; c.height = bmp.height;
+  c.getContext('2d').drawImage(bmp, 0, 0);
+  bmp.close();
+  return c;
+}
+
+// アルファブラー深度（フォールバック）
+async function computeInflationMap(blob) {
+  const bitmap = await createImageBitmap(blob);
+  const { width: w, height: h } = bitmap;
+  const src = new OffscreenCanvas(w, h);
+  src.getContext('2d').drawImage(bitmap, 0, 0);
+  bitmap.close();
+  const pixels = src.getContext('2d').getImageData(0, 0, w, h).data;
+
+  const depth = document.createElement('canvas');
+  depth.width = w; depth.height = h;
+  const dCtx = depth.getContext('2d');
+  const dd = dCtx.createImageData(w, h);
+  for (let i = 0; i < pixels.length; i += 4) {
+    const a = pixels[i+3];
+    dd.data[i] = dd.data[i+1] = dd.data[i+2] = a;
+    dd.data[i+3] = 255;
+  }
+  dCtx.putImageData(dd, 0, 0);
+
+  const blurPx = Math.round(Math.min(w, h) * 0.09);
+  const out = document.createElement('canvas');
+  out.width = w; out.height = h;
+  out.getContext('2d').filter = `blur(${blurPx}px)`;
+  out.getContext('2d').drawImage(depth, 0, 0);
+  const out2 = document.createElement('canvas');
+  out2.width = w; out2.height = h;
+  out2.getContext('2d').filter = `blur(${Math.round(blurPx * 0.5)}px)`;
+  out2.getContext('2d').drawImage(out, 0, 0);
+  return out2;
+}
+
+// ═══════════════════════════════════════════════════════════
+// UPLOAD HANDLERS
+// ═══════════════════════════════════════════════════════════
+$('drop-zone').addEventListener('click', () => $('file-cam').click());
+$('gallery-btn').addEventListener('click', () => $('file-gal').click());
+$('file-cam').addEventListener('change', e => e.target.files[0] && processFile(e.target.files[0]));
+$('file-gal').addEventListener('change', e => e.target.files[0] && processFile(e.target.files[0]));
+
+const dropZone = $('drop-zone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragging'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragging'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('dragging');
+  const f = e.dataTransfer.files[0];
+  if (f?.type.startsWith('image/')) processFile(f);
+});
+
+// ═══════════════════════════════════════════════════════════
+// IMAGE PROCESSING
+// ═══════════════════════════════════════════════════════════
+async function processFile(file) {
+  showScreen('screen-loading');
+  $('load-status').textContent = '📷 写真を読み込んでるよ...';
+  $('load-bar').style.width = '10%';
+
+  try {
+    await delay(150);
+    const blob = await removeBackground(file);
+    $('load-status').textContent = 'できた！🎉';
+    $('load-bar').style.width = '100%';
+
+    if (state.charBlobURL) URL.revokeObjectURL(state.charBlobURL);
+    state.charBlob = blob;
+    state.charBlobURL = URL.createObjectURL(blob);
+    $('preview-img').src = state.charBlobURL;
+
+    await delay(400);
+    showScreen('screen-preview');
+  } catch (err) {
+    console.error(err);
+    $('load-status').textContent = `😅 エラー: ${err.message}`;
+    await delay(3000);
+    showScreen('screen-upload');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// PREVIEW SCREEN HANDLERS
+// ═══════════════════════════════════════════════════════════
+$('btn-walk-3d').addEventListener('click', () => launchWalker('3d'));
+$('btn-walk-2d').addEventListener('click', () => launchWalker('2d'));
+
+$('btn-retake').addEventListener('click', () => {
+  $('file-cam').value = '';
+  $('file-gal').value = '';
+  showScreen('screen-upload');
+});
+
+// ═══════════════════════════════════════════════════════════
+// LAUNCH WALKER
+// ═══════════════════════════════════════════════════════════
+async function launchWalker(mode) {
+  if (state.threeApp) { state.threeApp.dispose(); state.threeApp = null; }
+  const token = getToken();
+
+  if (mode === '3d') {
+    showScreen('screen-loading');
+    $('load-status').textContent = '🎈 3Dを作ってるよ...';
+    $('load-bar').style.width = '10%';
+
+    try {
+      const depthCanvas = await computeDepthMap(state.charBlob, token);
+      $('load-bar').style.width = '90%';
+      $('load-status').textContent = '🌍 3Dワールドを準備中...';
+      await delay(200);
+      showScreen('screen-walker');
+      $('gen-label').textContent = token ? '🔮 AI深度3D' : '🎈 ぷっくり3D';
+      state.threeApp = await initInflationWalker(state.charBlobURL, depthCanvas);
+    } catch (err) {
+      console.error('3D failed:', err);
+      showScreen('screen-walker');
+      $('gen-label').textContent = '✨ 2.5Dモード';
+      state.threeApp = init2DWalker(state.charBlobURL);
+    }
+  } else {
+    showScreen('screen-walker');
+    $('gen-label').textContent = '✨ ペーパーモード';
+    state.threeApp = init2DWalker(state.charBlobURL);
+  }
+
+  const hint = $('jump-hint');
+  hint.style.opacity = '1';
+  setTimeout(() => { hint.style.opacity = '0'; }, 3500);
+}
+
+// ═══════════════════════════════════════════════════════════
+// THREE.JS — 2.5D SPRITE WALKER
+// ═══════════════════════════════════════════════════════════
+function init2DWalker(imageURL) {
+  const canvas = $('three-canvas');
+  const scene = buildScene();
+  const { renderer, camera, resize } = buildRenderer(canvas);
+
+  // Load character texture
+  const loader = new THREE.TextureLoader();
+  let character = null;
+  let shadow = null;
+  let charW = 1.0;
+  let walkDir = 1;
+  const walkSpeed = 1.6;
+  const maxX = 4.2;
+  let baseY = 0;
+  let isJumping = false;
+  let jumpVel = 0;
+  const gravity = -14;
+  let spawnT = null;
+  const particles = [];
+
+  loader.load(imageURL, tex => {
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const aspect = tex.image.width / tex.image.height;
+    const h = 1.8;
+    const w = h * aspect;
+    charW = w;
+    baseY = h / 2 + 0.02;
+
+    const geo = new THREE.PlaneGeometry(w, h);
+    const mat = new THREE.MeshLambertMaterial({
+      map: tex, transparent: true, alphaTest: 0.05, side: THREE.DoubleSide,
+    });
+    character = new THREE.Mesh(geo, mat);
+    character.position.set(0, baseY, 0);
+    character.castShadow = true;
+    scene.add(character);
+
+    // Blob shadow
+    const sGeo = new THREE.CircleGeometry(1, 20);
+    const sMat = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.18 });
+    shadow = new THREE.Mesh(sGeo, sMat);
+    shadow.rotation.x = -Math.PI / 2;
+    shadow.position.y = 0.005;
+    shadow.scale.set(w * 0.38, w * 0.14, 1);
+    scene.add(shadow);
+
+    spawnT = clock.getElapsedTime();
+    spawnParticles(scene, particles, 0, baseY, 0);
+  });
+
+  const clock = new THREE.Clock();
+  let prevT = 0;
+  let animId;
+
+  function animate() {
+    animId = requestAnimationFrame(animate);
+    const t = clock.getElapsedTime();
+    const dt = Math.min(t - prevT, 0.05);
+    prevT = t;
+
+    tickClouds(scene.userData.clouds, dt);
+    tickParticles(particles, scene, dt);
+
+    if (!character) { renderer.render(scene, camera); return; }
+
+    // Spawn scale-in
+    if (spawnT !== null) {
+      const elapsed = t - spawnT;
+      const s = ease(Math.min(elapsed / 0.45, 1));
+      character.scale.set(walkDir * s, s, 1);
+      if (elapsed >= 0.45) spawnT = null;
+    }
+
+    // Jump
+    if (isJumping) {
+      jumpVel += gravity * dt;
+      character.position.y += jumpVel * dt;
+      if (character.position.y <= baseY) {
+        character.position.y = baseY;
+        isJumping = false; jumpVel = 0;
+        spawnParticles(scene, particles, character.position.x, 0.05, 0, 0.5);
+      }
+    }
+
+    // Walk
+    character.position.x += walkDir * walkSpeed * dt;
+    if (character.position.x > maxX) {
+      character.position.x = maxX; walkDir = -1;
+      character.scale.x = -Math.abs(character.scale.x);
+    }
+    if (character.position.x < -maxX) {
+      character.position.x = -maxX; walkDir = 1;
+      character.scale.x = Math.abs(character.scale.x);
+    }
+
+    // Bob (ground only)
+    if (!isJumping) {
+      character.position.y = baseY + Math.abs(Math.sin(t * 3.8)) * 0.09;
+    }
+    character.rotation.z = -walkDir * 0.06;
+
+    // Shadow
+    if (shadow) {
+      shadow.position.x = character.position.x;
+      const lift = character.position.y - baseY;
+      shadow.scale.set(charW * Math.max(0.1, 0.38 - lift * 0.06), charW * Math.max(0.04, 0.14 - lift * 0.02), 1);
+      shadow.material.opacity = Math.max(0, 0.18 - lift * 0.04);
+    }
+
+    renderer.render(scene, camera);
+  }
+
+  animate();
+
+  const ac = new AbortController();
+  canvas.addEventListener('click', () => {
+    if (!isJumping && character) { isJumping = true; jumpVel = 7; }
+  }, { signal: ac.signal });
+  canvas.addEventListener('touchend', e => {
+    e.preventDefault();
+    if (!isJumping && character) { isJumping = true; jumpVel = 7; }
+  }, { passive: false, signal: ac.signal });
+
+  window.addEventListener('resize', resize);
+
+  return {
+    dispose() {
+      cancelAnimationFrame(animId);
+      renderer.dispose();
+      ac.abort();
+      window.removeEventListener('resize', resize);
+    }
+  };
+}
+
+// ═══════════════════════════════════════════════════════════
+// THREE.JS — ぷっくり3Dウォーカー（DisplacementMap使用）
+// ═══════════════════════════════════════════════════════════
+// アルファ由来の深度マップをMeshStandardMaterialのdisplacementMapに適用し
+// 本物のジオメトリとして「膨らんだ」3Dキャラクターを生成する
+async function initInflationWalker(charBlobURL, depthCanvas) {
+  const canvas = $('three-canvas');
+  const scene = buildScene();
+  const { renderer, camera, resize } = buildRenderer(canvas);
+
+  // 3D感を見せやすいよう少し俯瞰・斜め気味のカメラ
+  camera.position.set(0, 3.8, 8.5);
+  camera.lookAt(0, 0.6, 0);
+
+  // ライトを強めにして凹凸が映えるように
+  scene.children.filter(c => c.isDirectionalLight).forEach(l => { l.intensity = 2.8; });
+
+  const charTexture = await new Promise((res, rej) =>
+    new THREE.TextureLoader().load(charBlobURL, res, undefined, rej)
+  );
+  charTexture.colorSpace = THREE.SRGBColorSpace;
+
+  const depthTexture = new THREE.CanvasTexture(depthCanvas);
+
+  const imgW = charTexture.image.width;
+  const imgH = charTexture.image.height;
+  const aspect = imgW / imgH;
+  const h = 1.8;
+  const w = h * aspect;
+
+  // 高分割で滑らかな変位に（segmentsはmin辺を基準）
+  const segs = 160;
+  const geo = new THREE.PlaneGeometry(w, h, segs, Math.round(segs / aspect));
+  const mat = new THREE.MeshStandardMaterial({
+    map: charTexture,
+    displacementMap: depthTexture,
+    displacementScale: 0.28,
+    displacementBias: -0.05,
+    transparent: true,
+    alphaTest: 0.08,
+    roughness: 0.75,
+    metalness: 0.0,
+    side: THREE.FrontSide,
+  });
+
+  const baseY = h / 2 + 0.02;
+  let character = new THREE.Mesh(geo, mat);
+  character.position.set(0, baseY, 0);
+  character.rotation.x = -0.18; // 上端を奥に倒して3D感を強調
+  character.castShadow = true;
+  scene.add(character);
+
+  // シャドウ（楕円形）
+  const sMat = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.18 });
+  const shadow = new THREE.Mesh(new THREE.CircleGeometry(1, 20), sMat);
+  shadow.rotation.x = -Math.PI / 2;
+  shadow.position.y = 0.005;
+  shadow.scale.set(w * 0.38, w * 0.14, 1);
+  scene.add(shadow);
+
+  let charW = w;
+  let walkDir = 1;
+  const walkSpeed = 1.5;
+  const maxX = 4.0;
+  let isJumping = false;
+  let jumpVel = 0;
+  const gravity = -14;
+  let spawnT = null;
+  const particles = [];
+
+  const clock = new THREE.Clock();
+  let prevT = 0;
+  let animId;
+
+  spawnT = clock.getElapsedTime();
+  spawnParticles(scene, particles, 0, baseY, 0);
+
+  function animate() {
+    animId = requestAnimationFrame(animate);
+    const t = clock.getElapsedTime();
+    const dt = Math.min(t - prevT, 0.05);
+    prevT = t;
+
+    tickClouds(scene.userData.clouds, dt);
+    tickParticles(particles, scene, dt);
+
+    // Spawn scale-in
+    if (spawnT !== null) {
+      const s = ease(Math.min((t - spawnT) / 0.5, 1));
+      character.scale.set(walkDir * s, s, 1);
+      if (t - spawnT >= 0.5) spawnT = null;
+    }
+
+    // Jump
+    if (isJumping) {
+      jumpVel += gravity * dt;
+      character.position.y += jumpVel * dt;
+      if (character.position.y <= baseY) {
+        character.position.y = baseY;
+        isJumping = false; jumpVel = 0;
+        spawnParticles(scene, particles, character.position.x, 0.05, 0, 0.5);
+      }
+    }
+
+    // Walk
+    character.position.x += walkDir * walkSpeed * dt;
+    if (character.position.x > maxX) {
+      character.position.x = maxX; walkDir = -1;
+      character.scale.x = -Math.abs(character.scale.x);
+    }
+    if (character.position.x < -maxX) {
+      character.position.x = -maxX; walkDir = 1;
+      character.scale.x = Math.abs(character.scale.x);
+    }
+
+    if (!isJumping) {
+      character.position.y = baseY + Math.abs(Math.sin(t * 3.8)) * 0.09;
+    }
+    character.rotation.z = -walkDir * 0.06;
+
+    // Shadow
+    shadow.position.x = character.position.x;
+    const lift = character.position.y - baseY;
+    shadow.scale.set(charW * Math.max(0.1, 0.38 - lift * 0.06), charW * Math.max(0.04, 0.14 - lift * 0.02), 1);
+    shadow.material.opacity = Math.max(0, 0.18 - lift * 0.04);
+
+    renderer.render(scene, camera);
+  }
+
+  animate();
+
+  const ac = new AbortController();
+  canvas.addEventListener('click', () => {
+    if (!isJumping) { isJumping = true; jumpVel = 7; }
+  }, { signal: ac.signal });
+  canvas.addEventListener('touchend', e => {
+    e.preventDefault();
+    if (!isJumping) { isJumping = true; jumpVel = 7; }
+  }, { passive: false, signal: ac.signal });
+
+  window.addEventListener('resize', resize);
+
+  return {
+    dispose() {
+      cancelAnimationFrame(animId);
+      renderer.dispose();
+      ac.abort();
+      window.removeEventListener('resize', resize);
+    }
+  };
+}
+
+// ═══════════════════════════════════════════════════════════
+// SCENE BUILDER — shared by both modes
+// ═══════════════════════════════════════════════════════════
+function buildScene() {
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x87CEEB);
+  scene.fog = new THREE.FogExp2(0xC5E8F9, 0.04);
+
+  // Lights
+  scene.add(new THREE.AmbientLight(0xFFF8DC, 1.0));
+  const sun = new THREE.DirectionalLight(0xFFFACD, 2.2);
+  sun.position.set(6, 10, 6);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(1024, 1024);
+  sun.shadow.camera.near = 0.1; sun.shadow.camera.far = 40;
+  sun.shadow.camera.left = -8; sun.shadow.camera.right = 8;
+  sun.shadow.camera.top = 8; sun.shadow.camera.bottom = -8;
+  scene.add(sun);
+
+  // Ground
+  const groundGeo = new THREE.PlaneGeometry(40, 40);
+  const groundMat = new THREE.MeshLambertMaterial({ color: 0x7BC67E });
+  const ground = new THREE.Mesh(groundGeo, groundMat);
+  ground.rotation.x = -Math.PI / 2;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  // Path strip
+  const pathGeo = new THREE.PlaneGeometry(10, 1.6);
+  const pathMat = new THREE.MeshLambertMaterial({ color: 0x68B36E, transparent: true, opacity: 0.55 });
+  const path = new THREE.Mesh(pathGeo, pathMat);
+  path.rotation.x = -Math.PI / 2; path.position.y = 0.003;
+  scene.add(path);
+
+  // Sun sphere
+  const sunSphere = new THREE.Mesh(
+    new THREE.SphereGeometry(0.9, 16, 12),
+    new THREE.MeshBasicMaterial({ color: 0xFFE44D })
+  );
+  sunSphere.position.set(8, 9, -12);
+  scene.add(sunSphere);
+
+  // Sun glow ring
+  const glowMat = new THREE.MeshBasicMaterial({ color: 0xFFEC80, transparent: true, opacity: 0.25, side: THREE.BackSide });
+  const glow = new THREE.Mesh(new THREE.SphereGeometry(1.4, 16, 12), glowMat);
+  sunSphere.add(glow);
+
+  // Trees
+  [
+    [-5.5, 0, -2.5, 1.1], [-6.5, 0, 1.2, 0.85], [-4.8, 0, -5, 0.75],
+    [5.5, 0, -2.5, 1.0], [6.5, 0, 1.2, 0.9], [4.8, 0, -5, 0.8],
+    [-2.5, 0, -7.5, 0.7], [2.5, 0, -7.5, 0.75], [0, 0, -9, 0.65],
+  ].forEach(([x, , z, s]) => addTree(scene, x, z, s));
+
+  // Flowers
+  for (let i = 0; i < 28; i++) {
+    const x = (Math.random() - 0.5) * 22;
+    const z = (Math.random() - 0.5) * 22;
+    if (Math.abs(x) < 5.5 && Math.abs(z) < 4) continue;
+    const h = new THREE.Color().setHSL(Math.random(), 0.95, 0.6);
+    const f = new THREE.Mesh(
+      new THREE.SphereGeometry(0.09 + Math.random() * 0.06, 6, 4),
+      new THREE.MeshBasicMaterial({ color: h })
+    );
+    f.position.set(x, 0.09, z);
+    scene.add(f);
+  }
+
+  // Clouds
+  const clouds = [];
+  [[-8,6,-11], [1,7,-14], [9,5.5,-12], [-3,8,-16]].forEach(([x,y,z]) => {
+    const c = buildCloud();
+    c.position.set(x, y, z);
+    scene.add(c);
+    clouds.push(c);
+  });
+  scene.userData.clouds = clouds;
+
+  return scene;
+}
+
+function addTree(scene, x, z, s) {
+  const trunkMat = new THREE.MeshLambertMaterial({ color: 0x8B5E3C });
+  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.12*s, 0.18*s, 0.9*s, 8), trunkMat);
+  trunk.position.set(x, 0.45*s, z);
+  trunk.castShadow = true;
+  scene.add(trunk);
+
+  const greenH = 0.28 + Math.random() * 0.08;
+  const canopyMat = new THREE.MeshLambertMaterial({ color: new THREE.Color().setHSL(greenH, 0.62, 0.35) });
+  [[0, 0, 0.55*s], [0.2*s, 0.3*s, 0.48*s], [-0.18*s, 0.22*s, 0.44*s]].forEach(([dx, dy, r]) => {
+    const sphere = new THREE.Mesh(new THREE.SphereGeometry(r, 10, 7), canopyMat);
+    sphere.position.set(x + dx, 0.85*s + dy + r, z);
+    sphere.castShadow = true;
+    scene.add(sphere);
+  });
+}
+
+function buildCloud() {
+  const g = new THREE.Group();
+  const mat = new THREE.MeshLambertMaterial({ color: 0xFFFFFF, transparent: true, opacity: 0.88 });
+  [[0,0,0, 0.65], [0.9,0.2,0, 0.55], [-0.7,0.1,0, 0.5], [0.3,0.55,0, 0.45]].forEach(([dx,dy,dz,r]) => {
+    const s = new THREE.Mesh(new THREE.SphereGeometry(r,8,6), mat);
+    s.position.set(dx,dy,dz); g.add(s);
+  });
+  return g;
+}
+
+function buildRenderer(canvas) {
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 100);
+  camera.position.set(0, 3.2, 9.5);
+  camera.lookAt(0, 0.8, 0);
+
+  const resize = () => {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+  };
+
+  return { renderer, camera, resize };
+}
+
+// ═══════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════
+function tickClouds(clouds, dt) {
+  if (!clouds) return;
+  clouds.forEach((c, i) => {
+    c.position.x += 0.025 * dt * (i % 2 ? 1 : -1);
+    if (c.position.x > 14) c.position.x = -14;
+    if (c.position.x < -14) c.position.x = 14;
+  });
+}
+
+function spawnParticles(scene, arr, x, y, z, scale = 1.0) {
+  for (let i = 0; i < 18; i++) {
+    const col = new THREE.Color().setHSL(Math.random(), 1, 0.6);
+    const p = new THREE.Mesh(
+      new THREE.SphereGeometry((0.05 + Math.random() * 0.06) * scale, 6, 4),
+      new THREE.MeshBasicMaterial({ color: col, transparent: true })
+    );
+    p.position.set(x, y, z);
+    p.userData.vel = new THREE.Vector3(
+      (Math.random() - 0.5) * 4 * scale,
+      (Math.random() * 5 + 2) * scale,
+      (Math.random() - 0.5) * 2 * scale
+    );
+    p.userData.life = 1;
+    scene.add(p);
+    arr.push(p);
+  }
+}
+
+function tickParticles(arr, scene, dt) {
+  for (let i = arr.length - 1; i >= 0; i--) {
+    const p = arr[i];
+    p.userData.life -= dt / 1.2;
+    if (p.userData.life <= 0) {
+      scene.remove(p); p.geometry.dispose(); p.material.dispose();
+      arr.splice(i, 1); continue;
+    }
+    p.userData.vel.y -= 9 * dt;
+    p.position.addScaledVector(p.userData.vel, dt);
+    p.material.opacity = p.userData.life;
+    p.scale.setScalar(p.userData.life);
+  }
+}
+
+function ease(t) { return 1 - Math.pow(1 - t, 3); }
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ═══════════════════════════════════════════════════════════
+// HUD BUTTONS
+// ═══════════════════════════════════════════════════════════
+$('btn-reset').addEventListener('click', () => {
+  if (state.threeApp) { state.threeApp.dispose(); state.threeApp = null; }
+  if (state.charBlobURL) { URL.revokeObjectURL(state.charBlobURL); state.charBlobURL = null; }
+  state.charBlob = null;
+  $('file-cam').value = ''; $('file-gal').value = '';
+  $('jump-hint').style.opacity = '1';
+  showScreen('screen-upload');
+});
+
+$('btn-screenshot').addEventListener('click', () => {
+  const canvas = $('three-canvas');
+  const link = document.createElement('a');
+  link.download = 'rakugaki-3d.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+});
+</script>
+</body>
+</html>
