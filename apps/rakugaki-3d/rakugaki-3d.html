@@ -560,36 +560,115 @@ async function blobToCanvas(blob) {
   return c;
 }
 
-// アルファブラー深度（フォールバック）
+// アルファブラー深度（フォールバック） — 3パスブレンドでドーム形状を改善
 async function computeInflationMap(blob) {
   const bitmap = await createImageBitmap(blob);
   const { width: w, height: h } = bitmap;
-  const src = new OffscreenCanvas(w, h);
-  src.getContext('2d').drawImage(bitmap, 0, 0);
+  // 処理は512px以内にリサイズして高速化
+  const maxDim = 512;
+  const sc = Math.min(1, maxDim / Math.max(w, h));
+  const sw = Math.round(w * sc), sh = Math.round(h * sc);
+
+  const src = new OffscreenCanvas(sw, sh);
+  src.getContext('2d').drawImage(bitmap, 0, 0, sw, sh);
   bitmap.close();
-  const pixels = src.getContext('2d').getImageData(0, 0, w, h).data;
+  const pixels = src.getContext('2d').getImageData(0, 0, sw, sh).data;
 
-  const depth = document.createElement('canvas');
-  depth.width = w; depth.height = h;
-  const dCtx = depth.getContext('2d');
-  const dd = dCtx.createImageData(w, h);
+  // アルファ → グレースケールシード
+  const seed = document.createElement('canvas');
+  seed.width = sw; seed.height = sh;
+  const sCtx = seed.getContext('2d');
+  const sd = sCtx.createImageData(sw, sh);
   for (let i = 0; i < pixels.length; i += 4) {
-    const a = pixels[i+3];
-    dd.data[i] = dd.data[i+1] = dd.data[i+2] = a;
-    dd.data[i+3] = 255;
+    const a = pixels[i + 3];
+    sd.data[i] = sd.data[i+1] = sd.data[i+2] = a;
+    sd.data[i+3] = 255;
   }
-  dCtx.putImageData(dd, 0, 0);
+  sCtx.putImageData(sd, 0, 0);
 
-  const blurPx = Math.round(Math.min(w, h) * 0.09);
+  const minDim = Math.min(sw, sh);
+
+  // Pass 1: 大ブラー → 大まかなドーム
+  function blurCanvas(src, r) {
+    const c = document.createElement('canvas');
+    c.width = sw; c.height = sh;
+    const ctx = c.getContext('2d');
+    ctx.filter = `blur(${r}px)`;
+    ctx.drawImage(src, 0, 0);
+    return c;
+  }
+  const b1 = blurCanvas(seed, Math.round(minDim * 0.13));
+  const b2 = blurCanvas(seed, Math.round(minDim * 0.06));
+  const b3 = blurCanvas(seed, Math.round(minDim * 0.025));
+
+  // 3レイヤーを合成: 60% 大ドーム + 30% 中 + 10% 細部
+  const mix = document.createElement('canvas');
+  mix.width = sw; mix.height = sh;
+  const mCtx = mix.getContext('2d');
+  mCtx.drawImage(b1, 0, 0);
+  mCtx.globalCompositeOperation = 'screen';
+  mCtx.globalAlpha = 0.45;
+  mCtx.drawImage(b2, 0, 0);
+  mCtx.globalAlpha = 0.15;
+  mCtx.drawImage(b3, 0, 0);
+  mCtx.globalCompositeOperation = 'source-over';
+  mCtx.globalAlpha = 1.0;
+
+  // 元サイズに戻す
   const out = document.createElement('canvas');
   out.width = w; out.height = h;
-  out.getContext('2d').filter = `blur(${blurPx}px)`;
-  out.getContext('2d').drawImage(depth, 0, 0);
-  const out2 = document.createElement('canvas');
-  out2.width = w; out2.height = h;
-  out2.getContext('2d').filter = `blur(${Math.round(blurPx * 0.5)}px)`;
-  out2.getContext('2d').drawImage(out, 0, 0);
-  return out2;
+  out.getContext('2d').drawImage(mix, 0, 0, w, h);
+  return out;
+}
+
+// 深度マップ → ノーマルマップ（Sobelフィルタ）
+// displacementMap だけでは頂点間が平坦に見える問題を解消し、ライティングが表面を追う
+function computeNormalMap(depthCanvas) {
+  const srcW = depthCanvas.width, srcH = depthCanvas.height;
+  // 計算は512px以内で行い、最後に元サイズへ戻す
+  const maxDim = 512;
+  const sc = Math.min(1, maxDim / Math.max(srcW, srcH));
+  const w = Math.round(srcW * sc), h = Math.round(srcH * sc);
+
+  const tmp = document.createElement('canvas');
+  tmp.width = w; tmp.height = h;
+  tmp.getContext('2d').drawImage(depthCanvas, 0, 0, w, h);
+  const src = tmp.getContext('2d').getImageData(0, 0, w, h).data;
+
+  function depth(x, y) {
+    const cx = Math.max(0, Math.min(w - 1, x));
+    const cy = Math.max(0, Math.min(h - 1, y));
+    return src[(cy * w + cx) * 4] / 255;
+  }
+
+  const norm = document.createElement('canvas');
+  norm.width = w; norm.height = h;
+  const nCtx = norm.getContext('2d');
+  const nd = nCtx.createImageData(w, h);
+  const strength = 5.0;
+
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const tl = depth(x-1,y-1), tc = depth(x,y-1), tr = depth(x+1,y-1);
+      const ml = depth(x-1,y  ),                     mr = depth(x+1,y  );
+      const bl = depth(x-1,y+1), bc = depth(x,y+1), br = depth(x+1,y+1);
+      const dx = strength * (tr + 2*mr + br - tl - 2*ml - bl);
+      const dy = strength * (bl + 2*bc + br - tl - 2*tc - tr);
+      const len = Math.sqrt(dx*dx + dy*dy + 1);
+      const i = (y * w + x) * 4;
+      nd.data[i]   = (-dx / len * 0.5 + 0.5) * 255 | 0;
+      nd.data[i+1] = ( dy / len * 0.5 + 0.5) * 255 | 0;
+      nd.data[i+2] = ( 1  / len * 0.5 + 0.5) * 255 | 0;
+      nd.data[i+3] = 255;
+    }
+  }
+  nCtx.putImageData(nd, 0, 0);
+
+  // 元サイズへ戻す
+  const out = document.createElement('canvas');
+  out.width = srcW; out.height = srcH;
+  out.getContext('2d').drawImage(norm, 0, 0, srcW, srcH);
+  return out;
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -848,19 +927,38 @@ async function initInflationWalker(charBlobURL, depthCanvas) {
   const scene = buildScene();
   const { renderer, camera, resize } = buildRenderer(canvas);
 
-  // 3D感を見せやすいよう少し俯瞰・斜め気味のカメラ
-  camera.position.set(0, 3.8, 8.5);
-  camera.lookAt(0, 0.6, 0);
+  camera.position.set(0, 2.8, 8.0);
+  camera.lookAt(0, 0.9, 0);
 
-  // ライトを強めにして凹凸が映えるように
-  scene.children.filter(c => c.isDirectionalLight).forEach(l => { l.intensity = 2.8; });
+  // buildSceneのデフォルトライトを差し替えて3D専用ライティングに
+  scene.children.filter(c => c.isDirectionalLight || c.isAmbientLight)
+       .forEach(l => scene.remove(l));
+
+  // アンビエント: 暗めにして影を際立てる
+  scene.add(new THREE.AmbientLight(0xFFEED0, 0.35));
+  // キーライト（太陽）
+  const keyLight = new THREE.DirectionalLight(0xFFF8CC, 3.8);
+  keyLight.position.set(5, 9, 6);
+  keyLight.castShadow = true;
+  keyLight.shadow.mapSize.set(2048, 2048);
+  scene.add(keyLight);
+  // リムライト（背後から）— エッジを光らせて立体感を強調
+  const rimLight = new THREE.DirectionalLight(0x99CCFF, 2.2);
+  rimLight.position.set(0, 4, -7);
+  scene.add(rimLight);
+  // フィルライト（前方柔らか）
+  const fillLight = new THREE.DirectionalLight(0xFFDDCC, 0.9);
+  fillLight.position.set(-5, 1, 8);
+  scene.add(fillLight);
 
   const charTexture = await new Promise((res, rej) =>
     new THREE.TextureLoader().load(charBlobURL, res, undefined, rej)
   );
   charTexture.colorSpace = THREE.SRGBColorSpace;
 
-  const depthTexture = new THREE.CanvasTexture(depthCanvas);
+  const depthTexture  = new THREE.CanvasTexture(depthCanvas);
+  const normalCanvas  = computeNormalMap(depthCanvas);
+  const normalTexture = new THREE.CanvasTexture(normalCanvas);
 
   const imgW = charTexture.image.width;
   const imgH = charTexture.image.height;
@@ -868,25 +966,27 @@ async function initInflationWalker(charBlobURL, depthCanvas) {
   const h = 1.8;
   const w = h * aspect;
 
-  // 高分割で滑らかな変位に（segmentsはmin辺を基準）
-  const segs = 160;
+  // セグメント数を増やして変位を滑らかに
+  const segs = 240;
   const geo = new THREE.PlaneGeometry(w, h, segs, Math.round(segs / aspect));
   const mat = new THREE.MeshStandardMaterial({
     map: charTexture,
     displacementMap: depthTexture,
-    displacementScale: 0.28,
-    displacementBias: -0.05,
+    displacementScale: 0.55,   // 元の2倍に強化
+    displacementBias: -0.10,
+    normalMap: normalTexture,   // 表面ライティングを深度に連動させる
+    normalScale: new THREE.Vector2(2.2, 2.2),
     transparent: true,
     alphaTest: 0.08,
-    roughness: 0.75,
-    metalness: 0.0,
+    roughness: 0.55,
+    metalness: 0.05,
     side: THREE.FrontSide,
   });
 
   const baseY = h / 2 + 0.02;
   let character = new THREE.Mesh(geo, mat);
   character.position.set(0, baseY, 0);
-  character.rotation.x = -0.18; // 上端を奥に倒して3D感を強調
+  character.rotation.x = -0.22;  // やや後ろに傾けて凸凹を見せやすくする
   character.castShadow = true;
   scene.add(character);
 
@@ -957,12 +1057,21 @@ async function initInflationWalker(charBlobURL, depthCanvas) {
       character.position.y = baseY + Math.abs(Math.sin(t * 3.8)) * 0.09;
     }
     character.rotation.z = -walkDir * 0.06;
+    // 3D感を見せるための微回転 — 歩行方向に向かって少し振り向く
+    character.rotation.y = Math.sin(t * 0.35) * 0.18 * walkDir;
 
     // Shadow
     shadow.position.x = character.position.x;
     const lift = character.position.y - baseY;
     shadow.scale.set(charW * Math.max(0.1, 0.38 - lift * 0.06), charW * Math.max(0.04, 0.14 - lift * 0.02), 1);
     shadow.material.opacity = Math.max(0, 0.18 - lift * 0.04);
+
+    // カメラをゆっくり旋回させて3D奥行きを強調
+    const camR = 8.0;
+    const camAngle = Math.sin(t * 0.10) * 0.45;
+    camera.position.x = Math.sin(camAngle) * camR;
+    camera.position.z = Math.cos(camAngle) * camR;
+    camera.lookAt(0, 0.9, 0);
 
     renderer.render(scene, camera);
   }
