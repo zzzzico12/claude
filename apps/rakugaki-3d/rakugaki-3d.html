@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>らくがき3D ✨</title>
-<meta http-equiv="Content-Security-Policy" content="default-src https:; script-src 'unsafe-inline' 'wasm-unsafe-eval' https://cdn.jsdelivr.net blob:; style-src 'unsafe-inline'; img-src data: blob: https:; worker-src blob:; connect-src https: http://localhost:* blob:;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'wasm-unsafe-eval' https://cdn.jsdelivr.net blob:; style-src 'unsafe-inline'; img-src data: blob:; worker-src blob:; connect-src https://cdn.jsdelivr.net https://api-inference.huggingface.co blob:; base-uri 'self'; form-action 'none';">
+<meta name="referrer" content="no-referrer">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -306,7 +307,7 @@ body {
       <button class="token-save-btn" id="token-save">保存する</button>
       <div class="token-hint">
         設定するとAI深度推定（ぷっくり3D精度アップ）が使えます<br>
-        <a href="https://huggingface.co/settings/tokens" target="_blank">HFトークンを無料取得 →</a>
+        <a href="https://huggingface.co/settings/tokens" target="_blank" rel="noopener noreferrer">HFトークンを無料取得 →</a>
       </div>
       <div class="token-status" id="token-status"></div>
     </div>
@@ -398,7 +399,14 @@ function showScreen(name) {
 // TOKEN MANAGEMENT
 // ═══════════════════════════════════════════════════════════
 const TOKEN_KEY = 'hf_token_rakugaki';
-function getToken() { return localStorage.getItem(TOKEN_KEY) || ''; }
+// HFトークンは "hf_" で始まる20文字以上の英数字列
+function isValidToken(t) {
+  return typeof t === 'string' && /^hf_[A-Za-z0-9]{16,}$/.test(t);
+}
+function getToken() {
+  const t = localStorage.getItem(TOKEN_KEY) || '';
+  return isValidToken(t) ? t : '';
+}
 function saveToken(t) {
   if (t) localStorage.setItem(TOKEN_KEY, t);
   else localStorage.removeItem(TOKEN_KEY);
@@ -420,6 +428,11 @@ function saveToken(t) {
 
   $('token-save').addEventListener('click', () => {
     const val = $('hf-token-input').value.trim();
+    if (val && !isValidToken(val)) {
+      $('token-status').textContent = '❌ hf_ から始まる有効なトークンを入力してください';
+      $('token-status').style.color = '#F44336';
+      return;
+    }
     saveToken(val);
     updateTokenIndicator(!!val);
     $('token-status').textContent = val ? '✅ 保存しました！' : '🗑️ 削除しました';
@@ -594,13 +607,25 @@ dropZone.addEventListener('drop', e => {
   e.preventDefault();
   dropZone.classList.remove('dragging');
   const f = e.dataTransfer.files[0];
-  if (f?.type.startsWith('image/')) processFile(f);
+  if (f) processFile(f);
 });
 
 // ═══════════════════════════════════════════════════════════
 // IMAGE PROCESSING
 // ═══════════════════════════════════════════════════════════
+const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB
+const ALLOWED_MIME = /^image\/(jpeg|png|gif|webp|heic|heif|bmp)$/i;
+
 async function processFile(file) {
+  if (!ALLOWED_MIME.test(file.type)) {
+    alert('画像ファイル（JPEG / PNG / WebP / GIF）を選んでください');
+    return;
+  }
+  if (file.size > MAX_FILE_SIZE) {
+    alert('ファイルサイズは15MB以下にしてください');
+    return;
+  }
+
   showScreen('screen-loading');
   $('load-status').textContent = '📷 写真を読み込んでるよ...';
   $('load-bar').style.width = '10%';
