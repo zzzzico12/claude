@@ -614,6 +614,17 @@ async function computeInflationMap(blob) {
   mCtx.globalCompositeOperation = 'source-over';
   mCtx.globalAlpha = 1.0;
 
+  // 深度を 0-255 フルレンジに正規化（変位を最大限活かす）
+  const rd = mCtx.getImageData(0, 0, sw, sh);
+  let maxV = 0;
+  for (let i = 0; i < rd.data.length; i += 4) maxV = Math.max(maxV, rd.data[i]);
+  if (maxV > 0 && maxV < 240) {
+    const f = 255 / maxV;
+    for (let i = 0; i < rd.data.length; i += 4)
+      rd.data[i] = rd.data[i+1] = rd.data[i+2] = Math.min(255, rd.data[i] * f | 0);
+    mCtx.putImageData(rd, 0, 0);
+  }
+
   // 元サイズに戻す
   const out = document.createElement('canvas');
   out.width = w; out.height = h;
@@ -972,13 +983,13 @@ async function initInflationWalker(charBlobURL, depthCanvas) {
   const mat = new THREE.MeshStandardMaterial({
     map: charTexture,
     displacementMap: depthTexture,
-    displacementScale: 0.55,   // 元の2倍に強化
-    displacementBias: -0.10,
-    normalMap: normalTexture,   // 表面ライティングを深度に連動させる
-    normalScale: new THREE.Vector2(2.2, 2.2),
+    displacementScale: 1.5,    // 大幅増強: 本物の彫刻のように飛び出す
+    displacementBias: -0.28,
+    normalMap: normalTexture,
+    normalScale: new THREE.Vector2(3.5, 3.5),
     transparent: true,
     alphaTest: 0.08,
-    roughness: 0.55,
+    roughness: 0.45,
     metalness: 0.05,
     side: THREE.FrontSide,
   });
@@ -986,9 +997,31 @@ async function initInflationWalker(charBlobURL, depthCanvas) {
   const baseY = h / 2 + 0.02;
   let character = new THREE.Mesh(geo, mat);
   character.position.set(0, baseY, 0);
-  character.rotation.x = -0.22;  // やや後ろに傾けて凸凹を見せやすくする
+  character.rotation.x = -0.28;
   character.castShadow = true;
   scene.add(character);
+
+  // アウトラインメッシュ（BackSide + 少し拡大）で厚みを演出
+  // 横から見たときにただの薄板にならないようにする
+  const outSegs = 80;
+  const outlineGeo = new THREE.PlaneGeometry(w, h, outSegs, Math.round(outSegs / aspect));
+  const outlineMat = new THREE.MeshStandardMaterial({
+    map: charTexture,
+    displacementMap: depthTexture,
+    displacementScale: 1.5,
+    displacementBias: -0.28,
+    transparent: true,
+    alphaTest: 0.04,
+    color: new THREE.Color(0x080810),
+    roughness: 1.0,
+    metalness: 0.0,
+    side: THREE.BackSide,
+  });
+  const outline = new THREE.Mesh(outlineGeo, outlineMat);
+  outline.position.set(0, baseY, 0);
+  outline.rotation.x = -0.28;
+  outline.scale.set(1.09, 1.09, 1.0);
+  scene.add(outline);
 
   // シャドウ（楕円形）
   const sMat = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.18 });
@@ -1057,8 +1090,12 @@ async function initInflationWalker(charBlobURL, depthCanvas) {
       character.position.y = baseY + Math.abs(Math.sin(t * 3.8)) * 0.09;
     }
     character.rotation.z = -walkDir * 0.06;
-    // 3D感を見せるための微回転 — 歩行方向に向かって少し振り向く
-    character.rotation.y = Math.sin(t * 0.35) * 0.18 * walkDir;
+    character.rotation.y = Math.sin(t * 0.35) * 0.22 * walkDir;
+
+    // アウトラインをキャラクターに完全追従
+    outline.position.copy(character.position);
+    outline.rotation.copy(character.rotation);
+    outline.scale.set(character.scale.x * 1.09, character.scale.y * 1.09, 1.0);
 
     // Shadow
     shadow.position.x = character.position.x;
@@ -1066,11 +1103,13 @@ async function initInflationWalker(charBlobURL, depthCanvas) {
     shadow.scale.set(charW * Math.max(0.1, 0.38 - lift * 0.06), charW * Math.max(0.04, 0.14 - lift * 0.02), 1);
     shadow.material.opacity = Math.max(0, 0.18 - lift * 0.04);
 
-    // カメラをゆっくり旋回させて3D奥行きを強調
+    // カメラ旋回: ±57° まで広角で回すと側面から深度が丸見えになる
     const camR = 8.0;
-    const camAngle = Math.sin(t * 0.10) * 0.45;
+    const camAngle = Math.sin(t * 0.11) * 1.0;
     camera.position.x = Math.sin(camAngle) * camR;
     camera.position.z = Math.cos(camAngle) * camR;
+    // 側面向きのとき少し高い位置から見ると3/4アングルで深度が映える
+    camera.position.y = 2.5 + Math.abs(Math.sin(camAngle)) * 2.5;
     camera.lookAt(0, 0.9, 0);
 
     renderer.render(scene, camera);
