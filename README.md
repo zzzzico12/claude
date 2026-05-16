@@ -63,10 +63,10 @@ claude/
 - **ファイル**: [ai-profiling-app.jsx](apps/ai-profiling-app/ai-profiling-app.jsx)
 
 ### 4. [Casino Poker](apps/casino-poker/)
-- **説明**: カジノ風の本格テキサスホールデムポーカー
-- **技術**: HTML5, JavaScript, CSS3
-- **特徴**: ディーラー・AI対戦、チップ管理、アニメーション演出
-- **ファイル**: [casino-poker.html](apps/casino-poker/casino-poker.html)
+- **説明**: スマブラ風UIの本格テキサスホールデムポーカー（SMASH POKER）
+- **技術**: HTML5, JavaScript, Three.js, CSS3
+- **特徴**: ダメージ%・KO・FINAL SMASH演出、4体AIファイター対戦、PWA対応
+- **ファイル**: [smash.html](apps/casino-poker/smash.html)
 
 ### 5. [Character Prediction](apps/character-prediction/)
 - **説明**: AI搭載の文字予測ゲーム

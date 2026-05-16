@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>らくがき3D ✨</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'wasm-unsafe-eval' https://cdn.jsdelivr.net blob:; style-src 'unsafe-inline'; img-src data: blob:; worker-src blob:; connect-src https://cdn.jsdelivr.net https://api-inference.huggingface.co blob:; base-uri 'self'; form-action 'none';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'wasm-unsafe-eval' https://cdn.jsdelivr.net blob:; style-src 'unsafe-inline'; img-src data: blob: https://*.meshy.ai; worker-src blob:; connect-src https://cdn.jsdelivr.net https://api-inference.huggingface.co https://api.meshy.ai https://assets.meshy.ai blob:; base-uri 'self'; form-action 'none';">
 <meta name="referrer" content="no-referrer">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -338,7 +338,7 @@ body {
   </div>
   <div class="preview-btns">
     <button class="primary-btn" id="btn-walk-3d">
-      🔮 ぷっくり3Dで歩かせる！
+      🧱 ボクセル3Dで歩かせる！
     </button>
     <button class="secondary-btn" id="btn-walk-2d">
       ✨ ペーパーモード（2.5D）
@@ -802,13 +802,15 @@ async function launchWalker(mode) {
     $('load-bar').style.width = '10%';
 
     try {
-      const depthCanvas = await computeDepthMap(state.charBlob, token);
-      $('load-bar').style.width = '90%';
+      $('load-status').textContent = '🔮 輪郭を解析中...';
+      $('load-bar').style.width = '60%';
+      await delay(50);
+      $('load-bar').style.width = '88%';
       $('load-status').textContent = '🌍 3Dワールドを準備中...';
-      await delay(200);
+      await delay(150);
       showScreen('screen-walker');
-      $('gen-label').textContent = token ? '🔮 AI深度3D' : '🎈 ぷっくり3D';
-      state.threeApp = await initInflationWalker(state.charBlobURL, depthCanvas);
+      $('gen-label').textContent = '🧱 ボクセル3D';
+      state.threeApp = await initVoxelWalker(state.charBlobURL);
     } catch (err) {
       console.error('3D failed:', err);
       showScreen('screen-walker');
@@ -1176,6 +1178,195 @@ async function initInflationWalker(charBlobURL, depthCanvas) {
       window.removeEventListener('resize', resize);
     }
   };
+}
+
+// ═══════════════════════════════════════════════════════════
+// THREE.JS — ボクセル3Dウォーカー（木と同じ立体方式）
+// ═══════════════════════════════════════════════════════════
+// 画像を小さなBoxに変換し、距離フィールドで中央ほど前に突き出す
+// → ツリーと同じ「本物の3D立体」として全方向から見ても厚みがある
+async function initVoxelWalker(charBlobURL) {
+  const canvas = $('three-canvas');
+  const scene = buildScene();
+  const { renderer, camera, resize } = buildRenderer(canvas);
+
+  // 木と同じリッチなライティング
+  scene.children.filter(c => c.isAmbientLight || c.isDirectionalLight).forEach(l => scene.remove(l));
+  scene.add(new THREE.AmbientLight(0xFFEED0, 0.7));
+  const keyL = new THREE.DirectionalLight(0xFFF5CC, 3.2);
+  keyL.position.set(5, 9, 5); keyL.castShadow = true; keyL.shadow.mapSize.set(2048, 2048);
+  scene.add(keyL);
+  const rimL = new THREE.DirectionalLight(0x88BBFF, 1.8);
+  rimL.position.set(-2, 4, -6); scene.add(rimL);
+  const fillL = new THREE.DirectionalLight(0xFFCCBB, 0.9);
+  fillL.position.set(-4, 1, 7); scene.add(fillL);
+
+  const img = new Image();
+  img.src = charBlobURL;
+  await new Promise(res => { img.onload = res; });
+
+  const aspect = img.naturalWidth / img.naturalHeight;
+  const charH3 = 1.8, charW3 = charH3 * aspect;
+
+  // ── ボクセルグリッドに縮小 ──────────────────────────────
+  const VH = 28;
+  const VW = Math.max(1, Math.round(VH * aspect));
+  const vc = document.createElement('canvas');
+  vc.width = VW; vc.height = VH;
+  vc.getContext('2d').drawImage(img, 0, 0, VW, VH);
+  const px = vc.getContext('2d').getImageData(0, 0, VW, VH).data;
+
+  const mask = new Uint8Array(VW * VH);
+  for (let i = 0; i < mask.length; i++) mask[i] = px[i * 4 + 3] > 32 ? 1 : 0;
+
+  // ── 距離フィールドで各ボクセルの奥行きを決定 ─────────────
+  // エッジからの距離が大きいほど中央 → 前に突き出す（球状ドーム）
+  const dist = voxelDistField(mask, VW, VH);
+  let maxDist = 0;
+  for (let i = 0; i < dist.length; i++) if (mask[i] && dist[i] > maxDist) maxDist = dist[i];
+  if (maxDist === 0) maxDist = 1;
+
+  // ── InstancedMesh でボクセルを一括描画 ──────────────────
+  const MAX_Z = 0.46;
+  const voxelSz = (charH3 / VH) * 0.93;
+  const voxels = [];
+  for (let y = 0; y < VH; y++) {
+    for (let x = 0; x < VW; x++) {
+      const i = y * VW + x;
+      if (!mask[i]) continue;
+      voxels.push({
+        x: ((x + 0.5) / VW - 0.5) * charW3,
+        y: (0.5 - (y + 0.5) / VH) * charH3,
+        z: (dist[i] / maxDist) * MAX_Z - MAX_Z * 0.5,
+        r: px[i * 4] / 255,
+        g: px[i * 4 + 1] / 255,
+        b: px[i * 4 + 2] / 255,
+      });
+    }
+  }
+
+  const geo = new THREE.BoxGeometry(voxelSz, voxelSz, voxelSz);
+  const mat = new THREE.MeshLambertMaterial({ vertexColors: true });
+  const imesh = new THREE.InstancedMesh(geo, mat, voxels.length);
+  imesh.castShadow = true;
+
+  const dummy = new THREE.Object3D();
+  const col = new THREE.Color();
+  voxels.forEach((v, i) => {
+    dummy.position.set(v.x, v.y, v.z);
+    dummy.updateMatrix();
+    imesh.setMatrixAt(i, dummy.matrix);
+    col.setRGB(v.r, v.g, v.b);
+    imesh.setColorAt(i, col);
+  });
+  imesh.instanceMatrix.needsUpdate = true;
+  imesh.instanceColor.needsUpdate = true;
+
+  const charGroup = new THREE.Group();
+  charGroup.position.set(0, charH3 / 2 + 0.02, 0);
+  charGroup.add(imesh);
+  scene.add(charGroup);
+
+  const sMat = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.20 });
+  const shadow = new THREE.Mesh(new THREE.CircleGeometry(1, 20), sMat);
+  shadow.rotation.x = -Math.PI / 2; shadow.position.y = 0.005;
+  shadow.scale.set(charW3 * 0.42, charW3 * 0.16, 1);
+  scene.add(shadow);
+
+  // ── ウォーク・ジャンプ（共通） ──────────────────────────
+  const baseY = charGroup.position.y;
+  let walkDir = 1;
+  const walkSpeed = 1.4, maxX = 4.0;
+  let isJumping = false, jumpVel = 0;
+  const gravity = -14;
+  const particles = [];
+  const clock = new THREE.Clock();
+  let prevT = 0, animId, spawnT = clock.getElapsedTime();
+  spawnParticles(scene, particles, 0, baseY, 0);
+
+  function animate() {
+    animId = requestAnimationFrame(animate);
+    const t = clock.getElapsedTime(), dt = Math.min(t - prevT, 0.05);
+    prevT = t;
+    tickClouds(scene.userData.clouds, dt);
+    tickParticles(particles, scene, dt);
+
+    if (spawnT !== null) {
+      const s = ease(Math.min((t - spawnT) / 0.5, 1));
+      charGroup.scale.set(walkDir * s, s, 1);
+      if (t - spawnT >= 0.5) spawnT = null;
+    }
+
+    if (isJumping) {
+      jumpVel += gravity * dt;
+      charGroup.position.y += jumpVel * dt;
+      if (charGroup.position.y <= baseY) {
+        charGroup.position.y = baseY; isJumping = false; jumpVel = 0;
+        spawnParticles(scene, particles, charGroup.position.x, 0.05, 0, 0.5);
+      }
+    }
+
+    charGroup.position.x += walkDir * walkSpeed * dt;
+    if (charGroup.position.x > maxX) { charGroup.position.x = maxX; walkDir = -1; charGroup.scale.x = -Math.abs(charGroup.scale.x); }
+    if (charGroup.position.x < -maxX) { charGroup.position.x = -maxX; walkDir = 1; charGroup.scale.x = Math.abs(charGroup.scale.x); }
+    if (!isJumping) charGroup.position.y = baseY + Math.abs(Math.sin(t * 3.8)) * 0.09;
+    charGroup.rotation.z = -walkDir * 0.04;
+    // ゆっくり回転して全方向からボクセルの立体感が見える
+    charGroup.rotation.y = Math.sin(t * 0.38) * 0.65 * walkDir;
+
+    shadow.position.x = charGroup.position.x;
+    const lift = charGroup.position.y - baseY;
+    shadow.scale.set(charW3 * Math.max(0.12, 0.42 - lift * 0.06), charW3 * Math.max(0.05, 0.16 - lift * 0.02), 1);
+    shadow.material.opacity = Math.max(0, 0.20 - lift * 0.04);
+
+    const camAngle = Math.sin(t * 0.11) * 1.0;
+    camera.position.x = Math.sin(camAngle) * 8.0;
+    camera.position.z = Math.cos(camAngle) * 8.0;
+    camera.position.y = 2.5 + Math.abs(Math.sin(camAngle)) * 2.5;
+    camera.lookAt(0, 0.9, 0);
+    renderer.render(scene, camera);
+  }
+
+  animate();
+
+  const ac = new AbortController();
+  canvas.addEventListener('click', () => { if (!isJumping) { isJumping = true; jumpVel = 7; } }, { signal: ac.signal });
+  canvas.addEventListener('touchend', e => {
+    e.preventDefault();
+    if (!isJumping) { isJumping = true; jumpVel = 7; }
+  }, { passive: false, signal: ac.signal });
+  window.addEventListener('resize', resize);
+
+  return { dispose() { cancelAnimationFrame(animId); renderer.dispose(); ac.abort(); window.removeEventListener('resize', resize); } };
+}
+
+// エッジからの距離をBFSで計算（奥行きドーム生成に使用）
+function voxelDistField(mask, w, h) {
+  const dist = new Float32Array(w * h);
+  const queue = [];
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const i = y * w + x;
+      if (!mask[i]) { dist[i] = 0; continue; }
+      const edge = (x === 0 || !mask[i - 1]) || (x === w - 1 || !mask[i + 1]) ||
+                   (y === 0 || !mask[i - w]) || (y === h - 1 || !mask[i + w]);
+      if (edge) { dist[i] = 0; queue.push(i); }
+      else dist[i] = Infinity;
+    }
+  }
+  let head = 0;
+  while (head < queue.length) {
+    const i = queue[head++];
+    const x = i % w, y = (i / w) | 0, cd = dist[i];
+    for (const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
+      const nx = x + dx, ny = y + dy;
+      if (nx < 0 || nx >= w || ny < 0 || ny >= h) continue;
+      const ni = ny * w + nx;
+      if (!mask[ni] || dist[ni] <= cd + 1) continue;
+      dist[ni] = cd + 1; queue.push(ni);
+    }
+  }
+  return dist;
 }
 
 // ═══════════════════════════════════════════════════════════
