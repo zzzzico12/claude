@@ -13,21 +13,30 @@
 
 ## 技術スタック
 
-- HTML5（スタンドアロン・ビルド不要）
-- React 18（CDN / UMD版）
-- Tailwind CSS（Play CDN）
-- Babel Standalone（ブラウザ内JSX変換）
-- PWA（manifest.json・Service Worker）
+- React 18（esbuild でバンドル済み）
+- Tailwind CSS v4（CLI で静的 CSS 生成）
+- PWA（manifest.json・Service Worker・完全オフライン対応）
+- CSP: `script-src 'self'` / `style-src 'self'`（unsafe-eval・unsafe-inline ゼロ）
+
+## ビルド
+
+```bash
+npm install
+npm run build
+```
+
+`app.js`（React バンドル）と `style.css`（Tailwind 静的 CSS）が生成されます。
 
 ## 使い方
 
-1. [pi-memory-game.html](pi-memory-game.html)をブラウザで開く
-2. 「ゲームスタート」ボタンをクリック
-3. 円周率の小数点以下を入力
-4. 間違えるまで続ける
-5. 結果を確認してリトライ
+1. `npm run build` でビルド
+2. [pi-memory-game.html](pi-memory-game.html)をブラウザで開く
+3. 「ゲームスタート」ボタンをクリック
+4. 円周率の小数点以下を入力
+5. 間違えるまで続ける
+6. 結果を確認してリトライ
 
-> TypeScript版は [pi-memory-game.tsx](pi-memory-game.tsx) を参照。
+> ソースは [src/app.jsx](src/app.jsx)（TypeScript 型付き版は [pi-memory-game.tsx](pi-memory-game.tsx)）。
 
 ## ゲームルール
 
@@ -94,7 +103,7 @@
 
 ## PWA対応
 
-HTTPS環境でサーブすると「ホーム画面に追加」が可能。オフラインでも動作します。
+HTTPS 環境でサーブすると「ホーム画面に追加」が可能。Service Worker が全アセットをプリキャッシュするため、オフラインでも完全動作します。外部 CDN への依存はゼロです。
 
 ---
 
