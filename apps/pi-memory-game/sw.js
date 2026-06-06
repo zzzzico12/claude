@@ -1,9 +1,12 @@
-const CACHE_NAME = 'pi-memory-game-v1';
+const CACHE_NAME = 'pi-memory-game-v5';
 const ASSETS = [
   './pi-memory-game.html',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
+  './app.js',
+  './register-sw.js',
+  './style.css',
 ];
 
 self.addEventListener('install', (e) => {
