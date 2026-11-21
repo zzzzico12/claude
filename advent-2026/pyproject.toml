@@ -1,0 +1,9 @@
+[project]
+name = "advent-2026-open-data-ai"
+version = "0.1.0"
+requires-python = ">=3.11"
+description = "Python側のデータ処理・評価（各日で必要なものを追加する）"
+dependencies = []
+
+[tool.ruff]
+line-length = 110
