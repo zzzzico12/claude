@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "anthropic.claude-code",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "ms-python.python",
+    "charliermarsh.ruff",
+    "github.vscode-pull-request-github",
+    "yzhang.markdown-all-in-one"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "paper-survey",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "tsc --noEmit",
+    "test": "vitest run",
+    "eval": "tsx --env-file=../../.env scripts/eval.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4",
+    "vite": "^7"
+  },
+  "dependencies": {
+    "@advent/ai": "workspace:^",
+    "@advent/attribution": "workspace:^",
+    "dompurify": "^3",
+    "marked": "^18",
+    "zod": "^4"
+  }
+}

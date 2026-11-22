@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>論文サーベイ</title>
+    <meta name="description" content="テーマを入れると、重要論文・無料で読めるリンク・日本語の要約をまとめたサーベイを作ります（OpenAlex × Unpaywall × arXiv × Claude）" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <header class="site">
+      <h1>論文サーベイ</h1>
+      <p class="lead">調べたいテーマを入れると、重要な論文を20本選び、無料で読めるリンクと日本語の解説をまとめます。</p>
+    </header>
+
+    <main>
+      <form id="form" class="search">
+        <label class="theme">
+          <span>テーマ</span>
+          <input id="theme" name="theme" type="text" maxlength="100" required placeholder="例：大規模言語モデルの検索拡張生成" />
+        </label>
+        <label class="period">
+          <span>期間</span>
+          <select id="period">
+            <option value="5">直近5年</option>
+            <option value="10" selected>直近10年</option>
+            <option value="20">直近20年</option>
+          </select>
+        </label>
+        <button id="submit" type="submit">サーベイを作る</button>
+      </form>
+      <div class="examples" id="examples">
+        <span>例：</span>
+        <button type="button">検索拡張生成（RAG）</button>
+        <button type="button">拡散モデルによる動画生成</button>
+        <button type="button">グラフニューラルネットワークの創薬応用</button>
+      </div>
+      <p class="note">1日の利用回数に上限があります（全体で10回）。一度調べたテーマは、上限に関係なく何度でも見られます。</p>
+
+      <p id="status" class="status" hidden></p>
+
+      <section id="result" hidden>
+        <div class="layout">
+          <article id="survey" class="survey" aria-live="polite"></article>
+          <aside class="side">
+            <section id="check" class="check" hidden></section>
+            <section class="how">
+              <h2>この20本の選び方</h2>
+              <p>
+                テーマを英語の検索語に言い換え（AI）、OpenAlex で関連度の高い論文を集めます。そこから
+                <b>関連度</b>・<b>1年あたりの引用数</b>・<b>新しさ</b>の点数をコードで計算して上位20本を選びます。
+              </p>
+              <p id="queries" class="queries"></p>
+            </section>
+          </aside>
+        </div>
+        <h2 class="papers-title">選んだ論文</h2>
+        <div class="table-wrap">
+          <table id="papers">
+            <thead>
+              <tr><th>#</th><th>論文</th><th>年</th><th>引用数</th><th>無料で読む</th><th title="関連度＋引用＋新しさ">点数</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="disclaimer">解説はAI（Claude）が抄録だけを根拠に書いたものです。誤りがありえるので、引用する前に必ず元の論文を確認してください。数字（年・引用数）は表のほうが正確です。</p>
+      </section>
+    </main>
+
+    <div id="attribution"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

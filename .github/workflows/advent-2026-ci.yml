@@ -1,0 +1,40 @@
+name: advent-2026 CI
+on:
+  pull_request:
+    paths:
+      - "advent-2026/**"
+      - ".github/workflows/advent-2026-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "advent-2026/**"
+      - ".github/workflows/advent-2026-ci.yml"
+defaults:
+  run:
+    working-directory: advent-2026
+jobs:
+  node:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: advent-2026/package.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: advent-2026/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm lint
+      - run: pnpm test
+  secrets-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: .env がコミットされていないか確認
+        working-directory: .
+        run: |
+          if git ls-files | grep -E '(^|/)\.env($|\.)' | grep -v '\.env\.example$'; then
+            echo "::error::.env がコミットされています"; exit 1; fi

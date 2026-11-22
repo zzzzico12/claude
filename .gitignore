@@ -25,3 +25,6 @@ build/
 .env
 .env.local
 .env.*.local
+
+# advent-2026 の VS Code 設定は共有する
+!advent-2026/.vscode/
