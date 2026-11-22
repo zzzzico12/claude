@@ -18,14 +18,25 @@ importers:
         specifier: ^4
         version: 4.1.12(@opentelemetry/api@1.10.0)(@types/node@22.20.5)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15))
 
-  apps/paper-survey:
+  packages/ai:
+    dependencies:
+      '@anthropic-ai/sdk':
+        specifier: ^1.12.0
+        version: 1.12.0(zod@4.6.7)
+      zod:
+        specifier: ^4
+        version: 4.6.7
+
+  packages/attribution: {}
+
+  paper-survey:
     dependencies:
       '@advent/ai':
         specifier: workspace:^
-        version: link:../../packages/ai
+        version: link:../packages/ai
       '@advent/attribution':
         specifier: workspace:^
-        version: link:../../packages/attribution
+        version: link:../packages/attribution
       dompurify:
         specifier: ^3
         version: 3.4.18
@@ -42,17 +53,6 @@ importers:
       vite:
         specifier: ^7
         version: 7.3.8(@types/node@22.20.5)(lightningcss@1.33.0)(tsx@4.23.15)
-
-  packages/ai:
-    dependencies:
-      '@anthropic-ai/sdk':
-        specifier: ^1.12.0
-        version: 1.12.0(zod@4.6.7)
-      zod:
-        specifier: ^4
-        version: 4.6.7
-
-  packages/attribution: {}
 
 packages:
 

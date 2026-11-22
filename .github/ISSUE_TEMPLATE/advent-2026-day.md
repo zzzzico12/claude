@@ -5,7 +5,7 @@ title: "[DayNN] MM/DD タイトル"
 labels: advent-2026
 ---
 
-仕様書：`advent-2026/apps/<アプリ名>/README.md`
+仕様書：`advent-2026/<アプリ名>/README.md`
 
 ## 完了条件
 
