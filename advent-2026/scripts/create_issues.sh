@@ -9,7 +9,7 @@ if [ -z "${DRY_RUN:-}" ]; then
   gh label create advent-2026 --color 1D76DB --description "アドベントカレンダー2026の1日分" 2>/dev/null || true
 fi
 
-for readme in $(for f in apps/*/README.md; do n=$(head -n1 "$f" | sed -E 's/^# Day ([0-9]+).*/\1/'); echo "$n $f"; done | sort -n | cut -d" " -f2); do
+for readme in $(for f in */README.md; do head -n1 "$f" | grep -q "^# Day [0-9]" || continue; n=$(head -n1 "$f" | sed -E 's/^# Day ([0-9]+).*/\1/'); echo "$n $f"; done | sort -n | cut -d" " -f2); do
   # 1行目 "# Day 01（12/1 火）論文サーベイの自動化" → "[Day01] 12/1 論文サーベイの自動化"
   first=$(head -n1 "$readme" | sed 's/^# //')
   num=$(echo "$first" | sed -E 's/^Day ([0-9]+).*/\1/')

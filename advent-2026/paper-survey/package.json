@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "tsc --noEmit",
     "test": "vitest run",
-    "eval": "tsx --env-file=../../.env scripts/eval.ts"
+    "eval": "tsx --env-file=../.env scripts/eval.ts"
   },
   "devDependencies": {
     "tsx": "^4",

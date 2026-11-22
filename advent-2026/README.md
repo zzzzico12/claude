@@ -11,45 +11,44 @@ Qiitaアドベントカレンダーで、12月1日〜25日に毎日1本、世界
 ## 📁 プロジェクト構成
 
 ```
-advent-2026-open-data-ai/
+advent-2026/
 ├── README.md
 ├── CLAUDE.md
 ├── docs/          # 企画書・スケジュール・決めること
 ├── packages/      # 使い回す共通部品（地球儀、軌道計算、「今ここ」地図、美術館データ、AI呼び出し、出典表示）
 ├── scripts/       # Issueの一括作成など
-└── apps/
-    ├── paper-survey/
-    ├── dependency-risk-radar/
-    ├── green-region-finder/
-    ├── masterpiece-vscode-theme/
-    ├── forest-change-detector/
-    ├── satellite-tracker-3d/
-    ├── satellite-pass-api/
-    ├── nasa-tech-finder/
-    ├── asteroid-size-compare/
-    ├── where-is-voyager/
-    ├── plane-overhead-guide/
-    ├── bird-song-identifier/
-    ├── walk-into-painting/
-    ├── similar-artwork-search/
-    ├── harbor-ship-guide/
-    ├── mountain-name-finder/
-    ├── balloon-flight-simulator/
-    ├── classic-character-chat/
-    ├── life-size-art-ar/
-    ├── old-map-walk/
-    ├── darwin-voyage-map/
-    ├── roman-travel-planner/
-    ├── f1-ghost-lap/
-    ├── f1-ai-commentary/
-    └── santa-route-optimizer/
+├── paper-survey/            # ここから下が25本のアプリ（1アプリ1フォルダ）
+├── dependency-risk-radar/
+├── green-region-finder/
+├── masterpiece-vscode-theme/
+├── forest-change-detector/
+├── satellite-tracker-3d/
+├── satellite-pass-api/
+├── nasa-tech-finder/
+├── asteroid-size-compare/
+├── where-is-voyager/
+├── plane-overhead-guide/
+├── bird-song-identifier/
+├── walk-into-painting/
+├── similar-artwork-search/
+├── harbor-ship-guide/
+├── mountain-name-finder/
+├── balloon-flight-simulator/
+├── classic-character-chat/
+├── life-size-art-ar/
+├── old-map-walk/
+├── darwin-voyage-map/
+├── roman-travel-planner/
+├── f1-ghost-lap/
+├── f1-ai-commentary/
+└── santa-route-optimizer/
 ```
 
-各アプリのフォルダには、仕様書（README.md）、`src/`、`scripts/`、`data/`（Git管理外）、`eval/`（評価）、`ARTICLE.md`（記事の下書き）が入っています。
+各アプリのフォルダ（`advent-2026/<アプリ名>/`）には、仕様書（README.md）、`src/`、`scripts/`、`data/`（Git管理外）、`eval/`（評価）、`ARTICLE.md`（記事の下書き）が入っています。
 
 ## 📱 アプリ一覧
 
-### 1. [論文サーベイの自動化](apps/paper-survey/)（12/1）
+### 1. [論文サーベイの自動化](paper-survey/)（12/1）
 - **説明**: テーマを入れると、重要論文、無料で読めるリンク、日本語の要約をまとめたサーベイを出す
 - **データ**: OpenAlex × arXiv × Unpaywall
 - **技術**: RAG・要約
@@ -57,168 +56,168 @@ advent-2026-open-data-ai/
 - **デモ**: https://advent26-paper-survey.vercel.app （1日10回まで）
 - **記事**: （公開後に記入）
 
-### 2. [依存ライブラリと脆弱性の優先度判定](apps/dependency-risk-radar/)（12/2）
+### 2. [依存ライブラリと脆弱性の優先度判定](dependency-risk-radar/)（12/2）
 - **説明**: package.json などを渡すと、危ない依存、放置されている依存、今日対応すべき脆弱性の順番、乗り換え先を出す
 - **データ**: OSV × deps.dev × CISA KEV × EPSS
 - **技術**: エージェント・判断の説明
 - **デモ**: （公開後に記入）
 - **記事**: （公開後に記入）
 
-### 3. [CO2の少ないクラウドリージョン](apps/green-region-finder/)（12/3）
+### 3. [CO2の少ないクラウドリージョン](green-region-finder/)（12/3）
 - **説明**: 利用者の場所と要件を入れると、通信の近さ・料金・電力のCO2のバランスでリージョンを提案する
 - **データ**: Ember × リージョン所在地 × Google Cloudの公開カーボンデータ
 - **技術**: 推薦
 - **デモ**: （公開後に記入）
 - **記事**: （公開後に記入）
 
-### 4. [名画のエディタ配色](apps/masterpiece-vscode-theme/)（12/4）
+### 4. [名画のエディタ配色](masterpiece-vscode-theme/)（12/4）
 - **説明**: 好きな名画を選ぶと、その絵の色からVS Codeのテーマを作る。文字の読みやすさ（コントラスト）は自動で調整し、天気や時間帯で絵が切り替わる
 - **データ**: メトロポリタン美術館 × シカゴ美術館 × Open-Meteo
 - **技術**: 画像からの配色抽出、VS Code拡張
 - **デモ**: （公開後に記入）
 - **記事**: （公開後に記入）
 
-### 5. [衛星画像で森の変化を検知](apps/forest-change-detector/)（12/5）
+### 5. [衛星画像で森の変化を検知](forest-change-detector/)（12/5）
 - **説明**: 地域を選ぶと、2つの時期の衛星画像から植物の量の変化を計算し、変化した場所とその理由の候補をAIが説明する
 - **データ**: Sentinel-2 × Global Forest Watch × OpenStreetMap
 - **技術**: 植生指数＋画像の説明
 - **デモ**: （公開後に記入）
 - **記事**: （公開後に記入）
 
-### 6. [人工衛星は今どこ？](apps/satellite-tracker-3d/)（12/6）
+### 6. [人工衛星は今どこ？](satellite-tracker-3d/)（12/6）
 - **説明**: 3Dの地球儀に、今動いている約1万機の人工衛星をリアルタイムで表示する。Starlink、GPS、気象衛星などで絞り込み、クリックすると「どこの国の、何のための衛星か」をAIが解説する
 - **データ**: CelesTrak × UCS Satellite Database
 - **技術**: 軌道計算＋1万機の3D描画
 - **デモ**: （公開後に記入）
 - **記事**: （公開後に記入）
 
-### 7. [衛星の通過予測API](apps/satellite-pass-api/)（12/7）
+### 7. [衛星の通過予測API](satellite-pass-api/)（12/7）
 - **説明**: 場所を入れると、ISSなどが見える時刻・方角・高さと、その時間に晴れているかを返すAPI。「今週いちばん見やすいのは？」にも自然文で答える
 - **データ**: CelesTrak × Open-Meteo（雲量）
 - **技術**: 軌道計算＋自然文の応答
 - **デモ**: （公開後に記入）
 - **記事**: （公開後に記入）
 
-### 8. [NASAの特許から技術探し](apps/nasa-tech-finder/)（12/8）
+### 8. [NASAの特許から技術探し](nasa-tech-finder/)（12/8）
 - **説明**: 課題を日本語で入れると、使えそうなNASAの特許と技術報告書を探し、仕組みをやさしく説明する
 - **データ**: NASA技術移転API × NASA技術報告書（NTRS）
 - **技術**: RAG
 - **デモ**: （公開後に記入）
 - **記事**: （公開後に記入）
 
-### 9. [地球に近づく小惑星を身近なサイズで](apps/asteroid-size-compare/)（12/9）
+### 9. [地球に近づく小惑星を身近なサイズで](asteroid-size-compare/)（12/9）
 - **説明**: 今月地球に近づく小惑星を、「東京タワー何本分」「月までの距離の何倍」のように身近なものに置き換えて、大きさと距離を図で見せる
 - **データ**: NASA JPL の接近天体データ × Wikidata
 - **技術**: 身近なものへの置き換え
 - **デモ**: （公開後に記入）
 - **記事**: （公開後に記入）
 
-### 10. [ボイジャーは今どこ？](apps/where-is-voyager/)（12/10）
+### 10. [ボイジャーは今どこ？](where-is-voyager/)（12/10）
 - **説明**: ボイジャーやはやぶさ2などの探査機が、打ち上げから今までどう旅してきたかを3Dで再生し、今いる場所と、地球まで電波が届く時間をAIが解説する
 - **データ**: NASA JPL Horizons × 探査機のミッション情報
 - **技術**: 3Dでの旅の再生
 - **デモ**: （公開後に記入）
 - **記事**: （公開後に記入）
 
-### 11. [頭上の飛行機ガイド](apps/plane-overhead-guide/)（12/11）
+### 11. [頭上の飛行機ガイド](plane-overhead-guide/)（12/11）
 - **説明**: スマホで開くと、今頭上を飛んでいる飛行機の機種、出発地、行き先、到着地の天気を教える
 - **データ**: OpenSky × OurAirports × 行き先の天気
 - **技術**: 位置からの特定＋解説
 - **デモ**: （公開後に記入）
 - **記事**: （公開後に記入）
 
-### 12. [鳥の声を聞き分けるAI](apps/bird-song-identifier/)（12/12）
+### 12. [鳥の声を聞き分けるAI](bird-song-identifier/)（12/12）
 - **説明**: 録音を渡すと鳥の種類を推定し、録音した場所と季節に観察記録がある種だけに絞り込んで答える
 - **データ**: xeno-canto × GBIF
 - **技術**: 音声分類
 - **デモ**: （公開後に記入）
 - **記事**: （公開後に記入）
 
-### 13. [名画の中を歩く](apps/walk-into-painting/)（12/13）
+### 13. [名画の中を歩く](walk-into-painting/)（12/13）
 - **説明**: 1枚の名画から奥行きを推定して、マウスやスマホの傾きで視点が動く立体表示にする。絵の中のものをタップするとAIが解説する
 - **データ**: 美術館のパブリックドメイン画像 × 奥行き推定モデル
 - **技術**: 奥行き推定＋立体表示
 - **デモ**: （公開後に記入）
 - **記事**: （公開後に記入）
 
-### 14. [似ている作品の横断検索](apps/similar-artwork-search/)（12/14）
+### 14. [似ている作品の横断検索](similar-artwork-search/)（12/14）
 - **説明**: 1枚の絵を選ぶと、世界の美術館から構図や雰囲気の似た作品を探し、どこが似ているかをAIが説明する
 - **データ**: 複数の美術館の画像 × Wikidata
 - **技術**: ベクトル検索
 - **デモ**: （公開後に記入）
 - **記事**: （公開後に記入）
 
-### 15. [港の船ガイド](apps/harbor-ship-guide/)（12/15）
+### 15. [港の船ガイド](harbor-ship-guide/)（12/15）
 - **説明**: 港や海岸で開くと、見えている船の名前、種類、どこから来てどこへ向かうかを教える。「頭上の飛行機ガイド」の海版
 - **データ**: 北欧の船舶位置データ（AIS）× 世界の港のデータ
 - **技術**: 位置からの特定＋解説
 - **デモ**: （公開後に記入）
 - **記事**: （公開後に記入）
 
-### 16. [あの山の名前は？](apps/mountain-name-finder/)（12/16）
+### 16. [あの山の名前は？](mountain-name-finder/)（12/16）
 - **説明**: 今いる場所から見える360度の山並みを標高データから計算して描き、山の名前を付ける。山の写真をアップロードすると、計算した稜線と写真の稜線を照らし合わせて、写っている山に名前を付ける
 - **データ**: Copernicus DEM × OpenStreetMap
 - **技術**: 見通し計算＋写真と稜線の照合
 - **デモ**: （公開後に記入）
 - **記事**: （公開後に記入）
 
-### 17. [風船を飛ばしたらどこへ行く？](apps/balloon-flight-simulator/)（12/17）
+### 17. [風船を飛ばしたらどこへ行く？](balloon-flight-simulator/)（12/17）
 - **説明**: 今いる場所から風船を放したら、高さごとの風に乗ってどこをどう飛んで、どこに落ちるかを計算し、地図上でアニメーションにする
 - **データ**: Open-Meteo（高さごとの風）× OpenStreetMap
 - **技術**: 軌跡シミュレーション
 - **デモ**: （公開後に記入）
 - **記事**: （公開後に記入）
 
-### 18. [名作の登場人物と話す](apps/classic-character-chat/)（12/18）
+### 18. [名作の登場人物と話す](classic-character-chat/)（12/18）
 - **説明**: 著作権の切れた名作の本文だけを根拠に、登場人物として答えるチャット。答えには根拠となる本文の箇所を添える
 - **データ**: Project Gutenberg × Wikidata
 - **技術**: RAG・ロールプレイ
 - **デモ**: （公開後に記入）
 - **記事**: （公開後に記入）
 
-### 19. [名画を実物大で部屋に飾る](apps/life-size-art-ar/)（12/19）
+### 19. [名画を実物大で部屋に飾る](life-size-art-ar/)（12/19）
 - **説明**: 美術館のデータにある作品の実寸を使って、スマホのARで名画を自分の部屋に実物大で飾る。「モナ・リザは意外と小さい」がその場でわかる
 - **データ**: 美術館の画像と作品の実寸データ
 - **技術**: WebのAR
 - **デモ**: （公開後に記入）
 - **記事**: （公開後に記入）
 
-### 20. [100年前の街を歩く](apps/old-map-walk/)（12/20）
+### 20. [100年前の街を歩く](old-map-walk/)（12/20）
 - **説明**: 今いる場所に100年前の地図を重ね、スライダーで今と昔を行き来しながら、「昔ここには何があったか」をAIが語る
 - **データ**: 位置合わせ済みの古地図 × OpenStreetMap × Wikipedia
 - **技術**: 地図の重ね合わせ＋語り
 - **デモ**: （公開後に記入）
 - **記事**: （公開後に記入）
 
-### 21. [ダーウィンの航海をたどる](apps/darwin-voyage-map/)（12/21）
+### 21. [ダーウィンの航海をたどる](darwin-voyage-map/)（12/21）
 - **説明**: 『ビーグル号航海記』の本文から地名を抜き出して航路を地図に描き、各地で書いた文章と、そこで実際に集めた標本の記録を並べて見せる
 - **データ**: 『ビーグル号航海記』× GBIF・ロンドン自然史博物館の標本
 - **技術**: 本文からの地名抽出＋地図
 - **デモ**: （公開後に記入）
 - **記事**: （公開後に記入）
 
-### 22. [古代ローマの旅行計画](apps/roman-travel-planner/)（12/22）
+### 22. [古代ローマの旅行計画](roman-travel-planner/)（12/22）
 - **説明**: 「ローマからロンドンまで」のように入れると、ローマ帝国の道路網で経路を探し、徒歩・馬車・船で何日かかるかを、途中の街の解説つきで出す。古代の乗り換え案内
 - **データ**: ローマ帝国の道路網（Itiner-e）× Pleiades
 - **技術**: 経路探索
 - **デモ**: （公開後に記入）
 - **記事**: （公開後に記入）
 
-### 23. [F1のゴースト比較](apps/f1-ghost-lap/)（12/23）
+### 23. [F1のゴースト比較](f1-ghost-lap/)（12/23）
 - **説明**: 2人のドライバーの最速ラップをコース図の上で重ねて再生し、「ターン9でブレーキを踏むのが10m遅い」のように、どこでタイム差がついたかをAIが解説する
 - **データ**: OpenF1のテレメトリ × コース図
 - **技術**: テレメトリ分析＋解説
 - **デモ**: （公開後に記入）
 - **記事**: （公開後に記入）
 
-### 24. [AIがF1を実況する](apps/f1-ai-commentary/)（12/24）
+### 24. [AIがF1を実況する](f1-ai-commentary/)（12/24）
 - **説明**: 過去のレースを全車の位置で再生しながら、順位の入れ替わり、ピットイン、タイム差、レースコントロールの指示から、日本語の実況を生成して音声で流す
 - **データ**: OpenF1の位置・タイム差・レースコントロール
 - **技術**: 実況の生成＋音声合成
 - **デモ**: （公開後に記入）
 - **記事**: （公開後に記入）
 
-### 25. [AIサンタの配達ルート](apps/santa-route-optimizer/)（12/25）
+### 25. [AIサンタの配達ルート](santa-route-optimizer/)（12/25）
 - **説明**: 世界の人口分布、タイムゾーンと夜の時間、世界の天気から、一晩で世界中の子どもに配るための最適なルートを計算し、3Dの地球儀でアニメーションにする。各地に着いたときの天気や現地の時刻をAIが実況する
 - **データ**: GHSL（人口分布）× タイムゾーン × 世界の天気
 - **技術**: 経路最適化＋3Dの地球儀
@@ -230,4 +229,4 @@ advent-2026-open-data-ai/
 1. `.env.example` を `.env` にコピーして、[docs/setup.md](docs/setup.md) のキーを入れる
 2. VS Codeで `advent-2026/` フォルダを開き、Claudeに「`CLAUDE.md` と `docs/plan.md` を読んで、`docs/schedule.md` の11月の作業から始めて」と伝える
 3. GitHubにpushしたら、`scripts/create_issues.sh` で25本分のIssue（ラベル `advent-2026`）を作る
-4. デプロイは Vercel。アプリごとにプロジェクトを作り、Root Directory を `advent-2026/apps/<アプリ名>` にする（[docs/decisions.md](docs/decisions.md)）
+4. デプロイは Vercel。アプリごとにプロジェクトを作り、Root Directory を `advent-2026/<アプリ名>` にする（[docs/decisions.md](docs/decisions.md)）

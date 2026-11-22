@@ -28,6 +28,6 @@ function devApi(): Plugin {
 }
 
 export default defineConfig(({ mode }) => {
-  Object.assign(process.env, loadEnv(mode, "../..", ""));
+  Object.assign(process.env, loadEnv(mode, "..", ""));
   return { plugins: [devApi()] };
 });

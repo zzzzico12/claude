@@ -7,6 +7,6 @@ __pycache__/
 .venv/
 *.pyc
 .DS_Store
-apps/*/data/*
-!apps/*/data/.gitkeep
+*/data/*
+!*/data/.gitkeep
 .cache/

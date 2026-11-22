@@ -121,7 +121,7 @@ OpenAlex 検索（検索語ごとに関連度順で上位100件、抄録あり�
 ### デプロイ（Vercel）
 
 - 公開URL：https://advent26-paper-survey.vercel.app （Vercel のプロジェクト名 `advent26-paper-survey`）
-- Vercel で `zzzzico12/claude` を Import し、**Root Directory を `advent-2026/apps/paper-survey`** にする。ほかの設定（インストール・ビルド・関数の実行時間）は `vercel.json` に書いてある
+- Vercel で `zzzzico12/claude` を Import し、**Root Directory を `advent-2026/paper-survey`** にする。ほかの設定（インストール・ビルド・関数の実行時間）は `vercel.json` に書いてある
 - 環境変数：`ANTHROPIC_API_KEY`・`CLAUDE_MODEL`・`OPENALEX_API_KEY`・`CONTACT_EMAIL`
 - Storage（Marketplace）から Upstash Redis を追加してプロジェクトにつなぐ（環境変数は自動で入る）
 - このフォルダか `packages/` に変更がないコミットでは、ビルドしない（`ignoreCommand`）。環境変数だけ変えて Redeploy するときは「Use project's Ignore Build Step」のチェックを外す
@@ -130,7 +130,7 @@ OpenAlex 検索（検索語ごとに関連度順で上位100件、抄録あり�
 ### 動かし方
 
 ```bash
-cd advent-2026/apps/paper-survey
+cd advent-2026/paper-survey
 pnpm dev        # http://localhost:5173 （API も一緒に動く。.env は advent-2026/.env を読む）
 pnpm eval       # 評価（eval/RESULTS.md を更新）
 ```

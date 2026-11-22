@@ -19,31 +19,31 @@
 
 | 日付 | タイトル | ジャンル | 組み合わせるデータ | AI・技術の見どころ |
 | --- | --- | --- | --- | --- |
-| 12/1 火 | [論文サーベイの自動化](../apps/paper-survey/README.md) | 論文 | OpenAlex × arXiv × Unpaywall | RAG・要約 |
-| 12/2 水 | [依存ライブラリと脆弱性の優先度判定](../apps/dependency-risk-radar/README.md) | セキュリティ | OSV × deps.dev × CISA KEV × EPSS | エージェント・判断の説明 |
-| 12/3 木 | [CO2の少ないクラウドリージョン](../apps/green-region-finder/README.md) | インフラ | Ember × リージョン所在地 × Google Cloudの公開カーボンデータ | 推薦 |
-| 12/4 金 | [名画のエディタ配色](../apps/masterpiece-vscode-theme/README.md) | 名画 | メトロポリタン美術館 × シカゴ美術館 × Open-Meteo | 画像からの配色抽出、VS Code拡張 |
-| 12/5 土 | [衛星画像で森の変化を検知](../apps/forest-change-detector/README.md) | 宇宙 | Sentinel-2 × Global Forest Watch × OpenStreetMap | 植生指数＋画像の説明 |
-| 12/6 日 | [人工衛星は今どこ？](../apps/satellite-tracker-3d/README.md) | 宇宙 | CelesTrak × UCS Satellite Database | 軌道計算＋1万機の3D描画 |
-| 12/7 月 | [衛星の通過予測API](../apps/satellite-pass-api/README.md) | 宇宙 | CelesTrak × Open-Meteo（雲量） | 軌道計算＋自然文の応答 |
-| 12/8 火 | [NASAの特許から技術探し](../apps/nasa-tech-finder/README.md) | 宇宙 | NASA技術移転API × NASA技術報告書（NTRS） | RAG |
-| 12/9 水 | [地球に近づく小惑星を身近なサイズで](../apps/asteroid-size-compare/README.md) | 宇宙 | NASA JPL の接近天体データ × Wikidata | 身近なものへの置き換え |
-| 12/10 木 | [ボイジャーは今どこ？](../apps/where-is-voyager/README.md) | 宇宙 | NASA JPL Horizons × 探査機のミッション情報 | 3Dでの旅の再生 |
-| 12/11 金 | [頭上の飛行機ガイド](../apps/plane-overhead-guide/README.md) | 空 | OpenSky × OurAirports × 行き先の天気 | 位置からの特定＋解説 |
-| 12/12 土 | [鳥の声を聞き分けるAI](../apps/bird-song-identifier/README.md) | 生き物 | xeno-canto × GBIF | 音声分類 |
-| 12/13 日 | [名画の中を歩く](../apps/walk-into-painting/README.md) | 名画 | 美術館のパブリックドメイン画像 × 奥行き推定モデル | 奥行き推定＋立体表示 |
-| 12/14 月 | [似ている作品の横断検索](../apps/similar-artwork-search/README.md) | 名画 | 複数の美術館の画像 × Wikidata | ベクトル検索 |
-| 12/15 火 | [港の船ガイド](../apps/harbor-ship-guide/README.md) | 海 | 北欧の船舶位置データ（AIS）× 世界の港のデータ | 位置からの特定＋解説 |
-| 12/16 水 | [あの山の名前は？](../apps/mountain-name-finder/README.md) | 景色 | Copernicus DEM × OpenStreetMap | 見通し計算＋写真と稜線の照合 |
-| 12/17 木 | [風船を飛ばしたらどこへ行く？](../apps/balloon-flight-simulator/README.md) | 空 | Open-Meteo（高さごとの風）× OpenStreetMap | 軌跡シミュレーション |
-| 12/18 金 | [名作の登場人物と話す](../apps/classic-character-chat/README.md) | 文学 | Project Gutenberg × Wikidata | RAG・ロールプレイ |
-| 12/19 土 | [名画を実物大で部屋に飾る](../apps/life-size-art-ar/README.md) | 名画 | 美術館の画像と作品の実寸データ | WebのAR |
-| 12/20 日 | [100年前の街を歩く](../apps/old-map-walk/README.md) | 歴史 | 位置合わせ済みの古地図 × OpenStreetMap × Wikipedia | 地図の重ね合わせ＋語り |
-| 12/21 月 | [ダーウィンの航海をたどる](../apps/darwin-voyage-map/README.md) | 博物学 | 『ビーグル号航海記』× GBIF・ロンドン自然史博物館の標本 | 本文からの地名抽出＋地図 |
-| 12/22 火 | [古代ローマの旅行計画](../apps/roman-travel-planner/README.md) | 歴史 | ローマ帝国の道路網（Itiner-e）× Pleiades | 経路探索 |
-| 12/23 水 | [F1のゴースト比較](../apps/f1-ghost-lap/README.md) | F1 | OpenF1のテレメトリ × コース図 | テレメトリ分析＋解説 |
-| 12/24 木 | [AIがF1を実況する](../apps/f1-ai-commentary/README.md) | F1 | OpenF1の位置・タイム差・レースコントロール | 実況の生成＋音声合成 |
-| 12/25 金 | [AIサンタの配達ルート](../apps/santa-route-optimizer/README.md) | 最終日 | GHSL（人口分布）× タイムゾーン × 世界の天気 | 経路最適化＋3Dの地球儀 |
+| 12/1 火 | [論文サーベイの自動化](../paper-survey/README.md) | 論文 | OpenAlex × arXiv × Unpaywall | RAG・要約 |
+| 12/2 水 | [依存ライブラリと脆弱性の優先度判定](../dependency-risk-radar/README.md) | セキュリティ | OSV × deps.dev × CISA KEV × EPSS | エージェント・判断の説明 |
+| 12/3 木 | [CO2の少ないクラウドリージョン](../green-region-finder/README.md) | インフラ | Ember × リージョン所在地 × Google Cloudの公開カーボンデータ | 推薦 |
+| 12/4 金 | [名画のエディタ配色](../masterpiece-vscode-theme/README.md) | 名画 | メトロポリタン美術館 × シカゴ美術館 × Open-Meteo | 画像からの配色抽出、VS Code拡張 |
+| 12/5 土 | [衛星画像で森の変化を検知](../forest-change-detector/README.md) | 宇宙 | Sentinel-2 × Global Forest Watch × OpenStreetMap | 植生指数＋画像の説明 |
+| 12/6 日 | [人工衛星は今どこ？](../satellite-tracker-3d/README.md) | 宇宙 | CelesTrak × UCS Satellite Database | 軌道計算＋1万機の3D描画 |
+| 12/7 月 | [衛星の通過予測API](../satellite-pass-api/README.md) | 宇宙 | CelesTrak × Open-Meteo（雲量） | 軌道計算＋自然文の応答 |
+| 12/8 火 | [NASAの特許から技術探し](../nasa-tech-finder/README.md) | 宇宙 | NASA技術移転API × NASA技術報告書（NTRS） | RAG |
+| 12/9 水 | [地球に近づく小惑星を身近なサイズで](../asteroid-size-compare/README.md) | 宇宙 | NASA JPL の接近天体データ × Wikidata | 身近なものへの置き換え |
+| 12/10 木 | [ボイジャーは今どこ？](../where-is-voyager/README.md) | 宇宙 | NASA JPL Horizons × 探査機のミッション情報 | 3Dでの旅の再生 |
+| 12/11 金 | [頭上の飛行機ガイド](../plane-overhead-guide/README.md) | 空 | OpenSky × OurAirports × 行き先の天気 | 位置からの特定＋解説 |
+| 12/12 土 | [鳥の声を聞き分けるAI](../bird-song-identifier/README.md) | 生き物 | xeno-canto × GBIF | 音声分類 |
+| 12/13 日 | [名画の中を歩く](../walk-into-painting/README.md) | 名画 | 美術館のパブリックドメイン画像 × 奥行き推定モデル | 奥行き推定＋立体表示 |
+| 12/14 月 | [似ている作品の横断検索](../similar-artwork-search/README.md) | 名画 | 複数の美術館の画像 × Wikidata | ベクトル検索 |
+| 12/15 火 | [港の船ガイド](../harbor-ship-guide/README.md) | 海 | 北欧の船舶位置データ（AIS）× 世界の港のデータ | 位置からの特定＋解説 |
+| 12/16 水 | [あの山の名前は？](../mountain-name-finder/README.md) | 景色 | Copernicus DEM × OpenStreetMap | 見通し計算＋写真と稜線の照合 |
+| 12/17 木 | [風船を飛ばしたらどこへ行く？](../balloon-flight-simulator/README.md) | 空 | Open-Meteo（高さごとの風）× OpenStreetMap | 軌跡シミュレーション |
+| 12/18 金 | [名作の登場人物と話す](../classic-character-chat/README.md) | 文学 | Project Gutenberg × Wikidata | RAG・ロールプレイ |
+| 12/19 土 | [名画を実物大で部屋に飾る](../life-size-art-ar/README.md) | 名画 | 美術館の画像と作品の実寸データ | WebのAR |
+| 12/20 日 | [100年前の街を歩く](../old-map-walk/README.md) | 歴史 | 位置合わせ済みの古地図 × OpenStreetMap × Wikipedia | 地図の重ね合わせ＋語り |
+| 12/21 月 | [ダーウィンの航海をたどる](../darwin-voyage-map/README.md) | 博物学 | 『ビーグル号航海記』× GBIF・ロンドン自然史博物館の標本 | 本文からの地名抽出＋地図 |
+| 12/22 火 | [古代ローマの旅行計画](../roman-travel-planner/README.md) | 歴史 | ローマ帝国の道路網（Itiner-e）× Pleiades | 経路探索 |
+| 12/23 水 | [F1のゴースト比較](../f1-ghost-lap/README.md) | F1 | OpenF1のテレメトリ × コース図 | テレメトリ分析＋解説 |
+| 12/24 木 | [AIがF1を実況する](../f1-ai-commentary/README.md) | F1 | OpenF1の位置・タイム差・レースコントロール | 実況の生成＋音声合成 |
+| 12/25 金 | [AIサンタの配達ルート](../santa-route-optimizer/README.md) | 最終日 | GHSL（人口分布）× タイムゾーン × 世界の天気 | 経路最適化＋3Dの地球儀 |
 
 ## 第1週（12/1〜12/7）：エンジニアの道具と、宇宙への入口
 
