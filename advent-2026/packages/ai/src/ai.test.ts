@@ -11,6 +11,16 @@ describe("extractNumbers", () => {
   });
 });
 
+describe("英語の単位", () => {
+  it("million / billion / 7B を読む。3D や 5G は単位にしない", () => {
+    const vals = extractNumbers("45 million papers, a 7B model, 1.5 billion, 3D scenes, 5G").map((n) => n.value);
+    expect(vals).toEqual([4.5e7, 7e9, 1.5e9, 3, 5]);
+  });
+  it("英語の抄録の数字を日本語で書き直しても一致する", () => {
+    expect(checkNumbers("4,500 万本の論文", [4.5e7]).ok).toBe(true);
+  });
+});
+
 describe("checkNumbers", () => {
   it("丸めた表記は桁の範囲内なら一致", () => {
     expect(checkNumbers("およそ1.2万km", [12345]).ok).toBe(true);

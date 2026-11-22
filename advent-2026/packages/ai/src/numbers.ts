@@ -11,7 +11,21 @@ export interface ExtractedNumber {
   percent: boolean;
 }
 
-const MULTIPLIERS: Record<string, number> = { 千: 1e3, 万: 1e4, 億: 1e8, 兆: 1e12 };
+const MULTIPLIERS: Record<string, number> = {
+  千: 1e3,
+  万: 1e4,
+  億: 1e8,
+  兆: 1e12,
+  thousand: 1e3,
+  million: 1e6,
+  billion: 1e9,
+  trillion: 1e12,
+  // 「7B」「45M」のように数字の直後に付く英語の略記
+  K: 1e3,
+  M: 1e6,
+  B: 1e9,
+  T: 1e12,
+};
 
 /** 全角数字・全角記号を半角にそろえる */
 function normalize(text: string): string {
@@ -20,13 +34,16 @@ function normalize(text: string): string {
     .replace(/％/g, "%");
 }
 
-// 1,234.5 / 1234 / -3.2 / 1.2万 / 45% など
-const NUMBER_RE = /(-)?(\d{1,3}(?:,\d{3})+|\d+)(?:\.(\d+))?\s*(千|万|億|兆)?\s*(%)?/g;
+// 1,234.5 / 1234 / -3.2 / 1.2万 / 45% / 45 million / 7B など
+// K/M/B/T は数字の直後で、後ろに英字が続かないときだけ単位とみなす（「3D」「5G」などと区別）
+const NUMBER_RE =
+  /(-)?(\d{1,3}(?:,\d{3})+|\d+)(?:\.(\d+))?(?:\s*(千|万|億|兆)|\s+(thousand|million|billion|trillion)\b|([KMBT])(?![A-Za-z]))?\s*(%)?/g;
 
 export function extractNumbers(text: string): ExtractedNumber[] {
   const out: ExtractedNumber[] = [];
   for (const m of normalize(text).matchAll(NUMBER_RE)) {
-    const [raw, minus, intPart, frac, unit, pct] = m;
+    const [raw, minus, intPart, frac, jaUnit, enWord, enAbbr, pct] = m;
+    const unit = jaUnit ?? enWord ?? enAbbr;
     const decimals = frac ? frac.length : 0;
     const mult = unit ? MULTIPLIERS[unit] : 1;
     const base = Number(`${intPart.replace(/,/g, "")}${frac ? `.${frac}` : ""}`);

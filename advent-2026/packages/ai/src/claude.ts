@@ -132,6 +132,23 @@ export async function generateText(opts: GenerateOptions): Promise<string> {
 }
 
 /**
+ * 文章を少しずつ受け取る（長い文章を画面に順に出すとき用）。
+ * 最後まで受け取ると、generateText と同じく使用量を記録し、拒否・途中切れはエラーにする。
+ */
+export async function* streamText(opts: GenerateOptions): AsyncGenerator<string, void> {
+  const model = resolveModel(opts.model);
+  const started = Date.now();
+  const stream = (opts.client ?? getClient()).beta.messages.stream({
+    ...buildParams(opts, model),
+    output_config: { effort: opts.effort ?? "low" },
+  });
+  for await (const event of stream) {
+    if (event.type === "content_block_delta" && event.delta.type === "text_delta") yield event.delta.text;
+  }
+  finish(opts, model, started, await stream.finalMessage());
+}
+
+/**
  * Zod のスキーマに沿った JSON を生成して、検証済みのオブジェクトを返す。
  * 「どの色をどこに割り当てるか」のような、AI に判断させて結果をコードで使う場面向け。
  */

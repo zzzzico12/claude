@@ -7,6 +7,7 @@ export {
   getClient,
   logUsage,
   resolveModel,
+  streamText,
   type Effort,
   type GenerateOptions,
   type UsageRecord,
