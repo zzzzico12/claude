@@ -5,7 +5,6 @@
 ## 未決定
 
 - [ ] **アプリの中で使うClaudeのモデル**：品質と料金のバランス
-- [ ] **ドメインとURLの形**：当面は Vercel の既定URL（`<プロジェクト名>.vercel.app`）。独自ドメインにするかは後で決める
 - [ ] **月の予算の上限**：Claude APIと各サービスの利用料
 
 ## 決定済み
@@ -17,4 +16,5 @@
 - 2026-11-21：**APIキーを隠す場所**は、各アプリの `api/` に置く Vercel Functions。キーは Vercel プロジェクトの環境変数に入れる
 - 2026-11-22：**回数の上限とキャッシュの保存先**は Upstash Redis（Vercel の Marketplace から追加。無料枠）。理由：Vercel Functions はインスタンスが入れ替わるので、メモリでは回数を保てない。Day02 以降の公開デモでも使い回す。環境変数 `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`（または `KV_REST_API_URL` / `KV_REST_API_TOKEN`）があれば自動で使い、なければメモリ（手元の開発用）
 - 2026-11-22：**公開デモの上限**は、Day01 で全体1日10回・IPごと3回（Sonnet 5.5 で1回約10円）
+- 2026-11-23：**URLの形**は `https://advent26-<アプリ名>.vercel.app`。Vercel のプロジェクト名も `advent26-<アプリ名>` にする。理由：1アプリ1プロジェクトなので、名前をそろえると記事やREADMEで見分けやすい。独自ドメインは使わない（手間に見合わない）
 - 2026-11-21：**pnpm** は 9.15.0（`package.json` の `packageManager`）。Node 25 には corepack が付いていないので、手元では `npm i -g pnpm@9.15.0` で入れる

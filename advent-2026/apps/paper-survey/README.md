@@ -38,7 +38,7 @@ OpenAlexは無料のAPIキーが必要（2026年2月から必須）。検索は�
 - [x] 確かめ方のスクリプトを動かし、結果を `eval/RESULTS.md` に書いた
 - [x] 画面またはREADMEに出典を表示した
 - [ ] スマホなど実機での動作確認をした（必要な場合）
-- [ ] デプロイした
+- [x] デプロイした（https://advent26-paper-survey.vercel.app ）
 - [ ] 記事の下書き `ARTICLE.md` を書いた
 
 ## データと出典
@@ -120,10 +120,12 @@ OpenAlex 検索（検索語ごとに関連度順で上位100件、抄録あり�
 
 ### デプロイ（Vercel）
 
+- 公開URL：https://advent26-paper-survey.vercel.app （Vercel のプロジェクト名 `advent26-paper-survey`）
 - Vercel で `zzzzico12/claude` を Import し、**Root Directory を `advent-2026/apps/paper-survey`** にする。ほかの設定（インストール・ビルド・関数の実行時間）は `vercel.json` に書いてある
 - 環境変数：`ANTHROPIC_API_KEY`・`CLAUDE_MODEL`・`OPENALEX_API_KEY`・`CONTACT_EMAIL`
 - Storage（Marketplace）から Upstash Redis を追加してプロジェクトにつなぐ（環境変数は自動で入る）
-- このフォルダか `packages/` に変更がないコミットでは、ビルドしない（`ignoreCommand`）
+- このフォルダか `packages/` に変更がないコミットでは、ビルドしない（`ignoreCommand`）。環境変数だけ変えて Redeploy するときは「Use project's Ignore Build Step」のチェックを外す
+- 2026-11-23 本番で確認：サーベイ1件 38秒・根拠の番号108か所すべて実在・照合できない数字0。同じテーマの2回目はキャッシュから0秒で返った
 
 ### 動かし方
 
