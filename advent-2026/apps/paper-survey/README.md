@@ -116,7 +116,14 @@ OpenAlex 検索（検索語ごとに関連度順で上位100件、抄録あり�
 
 - 同じテーマの結果はキャッシュして、Claude を再度呼ばない（キャッシュから返すときは回数に数えない）
 - **1日の上限は全体で10回**（2026-11-22 決定。Sonnet 5.5 で1回約10円 → 1日最大約100円）。1人で使い切らないよう、IPごとに1日3回まで
-- 回数とキャッシュの保存先：未決定（Upstash Redis か、合言葉方式か）。手元の開発ではメモリに置く。`lib/store.ts` は Upstash の環境変数（`UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`、または `KV_REST_API_URL` / `KV_REST_API_TOKEN`）があれば自動でそちらを使う
+- 回数とキャッシュの保存先：**Upstash Redis**（2026-11-22 決定）。手元の開発ではメモリに置く。`lib/store.ts` は Upstash の環境変数（`UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`、または `KV_REST_API_URL` / `KV_REST_API_TOKEN`）があれば自動でそちらを使う
+
+### デプロイ（Vercel）
+
+- Vercel で `zzzzico12/claude` を Import し、**Root Directory を `advent-2026/apps/paper-survey`** にする。ほかの設定（インストール・ビルド・関数の実行時間）は `vercel.json` に書いてある
+- 環境変数：`ANTHROPIC_API_KEY`・`CLAUDE_MODEL`・`OPENALEX_API_KEY`・`CONTACT_EMAIL`
+- Storage（Marketplace）から Upstash Redis を追加してプロジェクトにつなぐ（環境変数は自動で入る）
+- このフォルダか `packages/` に変更がないコミットでは、ビルドしない（`ignoreCommand`）
 
 ### 動かし方
 

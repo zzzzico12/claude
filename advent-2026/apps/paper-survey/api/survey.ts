@@ -9,7 +9,6 @@ import { findPapers } from "../lib/pipeline.js";
 import { getStore } from "../lib/store.js";
 import { checkSurvey, streamSurvey } from "../lib/survey.js";
 
-export const maxDuration = 120;
 
 const DAILY_LIMIT = 10; // 全体で1日10回（Sonnet 5.5 で1回約10円）
 const PER_IP_LIMIT = 3;
