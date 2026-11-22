@@ -1,0 +1,106 @@
+:root {
+  --bg: #fbfaf7;
+  --fg: #1d1d1f;
+  --muted: #6b6b70;
+  --line: #e4e1da;
+  --card: #ffffff;
+  --accent: #1f5fbf;
+  --ok: #1d7a46;
+  --warn: #b3541e;
+  --error-bg: #fdecea;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16171a;
+    --fg: #ececee;
+    --muted: #a0a0a8;
+    --line: #2d2f35;
+    --card: #1e2024;
+    --accent: #7fb0ff;
+    --ok: #6fd39b;
+    --warn: #f0a070;
+    --error-bg: #3a2220;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif;
+  line-height: 1.75;
+}
+a { color: var(--accent); }
+header.site, main, #attribution { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+header.site { padding-top: 40px; }
+h1 { font-size: 1.9rem; margin: 0 0 4px; letter-spacing: 0.02em; }
+.lead { color: var(--muted); margin: 0 0 24px; }
+
+.search { display: flex; gap: 12px; align-items: end; flex-wrap: wrap; }
+.search label { display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; color: var(--muted); }
+.search .theme { flex: 1 1 320px; }
+input, select, button { font: inherit; }
+input, select {
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--fg);
+}
+button#submit {
+  padding: 10px 20px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+@media (prefers-color-scheme: dark) { button#submit { color: #0d1626; } }
+button#submit:disabled { opacity: 0.5; cursor: wait; }
+.examples { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; font-size: 0.85rem; color: var(--muted); align-items: center; }
+.examples button {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--fg);
+  border-radius: 999px;
+  padding: 2px 12px;
+  cursor: pointer;
+}
+.note { font-size: 0.8rem; color: var(--muted); }
+
+.status { padding: 10px 14px; border-radius: 8px; background: var(--card); border: 1px solid var(--line); }
+.status.error { background: var(--error-bg); border-color: transparent; }
+
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 32px; margin-top: 16px; }
+@media (max-width: 860px) { .layout { grid-template-columns: 1fr; } .side { order: -1; } }
+.survey h2 { font-size: 1.3rem; border-bottom: 1px solid var(--line); padding-bottom: 4px; margin-top: 2em; }
+.survey h2:first-child { margin-top: 0; }
+.survey h3 { font-size: 1.05rem; margin-bottom: 0.2em; }
+.cite { font-size: 0.8em; text-decoration: none; margin-left: 1px; }
+
+.side section { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; font-size: 0.88rem; }
+.side h2 { font-size: 0.95rem; margin: 0 0 6px; }
+.side ul { padding-left: 0; list-style: none; margin: 0; }
+.side li { margin: 6px 0; }
+.ok { color: var(--ok); font-weight: 700; margin-right: 4px; }
+.warn { color: var(--warn); font-weight: 700; margin-right: 4px; }
+.queries { color: var(--muted); font-size: 0.82rem; }
+
+.papers-title { margin-top: 40px; font-size: 1.2rem; }
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
+table { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; }
+th { font-weight: 600; color: var(--muted); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+tr:target { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.meta { color: var(--muted); font-size: 0.8rem; }
+.muted { color: var(--muted); }
+.disclaimer { font-size: 0.8rem; color: var(--muted); margin-top: 12px; }
+
+#attribution { margin: 48px auto 32px; font-size: 0.8rem; color: var(--muted); }
+#attribution h2 { font-size: 0.9rem; }
+#attribution ul { padding-left: 1.2em; }

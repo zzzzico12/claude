@@ -1,0 +1,822 @@
+[
+  {
+    "survey": "W4389984066",
+    "theme": "大規模言語モデルの検索拡張生成（RAG）",
+    "queries": [
+      "retrieval-augmented generation large language models",
+      "retrieval augmented generation",
+      "RAG LLM",
+      "knowledge-grounded text generation retrieval"
+    ],
+    "candidates": 263,
+    "refs": 158,
+    "plain20": {
+      "hits": 9,
+      "k": 20,
+      "recall": 0.056962025316455694,
+      "precision": 0.45
+    },
+    "cit20": {
+      "hits": 8,
+      "k": 20,
+      "recall": 0.05063291139240506,
+      "precision": 0.4
+    },
+    "ours20": {
+      "hits": 11,
+      "k": 20,
+      "recall": 0.06962025316455696,
+      "precision": 0.55
+    },
+    "ours100": {
+      "hits": 19,
+      "k": 100,
+      "recall": 0.12025316455696203,
+      "precision": 0.19
+    },
+    "pool": {
+      "hits": 29,
+      "k": 263,
+      "recall": 0.18354430379746836,
+      "precision": 0.11026615969581749
+    },
+    "ourTop20": [
+      {
+        "title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
+        "year": 2020,
+        "citedBy": 19767,
+        "hit": true
+      },
+      {
+        "title": "In-Context Retrieval-Augmented Language Models",
+        "year": 2023,
+        "citedBy": 1422,
+        "hit": true
+      },
+      {
+        "title": "AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation",
+        "year": 2023,
+        "citedBy": 4206,
+        "hit": false
+      },
+      {
+        "title": "Ragas: Automated Evaluation of Retrieval Augmented Generation",
+        "year": 2023,
+        "citedBy": 801,
+        "hit": true
+      },
+      {
+        "title": "Enhancing Retrieval-Augmented Large Language Models with Iterative Retrieval-Generation Synergy",
+        "year": 2023,
+        "citedBy": 752,
+        "hit": true
+      },
+      {
+        "title": "Atlas: Few-shot Learning with Retrieval Augmented Language Models",
+        "year": 2022,
+        "citedBy": 997,
+        "hit": true
+      },
+      {
+        "title": "GLIGEN: Open-Set Grounded Text-to-Image Generation",
+        "year": 2023,
+        "citedBy": 1416,
+        "hit": false
+      },
+      {
+        "title": "Query Rewriting in Retrieval-Augmented Large Language Models",
+        "year": 2023,
+        "citedBy": 1001,
+        "hit": true
+      },
+      {
+        "title": "Improving the Domain Adaptation of Retrieval Augmented Generation (RAG) Models for Open Domain Question Answering",
+        "year": 2022,
+        "citedBy": 641,
+        "hit": true
+      },
+      {
+        "title": "PaperQA: Retrieval-Augmented Generative Agent for Scientific Research",
+        "year": 2023,
+        "citedBy": 389,
+        "hit": true
+      },
+      {
+        "title": "A Survey on Retrieval-Augmented Text Generation",
+        "year": 2022,
+        "citedBy": 419,
+        "hit": false
+      },
+      {
+        "title": "Enhancing Financial Sentiment Analysis via Retrieval Augmented Large Language Models",
+        "year": 2023,
+        "citedBy": 363,
+        "hit": false
+      },
+      {
+        "title": "Learning to Filter Context for Retrieval-Augmented Generation",
+        "year": 2023,
+        "citedBy": 249,
+        "hit": true
+      },
+      {
+        "title": "Re-Imagen: Retrieval-Augmented Text-to-Image Generator",
+        "year": 2022,
+        "citedBy": 269,
+        "hit": false
+      },
+      {
+        "title": "A Study on the Implementation of Generative AI Services Using an Enterprise Data-Based LLM Application Architecture",
+        "year": 2023,
+        "citedBy": 180,
+        "hit": false
+      },
+      {
+        "title": "ChipNeMo: Domain-Adapted LLMs for Chip Design",
+        "year": 2023,
+        "citedBy": 476,
+        "hit": false
+      },
+      {
+        "title": "Lift Yourself Up: Retrieval-augmented Text Generation with Self-Memory",
+        "year": 2023,
+        "citedBy": 147,
+        "hit": true
+      },
+      {
+        "title": "Retrieval-augmented Recommender System: Enhancing Recommender Systems with Large Language Models",
+        "year": 2023,
+        "citedBy": 158,
+        "hit": false
+      },
+      {
+        "title": "Knowledge Graph-Augmented Language Models for Knowledge-Grounded Dialogue Generation",
+        "year": 2023,
+        "citedBy": 129,
+        "hit": true
+      },
+      {
+        "title": "LeanDojo: Theorem Proving with Retrieval-Augmented Language Models",
+        "year": 2023,
+        "citedBy": 695,
+        "hit": false
+      }
+    ]
+  },
+  {
+    "survey": "W4393065402",
+    "theme": "大規模言語モデルを使った自律エージェント",
+    "queries": [
+      "large language model autonomous agents",
+      "LLM-based agents",
+      "LLM agent planning tool use",
+      "language model agents"
+    ],
+    "candidates": 293,
+    "refs": 171,
+    "plain20": {
+      "hits": 8,
+      "k": 20,
+      "recall": 0.04678362573099415,
+      "precision": 0.4
+    },
+    "cit20": {
+      "hits": 10,
+      "k": 20,
+      "recall": 0.05847953216374269,
+      "precision": 0.5
+    },
+    "ours20": {
+      "hits": 11,
+      "k": 20,
+      "recall": 0.06432748538011696,
+      "precision": 0.55
+    },
+    "ours100": {
+      "hits": 31,
+      "k": 100,
+      "recall": 0.18128654970760233,
+      "precision": 0.31
+    },
+    "pool": {
+      "hits": 39,
+      "k": 293,
+      "recall": 0.22807017543859648,
+      "precision": 0.13310580204778158
+    },
+    "ourTop20": [
+      {
+        "title": "AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation",
+        "year": 2023,
+        "citedBy": 4206,
+        "hit": true
+      },
+      {
+        "title": "CAMEL: Communicative Agents for \"Mind\" Exploration of Large Language Model Society",
+        "year": 2023,
+        "citedBy": 2892,
+        "hit": true
+      },
+      {
+        "title": "Tree of Thoughts: Deliberate Problem Solving with Large Language Models",
+        "year": 2023,
+        "citedBy": 7650,
+        "hit": true
+      },
+      {
+        "title": "QLoRA: Efficient Finetuning of Quantized LLMs",
+        "year": 2023,
+        "citedBy": 7544,
+        "hit": false
+      },
+      {
+        "title": "ChatDev: Communicative Agents for Software Development",
+        "year": 2023,
+        "citedBy": 1254,
+        "hit": true
+      },
+      {
+        "title": "API-Bank: A Comprehensive Benchmark for Tool-Augmented LLMs",
+        "year": 2023,
+        "citedBy": 1183,
+        "hit": true
+      },
+      {
+        "title": "Language Models as Zero-Shot Planners: Extracting Actionable Knowledge for Embodied Agents",
+        "year": 2022,
+        "citedBy": 1568,
+        "hit": true
+      },
+      {
+        "title": "LLM+P: Empowering Large Language Models with Optimal Planning Proficiency",
+        "year": 2023,
+        "citedBy": 911,
+        "hit": true
+      },
+      {
+        "title": "Describe, Explain, Plan and Select: Interactive Planning with LLMs Enables Open-World Multi-Task Agents",
+        "year": 2023,
+        "citedBy": 737,
+        "hit": true
+      },
+      {
+        "title": "Character-LLM: A Trainable Agent for Role-Playing",
+        "year": 2023,
+        "citedBy": 638,
+        "hit": false
+      },
+      {
+        "title": "Multi-Agent Collaboration: Harnessing the Power of Intelligent LLM Agents",
+        "year": 2023,
+        "citedBy": 618,
+        "hit": false
+      },
+      {
+        "title": "Mind2Web: Towards a Generalist Agent for the Web",
+        "year": 2023,
+        "citedBy": 1746,
+        "hit": true
+      },
+      {
+        "title": "Is ChatGPT Good at Search? Investigating Large Language Models as Re-Ranking Agents",
+        "year": 2023,
+        "citedBy": 1175,
+        "hit": false
+      },
+      {
+        "title": "On the Planning Abilities of Large Language Models - A Critical Investigation",
+        "year": 2023,
+        "citedBy": 555,
+        "hit": false
+      },
+      {
+        "title": "Prompt Injection attack against LLM-integrated Applications",
+        "year": 2023,
+        "citedBy": 1238,
+        "hit": false
+      },
+      {
+        "title": "Challenges and Applications of Large Language Models",
+        "year": 2023,
+        "citedBy": 1083,
+        "hit": false
+      },
+      {
+        "title": "ToolQA: A Dataset for LLM Question Answering with External Tools",
+        "year": 2023,
+        "citedBy": 472,
+        "hit": false
+      },
+      {
+        "title": "Ghost in the Minecraft: Generally Capable Agents for Open-World Environments via Large Language Models with Text-based Knowledge and Memory",
+        "year": 2023,
+        "citedBy": 429,
+        "hit": true
+      },
+      {
+        "title": "S$^3$: Social-network Simulation System with Large Language Model-Empowered Agents",
+        "year": 2023,
+        "citedBy": 366,
+        "hit": true
+      },
+      {
+        "title": "Theory of Mind for Multi-Agent Collaboration via Large Language Models",
+        "year": 2023,
+        "citedBy": 359,
+        "hit": false
+      }
+    ]
+  },
+  {
+    "survey": "W4387195417",
+    "theme": "拡散モデル",
+    "queries": [
+      "diffusion models",
+      "denoising diffusion probabilistic models",
+      "score-based generative models",
+      "diffusion generative modeling"
+    ],
+    "candidates": 300,
+    "refs": 340,
+    "plain20": {
+      "hits": 9,
+      "k": 20,
+      "recall": 0.026470588235294117,
+      "precision": 0.45
+    },
+    "cit20": {
+      "hits": 10,
+      "k": 20,
+      "recall": 0.029411764705882353,
+      "precision": 0.5
+    },
+    "ours20": {
+      "hits": 11,
+      "k": 20,
+      "recall": 0.03235294117647059,
+      "precision": 0.55
+    },
+    "ours100": {
+      "hits": 42,
+      "k": 100,
+      "recall": 0.12352941176470589,
+      "precision": 0.42
+    },
+    "pool": {
+      "hits": 64,
+      "k": 300,
+      "recall": 0.18823529411764706,
+      "precision": 0.21333333333333335
+    },
+    "ourTop20": [
+      {
+        "title": "Denoising Diffusion Probabilistic Models",
+        "year": 2020,
+        "citedBy": 21049,
+        "hit": false
+      },
+      {
+        "title": "High-Resolution Image Synthesis with Latent Diffusion Models",
+        "year": 2021,
+        "citedBy": 37545,
+        "hit": true
+      },
+      {
+        "title": "Score-Based Generative Modeling through Stochastic Differential Equations",
+        "year": 2020,
+        "citedBy": 8202,
+        "hit": false
+      },
+      {
+        "title": "Diffusion Models Beat GANs on Image Synthesis",
+        "year": 2021,
+        "citedBy": 6384,
+        "hit": true
+      },
+      {
+        "title": "Denoising Diffusion Implicit Models",
+        "year": 2020,
+        "citedBy": 11142,
+        "hit": false
+      },
+      {
+        "title": "Elucidating the Design Space of Diffusion-Based Generative Models",
+        "year": 2022,
+        "citedBy": 4090,
+        "hit": true
+      },
+      {
+        "title": "RePaint: Inpainting using Denoising Diffusion Probabilistic Models",
+        "year": 2022,
+        "citedBy": 3394,
+        "hit": true
+      },
+      {
+        "title": "Progressive Distillation for Fast Sampling of Diffusion Models",
+        "year": 2022,
+        "citedBy": 2699,
+        "hit": false
+      },
+      {
+        "title": "Improved Denoising Diffusion Probabilistic Models",
+        "year": 2021,
+        "citedBy": 3093,
+        "hit": false
+      },
+      {
+        "title": "Video Diffusion Models",
+        "year": 2022,
+        "citedBy": 1315,
+        "hit": true
+      },
+      {
+        "title": "Palette: Image-to-Image Diffusion Models",
+        "year": 2022,
+        "citedBy": 2693,
+        "hit": true
+      },
+      {
+        "title": "Structured Denoising Diffusion Models in Discrete State-Spaces",
+        "year": 2021,
+        "citedBy": 1224,
+        "hit": false
+      },
+      {
+        "title": "Photorealistic Text-to-Image Diffusion Models with Deep Language Understanding",
+        "year": 2022,
+        "citedBy": 4504,
+        "hit": true
+      },
+      {
+        "title": "Denoising Diffusion Restoration Models",
+        "year": 2022,
+        "citedBy": 1654,
+        "hit": true
+      },
+      {
+        "title": "Diffusion Models for Adversarial Purification",
+        "year": 2022,
+        "citedBy": 817,
+        "hit": true
+      },
+      {
+        "title": "Improved Techniques for Training Score-Based Generative Models",
+        "year": 2020,
+        "citedBy": 1227,
+        "hit": false
+      },
+      {
+        "title": "ILVR: Conditioning Method for Denoising Diffusion Probabilistic Models",
+        "year": 2021,
+        "citedBy": 918,
+        "hit": false
+      },
+      {
+        "title": "AnoDDPM: Anomaly Detection with Denoising Diffusion Probabilistic Models using Simplex Noise",
+        "year": 2022,
+        "citedBy": 725,
+        "hit": true
+      },
+      {
+        "title": "Understanding Diffusion Models: A Unified Perspective",
+        "year": 2022,
+        "citedBy": 687,
+        "hit": true
+      },
+      {
+        "title": "Pseudo Numerical Methods for Diffusion Models on Manifolds",
+        "year": 2022,
+        "citedBy": 901,
+        "hit": false
+      }
+    ]
+  },
+  {
+    "survey": "W3187418919",
+    "theme": "画像認識のためのVision Transformer",
+    "queries": [
+      "Vision Transformer image recognition",
+      "ViT image classification",
+      "transformer image classification",
+      "self-attention visual recognition"
+    ],
+    "candidates": 351,
+    "refs": 325,
+    "plain20": {
+      "hits": 6,
+      "k": 20,
+      "recall": 0.018461538461538463,
+      "precision": 0.3
+    },
+    "cit20": {
+      "hits": 5,
+      "k": 20,
+      "recall": 0.015384615384615385,
+      "precision": 0.25
+    },
+    "ours20": {
+      "hits": 8,
+      "k": 20,
+      "recall": 0.024615384615384615,
+      "precision": 0.4
+    },
+    "ours100": {
+      "hits": 13,
+      "k": 100,
+      "recall": 0.04,
+      "precision": 0.13
+    },
+    "pool": {
+      "hits": 19,
+      "k": 351,
+      "recall": 0.05846153846153846,
+      "precision": 0.05413105413105413
+    },
+    "ourTop20": [
+      {
+        "title": "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale",
+        "year": 2020,
+        "citedBy": 72151,
+        "hit": true
+      },
+      {
+        "title": "Learning Texture Transformer Network for Image Super-Resolution",
+        "year": 2020,
+        "citedBy": 1253,
+        "hit": true
+      },
+      {
+        "title": "Meshed-Memory Transformer for Image Captioning",
+        "year": 2019,
+        "citedBy": 1528,
+        "hit": false
+      },
+      {
+        "title": "Exploring Self-Attention for Image Recognition",
+        "year": 2020,
+        "citedBy": 1192,
+        "hit": false
+      },
+      {
+        "title": "Self-Attention Generative Adversarial Networks",
+        "year": 2018,
+        "citedBy": 3905,
+        "hit": false
+      },
+      {
+        "title": "Transformers are RNNs: Fast Autoregressive Transformers with Linear Attention",
+        "year": 2020,
+        "citedBy": 3701,
+        "hit": true
+      },
+      {
+        "title": "Visual Transformers: Token-based Image Representation and Processing for Computer Vision",
+        "year": 2020,
+        "citedBy": 926,
+        "hit": true
+      },
+      {
+        "title": "Residual Attention Network for Image Classification",
+        "year": 2017,
+        "citedBy": 4609,
+        "hit": true
+      },
+      {
+        "title": "Learning RoI Transformer for Oriented Object Detection in Aerial Images",
+        "year": 2019,
+        "citedBy": 1975,
+        "hit": false
+      },
+      {
+        "title": "Deep Audio-Visual Speech Recognition",
+        "year": 2018,
+        "citedBy": 1141,
+        "hit": false
+      },
+      {
+        "title": "Stand-Alone Self-Attention in Vision Models",
+        "year": 2019,
+        "citedBy": 1642,
+        "hit": true
+      },
+      {
+        "title": "Toward Transformer-Based Object Detection",
+        "year": 2020,
+        "citedBy": 353,
+        "hit": true
+      },
+      {
+        "title": "Deep Modular Co-Attention Networks for Visual Question Answering",
+        "year": 2019,
+        "citedBy": 1199,
+        "hit": false
+      },
+      {
+        "title": "HSI-BERT: Hyperspectral Image Classification Using the Bidirectional Encoder Representation From Transformers",
+        "year": 2019,
+        "citedBy": 414,
+        "hit": false
+      },
+      {
+        "title": "Entangled Transformer for Image Captioning",
+        "year": 2019,
+        "citedBy": 475,
+        "hit": true
+      },
+      {
+        "title": "Self-Supervised Pretraining of Transformers for Satellite Image Time Series Classification",
+        "year": 2020,
+        "citedBy": 259,
+        "hit": false
+      },
+      {
+        "title": "Sign Language Transformers: Joint End-to-End Sign Language Recognition and Translation",
+        "year": 2020,
+        "citedBy": 1141,
+        "hit": false
+      },
+      {
+        "title": "Spatial Transformer Networks",
+        "year": 2015,
+        "citedBy": 6419,
+        "hit": false
+      },
+      {
+        "title": "Multimodal Transformer With Multi-View Visual Representation for Image Captioning",
+        "year": 2019,
+        "citedBy": 534,
+        "hit": false
+      },
+      {
+        "title": "Convolutional Neural Networks for Image-Based High-Throughput Plant Phenotyping: A Review",
+        "year": 2020,
+        "citedBy": 447,
+        "hit": false
+      }
+    ]
+  },
+  {
+    "survey": "W4390215524",
+    "theme": "人間のフィードバックによる強化学習（RLHF）",
+    "queries": [
+      "reinforcement learning from human feedback",
+      "RLHF language models",
+      "human preference reward modeling",
+      "aligning language models human feedback"
+    ],
+    "candidates": 312,
+    "refs": 239,
+    "plain20": {
+      "hits": 6,
+      "k": 20,
+      "recall": 0.02510460251046025,
+      "precision": 0.3
+    },
+    "cit20": {
+      "hits": 7,
+      "k": 20,
+      "recall": 0.029288702928870293,
+      "precision": 0.35
+    },
+    "ours20": {
+      "hits": 9,
+      "k": 20,
+      "recall": 0.03765690376569038,
+      "precision": 0.45
+    },
+    "ours100": {
+      "hits": 28,
+      "k": 100,
+      "recall": 0.11715481171548117,
+      "precision": 0.28
+    },
+    "pool": {
+      "hits": 47,
+      "k": 312,
+      "recall": 0.19665271966527198,
+      "precision": 0.15064102564102563
+    },
+    "ourTop20": [
+      {
+        "title": "Direct Preference Optimization: Your Language Model is Secretly a Reward Model",
+        "year": 2023,
+        "citedBy": 11061,
+        "hit": true
+      },
+      {
+        "title": "Training language models to follow instructions with human feedback",
+        "year": 2022,
+        "citedBy": 11041,
+        "hit": false
+      },
+      {
+        "title": "Training a Helpful and Harmless Assistant with Reinforcement Learning from Human Feedback",
+        "year": 2022,
+        "citedBy": 6055,
+        "hit": true
+      },
+      {
+        "title": "ImageReward: Learning and Evaluating Human Preferences for Text-to-Image Generation",
+        "year": 2023,
+        "citedBy": 1885,
+        "hit": true
+      },
+      {
+        "title": "RLAIF vs. RLHF: Scaling Reinforcement Learning from Human Feedback with AI Feedback",
+        "year": 2023,
+        "citedBy": 1359,
+        "hit": false
+      },
+      {
+        "title": "Learning to summarize from human feedback",
+        "year": 2020,
+        "citedBy": 3670,
+        "hit": false
+      },
+      {
+        "title": "Open Problems and Fundamental Limitations of Reinforcement Learning from Human Feedback",
+        "year": 2023,
+        "citedBy": 1087,
+        "hit": false
+      },
+      {
+        "title": "Red Teaming Language Models to Reduce Harms: Methods, Scaling Behaviors, and Lessons Learned",
+        "year": 2022,
+        "citedBy": 1680,
+        "hit": false
+      },
+      {
+        "title": "Universal and Transferable Adversarial Attacks on Aligned Language Models",
+        "year": 2023,
+        "citedBy": 4897,
+        "hit": false
+      },
+      {
+        "title": "Deep reinforcement learning from human preferences",
+        "year": 2017,
+        "citedBy": 7318,
+        "hit": false
+      },
+      {
+        "title": "Summary of ChatGPT-Related research and perspective towards the future of large language models",
+        "year": 2023,
+        "citedBy": 1583,
+        "hit": true
+      },
+      {
+        "title": "UltraFeedback: Boosting Language Models with Scaled AI Feedback",
+        "year": 2023,
+        "citedBy": 951,
+        "hit": false
+      },
+      {
+        "title": "Reinforced Self-Training (ReST) for Language Modeling",
+        "year": 2023,
+        "citedBy": 668,
+        "hit": true
+      },
+      {
+        "title": "Aligning Large Language Models with Human: A Survey",
+        "year": 2023,
+        "citedBy": 660,
+        "hit": false
+      },
+      {
+        "title": "Fine-Tuning Language Models from Human Preferences",
+        "year": 2019,
+        "citedBy": 3329,
+        "hit": true
+      },
+      {
+        "title": "OpenAssistant Conversations -- Democratizing Large Language Model Alignment",
+        "year": 2023,
+        "citedBy": 572,
+        "hit": true
+      },
+      {
+        "title": "Aligning Large Multimodal Models with Factually Augmented RLHF",
+        "year": 2023,
+        "citedBy": 662,
+        "hit": false
+      },
+      {
+        "title": "Aligning Text-to-Image Models using Human Feedback",
+        "year": 2023,
+        "citedBy": 544,
+        "hit": true
+      },
+      {
+        "title": "SLiC-HF: Sequence Likelihood Calibration with Human Feedback",
+        "year": 2023,
+        "citedBy": 517,
+        "hit": true
+      },
+      {
+        "title": "Fine-Grained Human Feedback Gives Better Rewards for Language Model Training",
+        "year": 2023,
+        "citedBy": 490,
+        "hit": false
+      }
+    ]
+  }
+]
