@@ -1,0 +1,850 @@
+[
+ {
+  "group": "south_america",
+  "groupName": "南アメリカ",
+  "year": 2024,
+  "kind": "最も多かった年",
+  "loss_man_ha": 757,
+  "prev_loss_man_ha": 463,
+  "change_pct": 63,
+  "ratio_to_prev": 1.6,
+  "fire_share_pct": 49,
+  "primary_share_pct": 64,
+  "drivers": [
+   {
+    "name": "山火事",
+    "share_pct": 51
+   },
+   {
+    "name": "農地・牧草地への転換",
+    "share_pct": 40
+   }
+  ],
+  "countries": [
+   {
+    "name": "ブラジル",
+    "loss_man_ha": 439,
+    "change_pct": 57
+   },
+   {
+    "name": "ボリビア",
+    "loss_man_ha": 181,
+    "change_pct": 160
+   },
+   {
+    "name": "ペルー",
+    "loss_man_ha": 27,
+    "change_pct": 18
+   }
+  ],
+  "text": "2024年の南アメリカでは、森の減少が757万haに達し、前年の463万haから大きく増えました。主な原因は山火事で、火災の割合は49%です。減少の原因別では山火事が51%、農地・牧草地への転換が40%でした。ブラジルでは、記録的な干ばつが火災を助長したとされ、原生林の減少の66%が火災によるものでした。アマゾンの樹木被覆の減少は2016年以来で最大でした。ブラジルの減少は439万ha（57%増）です。ボリビアは181万ha（160%増）でした。ボリビアでは、干ばつと山火事に加え、政府が後押しした農業拡大が主な原因とされています。",
+  "citations": [
+   {
+    "url": "https://www.wri.org/news/release-global-forest-loss-shatters-records-2024-fueled-massive-fires",
+    "title": "RELEASE: Global Forest Loss Shatters Records in 2024, Fueled by Massive Fires",
+    "cited_text": "Fires, fueled by the worst drought on record, caused 66% of that loss — an over sixfold increase from 2023.\n\n"
+   },
+   {
+    "url": "https://www.wri.org/news/release-global-forest-loss-shatters-records-2024-fueled-massive-fires",
+    "title": "RELEASE: Global Forest Loss Shatters Records in 2024, Fueled by Massive Fires",
+    "cited_text": "The Amazon experienced its highest tree cover loss since 2016, while the Pantanal suffered the highest percentage of tree cover loss in the country.\n\n"
+   },
+   {
+    "url": "https://www.cbc.ca/news/climate/global-forest-loss-2024-1.7540231?cmp=rss",
+    "title": "global forest loss 2024 1.7540231",
+    "cited_text": "Bolivia's forest loss surged by 200 per cent in 2024, with a drought, wildfires and a government-incentivized agricultural expansion as the leading ca..."
+   }
+  ],
+  "unmatchedNumbers": [],
+  "searches": 1,
+  "costUsd": 0.047
+ },
+ {
+  "group": "south_america",
+  "groupName": "南アメリカ",
+  "year": 2016,
+  "kind": "前の年から最も増えた年",
+  "loss_man_ha": 736,
+  "prev_loss_man_ha": 340,
+  "change_pct": 117,
+  "ratio_to_prev": 2.2,
+  "fire_share_pct": 37,
+  "primary_share_pct": 48,
+  "drivers": [
+   {
+    "name": "農地・牧草地への転換",
+    "share_pct": 59
+   },
+   {
+    "name": "山火事",
+    "share_pct": 27
+   },
+   {
+    "name": "伐採（林業）",
+    "share_pct": 6
+   }
+  ],
+  "countries": [
+   {
+    "name": "ブラジル",
+    "loss_man_ha": 538,
+    "change_pct": 142
+   },
+   {
+    "name": "ボリビア",
+    "loss_man_ha": 47,
+    "change_pct": 183
+   },
+   {
+    "name": "パラグアイ",
+    "loss_man_ha": 32,
+    "change_pct": 14
+   }
+  ],
+  "text": "2016年の南アメリカの森林減少は736万haで、前年の340万haから約2.2倍に増えました。2015〜2016年のエルニーニョは史上2番目に強く、熱帯全域に干ばつをもたらしたとされ、これが主な背景です。ブラジルの2016年の樹木被覆の減少は主に火災によるとされる一方、農地開発や伐採による分も切り分けるのは難しいとされています。ブラジルでは538万ha（前年比142%増）が減り、アマゾン地域では3.7 million ha（約370万ha）が失われ、2015年のほぼ3倍になったと報じられました。数字では火災の割合が37%に上り、原因別でも山火事が27%を占めています。ただし最大の原因は農地・牧草地への転換（59%）で、干ばつによる火災の拡大がそこに重なったとみられます。",
+  "citations": [
+   {
+    "url": "https://blog.globalforestwatch.org/data-and-research/global-tree-cover-loss-rose-51-percent-in-2016/",
+    "title": "Global Tree Cover Loss Rose 51 Percent in 2016",
+    "cited_text": "This year’s trend is due in part to the global effects of 2015/2016 El Niño, the second-strongest ever recorded, which brought drought conditions thro..."
+   },
+   {
+    "url": "https://www.globalforestwatch.org/blog/data-and-research/technical-blog-caveats-to-the-2016-tree-cover-loss-data/",
+    "title": "Technical Blog: Caveats to the 2016 Tree Cover Loss Data, Explained",
+    "cited_text": "### We Don’t Fully Understand the Role of Fires in Tree Cover Loss\nWe know that the 2016 tree cover loss in Brazil occurred largely due to fires, but ..."
+   },
+   {
+    "url": "https://blog.globalforestwatch.org/data-and-research/global-tree-cover-loss-rose-51-percent-in-2016/",
+    "title": "Global Tree Cover Loss Rose 51 Percent in 2016",
+    "cited_text": "### Brazil’s Tree Cover Loss Doubles Due to Understory Fires\nBrazil’s Amazonian region lost 3.7 million hectares (9.1 million acres) of tree cover dur..."
+   }
+  ],
+  "unmatchedNumbers": [],
+  "searches": 1,
+  "costUsd": 0.046
+ },
+ {
+  "group": "north_america",
+  "groupName": "北アメリカ",
+  "year": 2023,
+  "kind": "最も多かった年",
+  "loss_man_ha": 1056,
+  "prev_loss_man_ha": 489,
+  "change_pct": 116,
+  "ratio_to_prev": 2.2,
+  "fire_share_pct": 77,
+  "primary_share_pct": 2,
+  "drivers": [
+   {
+    "name": "山火事",
+    "share_pct": 77
+   },
+   {
+    "name": "伐採（林業）",
+    "share_pct": 16
+   },
+   {
+    "name": "農地・牧草地への転換",
+    "share_pct": 5
+   }
+  ],
+  "countries": [
+   {
+    "name": "カナダ",
+    "loss_man_ha": 857,
+    "change_pct": 273
+   },
+   {
+    "name": "アメリカ合衆国",
+    "loss_man_ha": 138,
+    "change_pct": -37
+   },
+   {
+    "name": "メキシコ",
+    "loss_man_ha": 23,
+    "change_pct": 27
+   }
+  ],
+  "text": "2023年の北アメリカの森林減少は1056万haで、前年の489万haから2.2倍になりました。原因の77%は山火事で、増加の中心はカナダです。カナダの減少は857万haで、前年から273%増えました。カナダの山火事は記録的で、異常な高温と少雨が主な要因とされます。ケベック州、ノースウエスト準州、アルバータ州、ブリティッシュコロンビア州では、火災による樹木被覆の減少が過去最大になりました。世界資源研究所（WRI）などの分析では、カナダの減少の90%超が火災によるもので、火災で焼けた森林は7.76 million ha（約776万ha）、前年の5倍でした。一方、アメリカ合衆国は138万haで、37%減りました。",
+  "citations": [
+   {
+    "url": "https://www.wri.org/insights/canada-wildfire-emissions",
+    "title": "Canada's Record-Breaking 2023 Wildfires Released Nearly 4 Times More Carbon than Global Aviation",
+    "cited_text": "The 2023 wildfires in Canada accounted for more than a quarter of all tree cover loss globally that year and were largely driven by unusually hot temp..."
+   },
+   {
+    "url": "https://onlinelibrary.wiley.com/doi/10.1111/gcb.17392",
+    "title": "Extreme wildfires in Canada and their contribution to global loss in tree cover and carbon emissions in 2023",
+    "cited_text": "The province of Québec had the highest area of tree cover loss due to fire (2.3 Mha), followed by Northwest Territories (1.7 Mha), Alberta (1.3 Mha), ..."
+   },
+   {
+    "url": "https://www.westerninvestor.com/environment/canadian-wildfires-entirely-drove-surge-in-global-tree-loss-in-2023-study-says-8553429",
+    "title": "Canadian wildfires 'entirely' drove surge in global tree loss in 2023, study says - Western Investor",
+    "cited_text": "The report says more than 90 per cent of Canada's tree losses last year were due to fires that razed 7.76 million hectares of forest, a \"five-fold inc..."
+   }
+  ],
+  "unmatchedNumbers": [],
+  "searches": 1,
+  "costUsd": 0.046
+ },
+ {
+  "group": "north_america",
+  "groupName": "北アメリカ",
+  "year": 2004,
+  "kind": "前の年から最も増えた年",
+  "loss_man_ha": 581,
+  "prev_loss_man_ha": 364,
+  "change_pct": 60,
+  "ratio_to_prev": 1.6,
+  "fire_share_pct": 40,
+  "primary_share_pct": 1,
+  "drivers": [
+   {
+    "name": "伐採（林業）",
+    "share_pct": 44
+   },
+   {
+    "name": "山火事",
+    "share_pct": 43
+   },
+   {
+    "name": "農地・牧草地への転換",
+    "share_pct": 7
+   }
+  ],
+  "countries": [
+   {
+    "name": "アメリカ合衆国",
+    "loss_man_ha": 275,
+    "change_pct": 67
+   },
+   {
+    "name": "カナダ",
+    "loss_man_ha": 271,
+    "change_pct": 68
+   },
+   {
+    "name": "メキシコ",
+    "loss_man_ha": 17,
+    "change_pct": 11
+   }
+  ],
+  "text": "2004年の北アメリカでは、森の減少が581万haに達しました。前の年の364万haから60%増えています。伐採（44%）と山火事（43%）がほぼ同じ割合で、火災は全体の40%でした。火災の主な舞台は、米国のアラスカ州とされます。2004年夏のアラスカでは森林火災で6.59 million acres（26,669 km2）が焼け、過去50年の記録を更新しました。原因は気象で、異常に暖かく乾燥した天候が主因とされ、アラスカ内陸部では約100年で3番目に雨の少ない夏でした。また、雷が記録的に多く、通常の年の合計の5倍近くに達したと報告されています。ただし、カナダの増加（68%）については今回の検索では確かめられませんでした。",
+  "citations": [
+   {
+    "url": "https://www.frames.gov/catalog/3019",
+    "title": "Alaska's exceptional 2004 fire season",
+    "cited_text": "A total area of 26,669 km2 (6.59 million acres) burned from forest fires in Alaska during the summer of 2004, setting a new record in the 50-year data..."
+   },
+   {
+    "url": "https://www.frames.gov/catalog/3019",
+    "title": "Alaska's exceptional 2004 fire season",
+    "cited_text": "The unusually warm and dry weather was a predominant factor for the wildfire season in which it was the warmest on record and drought-like conditions ..."
+   },
+   {
+    "url": "https://ams.confex.com/ams/6FireJoint/techprogram/paper_97633.htm",
+    "title": "1.5 Alaska's exceptional 2004 fire season (2005 - 6FireJoint_6fire)",
+    "cited_text": "There was increased thunderstorm development producing a record number of lightning strikes almost five times the normal seasonal total.\n\n"
+   }
+  ],
+  "unmatchedNumbers": [
+   "100"
+  ],
+  "searches": 1,
+  "costUsd": 0.045
+ },
+ {
+  "group": "africa",
+  "groupName": "アフリカ",
+  "year": 2017,
+  "kind": "最も多かった年",
+  "loss_man_ha": 507,
+  "prev_loss_man_ha": 409,
+  "change_pct": 24,
+  "ratio_to_prev": 1.2,
+  "fire_share_pct": 3,
+  "primary_share_pct": 17,
+  "drivers": [
+   {
+    "name": "焼畑",
+    "share_pct": 52
+   },
+   {
+    "name": "農地・牧草地への転換",
+    "share_pct": 40
+   }
+  ],
+  "countries": [
+   {
+    "name": "コンゴ民主共和国",
+    "loss_man_ha": 147,
+    "change_pct": 6
+   },
+   {
+    "name": "マダガスカル",
+    "loss_man_ha": 51,
+    "change_pct": 33
+   },
+   {
+    "name": "モザンビーク",
+    "loss_man_ha": 36,
+    "change_pct": 43
+   }
+  ],
+  "text": "2017年のアフリカの森林減少は507万haで、前年(409万ha)より24%増え、観測された中で最多でした。主因は焼畑(52%)と農地・牧草地への転換(40%)です。火災の割合は3%にとどまり、山火事ではなく農業が中心だったことがわかります。国別ではコンゴ民主共和国が147万haで最大でした。同国の樹木被覆の減少は2017年に過去最高となり、2016年から6%増えたと報告されています。その要因は農業、小規模な伐採、木炭生産で、減少の約7割が「rural complex」と呼ばれる農業地帯で起きたとされます。2017年はエルニーニョのない年で、湿潤で火災が少なかったとも伝えられています。マダガスカルとモザンビークの増加の理由は、今回の検索では確認できませんでした。",
+  "citations": [
+   {
+    "url": "https://blog.globalforestwatch.org/data-and-research/2017-was-the-second-worst-year-on-record-for-tropical-tree-cover-loss",
+    "title": "2017 Was the Second-Worst Year on Record for Tropical Tree Cover Loss",
+    "cited_text": "Tree cover loss in the Democratic Republic of Congo (DRC) reached a record high in 2017, increasing 6 percent from 2016. "
+   },
+   {
+    "url": "https://blog.globalforestwatch.org/data-and-research/2017-was-the-second-worst-year-on-record-for-tropical-tree-cover-loss",
+    "title": "2017 Was the Second-Worst Year on Record for Tropical Tree Cover Loss",
+    "cited_text": "Agriculture, artisanal logging and charcoal production drove the tree cover loss, with nearly 70 percent of it occurring in agricultural areas known a..."
+   },
+   {
+    "url": "https://www.weforum.org/stories/nature-and-biodiversity/2017-was-the-second-worst-year-on-record-for-tropical-tree-cover-loss/",
+    "title": "2017 was the second-worst year on record for tropical tree loss",
+    "cited_text": "Additionally, 2017 was a non-El Niño year, which brought wetter conditions and fewer fires compared to past years.\n\n"
+   }
+  ],
+  "unmatchedNumbers": [],
+  "searches": 1,
+  "costUsd": 0.044
+ },
+ {
+  "group": "africa",
+  "groupName": "アフリカ",
+  "year": 2016,
+  "kind": "前の年から最も増えた年",
+  "loss_man_ha": 409,
+  "prev_loss_man_ha": 300,
+  "change_pct": 36,
+  "ratio_to_prev": 1.4,
+  "fire_share_pct": 4,
+  "primary_share_pct": 20,
+  "drivers": [
+   {
+    "name": "焼畑",
+    "share_pct": 57
+   },
+   {
+    "name": "農地・牧草地への転換",
+    "share_pct": 34
+   }
+  ],
+  "countries": [
+   {
+    "name": "コンゴ民主共和国",
+    "loss_man_ha": 138,
+    "change_pct": 49
+   },
+   {
+    "name": "マダガスカル",
+    "loss_man_ha": 38,
+    "change_pct": 27
+   },
+   {
+    "name": "モザンビーク",
+    "loss_man_ha": 25,
+    "change_pct": 38
+   }
+  ],
+  "text": "2016年のアフリカでは、森林の減少が409万haに達しました。前年は300万haで、36%増えています。火災の割合は4%にとどまります。原因は焼畑が57%、農地・牧草地への転換が34%で、この2つが大部分を占めます。国別ではコンゴ民主共和国が138万ha（前年比49%増）で最も多く、マダガスカルとモザンビークが続きます。コンゴ民主共和国では、農業、小規模な伐採、木炭生産が森林減少を招いたと報告されています。2016年と2017年に増加傾向が見られたとも指摘されています。火災については、コンゴ共和国で2016年初めに、中部アフリカで過去最大級の火災が起き、1.5万haの森林が失われました。エルニーニョによる干ばつの影響で強まった可能性があるとされています。ただしこの火災の規模は小さく、アフリカ全体の増加は主に農業由来の伐採によるとみられます。",
+  "citations": [
+   {
+    "url": "https://www.globalforestwatch.org/blog/data/2017-was-the-second-worst-year-on-record-for-tropical-tree-cover-loss/",
+    "title": "2017 Was the Second-Worst Year on Record for Tropical Tree Cover Loss",
+    "cited_text": "Agriculture, artisanal logging and charcoal production drove the tree cover loss, with nearly 70 percent of it occurring in agricultural areas known a..."
+   },
+   {
+    "url": "https://www.globalforestwatch.org/blog/data/2017-was-the-second-worst-year-on-record-for-tropical-tree-cover-loss/",
+    "title": "2017 Was the Second-Worst Year on Record for Tropical Tree Cover Loss",
+    "cited_text": "Given the increasing trends observed in 2016 and 2017, it is critical that DRC move ahead with improved land use planning and forest law enforcement w..."
+   },
+   {
+    "url": "https://globalnaturewatch.org/blog/forest-insights/global-tree-cover-loss-rose-51-percent-in-2016/",
+    "title": "Global Tree Cover Loss Rose 51 Percent in 2016",
+    "cited_text": "In the Republic of Congo, one of the largest fires ever recorded in Central Africa destroyed 15,000 hectares (37,000 acres) of forest in early 2016. T..."
+   }
+  ],
+  "unmatchedNumbers": [],
+  "searches": 1,
+  "costUsd": 0.044
+ },
+ {
+  "group": "asia",
+  "groupName": "アジア",
+  "year": 2016,
+  "kind": "最も多かった年",
+  "loss_man_ha": 564,
+  "prev_loss_man_ha": 405,
+  "change_pct": 39,
+  "ratio_to_prev": 1.4,
+  "fire_share_pct": 14,
+  "primary_share_pct": 26,
+  "drivers": [
+   {
+    "name": "農地・牧草地への転換",
+    "share_pct": 44
+   },
+   {
+    "name": "伐採（林業）",
+    "share_pct": 22
+   },
+   {
+    "name": "焼畑",
+    "share_pct": 17
+   },
+   {
+    "name": "山火事",
+    "share_pct": 14
+   }
+  ],
+  "countries": [
+   {
+    "name": "インドネシア",
+    "loss_man_ha": 242,
+    "change_pct": 39
+   },
+   {
+    "name": "中華人民共和国",
+    "loss_man_ha": 72,
+    "change_pct": 47
+   },
+   {
+    "name": "マレーシア",
+    "loss_man_ha": 57,
+    "change_pct": 24
+   }
+  ],
+  "text": "2016年のアジアでは森林の減少が564万haに達し、前年の405万haから39%増えました。国別ではインドネシアが242万haで最も多くなっています。インドネシアの増加は、2015年後半の激しい火災の影響とみられると、Global Forest Watchは報告しました。火災の多くは2015年後半に起きましたが、その後の樹木被覆の損失が記録されたのは大半が2016年初めでした。火災の割合は14%です。2015〜16年のエルニーニョによる熱帯の干ばつも一因とされるほか、伐採や大小の農園の拡大も影響したとされるため、農地・牧草地への転換(44%)や伐採(22%)の大きさにも表れています。",
+  "citations": [
+   {
+    "url": "http://blog.globalforestwatch.org/data/global-tree-cover-loss-rose-51-percent-in-2016.html",
+    "title": "Global Tree Cover Loss Rose 51 Percent in 2016",
+    "cited_text": "### Strong Indonesian Fire Season Shows Up in 2016 Data\nIndonesia also saw an increase in tree cover loss in 2016, likely related to the strong fire s..."
+   },
+   {
+    "url": "http://blog.globalforestwatch.org/data/global-tree-cover-loss-rose-51-percent-in-2016.html",
+    "title": "Global Tree Cover Loss Rose 51 Percent in 2016",
+    "cited_text": "(Though many of the fires occurred in late 2015, most subsequent tree cover loss wasn’t recorded until early 2016.\n\n"
+   },
+   {
+    "url": "https://wri-indonesia.org/en/insights/global-tree-cover-loss-rose-51-percent-2016",
+    "title": "Global Tree Cover Loss Rose 51 Percent in 2016",
+    "cited_text": "This year's trend is due in part to the global effects of 2015/2016 El Niño, the second-strongest ever recorded, which brought drought conditions thro..."
+   },
+   {
+    "url": "http://blog.globalforestwatch.org/data/global-tree-cover-loss-rose-51-percent-in-2016.html",
+    "title": "Global Tree Cover Loss Rose 51 Percent in 2016",
+    "cited_text": "The effects of logging and expansion of large- and small-scale plantations are also visible in Indonesia’s 2016 data. "
+   }
+  ],
+  "unmatchedNumbers": [],
+  "searches": 1,
+  "costUsd": 0.044
+ },
+ {
+  "group": "asia",
+  "groupName": "アジア",
+  "year": 2014,
+  "kind": "前の年から最も増えた年",
+  "loss_man_ha": 452,
+  "prev_loss_man_ha": 300,
+  "change_pct": 51,
+  "ratio_to_prev": 1.5,
+  "fire_share_pct": 6,
+  "primary_share_pct": 27,
+  "drivers": [
+   {
+    "name": "農地・牧草地への転換",
+    "share_pct": 56
+   },
+   {
+    "name": "伐採（林業）",
+    "share_pct": 21
+   },
+   {
+    "name": "焼畑",
+    "share_pct": 15
+   }
+  ],
+  "countries": [
+   {
+    "name": "インドネシア",
+    "loss_man_ha": 189,
+    "change_pct": 66
+   },
+   {
+    "name": "マレーシア",
+    "loss_man_ha": 65,
+    "change_pct": 94
+   },
+   {
+    "name": "中華人民共和国",
+    "loss_man_ha": 53,
+    "change_pct": 20
+   }
+  ],
+  "text": "2014年のアジアの森林減少は452万haで、前年の300万haから51%増えました。特にインドネシアが189万ha（66%増）、マレーシアが65万ha（94%増）と大きく増えています。2014年にはブラジルとインドネシアの樹木被覆の減少が増加に転じ、インドネシアは約30%増えたと報じられました。原生林でも減少が増えたとされます。マレーシアではアブラヤシ農園の拡大が主な要因の一つ（特にサラワク州）とされます。渡された数字でも、農地・牧草地への転換が56%を占める一方、火災は6%にとどまります。そのため、この年の増加は大規模な山火事より、農地やプランテーションのための開発が主因だったとみられます。",
+  "citations": [
+   {
+    "url": "https://www.wri.org/insights/brazil-and-indonesia-struggling-reduce-deforestation",
+    "title": "Brazil and Indonesia Struggling to Reduce Deforestation",
+    "cited_text": "Brazil and Indonesia, which have made significant efforts to reduce deforestation in recent years, both saw an uptick in tree cover loss in 2014, acco..."
+   },
+   {
+    "url": "https://www.wri.org/insights/brazil-and-indonesia-struggling-reduce-deforestation",
+    "title": "Brazil and Indonesia Struggling to Reduce Deforestation",
+    "cited_text": "However, our data show that tree cover loss increased in 2014 both overall and within Indonesia’s rich primary forests, those most valuable for biodiv..."
+   },
+   {
+    "url": "https://www.wri.org/insights/5-overlooked-deforestation-hotspots",
+    "title": "5 Overlooked Deforestation Hotspots",
+    "cited_text": "Expansion of oil palm plantations is one of the major drivers (especially in Sarawak) as Malaysia feeds a hungry global market."
+   }
+  ],
+  "unmatchedNumbers": [
+   "30%"
+  ],
+  "searches": 1,
+  "costUsd": 0.047
+ },
+ {
+  "group": "russia",
+  "groupName": "ロシア",
+  "year": 2021,
+  "kind": "最も多かった年",
+  "loss_man_ha": 652,
+  "prev_loss_man_ha": 544,
+  "change_pct": 20,
+  "ratio_to_prev": 1.2,
+  "fire_share_pct": 82,
+  "primary_share_pct": 0,
+  "drivers": [
+   {
+    "name": "山火事",
+    "share_pct": 83
+   },
+   {
+    "name": "伐採（林業）",
+    "share_pct": 16
+   }
+  ],
+  "countries": [
+   {
+    "name": "ロシア",
+    "loss_man_ha": 652,
+    "change_pct": 20
+   }
+  ],
+  "text": "2021年のロシアの森林減少は652万haで、前年より20%増えました。このうち火災が占める割合は82%です（原因別では山火事が83%、伐採が16%）。主な要因は、極東サハ共和国（ヤクーチア）の大規模な山火事とみられます。\n\nNASAによると、サハでは数十年で最悪の火災シーズンとなり、8.4 million ha（約840万ha）以上の森林が焼けました。背景には、極端な熱波と記録的な干ばつがあり、科学者は気候変動に伴う気温上昇が原因だと指摘していると報じられました。ただし火災面積は森林以外も含む数字で、衛星データの森林減少面積とは定義が異なります。",
+  "citations": [
+   {
+    "url": "https://science.nasa.gov/earth/earth-observatory/a-record-breaking-year-for-fire-in-sakha-148943/",
+    "title": "A Record-Breaking Year for Fire in Sakha - NASA Science",
+    "cited_text": "During Sakha’s most severe fire season in decades, more than 8.4 million hectares of forests burned.\n\n"
+   },
+   {
+    "url": "https://abcnews.com/International/siberian-wildfires-now-bigger-fires-world-combined/story?id=79422602",
+    "title": "Siberian wildfires now bigger than all other fires in world combined - ABC News",
+    "cited_text": "The massive blazes in Russia are fueled in part by extreme heat waves and record droughts that scientists are blaming on warmer temperatures linked to..."
+   }
+  ],
+  "unmatchedNumbers": [],
+  "searches": 1,
+  "costUsd": 0.046
+ },
+ {
+  "group": "russia",
+  "groupName": "ロシア",
+  "year": 2016,
+  "kind": "前の年から最も増えた年",
+  "loss_man_ha": 505,
+  "prev_loss_man_ha": 233,
+  "change_pct": 117,
+  "ratio_to_prev": 2.2,
+  "fire_share_pct": 73,
+  "primary_share_pct": 0,
+  "drivers": [
+   {
+    "name": "山火事",
+    "share_pct": 77
+   },
+   {
+    "name": "伐採（林業）",
+    "share_pct": 20
+   }
+  ],
+  "countries": [
+   {
+    "name": "ロシア",
+    "loss_man_ha": 505,
+    "change_pct": 117
+   }
+  ],
+  "text": "ロシアの2016年の森林減少は505万ha（前年は233万ha、117%増）でした。その73%が火災によるもので、主因別では山火事が77%、伐採（林業）が20%です。\n\n検索では、ロシアの2016年の火災を直接扱った記事は確認できませんでした。確認できたのは世界全体の傾向です。2016年の世界の樹木被覆の損失は、記録的な29.7 million ha（約2970万ha）でした。WRIは、森林火災がこの急増の主因とみられると説明しています。また、エルニーニョは、火災がより自然に起こる北方林や温帯林にも影響するとされています。ロシアの個別の原因については、検索結果だけでは断定できません。\n\nなお、この「損失」は伐採や火災などで樹冠が失われた面積です。森林破壊そのものとは同じではありません。",
+  "citations": [
+   {
+    "url": "https://www.wri.org/insights/global-tree-cover-loss-rose-51-percent-2016",
+    "title": "Global Tree Cover Loss Rose 51 Percent in 2016",
+    "cited_text": "Global tree cover loss reached a record 29.7 million hectares (73.4 million acres) in 2016, according to new data from the University of Maryland rele..."
+   },
+   {
+    "url": "https://www.wri.org/insights/global-tree-cover-loss-rose-51-percent-2016",
+    "title": "Global Tree Cover Loss Rose 51 Percent in 2016",
+    "cited_text": "Forest fires seem to be a primary cause of this year's spike, including dramatic fire-related degradation in Brazil. "
+   },
+   {
+    "url": "https://www.wri.org/insights/global-tree-cover-loss-rose-51-percent-2016",
+    "title": "Global Tree Cover Loss Rose 51 Percent in 2016",
+    "cited_text": "El Niño also plays a role in boreal and temperate forests, where fires are a more natural occurrence, but climate change is increasing the intensity a..."
+   },
+   {
+    "url": "https://www.wri.org/insights/global-tree-cover-loss-rose-51-percent-2016",
+    "title": "Global Tree Cover Loss Rose 51 Percent in 2016",
+    "cited_text": "*Tree cover loss is not the same as deforestation. “Tree cover” can refer to trees in plantations as well as natural forests, and “tree cover loss” is..."
+   }
+  ],
+  "unmatchedNumbers": [],
+  "searches": 1,
+  "costUsd": 0.046
+ },
+ {
+  "group": "europe",
+  "groupName": "ヨーロッパ（ロシアを除く）",
+  "year": 2020,
+  "kind": "最も多かった年",
+  "loss_man_ha": 171,
+  "prev_loss_man_ha": 161,
+  "change_pct": 6,
+  "ratio_to_prev": 1.1,
+  "fire_share_pct": 4,
+  "primary_share_pct": 0,
+  "drivers": [
+   {
+    "name": "伐採（林業）",
+    "share_pct": 92
+   },
+   {
+    "name": "山火事",
+    "share_pct": 5
+   }
+  ],
+  "countries": [
+   {
+    "name": "スウェーデン",
+    "loss_man_ha": 34,
+    "change_pct": 2
+   },
+   {
+    "name": "フィンランド",
+    "loss_man_ha": 25,
+    "change_pct": -12
+   },
+   {
+    "name": "ドイツ",
+    "loss_man_ha": 19,
+    "change_pct": 73
+   }
+  ],
+  "text": "2020年のヨーロッパ（ロシアを除く）の森林減少は171万haで、前年より6%増え、この地域で最も多い年になりました。内訳は伐採（林業）が92%で、山火事は5%にとどまります。つまり、火災ではなく林業による伐採が中心です。ドイツは前年比73%増でした。中央ヨーロッパでは2020年とその前年に過去に例のない樹木被覆の減少があり、ドイツとチェコでは2018年比で3倍に増えたと報じられました。この急増の大部分は、高温と乾燥の中で弱った木を襲うキクイムシの被害によるとされます。ドイツについては、枯れたトウヒは被害拡大を防ぐため通常は伐採されると説明されています。そのため、干ばつとキクイムシで枯れた木の伐採が、「伐採（林業）」の割合の高さに表れていると考えられます。",
+  "citations": [
+   {
+    "url": "https://blog.globalforestwatch.org/data-and-research/global-tree-cover-loss-data-2020",
+    "title": "What Happened to Global Forests in 2020?",
+    "cited_text": "Finally, Central Europe saw unprecedented levels of tree cover loss in 2020 and the year prior, with three-fold increases in Germany and Czech Republi..."
+   },
+   {
+    "url": "https://doi.org/10.3390/rs14030562",
+    "title": "A First Assessment of Canopy Cover Loss in Germany’s Forests after the 2018–2020 Drought Years",
+    "cited_text": "Dead spruce trees are usually removed to prevent further bark-beetle infestation.\n\n"
+   }
+  ],
+  "unmatchedNumbers": [],
+  "searches": 1,
+  "costUsd": 0.042
+ },
+ {
+  "group": "europe",
+  "groupName": "ヨーロッパ（ロシアを除く）",
+  "year": 2016,
+  "kind": "前の年から最も増えた年",
+  "loss_man_ha": 150,
+  "prev_loss_man_ha": 90,
+  "change_pct": 67,
+  "ratio_to_prev": 1.7,
+  "fire_share_pct": 6,
+  "primary_share_pct": 0,
+  "drivers": [
+   {
+    "name": "伐採（林業）",
+    "share_pct": 89
+   },
+   {
+    "name": "山火事",
+    "share_pct": 8
+   }
+  ],
+  "countries": [
+   {
+    "name": "スウェーデン",
+    "loss_man_ha": 31,
+    "change_pct": 44
+   },
+   {
+    "name": "フィンランド",
+    "loss_man_ha": 24,
+    "change_pct": 39
+   },
+   {
+    "name": "スペイン",
+    "loss_man_ha": 11,
+    "change_pct": 64
+   }
+  ],
+  "text": "2016年のヨーロッパ（ロシアを除く）の森林減少は150万ha（前年は90万ha）で、前年より67%増えました。ただ、検索では2016年のヨーロッパだけを扱った説明は見つかりませんでした。次の説明は、欧州全体の傾向についてのものです。\n\nヨーロッパの樹木被覆の減少の約90%は伐採によるものとされています。ヨーロッパでは伐採が樹木被覆減少の大部分を占め、その割合は90%という分析もあります。渡された数字でも、伐採（林業）が89%、山火事が8%（火災の割合は6%）です。これは、この年の増加が火災ではなく主に林業によることを示しています。\n\nスウェーデン（31万ha）とフィンランド（24万ha）が上位です。スウェーデンでは、通常の木材収穫が2001〜2025年の樹木被覆減少の98%を占めたと報告されています。伐採された場所は再植林されるか自然に再生するため、この減少は一時的で、管理された周期の中で再生と釣り合うのが一般的とされます。\n\n2016年の急増が具体的にどの伐採によるのかは、検索では確かめられませんでした。",
+  "citations": [
+   {
+    "url": "https://en.ilsole24ore.com/art/european-forests-more-hectares-but-less-biodiversity-and-increased-fire-risk-AIb1HWJD",
+    "title": "European forests, more hectares but less biodiversity. And the risk of fires increases - Il Sole 24 ORE",
+    "cited_text": "*\n\n\"Approximately 90% of the loss of tree cover in Europe is attributable to logging activities, such as logging, biomass production for energy, and t..."
+   },
+   {
+    "url": "https://www.wri.org/insights/forest-loss-drivers-data-trends",
+    "title": "New Data Shows What’s Driving Forest Loss Around the World",
+    "cited_text": "In Europe, logging drives the large majority of tree cover loss, accounting for 90%.\n\n"
+   },
+   {
+    "url": "https://www.wri.org/insights/forest-loss-drivers-data-trends",
+    "title": "New Data Shows What’s Driving Forest Loss Around the World",
+    "cited_text": "For example, in **Sweden**, a heavily forested country, the routine harvest of timber caused 98% of all tree cover loss from 2001-2025 (6.3 million he..."
+   },
+   {
+    "url": "https://www.wri.org/insights/forest-loss-drivers-data-trends",
+    "title": "New Data Shows What’s Driving Forest Loss Around the World",
+    "cited_text": "After trees are harvested, they are replanted or allowed to naturally regenerate, meaning that tree cover loss is temporary and generally balanced by ..."
+   }
+  ],
+  "unmatchedNumbers": [],
+  "searches": 1,
+  "costUsd": 0.046
+ },
+ {
+  "group": "oceania",
+  "groupName": "オセアニア",
+  "year": 2020,
+  "kind": "最も多かった年",
+  "loss_man_ha": 252,
+  "prev_loss_man_ha": 185,
+  "change_pct": 36,
+  "ratio_to_prev": 1.4,
+  "fire_share_pct": 78,
+  "primary_share_pct": 2,
+  "drivers": [
+   {
+    "name": "山火事",
+    "share_pct": 90
+   },
+   {
+    "name": "伐採（林業）",
+    "share_pct": 7
+   }
+  ],
+  "countries": [
+   {
+    "name": "オーストラリア",
+    "loss_man_ha": 236,
+    "change_pct": 42
+   },
+   {
+    "name": "パプアニューギニア",
+    "loss_man_ha": 8,
+    "change_pct": -18
+   },
+   {
+    "name": "ニュージーランド",
+    "loss_man_ha": 6,
+    "change_pct": -15
+   }
+  ],
+  "text": "2020年のオセアニアの森林減少は252万haで、前年(185万ha)より36%増え、最も多い年になりました。2019年6月から2020年3月にかけて、オーストラリア南東部のニューサウスウェールズ州やビクトリア州を中心に、記録的な山火事シーズン（「ブラックサマー」）が起きたとされます。ある報告では、森林の焼失面積は native forest で8.19 million ha（約819万ha）と推計されています。こうした火災が、減少要因の90%が山火事で、火災の割合が78%という数字に表れています。オーストラリアの減少は236万haで前年比42%増でした。なお、衛星の減少面積と火災の焼失面積は測り方が違うため、数字は一致しません。",
+  "citations": [
+   {
+    "url": "https://en.wikipedia.org/wiki/2019%E2%80%9320_Australian_bushfire_season",
+    "title": "2019%E2%80%9320 Australian bushfire season",
+    "cited_text": "- Date: June 2019 – 31 March 2020;\n- Location: Australia, mostly impacting the south-east coast in New South Wales and Victoria, and far-northern Quee..."
+   },
+   {
+    "url": "https://www.tandfonline.com/doi/full/10.1080/00049158.2020.1769899",
+    "title": "Full article: Editorial: the 2019/20 Black Summer bushfires",
+    "cited_text": "**A total of 8.19 million ha of native forest was burnt**. "
+   }
+  ],
+  "unmatchedNumbers": [],
+  "searches": 1,
+  "costUsd": 0.042
+ },
+ {
+  "group": "oceania",
+  "groupName": "オセアニア",
+  "year": 2019,
+  "kind": "前の年から最も増えた年",
+  "loss_man_ha": 185,
+  "prev_loss_man_ha": 47,
+  "change_pct": 292,
+  "ratio_to_prev": 3.9,
+  "fire_share_pct": 83,
+  "primary_share_pct": 4,
+  "drivers": [
+   {
+    "name": "山火事",
+    "share_pct": 84
+   },
+   {
+    "name": "伐採（林業）",
+    "share_pct": 10
+   }
+  ],
+  "countries": [
+   {
+    "name": "オーストラリア",
+    "loss_man_ha": 166,
+    "change_pct": 563
+   },
+   {
+    "name": "パプアニューギニア",
+    "loss_man_ha": 10,
+    "change_pct": -19
+   },
+   {
+    "name": "ニュージーランド",
+    "loss_man_ha": 7,
+    "change_pct": -10
+   }
+  ],
+  "text": "2019年のオセアニアでは、オーストラリアの大規模な山火事が森の減少を大きくしたとみられます。衛星データでは、減少面積が185万haで、前の年の47万haから大きく増えました。原因の84%が山火事で、減少の83%は火災によるものでした。国別ではオーストラリアが166万haで、前の年より563%増えています。\n\n2019〜20年の「ブラックサマー」と呼ばれる山火事は、2020年3月までに約1900万ha近くを焼き、3,000棟超の家屋を壊し、33人が亡くなったと報告されています。在来林の焼失は8.19 million ha（約819万ha）で、オーストラリアの在来林の6%にあたるとされます。ただし、この数字は2019年に限らず2020年初めまでの火災シーズン全体のものです。そのため、2019年分の衛星データの数字とは一致しません。",
+  "citations": [
+   {
+    "url": "https://www.sciencedirect.com/science/article/pii/S2666449620300098",
+    "title": "Impact of Australia's catastrophic 2019/20 bushfire season on communities and environment. Retrospective analysis and current trends - ScienceDirect",
+    "cited_text": "By March 2020 Black Summer fires **burnt almost 19 million hectares**, destroyed over 3,000 houses, and killed 33 people. "
+   },
+   {
+    "url": "https://www.tandfonline.com/doi/full/10.1080/00049158.2020.1769899",
+    "title": "Full article: Editorial: the 2019/20 Black Summer bushfires",
+    "cited_text": "**A total of 8.19 million ha of native forest was burnt**. "
+   },
+   {
+    "url": "https://www.tandfonline.com/doi/full/10.1080/00049158.2020.1769899",
+    "title": "Full article: Editorial: the 2019/20 Black Summer bushfires",
+    "cited_text": "The 8.19 million ha of native forest burnt represents 6% of Australia’s native forests (Table 2). "
+   }
+  ],
+  "unmatchedNumbers": [],
+  "searches": 1,
+  "costUsd": 0.043
+ }
+]

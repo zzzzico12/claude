@@ -1,0 +1,1 @@
+{"truth_ha": 2246, "precision": 0.631, "recall": 0.341, "f1": 0.443, "baseline": {"precision": 0.909, "recall": 0.079, "f1": 0.146}, "fp_lost_2024": 0.274}
