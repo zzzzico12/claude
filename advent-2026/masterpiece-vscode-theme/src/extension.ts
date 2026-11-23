@@ -1,6 +1,7 @@
 // VS Code 拡張機能の本体。テーマ（themes/*.json）は事前に作ってあり、ここでは AI を呼ばない。
 // - 天気（Open-Meteo）と時間帯から絵の雰囲気を決め、合う絵のテーマに切り替える（設定でオンにしたときだけ）
 // - いまの絵の解説を表示する
+// - いまの絵をエクスプローラーの下にずっと表示しておく
 import * as vscode from "vscode";
 import paintingsData from "../lib/paintings-data.json" with { type: "json" };
 import { MOOD_JA, moodOf, pickPainting, type Mood, type PaintingInfo, type WeatherNow } from "../lib/paintings.js";
@@ -23,6 +24,8 @@ function settings() {
   };
 }
 
+const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+
 const currentThemeLabel = () => vscode.workspace.getConfiguration("workbench").get<string>("colorTheme") ?? "";
 const currentPainting = () => byLabel.get(currentThemeLabel()) ?? null;
 
@@ -34,6 +37,7 @@ async function setTheme(p: PaintingInfo) {
 }
 
 function updateStatus() {
+  paintingView?.refresh();
   const p = currentPainting();
   if (!p) {
     status.hide();
@@ -43,6 +47,76 @@ function updateStatus() {
   status.tooltip = `${p.label}\nクリックで絵の解説を表示`;
   status.show();
 }
+
+// ---------- いまの絵をずっと表示しておくパネル（エクスプローラーの下。ドラッグで右側のサイドバーにも移せる） ----------
+// エディタの背景に画像を敷く公式の方法はないので、絵は横に表示する（VS Code 本体のファイルは書き換えない）
+
+const ROLE_JA: Record<string, string> = {
+  background: "背景",
+  foreground: "文字",
+  keyword: "キーワード",
+  string: "文字列",
+  function: "関数",
+  type: "型",
+  number: "数値",
+  comment: "コメント",
+};
+
+function nonce() {
+  let s = "";
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  for (let i = 0; i < 32; i++) s += chars[Math.floor(Math.random() * chars.length)];
+  return s;
+}
+
+class PaintingViewProvider implements vscode.WebviewViewProvider {
+  private view: vscode.WebviewView | undefined;
+
+  resolveWebviewView(view: vscode.WebviewView) {
+    this.view = view;
+    view.webview.options = { enableScripts: true };
+    view.webview.onDidReceiveMessage((m: { command?: string }) => {
+      if (m.command === "about" || m.command === "pick") void vscode.commands.executeCommand(`${CONFIG}.${m.command}`);
+    });
+    view.onDidChangeVisibility(() => view.visible && this.refresh());
+    this.refresh();
+  }
+
+  refresh() {
+    if (!this.view) return;
+    const p = currentPainting();
+    const n = nonce();
+    const csp = `default-src 'none'; img-src https://www.artic.edu; style-src 'unsafe-inline'; script-src 'nonce-${n}';`;
+    const script = `<script nonce="${n}">const vscode=acquireVsCodeApi();for(const el of document.querySelectorAll("[data-cmd]"))el.addEventListener("click",()=>vscode.postMessage({command:el.dataset.cmd}));</script>`;
+    const style = `<style>
+body{padding:8px 10px;margin:0;color:var(--vscode-foreground);font-family:var(--vscode-font-family);font-size:12px;line-height:1.6}
+img{width:100%;height:auto;border-radius:4px;cursor:pointer;display:block}
+.t{font-weight:600;margin:6px 0 0}.a{opacity:.75}
+.strip{display:flex;margin-top:8px;border-radius:3px;overflow:hidden;height:14px}
+.strip span{flex:1}
+button{margin-top:8px;background:var(--vscode-button-background);color:var(--vscode-button-foreground);border:0;padding:4px 10px;border-radius:2px;cursor:pointer;font:inherit}
+.muted{opacity:.75}
+</style>`;
+    if (!p) {
+      this.view.webview.html = `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${csp}">${style}</head><body>
+<p class="muted">いまのテーマは名画テーマではありません。</p><button data-cmd="pick">絵を選ぶ</button>${script}</body></html>`;
+      return;
+    }
+    // 色の帯：絵から取ってテーマに使った色（背景から順に）。マウスを乗せると役割が出る
+    const strip = p.adjustments
+      .map((a) => `<span style="background:${a.adjusted}" title="${ROLE_JA[a.role] ?? a.role} ${a.adjusted}"></span>`)
+      .join("");
+    this.view.webview.html = `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${csp}">${style}</head><body>
+<img src="${esc(p.imageUrl)}" alt="${esc(p.titleJa)}" title="クリックで解説を表示" data-cmd="about">
+<p class="t">${esc(p.titleJa)}</p>
+<p class="a">${esc(p.artistJa)}${p.date ? `・${esc(p.date)}` : ""}</p>
+<div class="strip" title="この絵から取った色">${strip}</div>
+<p class="muted">シカゴ美術館（CC0）</p>
+${script}</body></html>`;
+  }
+}
+
+let paintingView: PaintingViewProvider | undefined;
 
 /** Open-Meteo（キー不要・非商用は無料）から、いまの天気と日の出・日の入りを取る */
 async function fetchWeather(lat: number, lon: number): Promise<WeatherNow> {
@@ -100,7 +174,6 @@ function schedule() {
   timer = setInterval(() => void switchByWeather(), s.intervalMinutes * 60_000);
 }
 
-const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 
 function showAbout(p: PaintingInfo) {
   const panel = vscode.window.createWebviewPanel("masterpieceTheme.about", p.titleJa, vscode.ViewColumn.Beside, {});
@@ -145,6 +218,8 @@ ul{list-style:none;padding:0} small,.muted{opacity:.75} a{color:var(--vscode-tex
 }
 
 export function activate(context: vscode.ExtensionContext) {
+  paintingView = new PaintingViewProvider();
+  context.subscriptions.push(vscode.window.registerWebviewViewProvider(`${CONFIG}.painting`, paintingView));
   status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
   status.command = `${CONFIG}.about`;
   context.subscriptions.push(
@@ -175,6 +250,8 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.window.showInformationMessage("天気と時間による切り替えを止めました");
     }),
     vscode.commands.registerCommand(`${CONFIG}.switchNow`, () => switchByWeather(true)),
+    // パネルを開く（閉じてしまったとき用）。VS Code がビューごとに作る「.focus」コマンドを呼ぶ
+    vscode.commands.registerCommand(`${CONFIG}.showPainting`, () => vscode.commands.executeCommand(`${CONFIG}.painting.focus`)),
     vscode.workspace.onDidChangeConfiguration((e) => {
       if (e.affectsConfiguration(CONFIG)) schedule();
       if (e.affectsConfiguration("workbench.colorTheme")) updateStatus();

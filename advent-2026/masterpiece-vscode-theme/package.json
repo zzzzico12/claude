@@ -2,7 +2,7 @@
   "name": "masterpiece-theme",
   "displayName": "名画テーマ（Masterpiece Theme）",
   "description": "パブリックドメインの名画の色から作った VS Code のテーマ。文字の読みやすさ（WCAG AA）を自動で保証し、天気と時間帯で絵が切り替わる",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "zzzzico12",
   "private": true,
   "license": "MIT",
@@ -142,6 +142,10 @@
       {
         "command": "masterpieceTheme.switchNow",
         "title": "名画テーマ: いまの天気で選び直す"
+      },
+      {
+        "command": "masterpieceTheme.showPainting",
+        "title": "名画テーマ: 絵をサイドバーに表示"
       }
     ],
     "configuration": {
@@ -169,6 +173,15 @@
           "description": "天気を確かめる間隔（分。15分以上）"
         }
       }
+    },
+    "views": {
+      "explorer": [
+        {
+          "type": "webview",
+          "id": "masterpieceTheme.painting",
+          "name": "名画"
+        }
+      ]
     }
   },
   "repository": {
