@@ -1,0 +1,25 @@
+{
+  "name": "@advent/globe",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./vite": { "types": "./dist/vite.d.ts", "import": "./dist/vite.js" }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "peerDependencies": {
+    "cesium": "^1.147",
+    "vite": "^7"
+  },
+  "devDependencies": {
+    "cesium": "^1.147",
+    "vite": "^7"
+  }
+}
