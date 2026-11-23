@@ -69,7 +69,7 @@ advent-2026/
 - **データ**: Ember × リージョン所在地 × Google Cloudの公開カーボンデータ × Azure のリージョン間の実測遅延
 - **技術**: 推薦
 - **特徴**: CO2 を公開していない AWS・Azure も Ember から推定。推定は Google の公式値と比べて順位の相関 0.89。遅延は Azure の実測値で補正（誤差の中央値 18ms → 13ms）。例：東京から Web アプリなら CO2 −80%
-- **デモ**: （公開後に記入）
+- **デモ**: https://advent26-green-region-finder.vercel.app （AI の説明は1日50回まで）
 - **記事**: （公開後に記入）
 
 ### 4. [名画のエディタ配色](masterpiece-vscode-theme/)（12/4）
