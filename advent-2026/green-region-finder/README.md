@@ -79,6 +79,8 @@ Emberの国別データから出した推定値を、Google Cloudが公開して
 
 ## 使い方
 
+デモ：**https://advent26-green-region-finder.vercel.app**
+
 ### こんなときに使う
 
 | 場面 | 選ぶもの | 見るところ |
@@ -128,7 +130,9 @@ pnpm eval                     # 評価（eval/RESULTS.md を更新）
 - Vercel で `zzzzico12/claude` を Import し、プロジェクト名を `advent26-green-region-finder`、**Root Directory を `advent-2026/green-region-finder`** にする（ほかの設定は `vercel.json`）
 - 環境変数：`ANTHROPIC_API_KEY`・`CLAUDE_MODEL`
 - Storage から、Day01 で作った Upstash Redis をこのプロジェクトにもつなぐ（キーの頭にアプリ名を付けているので、同じデータベースを共用できる）
+- 公開URL：https://advent26-green-region-finder.vercel.app
 - AI の説明は全体で1日50回・IPごとに10回まで。同じ条件（場所は約50km単位に丸める）の説明は7日間キャッシュする
+- 2026-11-23 本番で確認：画面・入力の検査・AI の説明（ロンドン・リアルタイム。初回15秒、数字はすべて一致）・同じ条件の2回目はキャッシュから1秒
 
 ## 実装チェックリスト
 
@@ -139,7 +143,7 @@ pnpm eval                     # 評価（eval/RESULTS.md を更新）
 - [x] 確かめ方のスクリプトを動かし、結果を `eval/RESULTS.md` に書いた
 - [x] 画面またはREADMEに出典を表示した
 - [ ] スマホなど実機での動作確認をした（必要な場合）
-- [ ] デプロイした
+- [x] デプロイした（https://advent26-green-region-finder.vercel.app ）
 - [ ] 記事の下書き `ARTICLE.md` を書いた
 
 ## データと出典
