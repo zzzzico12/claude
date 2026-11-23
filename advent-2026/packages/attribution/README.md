@@ -28,3 +28,4 @@ console.log(toMarkdown(sources)); // README の「データと出典」に貼る
 - `name`・`provider`・`url`・`license`・`retrievedAt` は必須。欠けているとエラーになる
 - 非商用条件のデータは `nonCommercial: true` にすると、画面と表の両方に「非商用」と出る
 - 提供元が決めたクレジット表記は `credit` にそのまま書く
+- 英語の画面では `mountAttribution(el, sourcesEn, { lang: "en" })` とする。見出しや「取得日」などの言葉が英語になる（Source の中身は英語のものを渡す）。既定は日本語

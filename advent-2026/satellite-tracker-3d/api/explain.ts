@@ -1,0 +1,55 @@
+// POST /api/explain  { norad: 25544, lang?: "ja" | "en" }
+// 衛星の素性と軌道の数字はサーバーで用意し（画面から送られた数字は使わない）、AI の解説だけを返す
+import { expandGp } from "@advent/orbit";
+import { dailyLimit, getStore } from "@advent/store";
+import { explain, type Lang } from "../lib/explain.js";
+import { getGp } from "../lib/gp-source.js";
+import { loadCatalog, loadUcs } from "../lib/server-data.js";
+
+const DAILY_LIMIT = 10; // 全体で1日10回
+const PER_IP_LIMIT = 3;
+const CACHE_TTL = 60 * 60 * 24 * 30; // 衛星の素性はめったに変わらないので30日
+
+const json = (status: number, body: unknown) =>
+  new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json; charset=utf-8" } });
+
+export async function POST(request: Request): Promise<Response> {
+  let norad: number;
+  let lang: Lang = "ja";
+  try {
+    const body = await request.json();
+    norad = Number(body.norad);
+    if (body.lang === "en") lang = "en";
+  } catch {
+    return json(400, { error: "JSON で送ってください" });
+  }
+  if (!Number.isInteger(norad) || norad <= 0 || norad > 999_999) return json(400, { error: "NORAD 番号が正しくありません" });
+
+  const store = getStore();
+  // 日本語は前からのキーのまま。英語は別に保存する（1日の上限は共通）
+  const key = `satellite-tracker-3d:explain:${lang === "en" ? "en:" : ""}${norad}`;
+  const cached = await store.get(key);
+  if (cached) return json(200, { ...JSON.parse(cached), cached: true });
+
+  const r = await getGp();
+  const gp = r && expandGp(r.gp).find((g) => g.NORAD_CAT_ID === norad);
+  if (!gp) return json(404, { error: "この衛星の軌道のデータが見つかりません" });
+
+  // UCS が読めないときは「載っていない」と取り違えた解説を作らない
+  const ucs = loadUcs();
+  if (!ucs) return json(503, { error: "衛星の情報（UCS）を準備できていません" });
+
+  const ip = (request.headers.get("x-forwarded-for") ?? "local").split(",")[0].trim();
+  const limited = await dailyLimit(store, { app: "satellite-tracker-3d", ip, total: DAILY_LIMIT, perIp: PER_IP_LIMIT });
+  if (limited) return json(429, { error: limited, code: "limit" });
+
+  try {
+    const result = await explain(gp, loadCatalog(), ucs[String(norad)], lang);
+    const out = { text: result.text, unmatchedNumbers: result.unmatchedNumbers, createdAt: new Date().toISOString() };
+    await store.set(key, JSON.stringify(out), CACHE_TTL);
+    return json(200, out);
+  } catch (err) {
+    console.error(err);
+    return json(500, { error: "解説の作成に失敗しました。時間をおいて試してください" });
+  }
+}

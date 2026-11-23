@@ -88,10 +88,11 @@ advent-2026/
 - **デモ**: https://advent26-forest-change-detector.vercel.app （AI は事前に1回だけ呼ぶので、回数の上限なし）
 
 ### 6. [人工衛星は今どこ？](satellite-tracker-3d/)（12/6）
-- **説明**: 3Dの地球儀に、今動いている約1万機の人工衛星をリアルタイムで表示する。Starlink、GPS、気象衛星などで絞り込み、クリックすると「どこの国の、何のための衛星か」をAIが解説する
-- **データ**: CelesTrak × UCS Satellite Database
-- **技術**: 軌道計算＋1万機の3D描画
-- **デモ**: （公開後に記入）
+- **説明**: 3Dの地球儀に、今動いている人工衛星 16,904機をリアルタイムで表示する。種類（Starlink・測位・気象・地球観測など）・軌道・国で絞り込み、クリックすると「どこの国の、何のための衛星か」をAIが解説する
+- **データ**: CelesTrak（軌道要素・衛星カタログ）× UCS Satellite Database（2023年5月版）× Natural Earth II（地図）。評価に NASA の ISS 軌道データ
+- **技術**: SGP4 の軌道計算（Web Worker）＋補間、CesiumJS（ion なし）で1万7千点の描画、事実を渡した解説と数字の照合
+- **特徴**: CelesTrak の取得はサーバーで2時間に1回だけ。ISS の位置は NASA のデータと比べて 1.4〜3.5 km のずれ。全機の計算は1回 9.8 ms。日本語・英語の切り替えつき（AI の解説も英語）。共通部品 `packages/orbit`・`packages/globe` を作った
+- **デモ**: （公開後に記入。AI の解説は1日10回まで）
 - **記事**: （公開後に記入）
 
 ### 7. [衛星の通過予測API](satellite-pass-api/)（12/7）
