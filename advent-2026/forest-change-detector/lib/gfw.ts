@@ -28,6 +28,15 @@ export function yearColor(year: number, current: number): [number, number, numbe
   return [lerp(245, 200, u), lerp(120, 30, u), lerp(40, 40, u)];
 }
 
+/** 濃さ（R、1〜255）がこれ未満は表示しない（低い縮尺で、ほんの少しだけ減った画素で地図が埋まらないように） */
+export const MIN_INTENSITY = 3;
+
+/**
+ * 濃さを不透明度に：平方根で、少し減った所は薄く、たくさん減った所ははっきり
+ * 低い縮尺では1画素が数km四方で、R は「その中でどれだけ減ったか」の目安になる（2026-11-23 のアマゾンのタイル：中央値15）
+ */
+export const alphaOf = (intensity: number) => Math.round(255 * Math.sqrt(intensity / 255));
+
 export interface DecodeOptions {
   /** この年までの減少を表示する */
   year: number;
@@ -45,7 +54,10 @@ export function decodeTile(src: Uint8ClampedArray, out: Uint8ClampedArray, opts:
     const a = src[i + 3];
     const lossYear = 2000 + src[i + 2];
     const visible =
-      a > 0 && lossYear >= FIRST_YEAR && (opts.onlyThisYear ? lossYear === opts.year : lossYear <= opts.year);
+      a > 0 &&
+      src[i] >= MIN_INTENSITY &&
+      lossYear >= FIRST_YEAR &&
+      (opts.onlyThisYear ? lossYear === opts.year : lossYear <= opts.year);
     if (!visible) {
       out[i + 3] = 0;
       continue;
@@ -54,8 +66,7 @@ export function decodeTile(src: Uint8ClampedArray, out: Uint8ClampedArray, opts:
     out[i] = r;
     out[i + 1] = g;
     out[i + 2] = b;
-    // 濃さ（R）を不透明度に。低い縮尺では1画素に減少が少しでもあれば見えるよう、下限を設ける
-    out[i + 3] = Math.min(235, 90 + src[i] * 1.5);
+    out[i + 3] = alphaOf(src[i]);
     shown++;
   }
   return shown;

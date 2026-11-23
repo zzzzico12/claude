@@ -27,6 +27,14 @@ describe("GFW のタイルの読み取り", () => {
     expect(src).toEqual(copy);
   });
 
+  it("濃さが小さい画素は表示しない。濃いほど不透明", () => {
+    const faint = px([2, 0, 10, 255], [20, 0, 10, 255], [200, 0, 10, 255]);
+    const out = new Uint8ClampedArray(faint.length);
+    expect(decodeTile(faint, out, { year: 2025 })).toBe(2);
+    expect(out[3]).toBe(0);
+    expect(out[11]).toBeGreaterThan(out[7]);
+  });
+
   it("選んだ年は目立つ色、古い年は黄色寄り", () => {
     expect(yearColor(2020, 2020)).toEqual([255, 40, 90]);
     const old = yearColor(2001, LAST_YEAR);

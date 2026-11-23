@@ -14,6 +14,10 @@ const LossLayer = L.GridLayer.extend({
     this._states = new Map();
   },
   createTile(this: L.GridLayer & { _states: Map<string, TileState> }, coords: L.Coords, done: L.DoneCallback) {
+    // Leaflet の 512px の格子では、表示の縮尺 Z のタイルの範囲が、256px のタイルの Z−1 の範囲と同じ。
+    // GFW のタイルは「256px のタイルと同じ範囲を 512px で」描いたものなので、Z−1 を取る
+    // （TileLayer の zoomOffset に当たる処理。GridLayer では zoomOffset が効かないので自分でずらす。最初はこれを忘れて位置がずれた）
+    const z = coords.z - 1;
     const canvas = document.createElement("canvas");
     canvas.width = canvas.height = 512;
     const img = new Image();
@@ -22,13 +26,13 @@ const LossLayer = L.GridLayer.extend({
       const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
       ctx.drawImage(img, 0, 0);
       const data = ctx.getImageData(0, 0, 512, 512);
-      const key = `${coords.z}/${coords.x}/${coords.y}`;
+      const key = `${z}/${coords.x}/${coords.y}`;
       this._states.set(key, { canvas, src: new Uint8ClampedArray(data.data) });
       paint(canvas, data.data);
       done(undefined, canvas);
     };
     img.onerror = () => done(new Error("タイルを読み込めませんでした"), canvas);
-    img.src = tileUrl(coords.z, coords.x, coords.y);
+    img.src = tileUrl(z, coords.x, coords.y);
     return canvas;
   },
 });
@@ -51,10 +55,10 @@ export function mountGlobalMap(opts: { focus: { west: number; south: number; eas
     className: "gray-tiles",
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   }).addTo(map);
-  // GFW のタイルは 512px で、256px のタイルと同じ z/x/y の範囲を表す。tileSize 512 と zoomOffset -1 で表示の縮尺に合わせる
+  // GFW のタイルは 512px。取得する縮尺は createTile の中で1つ下げる
   const loss = new (LossLayer as unknown as new (o: L.GridLayerOptions) => L.GridLayer & { _states: Map<string, TileState> })({
     tileSize: 512,
-    zoomOffset: -1,
+    minZoom: 2,
     maxNativeZoom: 12,
     attribution:
       'Tree cover loss: Hansen et al. 2013, UMD/Google/USGS/NASA. Accessed through <a href="https://www.globalnaturewatch.org/">Global Nature Watch</a> | powered by <a href="https://resourcewatch.org">Resource Watch</a>',
