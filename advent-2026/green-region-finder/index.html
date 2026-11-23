@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>グリーンリージョン</title>
+    <meta name="description" content="利用者の場所と要件から、電力の CO2 が少ないクラウドのリージョン（Google Cloud・AWS・Azure）を提案します（Ember × Google Cloud × Azure の実測遅延 × Claude）" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <header class="site">
+      <h1>グリーンリージョン</h1>
+      <p class="lead">クラウドのサーバーをどこに置くと、電力の CO2 を減らせるか。あなたの場所と要件から、Google Cloud・AWS・Azure のリージョンを提案します。</p>
+    </header>
+
+    <main>
+      <section class="controls" aria-label="条件">
+        <div class="field">
+          <span class="label">利用者の場所</span>
+          <div class="chips" id="places"></div>
+          <p class="hint">地図をクリックしても選べます。<button type="button" id="geo" class="linklike">現在地を使う</button></p>
+        </div>
+        <fieldset class="field">
+          <legend class="label">要件</legend>
+          <div id="requirements" class="radios"></div>
+        </fieldset>
+        <fieldset class="field">
+          <legend class="label">クラウド</legend>
+          <div id="providers" class="radios"></div>
+        </fieldset>
+        <label class="field">
+          <span class="label">データを置ける国</span>
+          <select id="country"></select>
+        </label>
+      </section>
+
+      <section class="headline" id="headline" aria-live="polite"></section>
+
+      <div class="layout">
+        <div id="map" role="img" aria-label="リージョンの地図。色が濃い緑ほど電力の CO2 が少ない"></div>
+        <aside class="side">
+          <section class="ai">
+            <h2>AI による説明</h2>
+            <div id="ai-body"><p class="muted">提案の理由と注意点を、AI（Claude）が説明します。</p></div>
+            <button type="button" id="ai-btn">説明してもらう</button>
+          </section>
+          <section class="legend">
+            <h2>色の見方（電力1kWhあたりの CO2）</h2>
+            <ul id="legend"></ul>
+          </section>
+        </aside>
+      </div>
+
+      <h2 class="table-title">条件を満たすリージョン（CO2 の少ない順）</h2>
+      <div class="table-wrap">
+        <table id="table">
+          <thead>
+            <tr>
+              <th>#</th><th>リージョン</th><th>所在地</th>
+              <th title="Ember の国・州の年平均からの推定">CO2（g/kWh）</th>
+              <th title="Google Cloud だけ公開している値">公式値</th>
+              <th title="Azure の実測値をもとにした推定">遅延の目安</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <details class="method">
+        <summary>計算のしかたと限界</summary>
+        <ul>
+          <li><b>CO2</b>：リージョンのある国（米国は州）の電力1kWhあたりの CO2 の年平均（Ember）。各社が買っている再エネ電力（PPA など）は含まない。Google Cloud は公式の値も並べて表示する。</li>
+          <li><b>推定の正しさ</b>：Google Cloud の44リージョンで公式値と比べると、値は3割ほどずれるが、「CO2 の少ない順」の並びはよく合う（順位の相関 0.89、少ない上位10のうち9つが一致）。</li>
+          <li><b>遅延</b>：近い場所（2,000km未満）は距離から、遠い場所は Azure のリージョン間の実測値を中継して推定する。Azure の実測値と比べた誤差の中央値は約13ms。利用者の回線の分は含まない。</li>
+          <li><b>料金</b>は扱わない。</li>
+        </ul>
+      </details>
+    </main>
+
+    <div id="attribution"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
