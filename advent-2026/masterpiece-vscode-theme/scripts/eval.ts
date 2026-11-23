@@ -5,7 +5,7 @@
 // 2. 絵の色をどれだけ残せたか：読みやすさのための調整で、色がどれだけ変わったか（ΔE2000）
 // 3. 見分けやすさ：コードの色（文字・キーワード・文字列・関数・型・数値・コメント）どうしの差
 // 2 と 3 は、AI の割り当てと、機械的な割り当て（明るさと彩度の順）を比べる
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { AA, colorDifference, contrastRatio } from "../lib/color.js";
@@ -96,6 +96,28 @@ ${rows.join("\n")}
 - 配色の好み（きれいか、絵らしいか）は数字では測っていない。スクリーンショットで人が確かめる
 `;
 
-writeFileSync(join(appDir, "eval", "RESULTS.md"), md);
+// ---------- 4. ターミナル（Warp）：背景に絵を敷いたときの読みやすさ ----------
+const warpFile = join(appDir, "lib", "warp-summary.json");
+let warpMd = "";
+if (existsSync(warpFile)) {
+  const w = JSON.parse(readFileSync(warpFile, "utf8")) as { title: string; type: string; opacity: number; passRate: number }[];
+  warpMd = `
+## 4. ターミナル（Warp）：背景に絵を敷いたときの読みやすさ
+
+Warp のテーマは、背景色に絵を薄く混ぜて敷く。文字の後ろが場所ごとに変わるので、絵の画素ごとに「背景色と絵を混ぜた色」に対する文字のコントラスト比を計算し、**検査した文字色（文字・コメント・赤・緑・黄・青・紫・水色）すべてが、98%以上の画素で AA（4.5:1）を満たす範囲で、いちばん濃く**絵を見せる濃さを選んだ（5刻み、最大60）。文字色は、絵を混ぜる余裕を取って背景色に対して 7:1 にしてある。
+
+- 絵の濃さ：${Math.min(...w.map((x) => x.opacity))}〜${Math.max(...w.map((x) => x.opacity))}（中央値 ${[...w.map((x) => x.opacity)].sort((a, b) => a - b)[Math.floor(w.length / 2)]}）
+- 基準を満たした画素の割合（いちばん悪い文字色）：${(Math.min(...w.map((x) => x.passRate)) * 100).toFixed(1)}%〜${(Math.max(...w.map((x) => x.passRate)) * 100).toFixed(1)}%
+
+| テーマ | 種類 | 絵の濃さ | 基準を満たした画素 |
+| --- | --- | --- | --- |
+${w.map((x) => `| ${x.title} | ${x.type === "dark" ? "ダーク" : "ライト"} | ${x.opacity} | ${(x.passRate * 100).toFixed(1)}% |`).join("\n")}
+
+- 「背景色と絵を sRGB で単純に混ぜる」と仮定して計算している。Warp の実際の混ぜ方（濃さの意味）は資料に書かれていないので、見た目で確かめる
+- 最初は文字色を背景に対してちょうど 4.5:1 にしていたので、絵を少しでも混ぜると基準を割り、すべての絵で濃さ 0（絵なし）になった。7:1 の余裕を取って解決した
+`;
+}
+
+writeFileSync(join(appDir, "eval", "RESULTS.md"), md + warpMd);
 console.log(summary("AI", ai));
 console.log(summary("機械的", naive));
