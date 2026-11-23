@@ -50,10 +50,6 @@ const ja = {
   owner: "国・組織",
   explainButton: "AI に「何の衛星か」を解説してもらう",
   explainLimit: "AI の解説は全体で1日10回まで（同じ衛星の2回目からは保存した解説を出します）。",
-  countsTitle: "種類ごとの数",
-  colCategory: "種類",
-  colActive: "稼働中",
-  colShown: "表示中",
   methodTitle: "しくみ",
   method1:
     "衛星の軌道要素（GP データ）は CelesTrak から、サーバーで2時間に1回だけまとめて取得し、全員で使い回します（CelesTrak は頻繁な取得を控えるよう求めています）。",
@@ -70,7 +66,6 @@ const ja = {
   numLocale: "ja-JP",
   all: (n: number) => `すべて（${n}）`,
   ownerOption: (name: string, n: string) => `${name}（${n}）`,
-  total: "合計",
   clock: (t: string, speed: number) => `${t}（日本時間）${speed === 1 ? "" : ` ・ ${speed}倍速`}`,
   status: (n: string, t: string, stale: boolean) =>
     `稼働中の人工衛星 ${n} 機 ・ 軌道要素の取得：${t}${stale ? "（取得の待ち中のため、少し古いデータ）" : ""}`,
@@ -132,10 +127,6 @@ const en: Dict = {
   owner: "Country / organization",
   explainButton: "Ask AI what this satellite is",
   explainLimit: "AI explanations are limited to 10 per day in total (a satellite explained before shows the saved text).",
-  countsTitle: "Satellites by category",
-  colCategory: "Category",
-  colActive: "Active",
-  colShown: "Shown",
   methodTitle: "How it works",
   method1:
     "Orbital elements (GP data) come from CelesTrak. The server fetches them at most once every 2 hours and shares them with everyone, as CelesTrak asks users not to fetch frequently.",
@@ -151,7 +142,6 @@ const en: Dict = {
   numLocale: "en-US",
   all: (n) => `All (${n})`,
   ownerOption: (name, n) => `${name} (${n})`,
-  total: "Total",
   clock: (t, speed) => `${t} UTC${speed === 1 ? "" : ` · ${speed}×`}`,
   status: (n, t, stale) => `${n} active satellites · orbital elements fetched ${t} UTC${stale ? " (slightly old data while the next fetch is pending)" : ""}`,
   perf: (fps, avg, ms) => `Rendering ${fps} fps (10 s avg ${avg}) · position calc ${ms} ms`,

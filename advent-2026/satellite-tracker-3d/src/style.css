@@ -225,24 +225,6 @@ button:disabled {
   font-size: 1.1rem;
   margin-top: 1.5rem;
 }
-.counts {
-  border-collapse: collapse;
-  font-size: 0.9rem;
-  min-width: min(100%, 480px);
-}
-.counts th,
-.counts td {
-  padding: 0.3rem 0.6rem;
-  border-bottom: 1px solid var(--line);
-  text-align: left;
-}
-.counts .r {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-.counts .sum td {
-  font-weight: 600;
-}
 .method li {
   margin-bottom: 0.4rem;
 }

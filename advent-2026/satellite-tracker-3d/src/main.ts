@@ -134,12 +134,6 @@ async function main() {
       const el = ul.querySelector(`[data-num="${i}"]`)!;
       el.textContent = shown[i] === total[i] ? fmt.format(total[i]) : `${fmt.format(shown[i])} / ${fmt.format(total[i])}`;
     });
-    $("counts").querySelector("tbody")!.innerHTML =
-      CATEGORIES.map(
-        (_, i) =>
-          `<tr><td><span class="swatch" style="--c:${COLORS[i]}"></span>${catLabel(i)}</td><td class="r">${fmt.format(total[i])}</td><td class="r">${fmt.format(shown[i])}</td></tr>`,
-      ).join("") +
-      `<tr class="sum"><td>${t.total}</td><td class="r">${fmt.format(n)}</td><td class="r">${fmt.format(shown.reduce((a, b) => a + b, 0))}</td></tr>`;
   }
   applyFilter();
 
