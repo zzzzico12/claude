@@ -17,6 +17,7 @@
   "dependencies": {
     "@advent/ai": "workspace:^",
     "@advent/attribution": "workspace:^",
+    "@advent/store": "workspace:^",
     "dompurify": "^3",
     "marked": "^18",
     "zod": "^4"

@@ -70,3 +70,32 @@ export function getStore(): Store {
 
 export const isPersistentStore = () =>
   Boolean((process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL) && (process.env.UPSTASH_REDIS_REST_TOKEN ?? process.env.KV_REST_API_TOKEN));
+
+// ---------- 1日あたりの回数の上限 ----------
+
+/** 日本時間の日付（上限は日本時間の0時にリセット） */
+export const jstDate = () => new Date(Date.now() + 9 * 3600_000).toISOString().slice(0, 10);
+
+async function sha(s: string): Promise<string> {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+  return [...new Uint8Array(buf)].slice(0, 16).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+/**
+ * 全体の回数と IP ごとの回数を1増やし、上限を超えていたら利用者向けの日本語の理由を返す（超えていなければ null）。
+ * IP はそのまま保存せず、ハッシュにして数える。
+ */
+export async function dailyLimit(
+  store: Store,
+  { app, ip, total, perIp }: { app: string; ip: string; total: number; perIp: number },
+): Promise<string | null> {
+  const day = jstDate();
+  const ttl = 60 * 60 * 26;
+  const ipCount = await store.incr(`${app}:ip:${day}:${await sha(ip)}`, ttl);
+  if (ipCount > perIp) return `1人あたり1日${perIp}回までです。明日またお試しください`;
+  const count = await store.incr(`${app}:total:${day}`, ttl);
+  if (count > total) return `今日の上限（全体で${total}回）に達しました。日本時間の0時にリセットされます`;
+  return null;
+}
+
+export { sha as hashKey };
