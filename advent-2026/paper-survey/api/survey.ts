@@ -3,12 +3,10 @@
 //   {"type":"queries", ...} → {"type":"papers", ...} → {"type":"text","delta":"..."}... → {"type":"check", ...} → {"type":"done", ...}
 // エラーは {"type":"error","message":"..."}。
 // キーとメールアドレスはサーバー側だけで使う。
-import { createHash } from "node:crypto";
+import { dailyLimit, getStore, hashKey } from "@advent/store";
 import { findOaLinks } from "../lib/oa-links.js";
 import { findPapers } from "../lib/pipeline.js";
-import { getStore } from "../lib/store.js";
 import { checkSurvey, streamSurvey } from "../lib/survey.js";
-
 
 const DAILY_LIMIT = 10; // 全体で1日10回（Sonnet 5.5 で1回約10円）
 const PER_IP_LIMIT = 3;
@@ -16,10 +14,6 @@ const CACHE_TTL = 60 * 60 * 24 * 30; // 同じテーマは30日キャッシュ
 const TOP_K = 20;
 
 type Event = Record<string, unknown> & { type: string };
-
-/** 日本時間の日付（上限は日本時間の0時にリセット） */
-const jstDate = () => new Date(Date.now() + 9 * 3600_000).toISOString().slice(0, 10);
-const sha = (s: string) => createHash("sha256").update(s).digest("hex").slice(0, 32);
 
 function json(status: number, body: unknown) {
   return new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json; charset=utf-8" } });
@@ -41,21 +35,13 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   const store = getStore();
-  const cacheKey = `paper-survey:cache:${sha(`${theme.toLowerCase()}|${fromYear}`)}`;
+  const cacheKey = `paper-survey:cache:${await hashKey(`${theme.toLowerCase()}|${fromYear}`)}`;
   const cached = await store.get(cacheKey);
 
   if (!cached) {
-    // IP はそのまま保存せず、ハッシュにして数える
     const ip = (request.headers.get("x-forwarded-for") ?? "local").split(",")[0].trim();
-    const day = jstDate();
-    const ipCount = await store.incr(`paper-survey:ip:${day}:${sha(ip)}`, 60 * 60 * 26);
-    if (ipCount > PER_IP_LIMIT) {
-      return json(429, { error: `1人あたり1日${PER_IP_LIMIT}回までです。明日またお試しください（過去に調べたテーマは何度でも見られます）` });
-    }
-    const total = await store.incr(`paper-survey:total:${day}`, 60 * 60 * 26);
-    if (total > DAILY_LIMIT) {
-      return json(429, { error: `今日の上限（全体で${DAILY_LIMIT}回）に達しました。日本時間の0時にリセットされます` });
-    }
+    const limited = await dailyLimit(store, { app: "paper-survey", ip, total: DAILY_LIMIT, perIp: PER_IP_LIMIT });
+    if (limited) return json(429, { error: `${limited}（過去に調べたテーマは何度でも見られます）` });
   }
 
   const encoder = new TextEncoder();
