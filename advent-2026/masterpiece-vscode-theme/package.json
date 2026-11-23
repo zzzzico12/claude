@@ -21,7 +21,8 @@
     "themes": "tsx --env-file-if-exists=../.env scripts/build-themes.ts",
     "eval": "tsx scripts/eval.ts",
     "package": "pnpm build && vsce package --no-dependencies --readme-path EXTENSION.md --out dist/masterpiece-theme.vsix",
-    "themes:rebuild": "tsx scripts/rebuild-themes.ts"
+    "themes:rebuild": "tsx scripts/rebuild-themes.ts",
+    "warp": "tsx scripts/build-warp.ts"
   },
   "devDependencies": {
     "@advent/ai": "workspace:^",

@@ -1,0 +1,138 @@
+[
+  {
+    "id": "20684",
+    "slug": "gustave-caillebotte-paris-street-rainy-day",
+    "title": "パリの通り、雨の日",
+    "type": "light",
+    "opacity": 20,
+    "passRate": 0.998
+  },
+  {
+    "id": "27992",
+    "slug": "georges-seurat-a-sunday-on-la-grande-jatte-1884",
+    "title": "グランド・ジャット島の日曜日の午後",
+    "type": "dark",
+    "opacity": 20,
+    "passRate": 0.996
+  },
+  {
+    "id": "28560",
+    "slug": "vincent-van-gogh-the-bedroom",
+    "title": "寝室",
+    "type": "dark",
+    "opacity": 20,
+    "passRate": 0.987
+  },
+  {
+    "id": "16568",
+    "slug": "claude-monet-water-lilies",
+    "title": "睡蓮",
+    "type": "dark",
+    "opacity": 20,
+    "passRate": 0.998
+  },
+  {
+    "id": "16560",
+    "slug": "claude-monet-stack-of-wheat-snow-effect-overcast-day",
+    "title": "積みわら(雪の効果、曇り空)",
+    "type": "light",
+    "opacity": 25,
+    "passRate": 1
+  },
+  {
+    "id": "81545",
+    "slug": "claude-monet-stacks-of-wheat-sunset-snow-effect",
+    "title": "積みわら(日没、雪の効果)",
+    "type": "dark",
+    "opacity": 25,
+    "passRate": 0.985
+  },
+  {
+    "id": "64818",
+    "slug": "claude-monet-stacks-of-wheat-end-of-summer",
+    "title": "積みわら(夏の終わり)",
+    "type": "light",
+    "opacity": 30,
+    "passRate": 0.98
+  },
+  {
+    "id": "14624",
+    "slug": "claude-monet-stacks-of-wheat-end-of-day-autumn",
+    "title": "積みわら(日没、秋)",
+    "type": "dark",
+    "opacity": 20,
+    "passRate": 0.999
+  },
+  {
+    "id": "24645",
+    "slug": "katsushika-hokusai-under-the-wave-off-kanagawa-kanagawa-oki",
+    "title": "神奈川沖浪裏",
+    "type": "light",
+    "opacity": 20,
+    "passRate": 1
+  },
+  {
+    "id": "4371",
+    "slug": "utagawa-hiroshige-hamamatsu-from-the-series-fifty-three-st",
+    "title": "浜松（東海道五十三次 狂歌入東海道）",
+    "type": "light",
+    "opacity": 20,
+    "passRate": 1
+  },
+  {
+    "id": "56905",
+    "slug": "james-mcneill-whistler-nocturne-blue-and-gold-southampton-wa",
+    "title": "夜想曲：青と金色――サウサンプトン湾",
+    "type": "dark",
+    "opacity": 35,
+    "passRate": 0.981
+  },
+  {
+    "id": "14620",
+    "slug": "claude-monet-cliff-walk-at-pourville",
+    "title": "プールヴィルの断崖の散歩",
+    "type": "light",
+    "opacity": 25,
+    "passRate": 1
+  },
+  {
+    "id": "81557",
+    "slug": "pierre-auguste-renoir-seascape",
+    "title": "海景",
+    "type": "light",
+    "opacity": 25,
+    "passRate": 0.999
+  },
+  {
+    "id": "72801",
+    "slug": "john-henry-twachtman-icebound",
+    "title": "氷に閉ざされて",
+    "type": "light",
+    "opacity": 30,
+    "passRate": 0.98
+  },
+  {
+    "id": "4796",
+    "slug": "joseph-mallord-william-turner-fishing-boats-with-hucksters-b",
+    "title": "魚を値切る行商人のいる漁船",
+    "type": "dark",
+    "opacity": 15,
+    "passRate": 1
+  },
+  {
+    "id": "16343",
+    "slug": "jan-van-de-cappelle-fishing-boats-in-a-calm",
+    "title": "凪の漁船",
+    "type": "light",
+    "opacity": 20,
+    "passRate": 0.991
+  },
+  {
+    "id": "154235",
+    "slug": "edvard-munch-the-girl-by-the-window",
+    "title": "窓辺の少女",
+    "type": "dark",
+    "opacity": 20,
+    "passRate": 0.999
+  }
+]

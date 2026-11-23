@@ -23,7 +23,12 @@ const fromLinear = (l: number) => 255 * (l <= 0.0031308 ? 12.92 * l : 1.055 * l 
 
 /** WCAG の相対輝度（0〜1） */
 export function luminance(hex: string): number {
-  const [r, g, b] = hexToRgb(hex).map(toLinear);
+  return luminanceRgb(hexToRgb(hex));
+}
+
+/** WCAG の相対輝度（RGB から。大量の画素を調べるとき用） */
+export function luminanceRgb(rgb: RGB): number {
+  const [r, g, b] = rgb.map(toLinear);
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 
