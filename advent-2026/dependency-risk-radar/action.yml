@@ -1,0 +1,67 @@
+name: Dependency Risk Radar
+description: 依存ライブラリの脆弱性を「今日対応すべき順」に並べたレポートを、ジョブの Summary に出す（OSV × deps.dev × CISA KEV × EPSS × Claude）
+author: zzzzico12
+
+inputs:
+  file:
+    description: 調べる依存ファイル（package-lock.json か requirements.txt）。リポジトリのルートからのパス
+    required: true
+  top:
+    description: 説明する上位の件数
+    default: "10"
+  ai:
+    description: AI の説明と乗り換え先の提案を使うか（"true" / "false"）。使うには anthropic-api-key が必要
+    default: "true"
+  anthropic-api-key:
+    description: Claude の API キー（secrets から渡す）。なければ AI なしでレポートを作る
+    required: false
+  claude-model:
+    description: 使う Claude のモデル
+    default: claude-sonnet-5-5
+  fail-on:
+    description: kev（悪用確認済みがあれば失敗）/ urgent（今日対応すべきがあれば失敗）/ none
+    default: none
+
+outputs:
+  report:
+    description: レポート（Markdown）のファイルのパス
+    value: ${{ steps.run.outputs.report }}
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22
+
+    - name: 準備（依存のインストールとビルド）
+      shell: bash
+      run: |
+        npm install -g pnpm@9.15.0 >/dev/null
+        cd "$GITHUB_ACTION_PATH/.."
+        pnpm install --frozen-lockfile --filter "dependency-risk-radar..." >/dev/null
+        pnpm --filter "dependency-risk-radar..." build >/dev/null
+
+    - name: レポートを作る
+      id: run
+      shell: bash
+      env:
+        ANTHROPIC_API_KEY: ${{ inputs.anthropic-api-key }}
+        CLAUDE_MODEL: ${{ inputs.claude-model }}
+        INPUT_FILE: ${{ inputs.file }}
+        INPUT_TOP: ${{ inputs.top }}
+        INPUT_AI: ${{ inputs.ai }}
+        INPUT_FAIL_ON: ${{ inputs.fail-on }}
+      run: |
+        report="$RUNNER_TEMP/dependency-risk-radar.md"
+        args=("$GITHUB_WORKSPACE/$INPUT_FILE" --top "$INPUT_TOP" --out "$report" --fail-on "$INPUT_FAIL_ON")
+        if [ "$INPUT_AI" != "true" ]; then args+=(--no-ai); fi
+        set +e
+        node "$GITHUB_ACTION_PATH/dist/cli.js" "${args[@]}"
+        code=$?
+        set -e
+        if [ -f "$report" ]; then
+          cat "$report" >> "$GITHUB_STEP_SUMMARY"
+          echo "report=$report" >> "$GITHUB_OUTPUT"
+        fi
+        exit $code

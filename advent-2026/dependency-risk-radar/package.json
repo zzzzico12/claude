@@ -1,0 +1,23 @@
+{
+  "name": "dependency-risk-radar",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "dependency-risk-radar": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "tsc --noEmit",
+    "test": "vitest run",
+    "start": "tsx --env-file-if-exists=../.env src/cli.ts",
+    "eval:fetch": "tsx scripts/fetch-eval-data.ts",
+    "eval": "tsx scripts/eval.ts"
+  },
+  "dependencies": {
+    "@advent/ai": "workspace:^",
+    "@advent/attribution": "workspace:^",
+    "tsx": "^4",
+    "zod": "^4"
+  }
+}

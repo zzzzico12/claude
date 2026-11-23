@@ -1,0 +1,24 @@
+# Day02 の GitHub Action が動くかを、例の依存ファイルで確かめる（AI なし。キーは使わない）
+name: advent-2026 dependency-risk-radar demo
+on:
+  pull_request:
+    paths:
+      - "advent-2026/dependency-risk-radar/**"
+      - "advent-2026/packages/**"
+      - ".github/workflows/advent-2026-radar-demo.yml"
+  workflow_dispatch:
+jobs:
+  radar:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        file:
+          - advent-2026/dependency-risk-radar/examples/old-express.package-lock.json
+          - advent-2026/dependency-risk-radar/examples/old-django.requirements.txt
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./advent-2026/dependency-risk-radar
+        with:
+          file: ${{ matrix.file }}
+          ai: "false"
+          top: "5"
