@@ -4,7 +4,7 @@
 import "cesium/Build/Cesium/Widgets/widgets.css";
 import "./style.css";
 import { mountAttribution } from "@advent/attribution";
-import { expandGp, geodetic, orbitRingEcf, orbitSummary, toSatrec, type CompactGp, type Gp, type Regime } from "@advent/orbit";
+import { expandGp, geodetic, orbitRingEcf, orbitSummary, positionsEcf, toSatrec, type CompactGp, type Gp, type Regime } from "@advent/orbit";
 import { CATEGORIES } from "../lib/category.js";
 import { categoryFromName, CATEGORY_INDEX } from "../lib/category.js";
 import { factsOf, type Catalog, type UcsRecord } from "../lib/facts.js";
@@ -150,6 +150,8 @@ async function main() {
   let inflight = 0;
   let computeMs = 0;
   const cur = new Float32Array(n * 3).fill(NaN);
+  const selPos = new Float32Array(3);
+  let selSatrec: ReturnType<typeof toSatrec> = null;
 
   const stepMs = () => STEP_REAL_SEC * 1000 * speed;
   function requestAhead() {
@@ -206,9 +208,26 @@ async function main() {
     if (snaps.length >= 2 && snaps[0].t <= t) {
       const [a, b] = snaps;
       const f = Math.min(1, (t - a.t) / (b.t - a.t));
-      for (let k = 0; k < cur.length; k++) cur[k] = a.p[k] + (b.p[k] - a.p[k]) * f;
+      // 直線で補間すると弧の内側を通る（600倍で最大約24km）ので、
+      // 地球の中心からの距離も前後の値で補間して、その長さに伸ばす
+      const ap = a.p, bp = b.p;
+      for (let k = 0; k < cur.length; k += 3) {
+        const x = ap[k] + (bp[k] - ap[k]) * f;
+        const y = ap[k + 1] + (bp[k + 1] - ap[k + 1]) * f;
+        const z = ap[k + 2] + (bp[k + 2] - ap[k + 2]) * f;
+        const ra = Math.hypot(ap[k], ap[k + 1], ap[k + 2]);
+        const rb = Math.hypot(bp[k], bp[k + 1], bp[k + 2]);
+        const s = (ra + (rb - ra) * f) / Math.hypot(x, y, z);
+        cur[k] = x * s;
+        cur[k + 1] = y * s;
+        cur[k + 2] = z * s;
+      }
     } else if (snaps.length) {
       cur.set(snaps[0].p);
+    }
+    // 選んでいる衛星だけは毎フレーム正確に計算して、軌道の輪とぴったり重ねる
+    if (state.selected >= 0 && selSatrec && positionsEcf([selSatrec], new Date(t), selPos)) {
+      cur.set(selPos, state.selected * 3);
     }
     cloud.update(cur, (i) => visible[i] === 1);
     if (snaps.length && snaps[0].t < t - 4 * stepMs()) requestAhead();
@@ -242,7 +261,6 @@ async function main() {
   // ---------- 選択 ----------
   let ucs: Record<string, UcsRecord> | null = null;
   let ring: InstanceType<typeof Cesium.Entity> | null = null;
-  let selSatrec: ReturnType<typeof toSatrec> = null;
 
   function select(i: number, fly = false) {
     if (state.selected >= 0) cloud.setStyle(state.selected, colors[cat[state.selected]], 3);
