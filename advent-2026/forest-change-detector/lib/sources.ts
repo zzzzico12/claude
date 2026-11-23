@@ -20,6 +20,15 @@ export const sources: Source[] = [
     credit: "Hansen, M. C. et al. 2013. High-Resolution Global Maps of 21st-Century Forest Cover Change. Science 342: 850–53.",
   },
   {
+    name: "Tree cover loss（地球全体の地図のタイル）",
+    provider: "Hansen ら（UMD/Google/USGS/NASA）。配信：Global Nature Watch（旧 Global Forest Watch）の Tile Cache API。powered by Resource Watch",
+    url: "https://www.globalnaturewatch.org/",
+    license: "CC BY 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by/4.0/",
+    retrievedAt: "表示のたびに取得（v1.13）",
+    credit: "Hansen et al., 2013. High-Resolution Global Maps of 21st-Century Forest Cover Change. Accessed through Global Nature Watch.",
+  },
+  {
     name: "OpenStreetMap（道路・川、地図）",
     provider: "OpenStreetMap contributors",
     url: "https://www.openstreetmap.org/copyright",

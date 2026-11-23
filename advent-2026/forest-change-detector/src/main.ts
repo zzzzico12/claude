@@ -2,6 +2,7 @@ import { mountAttribution } from "@advent/attribution";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { sources } from "../lib/sources.js";
+import { mountGlobalMap } from "./global.js";
 
 interface Patch {
   id: number;
@@ -61,7 +62,9 @@ async function main() {
     <div><b>${ha(r.forest_before_ha)}</b><span>前の年に森だった面積</span></div>
     <div><b>${pct(ev.precision)}</b><span>検知のうち、森林減少データ（Hansen）でも2025年に減少していた割合</span></div>`;
 
-  // ---------- 地図 ----------
+  mountGlobalMap({ focus: r.bounds, onFocusClick: () => $("local").scrollIntoView({ behavior: "smooth" }) });
+
+  // ---------- 地図（拡大した1か所） ----------
   const b = r.bounds;
   const bounds = L.latLngBounds([b.south, b.west], [b.north, b.east]);
   const map = L.map("map", { maxBounds: bounds.pad(0.5) }).fitBounds(bounds);

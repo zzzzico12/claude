@@ -60,3 +60,14 @@ td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-n
 .method summary { cursor: pointer; font-weight: 600; }
 #attribution { margin: 32px auto; font-size: 0.8rem; color: var(--muted); }
 #attribution h2 { font-size: 0.9rem; }
+
+.global { margin-bottom: 8px; }
+h2.first { margin-top: 8px; }
+#global-map { height: 520px; border-radius: 10px; border: 1px solid var(--line); background: #d9dde0; }
+.gray-tiles { filter: grayscale(1) brightness(1.05) contrast(0.9); }
+@media (prefers-color-scheme: dark) { .gray-tiles { filter: grayscale(1) invert(1) brightness(0.8) contrast(0.9); } }
+#play { padding: 4px 14px; border: 0; border-radius: 6px; background: var(--accent); color: #fff; font: inherit; cursor: pointer; }
+@media (prefers-color-scheme: dark) { #play { color: #0c1a10; } }
+.year-label { font-size: 1.05rem; min-width: 14em; }
+.legend-years { list-style: none; display: flex; gap: 16px; padding: 0; margin: 6px 0 0; font-size: 0.8rem; color: var(--muted); flex-wrap: wrap; }
+.legend-years span { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }

@@ -10,9 +10,29 @@
   <body>
     <header class="site">
       <h1>森の変化ウォッチ</h1>
-      <p class="lead" id="lead"></p>
+      <p class="lead">地球のどこで森が減っているかを2001年から年ごとにたどり、アマゾンの1か所では衛星画像で実際に確かめます。</p>
     </header>
     <main>
+      <section class="global">
+        <h2 class="first">地球全体：2001〜2025年に森が減った場所</h2>
+        <p class="hint">メリーランド大学の森林減少データ（Global Forest Watch の元データ）。色は減った年（黄＝古い、赤＝新しい、明るいピンク＝選んだ年）。再生すると、森が減った場所が年ごとに広がっていきます。拡大すると30m単位まで見られます。</p>
+        <div class="controls">
+          <button type="button" id="play">▶ 再生</button>
+          <label class="slider"><span>2001</span><input type="range" id="year" aria-label="年" /><span>2025</span></label>
+          <label><input type="checkbox" id="only-year" /> その年だけ</label>
+          <b id="year-label" class="year-label"></b>
+        </div>
+        <div id="global-map" role="img" aria-label="地球全体の森林減少の地図"></div>
+        <ul class="legend-years">
+          <li><span style="background:#ffd23c"></span>2001年ごろ</li>
+          <li><span style="background:#f57828"></span>2013年ごろ</li>
+          <li><span style="background:#c81e28"></span>最近</li>
+          <li><span style="background:#ff285a"></span>選んだ年</li>
+        </ul>
+      </section>
+
+      <h2 id="local">拡大：ロンドニア州の約20km四方を、衛星画像で確かめる</h2>
+      <p class="lead" id="lead"></p>
       <section class="stats" id="stats"></section>
       <div class="layout">
         <div class="mapcol">
