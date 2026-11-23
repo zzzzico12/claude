@@ -2,7 +2,7 @@
   "name": "masterpiece-theme",
   "displayName": "名画テーマ（Masterpiece Theme）",
   "description": "パブリックドメインの名画の色から作った VS Code のテーマ。文字の読みやすさ（WCAG AA）を自動で保証し、天気と時間帯で絵が切り替わる",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "publisher": "zzzzico12",
   "private": true,
   "license": "MIT",

@@ -11,6 +11,8 @@ const byLabel = new Map(paintings.map((p) => [p.label, p]));
 const CONFIG = "masterpieceTheme";
 
 let status: vscode.StatusBarItem;
+/** 拡張機能の場所（同梱した絵の画像 media/*.jpg を読むため） */
+let extUri: vscode.Uri;
 let timer: NodeJS.Timeout | undefined;
 let lastMood: Mood | null = null;
 
@@ -69,12 +71,20 @@ function nonce() {
   return s;
 }
 
+/**
+ * 絵の画像は拡張機能に同梱している（media/<作品ID>.jpg、幅400px、パブリックドメイン）。
+ * Webview の <img> から美術館のサーバーを直接読むと、名乗るためのヘッダー（AIC-User-Agent）を付けられず、
+ * ボット確認のページが返って表示されなかったため
+ */
+const imageFor = (webview: vscode.Webview, p: PaintingInfo) => webview.asWebviewUri(vscode.Uri.joinPath(extUri, "media", `${p.id}.jpg`)).toString();
+const webviewOptions = () => ({ enableScripts: true, localResourceRoots: [vscode.Uri.joinPath(extUri, "media")] });
+
 class PaintingViewProvider implements vscode.WebviewViewProvider {
   private view: vscode.WebviewView | undefined;
 
   resolveWebviewView(view: vscode.WebviewView) {
     this.view = view;
-    view.webview.options = { enableScripts: true };
+    view.webview.options = webviewOptions();
     view.webview.onDidReceiveMessage((m: { command?: string }) => {
       if (m.command === "about" || m.command === "pick") void vscode.commands.executeCommand(`${CONFIG}.${m.command}`);
     });
@@ -86,7 +96,7 @@ class PaintingViewProvider implements vscode.WebviewViewProvider {
     if (!this.view) return;
     const p = currentPainting();
     const n = nonce();
-    const csp = `default-src 'none'; img-src https://www.artic.edu; style-src 'unsafe-inline'; script-src 'nonce-${n}';`;
+    const csp = `default-src 'none'; img-src ${this.view.webview.cspSource}; style-src 'unsafe-inline'; script-src 'nonce-${n}';`;
     const script = `<script nonce="${n}">const vscode=acquireVsCodeApi();for(const el of document.querySelectorAll("[data-cmd]"))el.addEventListener("click",()=>vscode.postMessage({command:el.dataset.cmd}));</script>`;
     const style = `<style>
 body{padding:8px 10px;margin:0;color:var(--vscode-foreground);font-family:var(--vscode-font-family);font-size:12px;line-height:1.6}
@@ -107,7 +117,7 @@ button{margin-top:8px;background:var(--vscode-button-background);color:var(--vsc
       .map((a) => `<span style="background:${a.adjusted}" title="${ROLE_JA[a.role] ?? a.role} ${a.adjusted}"></span>`)
       .join("");
     this.view.webview.html = `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${csp}">${style}</head><body>
-<img src="${esc(p.imageUrl)}" alt="${esc(p.titleJa)}" title="クリックで解説を表示" data-cmd="about">
+<img src="${imageFor(this.view.webview, p)}" alt="${esc(p.titleJa)}" title="クリックで解説を表示" data-cmd="about">
 <p class="t">${esc(p.titleJa)}</p>
 <p class="a">${esc(p.artistJa)}${p.date ? `・${esc(p.date)}` : ""}</p>
 <div class="strip" title="この絵から取った色">${strip}</div>
@@ -176,7 +186,7 @@ function schedule() {
 
 
 function showAbout(p: PaintingInfo) {
-  const panel = vscode.window.createWebviewPanel("masterpieceTheme.about", p.titleJa, vscode.ViewColumn.Beside, {});
+  const panel = vscode.window.createWebviewPanel("masterpieceTheme.about", p.titleJa, vscode.ViewColumn.Beside, webviewOptions());
   const roleNames: Record<string, string> = {
     background: "背景",
     foreground: "文字",
@@ -194,14 +204,14 @@ function showAbout(p: PaintingInfo) {
     )
     .join("");
   panel.webview.html = `<!doctype html><html lang="ja"><head><meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src https://www.artic.edu; style-src 'unsafe-inline';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${panel.webview.cspSource}; style-src 'unsafe-inline';">
 <style>
 body{font-family:var(--vscode-font-family);color:var(--vscode-foreground);line-height:1.7;padding:0 16px 24px;max-width:760px}
 img{max-width:100%;border-radius:6px;margin-top:12px}
 .sw{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:4px;vertical-align:-2px;border:1px solid #8884}
 ul{list-style:none;padding:0} small,.muted{opacity:.75} a{color:var(--vscode-textLink-foreground)}
 </style></head><body>
-<img src="${esc(p.imageUrl)}" alt="${esc(p.titleJa)}">
+<img src="${imageFor(panel.webview, p)}" alt="${esc(p.titleJa)}">
 <h1>${esc(p.titleJa)}</h1>
 <p class="muted">${esc(p.artistJa)}・${esc(p.date ?? "")}<br>${esc(p.title)}${p.artist ? ` / ${esc(p.artist)}` : ""}</p>
 <p>${esc(p.explanation)}</p>
@@ -218,6 +228,7 @@ ul{list-style:none;padding:0} small,.muted{opacity:.75} a{color:var(--vscode-tex
 }
 
 export function activate(context: vscode.ExtensionContext) {
+  extUri = context.extensionUri;
   paintingView = new PaintingViewProvider();
   context.subscriptions.push(vscode.window.registerWebviewViewProvider(`${CONFIG}.painting`, paintingView));
   status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);

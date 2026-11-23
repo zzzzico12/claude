@@ -109,6 +109,9 @@ async function main() {
     const art = await getAicArtwork(id);
     if (!art.isPublicDomain || !art.imageUrl) throw new Error(`${id} はパブリックドメインでないか、画像がない`);
     const image = await loadImage(art);
+    // 拡張機能に同梱する（Webview から美術館のサーバーを直接読むと、ボット確認で表示されないため）
+    mkdirSync(join(appDir, "media"), { recursive: true });
+    writeFileSync(join(appDir, "media", `${art.id}.jpg`), image);
     const palette = extractPalette(image, 12, 4);
 
     const ai = await generateObject({
