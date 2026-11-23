@@ -38,7 +38,8 @@
 
 ```sh
 cd advent-2026/satellite-tracker-3d
-pnpm catalog      # 衛星カタログ（CelesTrak・UCS）を取得して public/data/ に書く。取得したものは data/ に保存して使い回す
+pnpm catalog      # 衛星カタログ（CelesTrak・UCS）を取得して public/data/catalog.json に書く。取得したものは data/ に保存して使い回す
+pnpm ucs          # サーバーだけが読む UCS の項目（server-data/ucs.json。Git 管理外）を作る
 pnpm dev          # http://localhost:5206
 pnpm eval         # 評価（AI の解説の評価も行うときは pnpm eval -- --ai。約0.04ドル）
 ```
@@ -88,7 +89,7 @@ ISSなど位置が公表されている衛星で、計算した位置のずれ�
 | --- | --- | --- | --- | --- |
 | [GP データ（稼働中の衛星の軌道要素。GROUP=active）](https://celestrak.org/NORAD/elements/) | CelesTrak（元データは米宇宙軍 18th/19th SDS） | [無償で公開。取得回数の制限あり（利用方針）](https://celestrak.org/usage-policy.php) | 2時間ごとに取得（画面に取得時刻を表示） |  |
 | [SATCAT（衛星カタログ：所有者・打ち上げ日）と、分類（GROUP）](https://celestrak.org/satcat/) | CelesTrak | [無償で公開（利用方針）](https://celestrak.org/usage-policy.php) | 2026-11-23 |  |
-| [UCS Satellite Database（目的・利用者・運用者。2023年5月1日版）](https://www.ucs.org/resources/satellite-database) | Union of Concerned Scientists | 明示のライセンスなし（研究用に公開。出典を表示して一部の項目を使用） | 2026-11-23 | 2023年5月で更新が止まっていて、それ以降の衛星は載っていない |
+| [UCS Satellite Database（目的・利用者・運用者。2023年5月1日版）](https://www.ucs.org/resources/satellite-database) | Union of Concerned Scientists | 明示のライセンスなし（研究用に公開。出典を表示し、選んだ衛星の一部の項目だけを表示） | 2026-11-23 | 2023年5月で更新が止まっていて、それ以降の衛星は載っていない |
 | [Natural Earth II（地球儀の地図。CesiumJS に同梱）](https://www.naturalearthdata.com/) | Natural Earth | [パブリックドメイン](https://www.naturalearthdata.com/about/terms-of-use/) | CesiumJS 1.147 に同梱の版 |  |
 
 評価だけに使うデータ：
@@ -98,7 +99,7 @@ ISSなど位置が公表されている衛星で、計算した位置のずれ�
 | [ISS の軌道データ（ISS.OEM_J2K_EPH）](https://nasa-public-data.s3.amazonaws.com/iss-coords/current/ISS_OEM/ISS.OEM_J2K_EPH.txt) | NASA Johnson Space Center（Flight Operations Directorate） | 米国政府の著作物（パブリックドメイン） | 2026-11-23 |  |
 
 - **CelesTrak の取得回数**：大きなデータ（active・starlink）は取得回数が制限され、超えると 403 などで止められる（[利用方針](https://celestrak.org/usage-policy.php)）。公開デモでは、サーバー（[lib/gp-source.ts](lib/gp-source.ts)）が2時間に1回だけ取り、保存したものを全員に配る。カタログを作るときの小さな分類（GROUP）は33個を2秒ずつ間をあけて取り、`data/` に保存して使い回す
-- **UCS のライセンス**：ページに利用条件の明記がない。「研究用のツールとして公開している」とあるので、出典を表示し、目的・利用者・運用者などの一部の項目だけを使う。元のファイルはリポジトリに入れない
+- **UCS のライセンス**：ページに利用条件の明記がない。「研究用のツールとして公開している」とあるので、出典を表示し、目的・利用者・運用者などの一部の項目だけを使う。出典を書くことは利用の許可にはならないので、まとめたファイルは配らない：元のファイルも抜き出した JSON もリポジトリと `public/` に入れず、Vercel のビルドのときに UCS から取得して `server-data/ucs.json`（サーバーだけが読む）を作る。画面には、クリックした1機ぶんの項目だけを `api/sat.ts` が返す
 
 ## 実装メモ
 
@@ -133,6 +134,7 @@ ISSなど位置が公表されている衛星で、計算した位置のずれ�
 
 - 地図は Cesium ion を使わず、CesiumJS に同梱の Natural Earth II にする（キーも使用量の上限もいらない。画質はそこそこ）
 - UCS に載っていない衛星（全体の7割）も、CelesTrak のカタログと名前から解説する。画面に「UCS は2023年5月で更新停止」と出す
+- UCS の項目はまとめて配らない（2026-11-24 変更）。はじめは抜き出した `public/data/ucs.json`（1.5MB）を画面に配っていたが、利用条件が明記されていないので、サーバーだけに置き、1機ずつ返す形にした（`lib/ucs.ts`、`api/sat.ts`）
 - AI の解説は全体で1日10回（IP ごとに3回）。衛星ごとに30日保存し、2回目からは料金がかからない
 - 日本語と英語の表示を用意する（2026-11-24 追加）。切り替えはページを読み込み直す（選んだ衛星は `#` で引き継ぐ）。英語の解説は英語用の事実（[lib/facts.ts](lib/facts.ts) の `factsEn`。数字は日本語と同じ計算）と英語のプロンプトで作り、日本語とは別に保存する。1日の上限は両方の言語で共通。英語の文では「about 550」の 550 まで名前の番号として外さないよう、照合から外す名前の決まりを言語ごとに分けた
 
@@ -144,6 +146,7 @@ ISSなど位置が公表されている衛星で、計算した位置のずれ�
 | 地球儀（共通。Cesium ion なし） | [packages/globe/src/index.ts](../packages/globe/src/index.ts)、Vite のプラグイン [vite.ts](../packages/globe/src/vite.ts) |
 | 軌道要素の配信（2時間に1回だけ取得） | [lib/gp-source.ts](lib/gp-source.ts)、[api/gp.ts](api/gp.ts) |
 | 衛星カタログ（種類・国・UCS） | [scripts/build-catalog.ts](scripts/build-catalog.ts)、[lib/category.ts](lib/category.ts)、[lib/owners.ts](lib/owners.ts) |
+| UCS の項目（サーバーだけ。1機ずつ返す） | [lib/ucs.ts](lib/ucs.ts)、[scripts/build-ucs.ts](scripts/build-ucs.ts)、[api/sat.ts](api/sat.ts) |
 | 画面 | [src/main.ts](src/main.ts)、位置の計算 [src/worker.ts](src/worker.ts)、日本語・英語 [src/i18n.ts](src/i18n.ts) |
 | AI の解説 | [lib/facts.ts](lib/facts.ts)（事実）、[lib/explain.ts](lib/explain.ts)、[api/explain.ts](api/explain.ts) |
 | 評価 | [scripts/eval.ts](scripts/eval.ts) → [eval/RESULTS.md](eval/RESULTS.md) |
@@ -209,7 +212,7 @@ Qiita の記事を書くための材料。下書きは [ARTICLE.md](ARTICLE.md) 
 | 全機の計算時間 | 9.8 ms / 回（Node） | 同上 |
 | 描画 | 60 コマ/秒（全機でも同じ） | 画面の表示 |
 | AI の解説 | 8機すべてで数字が一致。1回 約0.005ドル（約0.8円） | 同上・使用量のログ |
-| 配るページの大きさ | CesiumJS 本体 約5MB（gzip 1.4MB）＋同梱ファイル 7.4MB、カタログ 0.5MB・UCS 1.5MB | `pnpm build` |
+| 配るページの大きさ | CesiumJS 本体 約5MB（gzip 1.4MB）＋同梱ファイル 7.4MB、カタログ 0.5MB（UCS はまとめて配らない） | `pnpm build` |
 
 ### AI の振る舞いで面白かった例
 

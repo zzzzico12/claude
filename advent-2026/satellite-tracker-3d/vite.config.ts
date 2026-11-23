@@ -18,7 +18,7 @@ function devApi(): Plugin {
         const mod = await server.ssrLoadModule(`/api/${name}.ts`);
         const chunks: Buffer[] = [];
         for await (const c of req) chunks.push(c as Buffer);
-        const request = new Request(`http://localhost/api/${name}`, {
+        const request = new Request(`http://localhost/api${req.url ?? ""}`, {
           method: req.method,
           headers: req.headers as Record<string, string>,
           body: req.method === "POST" ? Buffer.concat(chunks) : undefined,

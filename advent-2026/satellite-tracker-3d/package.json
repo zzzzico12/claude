@@ -9,6 +9,7 @@
     "lint": "tsc --noEmit",
     "test": "vitest run",
     "catalog": "tsx scripts/build-catalog.ts",
+    "ucs": "tsx scripts/build-ucs.ts",
     "eval": "tsx --env-file-if-exists=../.env scripts/eval.ts"
   },
   "dependencies": {

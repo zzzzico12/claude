@@ -7,6 +7,7 @@
 // 4. AI の解説：代表的な衛星で、解説の数字が事実と一致するか
 // 結果は eval/RESULTS.md に書く（4 は eval/explain-samples.json にも）
 import { apply, compactGp, expandGp, j2000ToTeme, parseOem, positionsEcf, positionTeme, toSatrec, type Gp } from "@advent/orbit";
+import { UCS_JSON } from "../lib/ucs.js";
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -88,7 +89,7 @@ function speed() {
 function categories() {
   const counts = new Array(CATEGORIES.length).fill(0);
   for (const v of Object.values(catalog.sats)) counts[v[0]]++;
-  const ucs = JSON.parse(readFileSync(join(appDir, "public", "data", "ucs.json"), "utf8"));
+  const ucs = JSON.parse(readFileSync(join(appDir, UCS_JSON), "utf8"));
   const inUcs = Object.keys(ucs).length;
   const notStarlink = gps.filter((g) => !g.OBJECT_NAME.startsWith("STARLINK"));
   const inUcsNotStarlink = notStarlink.filter((g) => ucs[g.NORAD_CAT_ID]).length;
@@ -99,7 +100,7 @@ function categories() {
 const SAMPLES = ["ISS (ZARYA)", "HIMAWARI-9", "QZS-2 (MICHIBIKI-2)", "NAVSTAR 43 (USA 132)", "STARLINK-1008", "KUIPER-00008", "YAOGAN-30 01", "HST"];
 async function explainSamples() {
   const { explain } = await import("../lib/explain.js");
-  const ucs = JSON.parse(readFileSync(join(appDir, "public", "data", "ucs.json"), "utf8"));
+  const ucs = JSON.parse(readFileSync(join(appDir, UCS_JSON), "utf8"));
   const out = [];
   for (const name of SAMPLES) {
     const gp = gps.find((g) => g.OBJECT_NAME === name);

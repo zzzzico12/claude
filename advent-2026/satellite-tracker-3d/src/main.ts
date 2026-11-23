@@ -269,7 +269,20 @@ async function main() {
   $("status").textContent = t.status(fmt.format(n), clockFmt.format(fetched), Boolean(gpRes.stale));
 
   // ---------- 選択 ----------
-  let ucs: Record<string, UcsRecord> | null = null;
+  // UCS の項目は、選んだ1機ぶんだけサーバーに聞く（まとめたファイルは配らない）
+  const ucsCache = new Map<number, UcsRecord | null>();
+  async function ucsOf(norad: number): Promise<UcsRecord | null | "error"> {
+    if (ucsCache.has(norad)) return ucsCache.get(norad)!;
+    try {
+      const r = await fetch(`/api/sat?norad=${norad}`);
+      if (!r.ok) return "error";
+      const u = ((await r.json()) as { ucs: UcsRecord | null }).ucs;
+      ucsCache.set(norad, u);
+      return u;
+    } catch {
+      return "error";
+    }
+  }
   let ring: InstanceType<typeof Cesium.Entity> | null = null;
 
   function select(i: number, fly = false) {
@@ -312,10 +325,10 @@ async function main() {
     $("sel-name").textContent = gp.OBJECT_NAME;
     $("explanation").hidden = true;
     $<HTMLButtonElement>("explain").disabled = false;
-    ucs ??= await fetch("/data/ucs.json").then((r) => r.json());
+    const u = await ucsOf(gp.NORAD_CAT_ID);
     if (state.selected !== i) return;
     // 数字は factsOf（AI に渡すのと同じ計算）から取り、言葉だけ言語に合わせる
-    const f = factsOf(gp, catalog, ucs![String(gp.NORAD_CAT_ID)]);
+    const f = factsOf(gp, catalog, u === "error" ? undefined : (u ?? undefined));
     const c = catalog.sats[String(gp.NORAD_CAT_ID)];
     const ownerCode = c?.[1] ?? "";
     const R = t.rows;
@@ -335,7 +348,7 @@ async function main() {
       rows.push([R.ucsOperator, t.operatorValue(f.UCS.運用者, f.UCS.運用者の国)]);
       rows.push([R.ucsUsers, f.UCS.利用者]);
     } else {
-      rows.push([R.ucs, t.notInUcs]);
+      rows.push([R.ucs, u === "error" ? t.ucsFailed : t.notInUcs]);
     }
     const dl = $("sel-facts");
     dl.innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd${k === R.position ? ' id="sel-pos"' : ""}>${escapeHtml(v)}</dd>`).join("");

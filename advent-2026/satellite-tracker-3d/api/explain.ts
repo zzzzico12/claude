@@ -2,10 +2,9 @@
 // 衛星の素性と軌道の数字はサーバーで用意し（画面から送られた数字は使わない）、AI の解説だけを返す
 import { expandGp } from "@advent/orbit";
 import { dailyLimit, getStore } from "@advent/store";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
-import { explain, type Catalog, type Lang, type UcsRecord } from "../lib/explain.js";
+import { explain, type Lang } from "../lib/explain.js";
 import { getGp } from "../lib/gp-source.js";
+import { loadCatalog, loadUcs } from "../lib/server-data.js";
 
 const DAILY_LIMIT = 10; // 全体で1日10回
 const PER_IP_LIMIT = 3;
@@ -13,16 +12,6 @@ const CACHE_TTL = 60 * 60 * 24 * 30; // 衛星の素性はめったに変わら�
 
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json; charset=utf-8" } });
-
-let data: { catalog: Catalog; ucs: Record<string, UcsRecord> } | undefined;
-function load() {
-  // vercel.json の includeFiles で、関数と一緒に置かれる
-  data ??= {
-    catalog: JSON.parse(readFileSync(join(process.cwd(), "public", "data", "catalog.json"), "utf8")),
-    ucs: JSON.parse(readFileSync(join(process.cwd(), "public", "data", "ucs.json"), "utf8")),
-  };
-  return data;
-}
 
 export async function POST(request: Request): Promise<Response> {
   let norad: number;
@@ -46,13 +35,16 @@ export async function POST(request: Request): Promise<Response> {
   const gp = r && expandGp(r.gp).find((g) => g.NORAD_CAT_ID === norad);
   if (!gp) return json(404, { error: "この衛星の軌道のデータが見つかりません" });
 
+  // UCS が読めないときは「載っていない」と取り違えた解説を作らない
+  const ucs = loadUcs();
+  if (!ucs) return json(503, { error: "衛星の情報（UCS）を準備できていません" });
+
   const ip = (request.headers.get("x-forwarded-for") ?? "local").split(",")[0].trim();
   const limited = await dailyLimit(store, { app: "satellite-tracker-3d", ip, total: DAILY_LIMIT, perIp: PER_IP_LIMIT });
   if (limited) return json(429, { error: limited, code: "limit" });
 
   try {
-    const { catalog, ucs } = load();
-    const result = await explain(gp, catalog, ucs[String(norad)], lang);
+    const result = await explain(gp, loadCatalog(), ucs[String(norad)], lang);
     const out = { text: result.text, unmatchedNumbers: result.unmatchedNumbers, createdAt: new Date().toISOString() };
     await store.set(key, JSON.stringify(out), CACHE_TTL);
     return json(200, out);

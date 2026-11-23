@@ -5,10 +5,11 @@
 //
 // 書き出すもの：
 //   public/data/catalog.json  … 全衛星の [種類, 所有者コード, 打ち上げ日]。絞り込みと色分けに使う
-//   public/data/ucs.json      … UCS に載っている衛星の、目的・利用者・運用者など（クリックしたときに表示）
+//   （UCS の項目は配らない。サーバー用の server-data/ucs.json は pnpm ucs で作る）
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { parseUcs, UCS_FILE, UCS_URL } from "../lib/ucs.js";
 import { CATEGORIES, CATEGORY_INDEX, categoryFromName, categoryFromUcs, GROUP_CATEGORY, type CategoryId } from "../lib/category.js";
 
 const appDir = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -79,54 +80,14 @@ async function main() {
   }
   process.stderr.write("\n");
 
-  // 4. UCS Satellite Database（2023年5月1日版。タブ区切り、Latin-1）
-  const ucsText = await cached(join(dataDir, "ucs", "UCS-Satellite-Database-5-1-2023.txt"), "https://www.ucs.org/media/11493");
-  const [ucsHead, ...ucsRows] = ucsText.split(/\r?\n/).map((l) => l.split("\t"));
-  const col = (name: string) => ucsHead.findIndex((h) => h.trim() === name);
-  const C = {
-    name: col("Current Official Name of Satellite"),
-    country: col("Country of Operator/Owner"),
-    operator: col("Operator/Owner"),
-    users: col("Users"),
-    purpose: col("Purpose"),
-    detailed: col("Detailed Purpose"),
-    launchMass: col("Launch Mass (kg.)"),
-    lifetime: col("Expected Lifetime (yrs.)"),
-    contractor: col("Contractor"),
-    contractorCountry: col("Country of Contractor"),
-    vehicle: col("Launch Vehicle"),
-    norad: col("NORAD Number"),
-    comments: col("Comments"),
-  };
-  // タブ区切りだが、「,」を含む値は "4,000" のように引用符で囲まれている。Ê は改行しない空白の名残
-  const clean = (s: string | undefined) =>
-    (s ?? "").replace(/Ê/g, " ").replace(/^"(.*)"$/s, "$1").replace(/""/g, '"').replace(/\s+/g, " ").trim();
-  // 数字の項目は「4,000」→「4000」にする（AI に渡す事実と、解説の数字の照合をそろえる）
-  const num = (s: string | undefined) => clean(s).replace(/,/g, "");
-  const ucs = new Map<number, Record<string, string>>();
-  for (const r of ucsRows) {
-    const id = Number(r[C.norad]);
-    if (!id) continue;
-    ucs.set(id, {
-      name: clean(r[C.name]),
-      country: clean(r[C.country]),
-      operator: clean(r[C.operator]),
-      users: clean(r[C.users]),
-      purpose: clean(r[C.purpose]),
-      detailedPurpose: clean(r[C.detailed]),
-      launchMassKg: num(r[C.launchMass]),
-      expectedLifetimeYears: num(r[C.lifetime]),
-      contractor: clean(r[C.contractor]),
-      contractorCountry: clean(r[C.contractorCountry]),
-      launchVehicle: clean(r[C.vehicle]),
-      comments: clean(r[C.comments]),
-    });
-  }
+  // 4. UCS Satellite Database（2023年5月1日版。タブ区切り、Latin-1）。種類を決めるのにだけ使う
+  //    項目そのもの（目的・運用者など）は pnpm ucs が server-data/ に書き、サーバーだけが読む
+  const ucs = parseUcs(await cached(join(dataDir, "ucs", UCS_FILE), UCS_URL));
 
   // 5. 結びつける
   const STRONG_BY_NAME: CategoryId[] = ["station", "starlink", "constellation"];
   const sats: Record<number, [number, string, string]> = {};
-  const ucsOut: Record<number, Record<string, string>> = {};
+  let inUcs = 0;
   const how = { group: 0, ucs: 0, name: 0 };
   const counts = new Map<CategoryId, number>();
   for (const s of active) {
@@ -143,7 +104,7 @@ async function main() {
     counts.set(cat, (counts.get(cat) ?? 0) + 1);
     const sc = satcat.get(id);
     sats[id] = [CATEGORY_INDEX[cat], sc?.OWNER ?? "", sc?.LAUNCH_DATE ?? ""];
-    if (u) ucsOut[id] = u;
+    if (u) inUcs++;
   }
 
   mkdirSync(outDir, { recursive: true });
@@ -159,11 +120,10 @@ async function main() {
       sats,
     }),
   );
-  writeFileSync(join(outDir, "ucs.json"), JSON.stringify(ucsOut));
 
   console.log(`稼働中 ${active.length} 機（${activePath.match(/\d{4}-\d{2}-\d{2}/)?.[0]} の一覧）`);
   console.log(`種類の決め方：CelesTrak の分類 ${how.group}、UCS ${how.ucs}、名前 ${how.name}`);
-  console.log(`UCS に載っている衛星：${Object.keys(ucsOut).length} 機（${((Object.keys(ucsOut).length / active.length) * 100).toFixed(1)}%）`);
+  console.log(`UCS に載っている衛星：${inUcs} 機（${((inUcs / active.length) * 100).toFixed(1)}%）`);
   for (const c of CATEGORIES) console.log(`  ${c.label}: ${counts.get(c.id) ?? 0}`);
 }
 

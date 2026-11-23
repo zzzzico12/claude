@@ -2,11 +2,12 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
   "installCommand": "cd .. && pnpm install --frozen-lockfile",
-  "buildCommand": "cd .. && pnpm --filter satellite-tracker-3d... build",
+  "buildCommand": "cd .. && pnpm --filter satellite-tracker-3d ucs && pnpm --filter satellite-tracker-3d... build",
   "outputDirectory": "dist",
   "ignoreCommand": "git diff --quiet HEAD^ HEAD -- . ../packages ../pnpm-lock.yaml",
   "functions": {
     "api/gp.ts": { "maxDuration": 60 },
-    "api/explain.ts": { "maxDuration": 60, "includeFiles": "public/data/*.json" }
+    "api/explain.ts": { "maxDuration": 60, "includeFiles": "{public/data/catalog.json,server-data/ucs.json}" },
+    "api/sat.ts": { "includeFiles": "server-data/ucs.json" }
   }
 }
