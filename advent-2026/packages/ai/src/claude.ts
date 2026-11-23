@@ -148,6 +148,34 @@ export async function* streamText(opts: GenerateOptions): AsyncGenerator<string,
   finish(opts, model, started, await stream.finalMessage());
 }
 
+type RunnerTools = Parameters<Anthropic["beta"]["messages"]["toolRunner"]>[0]["tools"];
+
+/**
+ * 道具（tools）を使わせながら答えさせる（エージェント）。SDK の toolRunner がループを回す。
+ * 道具は betaZodTool（@anthropic-ai/sdk/helpers/beta/zod）で定義して渡す。
+ * 1往復ごとに使用量を記録し、最後の文章と往復の回数を返す。
+ */
+export async function runAgent(
+  opts: GenerateOptions & { tools: RunnerTools; maxIterations?: number },
+): Promise<{ text: string; turns: number }> {
+  const model = resolveModel(opts.model);
+  const runner = (opts.client ?? getClient()).beta.messages.toolRunner({
+    ...buildParams(opts, model),
+    tools: opts.tools,
+    max_iterations: opts.maxIterations ?? 8,
+    output_config: { effort: opts.effort ?? "low" },
+  });
+  let text = "";
+  let turns = 0;
+  let started = Date.now();
+  for await (const message of runner) {
+    turns++;
+    text = finish(opts, model, started, message);
+    started = Date.now();
+  }
+  return { text, turns };
+}
+
 /**
  * Zod のスキーマに沿った JSON を生成して、検証済みのオブジェクトを返す。
  * 「どの色をどこに割り当てるか」のような、AI に判断させて結果をコードで使う場面向け。

@@ -57,10 +57,11 @@ advent-2026/
 - **記事**: （公開後に記入）
 
 ### 2. [依存ライブラリと脆弱性の優先度判定](dependency-risk-radar/)（12/2）
-- **説明**: package.json などを渡すと、危ない依存、放置されている依存、今日対応すべき脆弱性の順番、乗り換え先を出す
+- **説明**: package-lock.json / requirements.txt を渡すと、脆弱性を「今日対応すべき順」に並べ、理由、パッケージごとの対応、放置された依存の乗り換え先を出す CLI と GitHub Action
 - **データ**: OSV × deps.dev × CISA KEV × EPSS
 - **技術**: エージェント・判断の説明
-- **デモ**: （公開後に記入）
+- **特徴**: 順位はコードが KEV（悪用確認済み）と EPSS（悪用される確率）で決め、AI は説明と乗り換え先の調査だけ。AI の提案はコードでも実在を確認。時点を戻した評価で、その後悪用された脆弱性の順位の中央値が、深刻度順の1,931位に対して140位
+- **デモ**: GitHub Action（`uses: zzzzico12/claude/advent-2026/dependency-risk-radar@main`）。例のレポートは [examples/](dependency-risk-radar/examples/)
 - **記事**: （公開後に記入）
 
 ### 3. [CO2の少ないクラウドリージョン](green-region-finder/)（12/3）

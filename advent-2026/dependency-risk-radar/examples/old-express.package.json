@@ -1,0 +1,17 @@
+{
+  "name": "sample-old-express-app",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "express": "4.16.0",
+    "lodash": "4.17.15",
+    "request": "2.88.2",
+    "axios": "0.21.0",
+    "moment": "2.29.1",
+    "node-fetch": "2.6.0"
+  },
+  "devDependencies": {
+    "minimist": "1.2.0",
+    "mocha": "6.2.0"
+  }
+}
