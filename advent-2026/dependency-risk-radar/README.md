@@ -31,11 +31,46 @@ package.json などを渡すと、危ない依存、放置されている依存�
 
 ## 使い方
 
+### はじめて使う（5分）
+
+```bash
+# 1. リポジトリを取ってきて、依存を入れてビルドする（Node.js 22 以降と pnpm 9 が必要）
+git clone https://github.com/zzzzico12/claude.git
+cd claude/advent-2026
+pnpm install
+pnpm build              # 共通部品（packages/）をビルドする。最初の1回だけ
+
+# 2. （任意）AI の説明と乗り換え先の提案を使うなら、Claude の API キーを入れる
+cp .env.example .env     # .env の ANTHROPIC_API_KEY= にキーを書く
+
+# 3. 例のファイルで試す
+cd dependency-risk-radar
+pnpm start examples/old-django.requirements.txt --top 5
+```
+
+実行すると、進み具合が出たあとに Markdown のレポートが出る。
+
+```
+依存 7 個の脆弱性を OSV で調べています…
+脆弱性 136 件の悪用確率を EPSS で調べています…
+直接の依存 7 個の更新状況を deps.dev で調べています…
+AI が順番の理由を説明しています…
+AI が乗り換え先を調べています（1 個）…
+# 依存ライブラリのリスクレポート
+`old-django.requirements.txt` ・ 依存 7 個（直接 7 個） ・ 脆弱性 136 件 ・ **今日対応すべき 10 件**（悪用確認済み 1 件） ・ 修正版あり 135 件
+…
+```
+
+自分のプロジェクトを調べるときは、例のファイルの代わりに自分の `package-lock.json` か `requirements.txt` のパスを渡す。
+
+```bash
+pnpm start ~/work/my-app/package-lock.json --out ~/work/my-app/risk-report.md
+```
+
 ### 手元で（CLI）
 
 ```bash
-cd advent-2026/dependency-risk-radar
-pnpm install
+cd advent-2026/dependency-risk-radar   # 最初に advent-2026 で pnpm install && pnpm build しておく
 pnpm start path/to/package-lock.json            # 画面に Markdown を出す
 pnpm start path/to/requirements.txt --out report.md
 pnpm start path/to/package-lock.json --no-ai    # キーなしで
@@ -84,6 +119,117 @@ jobs:
 | `old-django.requirements.txt` | [old-django.report.md](examples/old-django.report.md) | Django 3.2.0・Pillow 8.0.0 など。脆弱性136件 → 今日対応すべき10件（悪用確認済み1件） |
 
 ファイル名を `package-lock.json` / `requirements.txt` にしていないのは、このリポジトリで Dependabot の警告が出ないようにするため。
+
+### レポートの読み方
+
+例：[old-django.report.md](examples/old-django.report.md)（古い Django のプロジェクト）。上から順に読めば、何から手を付ければよいかが分かるようにしてある。
+
+**① 1行目：全体の状況**
+
+```
+依存 7 個（直接 7 個） ・ 脆弱性 136 件 ・ 今日対応すべき 10 件（悪用確認済み 1 件） ・ 修正版あり 135 件
+```
+
+136件の警告のうち、急ぐのは10件。「今日対応すべき」は、CISA KEV に載っている（実際に悪用が確認された）か、EPSS（30日以内に悪用される確率）が全CVEの上位5%に入るもの。
+
+**② 今日対応すべき順の表：1行目から順に直す**
+
+| 順位 | パッケージ | 脆弱性 | 根拠 | 依存 | 対応 |
+| --- | --- | --- | --- | --- | --- |
+| 1 ⚠️ | pillow@8.0.0 | CVE-2023-4863 libwebp: OOB write | 🔴 **悪用確認済み**（KEV 2023-09-13）<br>悪用確率 99.9%以上<br>HIGH 8.8 | 直接 | 10.0.1 に上げる |
+| 2 ⚠️ | django@3.2.0 | CVE-2022-34265 SQL Injection | 悪用確率 73.6%（上位0.5%）<br>CRITICAL 9.8 | 直接 | 3.2.14 に上げる |
+
+- ⚠️ が「今日対応すべき」、🔴 が「悪用確認済み」
+- 「根拠」の列が順位の理由。深刻度（CVSS）が CRITICAL でも、悪用確率が低ければ下に来る
+- 「依存」の列：開発用（devDependencies）や npm の間接の依存は、本番の影響が小さいので少し下げている
+
+**③ なぜこの順番か（AI による説明）**：表の根拠を、開発者向けの文章にしたもの。数字は根拠のデータと自動で照合している（最後の「自動チェック」に結果が出る）
+
+**④ パッケージごとの対応：実際の作業の単位**
+
+| パッケージ | 脆弱性 | うち今日対応すべき | すべて直すには |
+| --- | --- | --- | --- |
+| pillow@8.0.0 | 72 件 | **1 件**（悪用確認済み 1） | 13.0.0 以上 |
+| django@3.2.0 | 38 件 | **9 件** | 5.2.17 以上 |
+
+脆弱性は136件でも、作業は「pillow と django を上げる」の2つで今日対応すべきものがすべて片付く。
+
+**⑤ 放置・非推奨の直接の依存：乗り換えを考えるもの**
+
+| パッケージ | 状態 | 乗り換え先の提案（AI） |
+| --- | --- | --- |
+| nose@1.3.7 | 最新版の公開が 2015-06（11年以上前） | 🔧 標準機能：unittest<br>✅ **pytest**（9.2.0）<br>✅ **nose2**（0.16.0） |
+
+- 🔧 は言語やランタイムの標準機能で置き換えられるもの、✅ は AI の提案をコードで deps.dev に問い合わせて「実在・非推奨でない・2年以内に更新あり」を確かめたもの、❓ は確かめられなかったもの
+- 「このバージョンは非推奨」（npm でよくある「上げて」の印）は、乗り換えではなくバージョンを上げればよい
+
+**⑥ 自動チェック**：AI の説明の数字が根拠と一致したか、読めなかった行がないか、使ったデータの日付
+
+### よくある使い方
+
+**1. 自分のプロジェクトを、今すぐ調べる**
+
+```bash
+pnpm start ~/work/my-app/package-lock.json --out report.md
+```
+
+**2. キーなしで（AI を使わずに）**
+
+```bash
+pnpm start ~/work/my-app/requirements.txt --no-ai
+```
+
+順位・根拠・パッケージごとの対応・放置の判定は出る。出ないのは「なぜこの順番か」の文章と乗り換え先の提案だけ。データの取得はすべて無料。
+
+**3. プルリクエストのたびに調べ、悪用確認済みがあれば止める（GitHub Action）**
+
+```yaml
+on: pull_request
+jobs:
+  radar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: zzzzico12/claude/advent-2026/dependency-risk-radar@main
+        with:
+          file: package-lock.json
+          fail-on: kev          # 悪用確認済みの脆弱性があればジョブを失敗にする
+```
+
+**4. 毎週月曜に定期チェックする（AI の説明つき）**
+
+```yaml
+on:
+  schedule:
+    - cron: "0 0 * * 1"
+jobs:
+  radar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: zzzzico12/claude/advent-2026/dependency-risk-radar@main
+        with:
+          file: backend/requirements.txt
+          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+```
+
+レポートは、Actions の実行結果のページの **Summary** に出る。
+
+**5. 結果を他のツールで使う（JSON）**
+
+```bash
+pnpm start package-lock.json --no-ai --json \
+  | jq -r '.findings[] | select(.priority.urgent)
+           | "\(.dep.name)@\(.dep.version)  \(.vuln.cves[0] // .vuln.id)  → \(.vuln.fixedVersion // "修正版なし")"'
+```
+
+```
+lodash@4.17.15  CVE-2021-23337  → 4.17.21
+moment@2.29.1  CVE-2022-24785  → 2.29.2
+qs@6.5.1  CVE-2022-24999  → 6.5.3
+axios@0.21.0  CVE-2026-44492  → 0.32.0
+axios@0.21.0  CVE-2021-3749  → 0.21.2
+```
 
 ## 実装チェックリスト
 

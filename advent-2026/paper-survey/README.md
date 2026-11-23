@@ -138,7 +138,9 @@ OpenAlex 検索（検索語ごとに関連度順で上位100件、抄録あり�
 ### 動かし方
 
 ```bash
-cd advent-2026/paper-survey
+cd advent-2026
+pnpm install && pnpm build   # 最初の1回だけ（共通部品 packages/ をビルドする）
+cd paper-survey
 pnpm dev        # http://localhost:5173 （API も一緒に動く。.env は advent-2026/.env を読む）
 pnpm eval       # 評価（eval/RESULTS.md を更新）
 ```
