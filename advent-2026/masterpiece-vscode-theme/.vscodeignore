@@ -1,0 +1,7 @@
+**
+!package.json
+!dist/extension.cjs
+!themes/**
+!EXTENSION.md
+!LICENSE
+!media/**
