@@ -11,7 +11,7 @@ tags: [AI, オープンデータ, Claude, 宇宙, CesiumJS]
 
 （スクリーンショット：全機表示／Starlink 以外／600倍速の GIF）
 
-デモ：（公開後に記入）
+デモ：https://advent26-satellite-tracker-3d.vercel.app/
 
 ## 使ったオープンデータ
 

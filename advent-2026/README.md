@@ -92,7 +92,7 @@ advent-2026/
 - **データ**: CelesTrak（軌道要素・衛星カタログ）× UCS Satellite Database（2023年5月版）× Natural Earth II（地図）。評価に NASA の ISS 軌道データ
 - **技術**: SGP4 の軌道計算（Web Worker）＋補間、CesiumJS（ion なし）で1万7千点の描画、事実を渡した解説と数字の照合
 - **特徴**: CelesTrak の取得はサーバーで2時間に1回だけ。ISS の位置は NASA のデータと比べて 1.4〜3.5 km のずれ。全機の計算は1回 9.8 ms。日本語・英語の切り替えつき（AI の解説も英語）。共通部品 `packages/orbit`・`packages/globe` を作った
-- **デモ**: （公開後に記入。AI の解説は1日10回まで）
+- **デモ**: https://advent26-satellite-tracker-3d.vercel.app/ （AI の解説は1日10回まで）
 - **記事**: （公開後に記入）
 
 ### 7. [衛星の通過予測API](satellite-pass-api/)（12/7）
