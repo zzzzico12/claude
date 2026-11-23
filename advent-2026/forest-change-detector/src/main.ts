@@ -1,164 +1,232 @@
 import { mountAttribution } from "@advent/attribution";
-import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { FIRST_YEAR, LAST_YEAR } from "../lib/gfw.js";
 import { sources } from "../lib/sources.js";
 import { mountGlobalMap } from "./global.js";
 
-interface Patch {
-  id: number;
-  area_ha: number;
-  lat: number;
-  lon: number;
-  ndvi_before: number;
-  ndvi_after: number;
-  ndvi_drop: number;
-  context?: { road_m: number | null; road_type: string | null; road_name: string | null; river_m: number | null };
+interface Group {
+  name: string;
+  loss: number[];
+  fire: number[];
+  primary: number[];
+  drivers: Record<string, number[]>;
 }
-interface Result {
-  area: string;
-  bounds: { west: number; south: number; east: number; north: number };
-  pixel_m: number;
-  before: { date: string; id: string; clear: number };
-  after: { date: string; id: string; clear: number };
-  rules: { forest_ndvi: number; forest_method: string; drop_ndvi: number; year_shift: number; min_area_ha: number };
-  total_change_ha: number;
-  patch_count: number;
-  forest_before_ha: number;
-  patches: Patch[];
+interface Stats {
+  source: { dataset: string; version: string; threshold: number };
+  years: number[];
+  groups: Record<string, Group>;
+  world: { loss: number[] };
 }
-interface Explanation {
-  summary: string;
-  candidates: { cause: string; likelihood: string; evidence: string }[];
+interface EventItem {
+  group: string;
+  groupName: string;
+  year: number;
+  kind: string;
+  loss_man_ha: number;
+  prev_loss_man_ha: number;
+  change_pct: number;
+  ratio_to_prev: number;
+  fire_share_pct: number;
+  primary_share_pct: number;
+  drivers: { name: string; share_pct: number }[];
+  countries: { name: string; loss_man_ha: number; change_pct: number | null }[];
+  text: string;
+  citations: { url: string; title: string; cited_text: string }[];
   unmatchedNumbers: string[];
-}
-interface Evaluation {
-  truth_ha: number;
-  precision: number;
-  recall: number;
-  f1: number;
-  baseline: { precision: number; recall: number; f1: number };
-  fp_lost_2024: number;
 }
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const esc = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
-const pct = (x: number) => `${(x * 100).toFixed(0)}%`;
-const ha = (x: number) => `${x.toLocaleString("ja-JP", { maximumFractionDigits: 1 })} ha`;
+/** 面積：万 ha */
+const man = (ha: number) => (ha / 10_000).toLocaleString("ja-JP", { maximumFractionDigits: ha < 100_000 ? 1 : 0 });
+const signed = (p: number) => `${p > 0 ? "+" : ""}${p}%`;
+const SVG = "http://www.w3.org/2000/svg";
 
 async function main() {
-  const [r, ex, ev] = await Promise.all([
-    fetch("/data/result.json").then((x) => x.json() as Promise<Result>),
-    fetch("/data/explanations.json").then((x) => x.json() as Promise<Record<string, Explanation>>),
-    fetch("/data/eval.json").then((x) => x.json() as Promise<Evaluation>),
+  const [stats, events] = await Promise.all([
+    fetch("/data/stats.json").then((r) => r.json() as Promise<Stats>),
+    fetch("/data/events.json").then((r) => r.json() as Promise<EventItem[]>),
   ]);
+  const years = stats.years;
+  const keys = Object.keys(stats.groups);
+  const yi = (y: number) => years.indexOf(y);
 
-  $("lead").textContent = `${r.area}の約20km四方で、${r.before.date} と ${r.after.date} の衛星画像（Sentinel-2）を比べ、植物の量（NDVI）が大きく下がった森を見つけました。`;
-  $("label-before").textContent = r.before.date;
-  $("label-after").textContent = r.after.date;
-  $("stats").innerHTML = `
-    <div><b>${ha(r.total_change_ha)}</b><span>森が減ったと検知した面積</span></div>
-    <div><b>${r.patch_count} か所</b><span>まとまりの数（${r.rules.min_area_ha} ha 以上）</span></div>
-    <div><b>${ha(r.forest_before_ha)}</b><span>前の年に森だった面積</span></div>
-    <div><b>${pct(ev.precision)}</b><span>検知のうち、森林減少データ（Hansen）でも2025年に減少していた割合</span></div>`;
+  let year = LAST_YEAR;
 
-  mountGlobalMap({ focus: r.bounds, onFocusClick: () => $("local").scrollIntoView({ behavior: "smooth" }) });
+  // ---------- 選んだ年の数字 ----------
+  function renderYear() {
+    const i = yi(year);
+    const total = stats.world.loss[i];
+    const prev = i > 0 ? stats.world.loss[i - 1] : null;
+    $("year-title").textContent = `${year}年：世界で ${man(total)} 万 ha の森が減った${
+      prev ? `（前の年から ${signed(Math.round((total / prev - 1) * 100))}）` : ""
+    }`;
+    const rows = keys
+      .map((k) => {
+        const g = stats.groups[k];
+        const topDriver = Object.entries(g.drivers)
+          .filter(([name]) => name !== "不明")
+          .sort((a, b) => b[1][i] - a[1][i])[0];
+        return {
+          g,
+          loss: g.loss[i],
+          fire: g.fire[i],
+          change: i > 0 && g.loss[i - 1] > 0 ? Math.round((g.loss[i] / g.loss[i - 1] - 1) * 100) : null,
+          driver: topDriver && g.loss[i] > 0 ? `${topDriver[0]}（${Math.round((topDriver[1][i] / g.loss[i]) * 100)}%）` : "—",
+        };
+      })
+      .sort((a, b) => b.loss - a.loss);
 
-  // ---------- 地図（拡大した1か所） ----------
-  const b = r.bounds;
-  const bounds = L.latLngBounds([b.south, b.west], [b.north, b.east]);
-  const map = L.map("map", { maxBounds: bounds.pad(0.5) }).fitBounds(bounds);
-  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 17,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Contains modified Copernicus Sentinel data [2024, 2025]',
-  }).addTo(map);
-  const before = L.imageOverlay("/data/before.jpg", bounds).addTo(map);
-  const after = L.imageOverlay("/data/after.jpg", bounds, { opacity: 1 }).addTo(map);
-  const change = L.imageOverlay("/data/change.png", bounds).addTo(map);
-  void before;
-  $<HTMLInputElement>("fade").addEventListener("input", (e) => after.setOpacity(Number((e.target as HTMLInputElement).value) / 100));
-  $<HTMLInputElement>("show-change").addEventListener("change", (e) =>
-    (e.target as HTMLInputElement).checked ? change.addTo(map) : change.remove(),
-  );
-
-  const markers = new Map<number, L.CircleMarker>();
-  for (const p of r.patches) {
-    const m = L.circleMarker([p.lat, p.lon], {
-      radius: Math.max(4, Math.sqrt(p.area_ha) * 1.6),
-      color: "#fff",
-      weight: 1.5,
-      fillColor: ex[p.id] ? "#f2c037" : "#e64545",
-      fillOpacity: 0.55,
-    })
-      .bindTooltip(`#${p.id}　${ha(p.area_ha)}`)
-      .on("click", () => show(p))
-      .addTo(map);
-    markers.set(p.id, m);
+    // 横棒（多い順）。棒の中を火災とそれ以外に分ける
+    const max = Math.max(...rows.map((r) => r.loss));
+    $("year-bars").innerHTML = rows
+      .map(
+        (r) => `<div class="hbar" title="${esc(r.g.name)}：${man(r.loss)} 万 ha（うち火災 ${man(r.fire)}）">
+          <span class="hbar-label">${esc(r.g.name)}</span>
+          <span class="hbar-track"><span class="seg fire" style="width:${(r.fire / max) * 100}%"></span><span class="seg other" style="width:${((r.loss - r.fire) / max) * 100}%"></span></span>
+          <span class="hbar-value">${man(r.loss)}</span>
+        </div>`,
+      )
+      .join("");
+    // 表（色に頼らずに読める形）
+    document.querySelector("#year-table tbody")!.innerHTML = rows
+      .map(
+        (r) =>
+          `<tr><td>${esc(r.g.name)}</td><td class="num">${man(r.loss)}</td><td class="num">${man(r.fire)}</td><td class="num">${r.change === null ? "—" : signed(r.change)}</td><td>${esc(r.driver)}</td></tr>`,
+      )
+      .join("");
+    for (const line of document.querySelectorAll<SVGLineElement>(".year-cursor")) {
+      const x = line.getAttribute(`data-x${year}`) ?? "0";
+      line.setAttribute("x1", x);
+      line.setAttribute("x2", x);
+    }
   }
 
-  // ---------- 説明 ----------
-  function show(p: Patch) {
-    const e = ex[p.id];
-    const ctx = p.context;
-    const road = ctx?.road_m != null ? `${(ctx.road_m / 1000).toFixed(1)} km（${esc(ctx.road_type ?? "")}${ctx.road_name ? `「${esc(ctx.road_name)}」` : ""}）` : "—";
-    $("detail").innerHTML = `
-      <h2>#${p.id}　${ha(p.area_ha)}</h2>
-      <div class="pair">
-        <figure><img src="/data/crops/${p.id}-before.jpg" alt="前の年"><figcaption>${r.before.date}</figcaption></figure>
-        <figure><img src="/data/crops/${p.id}-after.jpg" alt="後の年"><figcaption>${r.after.date}</figcaption></figure>
-      </div>
-      <table class="facts">
-        <tr><th>NDVI（植物の量）</th><td>${p.ndvi_before} → ${p.ndvi_after}</td></tr>
-        <tr><th>下がり方（年のずれを除く）</th><td>${p.ndvi_drop}</td></tr>
-        <tr><th>地図に登録された道路まで</th><td>${road}</td></tr>
-        <tr><th>位置</th><td>南緯 ${(-p.lat).toFixed(4)}°・西経 ${(-p.lon).toFixed(4)}°</td></tr>
-      </table>
-      ${
-        e
-          ? `<h3>理由の候補（AI）</h3><p>${esc(e.summary)}</p><ol class="cands">${e.candidates
-              .map((c) => `<li><b>${esc(c.cause)}</b><span class="lk lk-${esc(c.likelihood)}">${esc(c.likelihood)}</span><br><span class="ev">${esc(c.evidence)}</span></li>`)
-              .join("")}</ol>
-             <p class="check ${e.unmatchedNumbers.length ? "warn" : "ok"}">${e.unmatchedNumbers.length ? `⚠ 計算した値にない数字：${e.unmatchedNumbers.map(esc).join("、")}` : "✓ 説明の数字は、すべて計算した値と一致"}</p>
-             <p class="muted">AI（Claude）が画像と数字から挙げた候補です。現地で確かめたものではありません。</p>`
-          : `<p class="muted">AI の説明は、面積の大きい12か所だけに付けています。</p>`
-      }`;
-    map.panTo([p.lat, p.lon]);
-    for (const [id, m] of markers) m.setStyle({ weight: id === p.id ? 4 : 1.5, color: id === p.id ? "#1f5fbf" : "#fff" });
+  const map = mountGlobalMap({
+    onYear: (y) => {
+      year = y;
+      renderYear();
+    },
+  });
+  /** 地図の年を変える（地図から onYear が呼ばれて、グラフと表も更新される） */
+  const setYear = (y: number) => map.setYear(y);
+
+  // ---------- 地域ごとの推移（スモールマルチプル。全部同じ目盛り） ----------
+  const yMax = Math.max(...keys.flatMap((k) => stats.groups[k].loss));
+  const W = 320;
+  const H = 120;
+  const pad = { l: 34, r: 6, t: 10, b: 18 };
+  const bw = (W - pad.l - pad.r) / years.length;
+  const yScale = (v: number) => pad.t + (H - pad.t - pad.b) * (1 - v / yMax);
+  const step = yMax > 8_000_000 ? 5_000_000 : 2_000_000;
+  const ticks = Array.from({ length: Math.floor(yMax / step) + 1 }, (_, n) => n * step);
+  const tooltip = document.createElement("div");
+  tooltip.className = "tooltip";
+  tooltip.hidden = true;
+  document.body.append(tooltip);
+
+  const multiples = $("multiples");
+  for (const k of keys) {
+    const g = stats.groups[k];
+    const total = g.loss.reduce((a, b) => a + b, 0);
+    const fireShare = g.fire.reduce((a, b) => a + b, 0) / total;
+    const panel = document.createElement("figure");
+    panel.className = "panel card";
+    panel.innerHTML = `<figcaption><b>${esc(g.name)}</b><span class="muted">25年で ${man(total)} 万 ha・火災 ${Math.round(fireShare * 100)}%</span></figcaption>`;
+    const svg = document.createElementNS(SVG, "svg");
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.setAttribute("role", "img");
+    svg.setAttribute("aria-label", `${g.name}の年ごとの森林減少（目盛りは万 ha）`);
+    let html = "";
+    for (const t of ticks) {
+      html += `<line class="grid" x1="${pad.l}" x2="${W - pad.r}" y1="${yScale(t)}" y2="${yScale(t)}"/><text class="axis" x="${pad.l - 4}" y="${yScale(t) + 3}" text-anchor="end">${t / 10_000}</text>`;
+    }
+    const cursorData: string[] = [];
+    years.forEach((y, i) => {
+      const x = pad.l + i * bw + 1;
+      const w = Math.max(1, bw - 2); // 棒と棒の間に 2px のすき間
+      const yFire = yScale(g.fire[i]);
+      const yAll = yScale(g.loss[i]);
+      html += `<rect class="fire" x="${x}" y="${yFire}" width="${w}" height="${Math.max(0, H - pad.b - yFire)}"/>`;
+      html += `<rect class="other" x="${x}" y="${yAll}" width="${w}" height="${Math.max(0, yFire - yAll - 1)}"/>`;
+      html += `<rect class="hit" data-i="${i}" x="${pad.l + i * bw}" y="${pad.t}" width="${bw}" height="${H - pad.t - pad.b}"/>`;
+      cursorData.push(`data-x${y}="${x + w / 2}"`);
+      if (y % 5 === 0 || y === FIRST_YEAR) html += `<text class="axis" x="${x + w / 2}" y="${H - 5}" text-anchor="middle">${y}</text>`;
+    });
+    for (const e of events.filter((e) => e.group === k)) {
+      const i = yi(e.year);
+      html += `<circle class="event-dot" data-event="${k}-${e.year}" cx="${pad.l + i * bw + bw / 2}" cy="${Math.max(5, yScale(g.loss[i]) - 6)}" r="4"><title>${e.year}年：${esc(e.kind)}（下で説明）</title></circle>`;
+    }
+    html += `<line class="year-cursor" ${cursorData.join(" ")} y1="${pad.t}" y2="${H - pad.b}"/>`;
+    svg.innerHTML = html;
+    svg.addEventListener("mousemove", (ev) => {
+      const t = (ev.target as Element).closest(".hit") as SVGRectElement | null;
+      if (!t) {
+        tooltip.hidden = true;
+        return;
+      }
+      const i = Number(t.dataset.i);
+      tooltip.hidden = false;
+      tooltip.innerHTML = `<b>${esc(g.name)}・${years[i]}年</b><br>減少 ${man(g.loss[i])} 万 ha<br><span class="key fire"></span>火災 ${man(g.fire[i])}　<span class="key other"></span>それ以外 ${man(g.loss[i] - g.fire[i])}`;
+      tooltip.style.left = `${ev.pageX + 12}px`;
+      tooltip.style.top = `${ev.pageY + 12}px`;
+    });
+    svg.addEventListener("mouseleave", () => (tooltip.hidden = true));
+    svg.addEventListener("click", (ev) => {
+      const dot = (ev.target as Element).closest(".event-dot") as SVGCircleElement | null;
+      if (dot) {
+        document.getElementById(`event-${dot.dataset.event}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+      const hit = (ev.target as Element).closest(".hit") as SVGRectElement | null;
+      if (hit) setYear(years[Number(hit.dataset.i)]);
+    });
+    panel.append(svg);
+    multiples.append(panel);
   }
 
-  // ---------- 一覧 ----------
-  const tbody = document.querySelector("#list tbody")!;
-  tbody.innerHTML = r.patches
-    .slice(0, 20)
-    .map((p) => {
-      const e = ex[p.id];
-      return `<tr data-id="${p.id}"><td class="num">${p.id}</td><td class="num">${ha(p.area_ha)}</td><td class="num">${p.ndvi_before} → ${p.ndvi_after}</td><td>${e ? e.candidates.map((c) => `${esc(c.cause)}（${esc(c.likelihood)}）`).join("・") : '<span class="muted">—</span>'}</td></tr>`;
+  // ---------- その年に何があったか ----------
+  $("events").innerHTML = events
+    .map((e) => {
+      const urls = [...new Map(e.citations.map((c) => [c.url, c])).values()];
+      return `<article class="event card" id="event-${e.group}-${e.year}">
+        <header><b>${esc(e.groupName)}・${e.year}年</b><span class="tag">${esc(e.kind)}</span></header>
+        <p class="facts">減少 <b>${e.loss_man_ha.toLocaleString("ja-JP")} 万 ha</b>（前の年 ${e.prev_loss_man_ha.toLocaleString("ja-JP")} 万 ha、${signed(e.change_pct)}）・火災 ${e.fire_share_pct}%・原生林 ${e.primary_share_pct}%<br>
+          主な原因：${e.drivers.map((d) => `${esc(d.name)} ${d.share_pct}%`).join("、") || "—"}<br>
+          多かった国：${e.countries.map((c) => `${esc(c.name)} ${c.loss_man_ha.toLocaleString("ja-JP")}万ha${c.change_pct === null ? "" : `（${signed(c.change_pct)}）`}`).join("、")}</p>
+        ${e.text
+          .split(/\n+/)
+          .filter(Boolean)
+          .map((p) => `<p>${esc(p)}</p>`)
+          .join("")}
+        <p class="sources">出典：${urls.map((c, n) => `<a href="${esc(c.url)}" target="_blank" rel="noopener">[${n + 1}] ${esc(c.title)}</a>`).join(" ")}</p>
+        <p class="check ${e.unmatchedNumbers.length ? "warn" : "ok"}">${
+          e.unmatchedNumbers.length
+            ? `⚠ 集計にも出典の文にも見つからなかった数字：${e.unmatchedNumbers.map(esc).join("、")}`
+            : "✓ 文中の数字は、すべて集計か出典の文と一致"
+        }</p>
+        <button type="button" class="link" data-year="${e.year}">地図を${e.year}年にする</button>
+      </article>`;
     })
     .join("");
-  tbody.addEventListener("click", (e) => {
-    const id = Number((e.target as HTMLElement).closest("tr")?.dataset.id);
-    const p = r.patches.find((x) => x.id === id);
-    if (p) {
-      show(p);
-      $("map").scrollIntoView({ behavior: "smooth" });
+  $("events").addEventListener("click", (ev) => {
+    const b = (ev.target as Element).closest("button[data-year]") as HTMLButtonElement | null;
+    if (b) {
+      setYear(Number(b.dataset.year));
+      $("global-map").scrollIntoView({ behavior: "smooth" });
     }
   });
 
-  // ---------- 計算のしかた ----------
-  $("method").innerHTML = `
-    <ul>
-      <li><b>NDVI</b>：植物の量の指標。（近赤外 − 赤）÷（近赤外 ＋ 赤）。森はおよそ0.6〜0.9、草地や裸地は低い</li>
-      <li><b>森の判定</b>：前の年の NDVI が ${r.rules.forest_ndvi} 以上（${esc(r.rules.forest_method)}で画像ごとに決めた境目）</li>
-      <li><b>年ごとのずれ</b>：2024年は記録的な干ばつと煙で森全体の NDVI が低かった。前の年に森だった所の変化の中央値（${r.rules.year_shift}）を差し引いてから比べた（森の大部分は変化していないので、これを「変化なし」とみなす）</li>
-      <li><b>変化</b>：NDVI が ${r.rules.drop_ndvi} 以上下がった森。${r.rules.min_area_ha} ha より小さいまとまりは除いた。雲と影はシーン分類（SCL）で除いた</li>
-      <li><b>答え合わせ</b>：メリーランド大学の森林減少データ（Hansen ら、Global Forest Watch の元データ）で、この範囲の2025年の減少は ${ha(ev.truth_ha)}。
-        検知した場所のうち ${pct(ev.precision)} がそこに含まれ（適合率）、減少の ${pct(ev.recall)} を見つけた（再現率）。
-        決まった値で森を判定する最初のやり方では、見つけられたのは ${pct(ev.baseline.recall)} だけだった</li>
-      <li><b>限界</b>：後の年の画像は ${r.after.date}（雨季は雲で使える画像がない）なので、それ以降に切られた森は写っていない。前の年の画像の後、2024年中に切られた森も「変化」に入る（検知したのに答えになかった場所の ${pct(ev.fp_lost_2024)} は、2024年の減少だった）</li>
-    </ul>`;
+  $("method").innerHTML = `<ul>
+    <li><b>森の減少</b>：メリーランド大学（Hansen ら）が衛星画像（Landsat）から30m単位で作ったデータ。高さ5m以上の木が失われた所。植林や自然の回復で増えた分は差し引いていない</li>
+    <li><b>地域ごとの数字</b>：Global Forest Watch（Global Nature Watch）が国ごとに集計した数字（${esc(stats.source.dataset)}、${esc(stats.source.version)}、樹冠の割合${stats.source.threshold}%以上を森とする）を、Natural Earth の大陸ごとに合計した。ロシアは森の大半がシベリアにあり、世界で最も森が減っている国なので、別にした</li>
+    <li><b>火災</b>：減少のうち火災によるもの。<b>原因</b>：WRI と Google の推定（農地への転換、伐採、山火事など）</li>
+    <li><b>その年の説明</b>：年の選び方と数字はコード、説明の文は AI（Claude）がウェブ検索の結果をもとに書いた。出典のリンクを付け、文中の数字は集計か出典の文と自動で照合した。AI の文には誤りがありうるので、出典で確かめてほしい</li>
+  </ul>`;
 
   mountAttribution($("attribution"), sources);
-  show(r.patches[0]);
+  renderYear();
 }
 
 main();

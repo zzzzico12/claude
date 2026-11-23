@@ -8,7 +8,9 @@
     "build": "vite build",
     "lint": "tsc --noEmit",
     "test": "vitest run",
-    "explain": "tsx --env-file-if-exists=../.env scripts/explain.ts"
+    "explain": "tsx --env-file-if-exists=../.env scripts/explain.ts",
+    "events": "tsx --env-file-if-exists=../.env scripts/events.ts",
+    "eval:events": "tsx scripts/eval_events.ts"
   },
   "dependencies": {
     "@advent/ai": "workspace:^",

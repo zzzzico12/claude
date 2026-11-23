@@ -27,7 +27,8 @@ from scipy import ndimage
 
 APP = Path(__file__).resolve().parent.parent
 DATA = APP / "data"
-PUBLIC = APP / "public" / "data"
+PUBLIC = APP / "public" / "data"  # 画面（地球全体の地図・地域ごとの数字）が使うファイル
+RONDONIA = APP / "analysis" / "rondonia"  # ロンドニア州の分析の結果（画面には出さない。README と評価で使う）
 UA = "advent-2026-forest-change (https://github.com/zzzzico12/claude)"
 
 # ---------- 対象の地域と時期 ----------
@@ -295,16 +296,16 @@ def to_rgb8(scene: dict) -> np.ndarray:
 def save_outputs(before_item, after_item, before, after, result, g, clear):
     from PIL import Image
 
-    PUBLIC.mkdir(parents=True, exist_ok=True)
-    (PUBLIC / "crops").mkdir(exist_ok=True)
+    RONDONIA.mkdir(parents=True, exist_ok=True)
+    (RONDONIA / "crops").mkdir(exist_ok=True)
     rgb0, rgb1 = to_rgb8(before), to_rgb8(after)
-    Image.fromarray(rgb0).save(PUBLIC / "before.jpg", quality=85)
-    Image.fromarray(rgb1).save(PUBLIC / "after.jpg", quality=85)
+    Image.fromarray(rgb0).save(RONDONIA / "before.jpg", quality=85)
+    Image.fromarray(rgb1).save(RONDONIA / "after.jpg", quality=85)
 
     # 変化した場所を赤で塗った透明な画像
     overlay = np.zeros((*result["change"].shape, 4), dtype=np.uint8)
     overlay[result["change"]] = (230, 40, 40, 200)
-    Image.fromarray(overlay, "RGBA").save(PUBLIC / "change.png", optimize=True)
+    Image.fromarray(overlay, "RGBA").save(RONDONIA / "change.png", optimize=True)
 
     # まとまりごとの前後の切り抜き（AI と画面で使う）。周りも少し入れる
     for p in result["patches"][:30]:
@@ -314,7 +315,7 @@ def save_outputs(before_item, after_item, before, after, result, g, clear):
         for tag, rgb in (("before", rgb0), ("after", rgb1)):
             img = Image.fromarray(rgb[sl])
             img.thumbnail((320, 320))
-            img.save(PUBLIC / "crops" / f"{p.id}-{tag}.jpg", quality=85)
+            img.save(RONDONIA / "crops" / f"{p.id}-{tag}.jpg", quality=85)
 
     west, south, east, north = bounds_of(g)
     meta = {
@@ -335,7 +336,7 @@ def save_outputs(before_item, after_item, before, after, result, g, clear):
         "forest_before_ha": round(float(result["forest"].sum() * pixel_area_m2(g) / 10_000), 1),
         "patches": [asdict(p) for p in result["patches"]],
     }
-    (PUBLIC / "result.json").write_text(json.dumps(meta, ensure_ascii=False, indent=1))
+    (RONDONIA / "result.json").write_text(json.dumps(meta, ensure_ascii=False, indent=1))
     return meta
 
 

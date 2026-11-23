@@ -71,3 +71,44 @@ h2.first { margin-top: 8px; }
 .year-label { font-size: 1.05rem; min-width: 14em; }
 .legend-years { list-style: none; display: flex; gap: 16px; padding: 0; margin: 6px 0 0; font-size: 0.8rem; color: var(--muted); flex-wrap: wrap; }
 .legend-years span { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+
+/* ---------- 地域ごとの数字とグラフ（色は dataviz の既定パレットの1・2番、明暗それぞれ検査済み） ---------- */
+:root { --fire: #eb6834; --other: #2a78d6; --grid: #e1e0d9; --axis: #898781; }
+@media (prefers-color-scheme: dark) { :root { --fire: #d95926; --other: #3987e5; --grid: #2c2c2a; --axis: #898781; } }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.year-panel h2 { font-size: 1.2rem; }
+.year-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 860px) { .year-grid { grid-template-columns: 1fr; } }
+.hbar { display: grid; grid-template-columns: 9em 1fr 4em; gap: 8px; align-items: center; font-size: 0.85rem; margin: 6px 0; }
+.hbar-track { display: flex; gap: 2px; height: 14px; }
+.seg { display: block; height: 100%; border-radius: 0 4px 4px 0; }
+.seg.fire { background: var(--fire); border-radius: 4px 0 0 4px; }
+.seg.other { background: var(--other); }
+.hbar-value { text-align: right; font-variant-numeric: tabular-nums; }
+.numbers { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.numbers th, .numbers td { padding: 4px 6px; border-bottom: 1px solid var(--line); text-align: left; }
+.numbers caption { text-align: left; padding-bottom: 4px; }
+.key { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin: 0 3px 0 6px; vertical-align: -1px; }
+.key.fire { background: var(--fire); }
+.key.other { background: var(--other); }
+.multiples { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.panel { margin: 0; }
+.panel figcaption { display: flex; justify-content: space-between; gap: 8px; font-size: 0.88rem; flex-wrap: wrap; }
+.panel svg { width: 100%; height: auto; display: block; }
+.panel .grid { stroke: var(--grid); stroke-width: 1; }
+.panel .axis { fill: var(--axis); font-size: 9px; font-variant-numeric: tabular-nums; }
+.panel .fire { fill: var(--fire); }
+.panel .other { fill: var(--other); }
+.panel .hit { fill: transparent; cursor: pointer; }
+.panel .hit:hover { fill: color-mix(in srgb, var(--fg) 8%, transparent); }
+.panel .year-cursor { stroke: var(--fg); stroke-width: 1.5; stroke-dasharray: 3 2; pointer-events: none; }
+.panel .event-dot { fill: var(--fg); stroke: var(--card); stroke-width: 2; cursor: pointer; }
+.tooltip { position: absolute; z-index: 1000; background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; font-size: 0.8rem; pointer-events: none; box-shadow: 0 2px 8px #0002; }
+.events { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px; }
+.event header { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.event .tag { font-size: 0.72rem; border: 1px solid var(--line); border-radius: 4px; padding: 0 6px; color: var(--muted); }
+.event .facts { font-size: 0.8rem; color: var(--muted); background: color-mix(in srgb, var(--accent) 6%, transparent); border-radius: 6px; padding: 6px 8px; }
+.event p { font-size: 0.88rem; margin: 6px 0; }
+.event .sources { font-size: 0.76rem; }
+.event .sources a { margin-right: 6px; }
+.link { background: none; border: 0; color: var(--accent); cursor: pointer; font: inherit; font-size: 0.82rem; padding: 0; text-decoration: underline; }

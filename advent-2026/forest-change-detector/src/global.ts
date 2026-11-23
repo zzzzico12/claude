@@ -51,7 +51,8 @@ function paint(canvas: HTMLCanvasElement, src: Uint8ClampedArray) {
   ctx.putImageData(out, 0, 0);
 }
 
-export function mountGlobalMap(opts: { focus: { west: number; south: number; east: number; north: number }; onFocusClick: () => void }) {
+/** 地図を作る。年が変わるたびに onYear を呼ぶ。戻り値の setYear で、外から年を変えられる */
+export function mountGlobalMap(opts: { onYear: (year: number) => void }) {
   const map = L.map("global-map", { worldCopyJump: true, minZoom: 2, maxZoom: 12 }).setView([-5, -20], 2);
   // 背景は白黒にして、森林減少の色を目立たせる（CSS で灰色にしている）
   L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -72,20 +73,8 @@ export function mountGlobalMap(opts: { focus: { west: number; south: number; eas
     for (const [canvas, src] of loss._states) paint(canvas, src);
     yearLabel.textContent = onlyThisYear ? `${currentYear}年に減った森` : `2001〜${currentYear}年に減った森`;
     slider.value = String(currentYear);
+    opts.onYear(currentYear);
   };
-
-  // 拡大して衛星画像で確かめる場所（Day05 の分析の範囲）
-  const f = opts.focus;
-  L.rectangle(
-    [
-      [f.south, f.west],
-      [f.north, f.east],
-    ],
-    { color: "#1f5fbf", weight: 2, fill: false },
-  )
-    .bindTooltip("ここを衛星画像で詳しく分析（押すと下に移動）")
-    .on("click", opts.onFocusClick)
-    .addTo(map);
 
   // ---------- タイムラインの操作 ----------
   const slider = document.getElementById("year") as HTMLInputElement;
@@ -123,5 +112,11 @@ export function mountGlobalMap(opts: { focus: { west: number; south: number; eas
     }, 700);
   });
   redrawAll();
-  return map;
+  return {
+    map,
+    setYear(year: number) {
+      currentYear = Math.min(LAST_YEAR, Math.max(FIRST_YEAR, year));
+      redrawAll();
+    },
+  };
 }

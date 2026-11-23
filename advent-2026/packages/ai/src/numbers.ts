@@ -27,11 +27,14 @@ const MULTIPLIERS: Record<string, number> = {
   T: 1e12,
 };
 
-/** 全角数字・全角記号を半角にそろえる */
+/** 全角数字・全角記号を半角にそろえ、「2万6,669」「1万5000」のような万をはさむ書き方を1つの数（26669、15000）にする */
 function normalize(text: string): string {
   return text
     .replace(/[０-９．，－]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0))
-    .replace(/％/g, "%");
+    .replace(/％/g, "%")
+    .replace(/(\d+)万(\d{1,3}(?:,\d{3})+|\d{1,4})(?![\d,.])/g, (_, man: string, rest: string) =>
+      String(Number(man) * 10_000 + Number(rest.replace(/,/g, ""))),
+    );
 }
 
 // 1,234.5 / 1234 / -3.2 / 1.2万 / 45% / 45 million / 7B など

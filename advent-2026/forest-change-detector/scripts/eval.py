@@ -80,7 +80,7 @@ def main():
         sweep.append(f"| {d:.2f}{'（このアプリ）' if abs(d - P.DROP_NDVI) < 1e-9 else ''} | {s['patches']} | {s['area_ha']} | {s['precision']:.1%} | {s['recall']:.1%} | {s['f1']:.2f} |")
     main_s = run()
 
-    meta = json.loads((P.PUBLIC / "result.json").read_text())
+    meta = json.loads((P.RONDONIA / "result.json").read_text())
     md = f"""# 評価結果：衛星画像で森の変化を検知
 
 - 実行日：{date.today()}
@@ -116,7 +116,7 @@ def main():
 - NDVI は植物の量の指標なので、木の一部だけを切る「劣化」や、伐採後すぐに草が生えた場所はとらえにくい
 """
     # 画面に出す要約
-    (P.PUBLIC / "eval.json").write_text(
+    (P.RONDONIA / "eval.json").write_text(
         json.dumps(
             {
                 "truth_ha": round(float(truth.sum() * cell_ha)),

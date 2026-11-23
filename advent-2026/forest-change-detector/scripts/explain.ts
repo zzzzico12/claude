@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 import { z } from "zod";
 
 const appDir = join(dirname(fileURLToPath(import.meta.url)), "..");
-const dataDir = join(appDir, "public", "data");
+const dataDir = join(appDir, "analysis", "rondonia");
 const TOP = 12;
 
 export const CAUSES = ["牧草地・農地への転換", "道路沿いの伐採", "火災", "選択的な伐採（森の劣化）", "川や水辺の変化", "見かけの変化（雲・影・季節）", "その他・不明"] as const;

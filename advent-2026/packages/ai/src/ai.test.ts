@@ -16,6 +16,9 @@ describe("英語の単位", () => {
     const vals = extractNumbers("45 million papers, a 7B model, 1.5 billion, 3D scenes, 5G").map((n) => n.value);
     expect(vals).toEqual([4.5e7, 7e9, 1.5e9, 3, 5]);
   });
+  it("「2万6,669」「1万5000」を1つの数として読む", () => {
+    expect(extractNumbers("約2万6,669km²、1万5000ha、3万人").map((n) => n.value)).toEqual([26669, 15000, 30000]);
+  });
   it("英語の抄録の数字を日本語で書き直しても一致する", () => {
     expect(checkNumbers("4,500 万本の論文", [4.5e7]).ok).toBe(true);
   });

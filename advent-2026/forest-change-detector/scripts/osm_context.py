@@ -87,7 +87,7 @@ def nearest(p, ways, lat0):
 
 
 def main():
-    path = P.PUBLIC / "result.json"
+    path = P.RONDONIA / "result.json"
     meta = json.loads(path.read_text())
     b = meta["bounds"]
     osm = fetch_osm((b["west"], b["south"], b["east"], b["north"]))

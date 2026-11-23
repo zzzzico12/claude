@@ -4,18 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>森の変化ウォッチ</title>
-    <meta name="description" content="Sentinel-2 の衛星画像の植物の量（NDVI）の変化から、アマゾンの森が減った場所を見つけ、理由の候補を AI が説明します" />
+    <meta name="description" content="地球全体で2001〜2025年に森が減った場所を年ごとにたどり、地域ごとの減少面積と、その年に何があったかを出典つきで示します" />
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
     <header class="site">
       <h1>森の変化ウォッチ</h1>
-      <p class="lead">地球のどこで森が減っているかを2001年から年ごとにたどり、アマゾンの1か所では衛星画像で実際に確かめます。</p>
+      <p class="lead">地球のどこで、いつ、どれくらい森が減ったのか。2001〜2025年を1年ずつたどり、大きく減った年に何があったかを、出典つきで説明します。</p>
     </header>
     <main>
-      <section class="global">
-        <h2 class="first">地球全体：2001〜2025年に森が減った場所</h2>
-        <p class="hint">メリーランド大学の森林減少データ（Global Forest Watch の元データ）。色は減った年（黄＝古い、赤＝新しい、明るいピンク＝選んだ年）。再生すると、森が減った場所が年ごとに広がっていきます。拡大すると30m単位まで見られます。</p>
+      <section aria-labelledby="map-title">
+        <h2 id="map-title" class="first">森が減った場所（2001〜2025年）</h2>
         <div class="controls">
           <button type="button" id="play">▶ 再生</button>
           <label class="slider"><span>2001</span><input type="range" id="year" aria-label="年" /><span>2025</span></label>
@@ -28,31 +27,38 @@
           <li><span style="background:#f57828"></span>2013年ごろ</li>
           <li><span style="background:#c81e28"></span>最近</li>
           <li><span style="background:#ff285a"></span>選んだ年</li>
+          <li class="muted">色の濃さは減った量（拡大すると30m単位）</li>
         </ul>
       </section>
 
-      <h2 id="local">拡大：ロンドニア州の約20km四方を、衛星画像で確かめる</h2>
-      <p class="lead" id="lead"></p>
-      <section class="stats" id="stats"></section>
-      <div class="layout">
-        <div class="mapcol">
-          <div class="controls">
-            <label class="slider">
-              <span id="label-before"></span>
-              <input type="range" id="fade" min="0" max="100" value="100" aria-label="前の年と後の年の画像を切り替える" />
-              <span id="label-after"></span>
-            </label>
-            <label><input type="checkbox" id="show-change" checked /> 検知した変化（赤）</label>
+      <section aria-labelledby="year-title" class="year-panel">
+        <h2 id="year-title"></h2>
+        <div class="year-grid">
+          <div id="year-bars" class="card"></div>
+          <div class="card">
+            <table id="year-table" class="numbers">
+              <caption class="muted">選んだ年の数字（万 ha）</caption>
+              <thead><tr><th>地域</th><th>減少</th><th>うち火災</th><th>前の年から</th><th>主な原因</th></tr></thead>
+              <tbody></tbody>
+            </table>
           </div>
-          <div id="map" role="img" aria-label="衛星画像の地図。赤い所が森が減ったと検知した場所"></div>
-          <p class="hint">スライダーで前の年と後の年の画像を見比べられます。丸を押すと、その場所の説明が出ます（丸の大きさは面積）。</p>
         </div>
-        <aside class="side" id="detail"></aside>
-      </div>
-      <h2>変化の大きい場所</h2>
-      <div class="table-wrap"><table id="list"><thead><tr><th>#</th><th>面積</th><th>NDVI</th><th>理由の候補（AI）</th></tr></thead><tbody></tbody></table></div>
+      </section>
+
+      <section aria-labelledby="trend-title">
+        <h2 id="trend-title">地域ごとの推移</h2>
+        <p class="hint">どの地域も同じ目盛り。棒の<span class="key fire"></span>は火災による減少、<span class="key other"></span>はそれ以外（農地への転換・伐採など）。● は下で説明している年。棒にマウスを乗せると数字が出ます。</p>
+        <div id="multiples" class="multiples"></div>
+      </section>
+
+      <section aria-labelledby="events-title">
+        <h2 id="events-title">その年に何があったか</h2>
+        <p class="hint">各地域で減少が最も多かった年と、前の年から最も増えた年について、AI（Claude）がウェブ検索で調べて説明しました。数字（面積・割合・原因）は衛星データからの集計で、説明の文の数字は集計か出典の文と自動で照合しています。</p>
+        <div id="events" class="events"></div>
+      </section>
+
       <details class="method">
-        <summary>計算のしかたと、どれくらい当たったか</summary>
+        <summary>データと計算のしかた</summary>
         <div id="method"></div>
       </details>
     </main>
