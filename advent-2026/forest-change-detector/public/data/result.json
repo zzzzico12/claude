@@ -1,0 +1,5916 @@
+{
+ "area": "ブラジル・ロンドニア州ポルト・ヴェーリョ（アクレ州との境の近く）",
+ "bounds": {
+  "west": -65.11925,
+  "south": -9.858,
+  "east": -64.93674999999999,
+  "north": -9.678
+ },
+ "pixel_m": 9.3,
+ "before": {
+  "id": "S2B_20LKQ_20240924_0_L2A",
+  "date": "2024-09-24",
+  "clear": 0.992
+ },
+ "after": {
+  "id": "S2C_20LKQ_20251004_0_L2A",
+  "date": "2025-10-04",
+  "clear": 0.999
+ },
+ "rules": {
+  "forest_ndvi": 0.386,
+  "forest_method": "大津の方法",
+  "drop_ndvi": 0.25,
+  "year_shift": -0.162,
+  "min_area_ha": 0.5
+ },
+ "total_change_ha": 1206.7,
+ "patch_count": 210,
+ "forest_before_ha": 17859.2,
+ "patches": [
+  {
+   "id": 1,
+   "area_ha": 153.08,
+   "lat": -9.83347,
+   "lon": -65.05213,
+   "ndvi_before": 0.661,
+   "ndvi_after": 0.229,
+   "ndvi_drop": 0.593,
+   "bbox": [
+    -65.062167,
+    -9.843083,
+    -65.043917,
+    -9.824083
+   ],
+   "pixel_bbox": [
+    1753,
+    685,
+    1981,
+    904
+   ],
+   "context": {
+    "road_m": 2637,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 11635,
+    "river_name": null
+   }
+  },
+  {
+   "id": 2,
+   "area_ha": 120.64,
+   "lat": -9.73758,
+   "lon": -65.01492,
+   "ndvi_before": 0.591,
+   "ndvi_after": 0.284,
+   "ndvi_drop": 0.469,
+   "bbox": [
+    -65.022,
+    -9.745417,
+    -65.006417,
+    -9.729167
+   ],
+   "pixel_bbox": [
+    614,
+    1167,
+    809,
+    1354
+   ],
+   "context": {
+    "road_m": 4785,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 3967,
+    "river_name": null
+   }
+  },
+  {
+   "id": 3,
+   "area_ha": 63.19,
+   "lat": -9.77468,
+   "lon": -65.08097,
+   "ndvi_before": 0.702,
+   "ndvi_after": 0.284,
+   "ndvi_drop": 0.58,
+   "bbox": [
+    -65.086583,
+    -9.780083,
+    -65.075417,
+    -9.769417
+   ],
+   "pixel_bbox": [
+    1097,
+    392,
+    1225,
+    526
+   ],
+   "context": {
+    "road_m": 2563,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 12081,
+    "river_name": null
+   }
+  },
+  {
+   "id": 4,
+   "area_ha": 43.03,
+   "lat": -9.72617,
+   "lon": -64.94902,
+   "ndvi_before": 0.702,
+   "ndvi_after": 0.313,
+   "ndvi_drop": 0.551,
+   "bbox": [
+    -64.956083,
+    -9.731667,
+    -64.941083,
+    -9.719917
+   ],
+   "pixel_bbox": [
+    503,
+    1958,
+    644,
+    2138
+   ],
+   "context": {
+    "road_m": 9361,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 2589,
+    "river_name": null
+   }
+  },
+  {
+   "id": 5,
+   "area_ha": 39.93,
+   "lat": -9.75294,
+   "lon": -65.09087,
+   "ndvi_before": 0.519,
+   "ndvi_after": 0.248,
+   "ndvi_drop": 0.433,
+   "bbox": [
+    -65.096417,
+    -9.75675,
+    -65.085917,
+    -9.7495
+   ],
+   "pixel_bbox": [
+    858,
+    274,
+    945,
+    400
+   ],
+   "context": {
+    "road_m": 3113,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 12457,
+    "river_name": null
+   }
+  },
+  {
+   "id": 6,
+   "area_ha": 38.2,
+   "lat": -9.78779,
+   "lon": -65.07414,
+   "ndvi_before": 0.723,
+   "ndvi_after": 0.354,
+   "ndvi_drop": 0.531,
+   "bbox": [
+    -65.07875,
+    -9.792333,
+    -65.06975,
+    -9.783667
+   ],
+   "pixel_bbox": [
+    1268,
+    486,
+    1372,
+    594
+   ],
+   "context": {
+    "road_m": 2250,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 11887,
+    "river_name": null
+   }
+  },
+  {
+   "id": 7,
+   "area_ha": 21.34,
+   "lat": -9.85099,
+   "lon": -65.05248,
+   "ndvi_before": 0.533,
+   "ndvi_after": 0.235,
+   "ndvi_drop": 0.46,
+   "bbox": [
+    -65.056333,
+    -9.858,
+    -65.048333,
+    -9.846083
+   ],
+   "pixel_bbox": [
+    2017,
+    755,
+    2160,
+    851
+   ],
+   "context": {
+    "road_m": 1498,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 12464,
+    "river_name": null
+   }
+  },
+  {
+   "id": 8,
+   "area_ha": 18.56,
+   "lat": -9.74396,
+   "lon": -65.03254,
+   "ndvi_before": 0.575,
+   "ndvi_after": 0.339,
+   "ndvi_drop": 0.399,
+   "bbox": [
+    -65.03625,
+    -9.74675,
+    -65.029333,
+    -9.740833
+   ],
+   "pixel_bbox": [
+    754,
+    996,
+    825,
+    1079
+   ],
+   "context": {
+    "road_m": 2800,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 6026,
+    "river_name": null
+   }
+  },
+  {
+   "id": 9,
+   "area_ha": 18.28,
+   "lat": -9.77057,
+   "lon": -64.97505,
+   "ndvi_before": 0.552,
+   "ndvi_after": 0.306,
+   "ndvi_drop": 0.408,
+   "bbox": [
+    -64.9795,
+    -9.775417,
+    -64.971167,
+    -9.764833
+   ],
+   "pixel_bbox": [
+    1042,
+    1677,
+    1169,
+    1777
+   ],
+   "context": {
+    "road_m": 6924,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 1982,
+    "river_name": null
+   }
+  },
+  {
+   "id": 10,
+   "area_ha": 17.23,
+   "lat": -9.71451,
+   "lon": -64.95982,
+   "ndvi_before": 0.746,
+   "ndvi_after": 0.527,
+   "ndvi_drop": 0.381,
+   "bbox": [
+    -64.963417,
+    -9.7175,
+    -64.955917,
+    -9.711083
+   ],
+   "pixel_bbox": [
+    397,
+    1870,
+    474,
+    1960
+   ],
+   "context": {
+    "road_m": 7771,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 1570,
+    "river_name": null
+   }
+  },
+  {
+   "id": 11,
+   "area_ha": 16.31,
+   "lat": -9.70961,
+   "lon": -64.96763,
+   "ndvi_before": 0.74,
+   "ndvi_after": 0.477,
+   "ndvi_drop": 0.425,
+   "bbox": [
+    -64.970167,
+    -9.713,
+    -64.964667,
+    -9.707
+   ],
+   "pixel_bbox": [
+    348,
+    1789,
+    420,
+    1855
+   ],
+   "context": {
+    "road_m": 6995,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 768,
+    "river_name": null
+   }
+  },
+  {
+   "id": 12,
+   "area_ha": 15.1,
+   "lat": -9.79911,
+   "lon": -65.06411,
+   "ndvi_before": 0.694,
+   "ndvi_after": 0.328,
+   "ndvi_drop": 0.528,
+   "bbox": [
+    -65.066917,
+    -9.801833,
+    -65.060667,
+    -9.795583
+   ],
+   "pixel_bbox": [
+    1411,
+    628,
+    1486,
+    703
+   ],
+   "context": {
+    "road_m": 2372,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 11513,
+    "river_name": null
+   }
+  },
+  {
+   "id": 13,
+   "area_ha": 15.03,
+   "lat": -9.85613,
+   "lon": -64.98157,
+   "ndvi_before": 0.613,
+   "ndvi_after": 0.449,
+   "ndvi_drop": 0.326,
+   "bbox": [
+    -64.984917,
+    -9.858,
+    -64.978583,
+    -9.8535
+   ],
+   "pixel_bbox": [
+    2106,
+    1612,
+    2160,
+    1688
+   ],
+   "context": {
+    "road_m": 9187,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 7180,
+    "river_name": null
+   }
+  },
+  {
+   "id": 14,
+   "area_ha": 14.92,
+   "lat": -9.70089,
+   "lon": -65.06254,
+   "ndvi_before": 0.615,
+   "ndvi_after": 0.38,
+   "ndvi_drop": 0.397,
+   "bbox": [
+    -65.064667,
+    -9.703417,
+    -65.060167,
+    -9.697833
+   ],
+   "pixel_bbox": [
+    238,
+    655,
+    305,
+    709
+   ],
+   "context": {
+    "road_m": 2351,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 9059,
+    "river_name": null
+   }
+  },
+  {
+   "id": 15,
+   "area_ha": 14.65,
+   "lat": -9.74106,
+   "lon": -65.02761,
+   "ndvi_before": 0.513,
+   "ndvi_after": 0.275,
+   "ndvi_drop": 0.401,
+   "bbox": [
+    -65.029917,
+    -9.74375,
+    -65.025333,
+    -9.738333
+   ],
+   "pixel_bbox": [
+    724,
+    1072,
+    789,
+    1127
+   ],
+   "context": {
+    "road_m": 3426,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 5412,
+    "river_name": null
+   }
+  },
+  {
+   "id": 16,
+   "area_ha": 13.85,
+   "lat": -9.80257,
+   "lon": -65.00572,
+   "ndvi_before": 0.702,
+   "ndvi_after": 0.499,
+   "ndvi_drop": 0.366,
+   "bbox": [
+    -65.00775,
+    -9.8055,
+    -65.003167,
+    -9.799333
+   ],
+   "pixel_bbox": [
+    1456,
+    1338,
+    1530,
+    1393
+   ],
+   "context": {
+    "road_m": 4024,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 5872,
+    "river_name": null
+   }
+  },
+  {
+   "id": 17,
+   "area_ha": 13.73,
+   "lat": -9.73123,
+   "lon": -64.96413,
+   "ndvi_before": 0.473,
+   "ndvi_after": 0.266,
+   "ndvi_drop": 0.369,
+   "bbox": [
+    -64.966333,
+    -9.7335,
+    -64.96225,
+    -9.728833
+   ],
+   "pixel_bbox": [
+    610,
+    1835,
+    666,
+    1884
+   ],
+   "context": {
+    "road_m": 9406,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 892,
+    "river_name": null
+   }
+  },
+  {
+   "id": 18,
+   "area_ha": 13.47,
+   "lat": -9.74965,
+   "lon": -65.06837,
+   "ndvi_before": 0.538,
+   "ndvi_after": 0.272,
+   "ndvi_drop": 0.428,
+   "bbox": [
+    -65.071333,
+    -9.751917,
+    -65.065833,
+    -9.7475
+   ],
+   "pixel_bbox": [
+    834,
+    575,
+    887,
+    641
+   ],
+   "context": {
+    "road_m": 756,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 9975,
+    "river_name": null
+   }
+  },
+  {
+   "id": 19,
+   "area_ha": 12.16,
+   "lat": -9.71658,
+   "lon": -65.0537,
+   "ndvi_before": 0.629,
+   "ndvi_after": 0.251,
+   "ndvi_drop": 0.54,
+   "bbox": [
+    -65.055583,
+    -9.72,
+    -65.052,
+    -9.713667
+   ],
+   "pixel_bbox": [
+    428,
+    764,
+    504,
+    807
+   ],
+   "context": {
+    "road_m": 2450,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 8052,
+    "river_name": null
+   }
+  },
+  {
+   "id": 20,
+   "area_ha": 12.07,
+   "lat": -9.7885,
+   "lon": -65.06692,
+   "ndvi_before": 0.619,
+   "ndvi_after": 0.29,
+   "ndvi_drop": 0.491,
+   "bbox": [
+    -65.0695,
+    -9.7905,
+    -65.06425,
+    -9.7865
+   ],
+   "pixel_bbox": [
+    1302,
+    597,
+    1350,
+    660
+   ],
+   "context": {
+    "road_m": 2836,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 11204,
+    "river_name": null
+   }
+  },
+  {
+   "id": 21,
+   "area_ha": 11.87,
+   "lat": -9.76714,
+   "lon": -65.08913,
+   "ndvi_before": 0.725,
+   "ndvi_after": 0.459,
+   "ndvi_drop": 0.428,
+   "bbox": [
+    -65.091667,
+    -9.769417,
+    -65.086583,
+    -9.764667
+   ],
+   "pixel_bbox": [
+    1040,
+    331,
+    1097,
+    392
+   ],
+   "context": {
+    "road_m": 2315,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 12741,
+    "river_name": null
+   }
+  },
+  {
+   "id": 22,
+   "area_ha": 11.63,
+   "lat": -9.73292,
+   "lon": -64.99047,
+   "ndvi_before": 0.554,
+   "ndvi_after": 0.316,
+   "ndvi_drop": 0.4,
+   "bbox": [
+    -64.99325,
+    -9.735667,
+    -64.987667,
+    -9.730583
+   ],
+   "pixel_bbox": [
+    631,
+    1512,
+    692,
+    1579
+   ],
+   "context": {
+    "road_m": 7349,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 1295,
+    "river_name": null
+   }
+  },
+  {
+   "id": 23,
+   "area_ha": 11.23,
+   "lat": -9.77045,
+   "lon": -65.051,
+   "ndvi_before": 0.553,
+   "ndvi_after": 0.309,
+   "ndvi_drop": 0.406,
+   "bbox": [
+    -65.05525,
+    -9.77425,
+    -65.048667,
+    -9.7675
+   ],
+   "pixel_bbox": [
+    1074,
+    768,
+    1155,
+    847
+   ],
+   "context": {
+    "road_m": 360,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 8808,
+    "river_name": null
+   }
+  },
+  {
+   "id": 24,
+   "area_ha": 10.02,
+   "lat": -9.8473,
+   "lon": -64.99613,
+   "ndvi_before": 0.551,
+   "ndvi_after": 0.366,
+   "ndvi_drop": 0.347,
+   "bbox": [
+    -65.0,
+    -9.850417,
+    -64.993417,
+    -9.844667
+   ],
+   "pixel_bbox": [
+    2000,
+    1431,
+    2069,
+    1510
+   ],
+   "context": {
+    "road_m": 7646,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 7270,
+    "river_name": null
+   }
+  },
+  {
+   "id": 25,
+   "area_ha": 9.63,
+   "lat": -9.74631,
+   "lon": -64.97699,
+   "ndvi_before": 0.661,
+   "ndvi_after": 0.25,
+   "ndvi_drop": 0.572,
+   "bbox": [
+    -64.97875,
+    -9.748333,
+    -64.975583,
+    -9.7445
+   ],
+   "pixel_bbox": [
+    798,
+    1686,
+    844,
+    1724
+   ],
+   "context": {
+    "road_m": 7729,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 304,
+    "river_name": null
+   }
+  },
+  {
+   "id": 26,
+   "area_ha": 9.45,
+   "lat": -9.76546,
+   "lon": -65.05394,
+   "ndvi_before": 0.499,
+   "ndvi_after": 0.236,
+   "ndvi_drop": 0.425,
+   "bbox": [
+    -65.056667,
+    -9.767667,
+    -65.051,
+    -9.762833
+   ],
+   "pixel_bbox": [
+    1018,
+    751,
+    1076,
+    819
+   ],
+   "context": {
+    "road_m": 355,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 8948,
+    "river_name": null
+   }
+  },
+  {
+   "id": 27,
+   "area_ha": 9.39,
+   "lat": -9.82382,
+   "lon": -65.04449,
+   "ndvi_before": 0.566,
+   "ndvi_after": 0.268,
+   "ndvi_drop": 0.46,
+   "bbox": [
+    -65.046833,
+    -9.825833,
+    -65.042167,
+    -9.821417
+   ],
+   "pixel_bbox": [
+    1721,
+    869,
+    1774,
+    925
+   ],
+   "context": {
+    "road_m": 3393,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 10507,
+    "river_name": null
+   }
+  },
+  {
+   "id": 28,
+   "area_ha": 8.96,
+   "lat": -9.68895,
+   "lon": -65.01801,
+   "ndvi_before": 0.649,
+   "ndvi_after": 0.341,
+   "ndvi_drop": 0.47,
+   "bbox": [
+    -65.02,
+    -9.690583,
+    -65.015083,
+    -9.687417
+   ],
+   "pixel_bbox": [
+    113,
+    1191,
+    151,
+    1250
+   ],
+   "context": {
+    "road_m": 3119,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 4032,
+    "river_name": null
+   }
+  },
+  {
+   "id": 29,
+   "area_ha": 8.75,
+   "lat": -9.78256,
+   "lon": -64.98293,
+   "ndvi_before": 0.458,
+   "ndvi_after": 0.246,
+   "ndvi_drop": 0.374,
+   "bbox": [
+    -64.984583,
+    -9.784917,
+    -64.981417,
+    -9.780333
+   ],
+   "pixel_bbox": [
+    1228,
+    1616,
+    1283,
+    1654
+   ],
+   "context": {
+    "road_m": 5916,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 2868,
+    "river_name": null
+   }
+  },
+  {
+   "id": 30,
+   "area_ha": 8.51,
+   "lat": -9.7196,
+   "lon": -64.95921,
+   "ndvi_before": 0.765,
+   "ndvi_after": 0.555,
+   "ndvi_drop": 0.372,
+   "bbox": [
+    -64.961917,
+    -9.721917,
+    -64.956667,
+    -9.717583
+   ],
+   "pixel_bbox": [
+    475,
+    1888,
+    527,
+    1951
+   ],
+   "context": {
+    "road_m": 8332,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 1651,
+    "river_name": null
+   }
+  },
+  {
+   "id": 31,
+   "area_ha": 8.48,
+   "lat": -9.70686,
+   "lon": -64.94231,
+   "ndvi_before": 0.754,
+   "ndvi_after": 0.351,
+   "ndvi_drop": 0.565,
+   "bbox": [
+    -64.944167,
+    -9.70875,
+    -64.940417,
+    -9.705167
+   ],
+   "pixel_bbox": [
+    326,
+    2101,
+    369,
+    2146
+   ],
+   "context": {
+    "road_m": 7522,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 3549,
+    "river_name": null
+   }
+  },
+  {
+   "id": 32,
+   "area_ha": 8.4,
+   "lat": -9.72886,
+   "lon": -64.93826,
+   "ndvi_before": 0.766,
+   "ndvi_after": 0.511,
+   "ndvi_drop": 0.416,
+   "bbox": [
+    -64.940417,
+    -9.730417,
+    -64.93675,
+    -9.727083
+   ],
+   "pixel_bbox": [
+    589,
+    2146,
+    629,
+    2190
+   ],
+   "context": {
+    "road_m": 9993,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 3391,
+    "river_name": null
+   }
+  },
+  {
+   "id": 33,
+   "area_ha": 8.34,
+   "lat": -9.82997,
+   "lon": -64.98926,
+   "ndvi_before": 0.528,
+   "ndvi_after": 0.24,
+   "ndvi_drop": 0.45,
+   "bbox": [
+    -64.991417,
+    -9.831917,
+    -64.987417,
+    -9.828
+   ],
+   "pixel_bbox": [
+    1800,
+    1534,
+    1847,
+    1582
+   ],
+   "context": {
+    "road_m": 7354,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 5375,
+    "river_name": null
+   }
+  },
+  {
+   "id": 34,
+   "area_ha": 8.2,
+   "lat": -9.6885,
+   "lon": -65.02249,
+   "ndvi_before": 0.631,
+   "ndvi_after": 0.409,
+   "ndvi_drop": 0.384,
+   "bbox": [
+    -65.025583,
+    -9.690333,
+    -65.020083,
+    -9.686417
+   ],
+   "pixel_bbox": [
+    101,
+    1124,
+    148,
+    1190
+   ],
+   "context": {
+    "road_m": 2921,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 4518,
+    "river_name": null
+   }
+  },
+  {
+   "id": 35,
+   "area_ha": 8.13,
+   "lat": -9.70096,
+   "lon": -64.95925,
+   "ndvi_before": 0.728,
+   "ndvi_after": 0.414,
+   "ndvi_drop": 0.476,
+   "bbox": [
+    -64.960583,
+    -9.703167,
+    -64.957417,
+    -9.697833
+   ],
+   "pixel_bbox": [
+    238,
+    1904,
+    302,
+    1942
+   ],
+   "context": {
+    "road_m": 6348,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 1761,
+    "river_name": null
+   }
+  },
+  {
+   "id": 36,
+   "area_ha": 7.94,
+   "lat": -9.75243,
+   "lon": -65.01941,
+   "ndvi_before": 0.431,
+   "ndvi_after": 0.173,
+   "ndvi_drop": 0.421,
+   "bbox": [
+    -65.02225,
+    -9.75475,
+    -65.01725,
+    -9.75025
+   ],
+   "pixel_bbox": [
+    867,
+    1164,
+    921,
+    1224
+   ],
+   "context": {
+    "road_m": 3538,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 4924,
+    "river_name": null
+   }
+  },
+  {
+   "id": 37,
+   "area_ha": 7.89,
+   "lat": -9.7078,
+   "lon": -64.95041,
+   "ndvi_before": 0.771,
+   "ndvi_after": 0.339,
+   "ndvi_drop": 0.594,
+   "bbox": [
+    -64.952167,
+    -9.7095,
+    -64.948833,
+    -9.706
+   ],
+   "pixel_bbox": [
+    336,
+    2005,
+    378,
+    2045
+   ],
+   "context": {
+    "road_m": 7361,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 2657,
+    "river_name": null
+   }
+  },
+  {
+   "id": 38,
+   "area_ha": 7.83,
+   "lat": -9.68088,
+   "lon": -65.03487,
+   "ndvi_before": 0.553,
+   "ndvi_after": 0.38,
+   "ndvi_drop": 0.335,
+   "bbox": [
+    -65.0375,
+    -9.68225,
+    -65.0325,
+    -9.679333
+   ],
+   "pixel_bbox": [
+    16,
+    981,
+    51,
+    1041
+   ],
+   "context": {
+    "road_m": 1693,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 5892,
+    "river_name": null
+   }
+  },
+  {
+   "id": 39,
+   "area_ha": 7.34,
+   "lat": -9.72413,
+   "lon": -64.9609,
+   "ndvi_before": 0.682,
+   "ndvi_after": 0.499,
+   "ndvi_drop": 0.345,
+   "bbox": [
+    -64.963167,
+    -9.726,
+    -64.958917,
+    -9.722333
+   ],
+   "pixel_bbox": [
+    532,
+    1873,
+    576,
+    1924
+   ],
+   "context": {
+    "road_m": 8759,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 1602,
+    "river_name": null
+   }
+  },
+  {
+   "id": 40,
+   "area_ha": 7.19,
+   "lat": -9.83815,
+   "lon": -64.97225,
+   "ndvi_before": 0.512,
+   "ndvi_after": 0.281,
+   "ndvi_drop": 0.393,
+   "bbox": [
+    -64.974417,
+    -9.84025,
+    -64.970583,
+    -9.83625
+   ],
+   "pixel_bbox": [
+    1899,
+    1738,
+    1947,
+    1784
+   ],
+   "context": {
+    "road_m": 9344,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 4932,
+    "river_name": null
+   }
+  },
+  {
+   "id": 41,
+   "area_ha": 7.15,
+   "lat": -9.714,
+   "lon": -65.00312,
+   "ndvi_before": 0.535,
+   "ndvi_after": 0.259,
+   "ndvi_drop": 0.438,
+   "bbox": [
+    -65.005333,
+    -9.715583,
+    -65.00075,
+    -9.712
+   ],
+   "pixel_bbox": [
+    408,
+    1367,
+    451,
+    1422
+   ],
+   "context": {
+    "road_m": 6274,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 2716,
+    "river_name": null
+   }
+  },
+  {
+   "id": 42,
+   "area_ha": 6.95,
+   "lat": -9.69621,
+   "lon": -64.95225,
+   "ndvi_before": 0.717,
+   "ndvi_after": 0.559,
+   "ndvi_drop": 0.32,
+   "bbox": [
+    -64.954417,
+    -9.699,
+    -64.94925,
+    -9.69275
+   ],
+   "pixel_bbox": [
+    177,
+    1978,
+    252,
+    2040
+   ],
+   "context": {
+    "road_m": 6068,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 2568,
+    "river_name": null
+   }
+  },
+  {
+   "id": 43,
+   "area_ha": 6.86,
+   "lat": -9.85425,
+   "lon": -65.02117,
+   "ndvi_before": 0.581,
+   "ndvi_after": 0.353,
+   "ndvi_drop": 0.39,
+   "bbox": [
+    -65.024417,
+    -9.856417,
+    -65.018333,
+    -9.852083
+   ],
+   "pixel_bbox": [
+    2089,
+    1138,
+    2141,
+    1211
+   ],
+   "context": {
+    "road_m": 4845,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 9795,
+    "river_name": null
+   }
+  },
+  {
+   "id": 44,
+   "area_ha": 6.59,
+   "lat": -9.69712,
+   "lon": -64.9377,
+   "ndvi_before": 0.743,
+   "ndvi_after": 0.584,
+   "ndvi_drop": 0.322,
+   "bbox": [
+    -64.93925,
+    -9.699417,
+    -64.93675,
+    -9.69475
+   ],
+   "pixel_bbox": [
+    201,
+    2160,
+    257,
+    2190
+   ],
+   "context": {
+    "road_m": 6685,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 3913,
+    "river_name": null
+   }
+  },
+  {
+   "id": 45,
+   "area_ha": 6.56,
+   "lat": -9.76341,
+   "lon": -65.0935,
+   "ndvi_before": 0.71,
+   "ndvi_after": 0.385,
+   "ndvi_drop": 0.487,
+   "bbox": [
+    -65.09475,
+    -9.765833,
+    -65.0925,
+    -9.761083
+   ],
+   "pixel_bbox": [
+    997,
+    294,
+    1054,
+    321
+   ],
+   "context": {
+    "road_m": 2181,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 13055,
+    "river_name": null
+   }
+  },
+  {
+   "id": 46,
+   "area_ha": 5.92,
+   "lat": -9.83878,
+   "lon": -64.96512,
+   "ndvi_before": 0.488,
+   "ndvi_after": 0.312,
+   "ndvi_drop": 0.339,
+   "bbox": [
+    -64.966833,
+    -9.840833,
+    -64.9635,
+    -9.837083
+   ],
+   "pixel_bbox": [
+    1909,
+    1829,
+    1954,
+    1869
+   ],
+   "context": {
+    "road_m": 9993,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 4699,
+    "river_name": null
+   }
+  },
+  {
+   "id": 47,
+   "area_ha": 5.87,
+   "lat": -9.70916,
+   "lon": -64.99705,
+   "ndvi_before": 0.705,
+   "ndvi_after": 0.37,
+   "ndvi_drop": 0.497,
+   "bbox": [
+    -64.9985,
+    -9.710833,
+    -64.995667,
+    -9.707333
+   ],
+   "pixel_bbox": [
+    352,
+    1449,
+    394,
+    1483
+   ],
+   "context": {
+    "road_m": 5966,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 2255,
+    "river_name": null
+   }
+  },
+  {
+   "id": 48,
+   "area_ha": 5.66,
+   "lat": -9.71285,
+   "lon": -65.10119,
+   "ndvi_before": 0.595,
+   "ndvi_after": 0.426,
+   "ndvi_drop": 0.331,
+   "bbox": [
+    -65.103333,
+    -9.714583,
+    -65.099,
+    -9.711667
+   ],
+   "pixel_bbox": [
+    404,
+    191,
+    439,
+    243
+   ],
+   "context": {
+    "road_m": 1623,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 13276,
+    "river_name": null
+   }
+  },
+  {
+   "id": 49,
+   "area_ha": 5.44,
+   "lat": -9.70367,
+   "lon": -64.95283,
+   "ndvi_before": 0.807,
+   "ndvi_after": 0.639,
+   "ndvi_drop": 0.33,
+   "bbox": [
+    -64.954667,
+    -9.704833,
+    -64.95125,
+    -9.70225
+   ],
+   "pixel_bbox": [
+    291,
+    1975,
+    322,
+    2016
+   ],
+   "context": {
+    "road_m": 6844,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 2437,
+    "river_name": null
+   }
+  },
+  {
+   "id": 50,
+   "area_ha": 5.42,
+   "lat": -9.72706,
+   "lon": -65.03505,
+   "ndvi_before": 0.556,
+   "ndvi_after": 0.406,
+   "ndvi_drop": 0.311,
+   "bbox": [
+    -65.037083,
+    -9.7285,
+    -65.033,
+    -9.726
+   ],
+   "pixel_bbox": [
+    576,
+    986,
+    606,
+    1035
+   ],
+   "context": {
+    "road_m": 3638,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 5951,
+    "river_name": null
+   }
+  },
+  {
+   "id": 51,
+   "area_ha": 5.38,
+   "lat": -9.75319,
+   "lon": -64.96529,
+   "ndvi_before": 0.628,
+   "ndvi_after": 0.427,
+   "ndvi_drop": 0.364,
+   "bbox": [
+    -64.967583,
+    -9.754333,
+    -64.9635,
+    -9.751833
+   ],
+   "pixel_bbox": [
+    886,
+    1820,
+    916,
+    1869
+   ],
+   "context": {
+    "road_m": 8523,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 468,
+    "river_name": null
+   }
+  },
+  {
+   "id": 52,
+   "area_ha": 5.27,
+   "lat": -9.71647,
+   "lon": -65.0171,
+   "ndvi_before": 0.434,
+   "ndvi_after": 0.263,
+   "ndvi_drop": 0.333,
+   "bbox": [
+    -65.018417,
+    -9.717833,
+    -65.015583,
+    -9.715
+   ],
+   "pixel_bbox": [
+    444,
+    1210,
+    478,
+    1244
+   ],
+   "context": {
+    "road_m": 5910,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 4088,
+    "river_name": null
+   }
+  },
+  {
+   "id": 53,
+   "area_ha": 5.21,
+   "lat": -9.82677,
+   "lon": -64.98546,
+   "ndvi_before": 0.447,
+   "ndvi_after": 0.237,
+   "ndvi_drop": 0.372,
+   "bbox": [
+    -64.98725,
+    -9.828833,
+    -64.983917,
+    -9.824583
+   ],
+   "pixel_bbox": [
+    1759,
+    1584,
+    1810,
+    1624
+   ],
+   "context": {
+    "road_m": 7419,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 4827,
+    "river_name": null
+   }
+  },
+  {
+   "id": 54,
+   "area_ha": 5.14,
+   "lat": -9.7556,
+   "lon": -64.96783,
+   "ndvi_before": 0.594,
+   "ndvi_after": 0.439,
+   "ndvi_drop": 0.317,
+   "bbox": [
+    -64.969667,
+    -9.756917,
+    -64.966083,
+    -9.75425
+   ],
+   "pixel_bbox": [
+    915,
+    1795,
+    947,
+    1838
+   ],
+   "context": {
+    "road_m": 8163,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 820,
+    "river_name": null
+   }
+  },
+  {
+   "id": 55,
+   "area_ha": 4.88,
+   "lat": -9.69758,
+   "lon": -65.06502,
+   "ndvi_before": 0.625,
+   "ndvi_after": 0.366,
+   "ndvi_drop": 0.421,
+   "bbox": [
+    -65.066417,
+    -9.698833,
+    -65.0625,
+    -9.695583
+   ],
+   "pixel_bbox": [
+    211,
+    634,
+    250,
+    681
+   ],
+   "context": {
+    "road_m": 2316,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 9267,
+    "river_name": null
+   }
+  },
+  {
+   "id": 56,
+   "area_ha": 4.83,
+   "lat": -9.75502,
+   "lon": -65.02568,
+   "ndvi_before": 0.588,
+   "ndvi_after": 0.312,
+   "ndvi_drop": 0.439,
+   "bbox": [
+    -65.02725,
+    -9.756417,
+    -65.024,
+    -9.753667
+   ],
+   "pixel_bbox": [
+    908,
+    1104,
+    941,
+    1143
+   ],
+   "context": {
+    "road_m": 2829,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 5657,
+    "river_name": null
+   }
+  },
+  {
+   "id": 57,
+   "area_ha": 4.83,
+   "lat": -9.81411,
+   "lon": -65.04784,
+   "ndvi_before": 0.699,
+   "ndvi_after": 0.36,
+   "ndvi_drop": 0.502,
+   "bbox": [
+    -65.049167,
+    -9.8155,
+    -65.046167,
+    -9.812583
+   ],
+   "pixel_bbox": [
+    1615,
+    841,
+    1650,
+    877
+   ],
+   "context": {
+    "road_m": 3076,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 10624,
+    "river_name": null
+   }
+  },
+  {
+   "id": 58,
+   "area_ha": 4.68,
+   "lat": -9.76201,
+   "lon": -65.08697,
+   "ndvi_before": 0.499,
+   "ndvi_after": 0.225,
+   "ndvi_drop": 0.436,
+   "bbox": [
+    -65.088583,
+    -9.7635,
+    -65.085333,
+    -9.760833
+   ],
+   "pixel_bbox": [
+    994,
+    368,
+    1026,
+    407
+   ],
+   "context": {
+    "road_m": 2847,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 12326,
+    "river_name": null
+   }
+  },
+  {
+   "id": 59,
+   "area_ha": 4.66,
+   "lat": -9.69673,
+   "lon": -65.1113,
+   "ndvi_before": 0.825,
+   "ndvi_after": 0.52,
+   "ndvi_drop": 0.467,
+   "bbox": [
+    -65.11275,
+    -9.697583,
+    -65.109583,
+    -9.69575
+   ],
+   "pixel_bbox": [
+    213,
+    78,
+    235,
+    116
+   ],
+   "context": {
+    "road_m": 757,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 14303,
+    "river_name": null
+   }
+  },
+  {
+   "id": 60,
+   "area_ha": 4.55,
+   "lat": -9.81997,
+   "lon": -65.06491,
+   "ndvi_before": 0.737,
+   "ndvi_after": 0.424,
+   "ndvi_drop": 0.474,
+   "bbox": [
+    -65.066167,
+    -9.82125,
+    -65.063667,
+    -9.8185
+   ],
+   "pixel_bbox": [
+    1686,
+    637,
+    1719,
+    667
+   ],
+   "context": {
+    "road_m": 1129,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 12585,
+    "river_name": null
+   }
+  },
+  {
+   "id": 61,
+   "area_ha": 4.44,
+   "lat": -9.76023,
+   "lon": -65.08418,
+   "ndvi_before": 0.513,
+   "ndvi_after": 0.231,
+   "ndvi_drop": 0.444,
+   "bbox": [
+    -65.085333,
+    -9.761917,
+    -65.0825,
+    -9.759
+   ],
+   "pixel_bbox": [
+    972,
+    407,
+    1007,
+    441
+   ],
+   "context": {
+    "road_m": 2852,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 11973,
+    "river_name": null
+   }
+  },
+  {
+   "id": 62,
+   "area_ha": 4.39,
+   "lat": -9.83764,
+   "lon": -65.02895,
+   "ndvi_before": 0.522,
+   "ndvi_after": 0.3,
+   "ndvi_drop": 0.384,
+   "bbox": [
+    -65.030917,
+    -9.839167,
+    -65.027083,
+    -9.835583
+   ],
+   "pixel_bbox": [
+    1891,
+    1060,
+    1934,
+    1106
+   ],
+   "context": {
+    "road_m": 4462,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 9488,
+    "river_name": null
+   }
+  },
+  {
+   "id": 63,
+   "area_ha": 4.33,
+   "lat": -9.79603,
+   "lon": -65.01232,
+   "ndvi_before": 0.646,
+   "ndvi_after": 0.481,
+   "ndvi_drop": 0.327,
+   "bbox": [
+    -65.013917,
+    -9.797083,
+    -65.010417,
+    -9.795
+   ],
+   "pixel_bbox": [
+    1404,
+    1264,
+    1429,
+    1306
+   ],
+   "context": {
+    "road_m": 3034,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 6341,
+    "river_name": null
+   }
+  },
+  {
+   "id": 64,
+   "area_ha": 4.3,
+   "lat": -9.71675,
+   "lon": -65.10053,
+   "ndvi_before": 0.528,
+   "ndvi_after": 0.349,
+   "ndvi_drop": 0.341,
+   "bbox": [
+    -65.102083,
+    -9.718667,
+    -65.098667,
+    -9.715
+   ],
+   "pixel_bbox": [
+    444,
+    206,
+    488,
+    247
+   ],
+   "context": {
+    "road_m": 1920,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 13165,
+    "river_name": null
+   }
+  },
+  {
+   "id": 65,
+   "area_ha": 4.23,
+   "lat": -9.79246,
+   "lon": -65.0615,
+   "ndvi_before": 0.47,
+   "ndvi_after": 0.301,
+   "ndvi_drop": 0.331,
+   "bbox": [
+    -65.063333,
+    -9.794083,
+    -65.059667,
+    -9.790583
+   ],
+   "pixel_bbox": [
+    1351,
+    671,
+    1393,
+    715
+   ],
+   "context": {
+    "road_m": 2838,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 10886,
+    "river_name": null
+   }
+  },
+  {
+   "id": 66,
+   "area_ha": 4.23,
+   "lat": -9.83359,
+   "lon": -64.96475,
+   "ndvi_before": 0.562,
+   "ndvi_after": 0.287,
+   "ndvi_drop": 0.437,
+   "bbox": [
+    -64.966583,
+    -9.83475,
+    -64.9635,
+    -9.832417
+   ],
+   "pixel_bbox": [
+    1853,
+    1832,
+    1881,
+    1869
+   ],
+   "context": {
+    "road_m": 9681,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 4139,
+    "river_name": null
+   }
+  },
+  {
+   "id": 67,
+   "area_ha": 4.21,
+   "lat": -9.77516,
+   "lon": -64.97556,
+   "ndvi_before": 0.428,
+   "ndvi_after": 0.242,
+   "ndvi_drop": 0.348,
+   "bbox": [
+    -64.97725,
+    -9.776667,
+    -64.974,
+    -9.77325
+   ],
+   "pixel_bbox": [
+    1143,
+    1704,
+    1184,
+    1743
+   ],
+   "context": {
+    "road_m": 6787,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 2076,
+    "river_name": null
+   }
+  },
+  {
+   "id": 68,
+   "area_ha": 4.17,
+   "lat": -9.69191,
+   "lon": -65.01299,
+   "ndvi_before": 0.677,
+   "ndvi_after": 0.48,
+   "ndvi_drop": 0.359,
+   "bbox": [
+    -65.01525,
+    -9.693667,
+    -65.010833,
+    -9.68975
+   ],
+   "pixel_bbox": [
+    141,
+    1248,
+    188,
+    1301
+   ],
+   "context": {
+    "road_m": 3602,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 3532,
+    "river_name": null
+   }
+  },
+  {
+   "id": 69,
+   "area_ha": 4.16,
+   "lat": -9.72512,
+   "lon": -64.93826,
+   "ndvi_before": 0.625,
+   "ndvi_after": 0.405,
+   "ndvi_drop": 0.381,
+   "bbox": [
+    -64.939917,
+    -9.727,
+    -64.93675,
+    -9.723167
+   ],
+   "pixel_bbox": [
+    542,
+    2152,
+    588,
+    2190
+   ],
+   "context": {
+    "road_m": 9594,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 3631,
+    "river_name": null
+   }
+  },
+  {
+   "id": 70,
+   "area_ha": 4.06,
+   "lat": -9.69774,
+   "lon": -65.01824,
+   "ndvi_before": 0.565,
+   "ndvi_after": 0.366,
+   "ndvi_drop": 0.361,
+   "bbox": [
+    -65.020417,
+    -9.699,
+    -65.016083,
+    -9.696
+   ],
+   "pixel_bbox": [
+    216,
+    1186,
+    252,
+    1238
+   ],
+   "context": {
+    "road_m": 4043,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 4247,
+    "river_name": null
+   }
+  },
+  {
+   "id": 71,
+   "area_ha": 3.77,
+   "lat": -9.8316,
+   "lon": -65.02333,
+   "ndvi_before": 0.587,
+   "ndvi_after": 0.319,
+   "ndvi_drop": 0.43,
+   "bbox": [
+    -65.024417,
+    -9.832667,
+    -65.022167,
+    -9.830583
+   ],
+   "pixel_bbox": [
+    1831,
+    1138,
+    1856,
+    1165
+   ],
+   "context": {
+    "road_m": 5324,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 8637,
+    "river_name": null
+   }
+  },
+  {
+   "id": 72,
+   "area_ha": 3.74,
+   "lat": -9.75817,
+   "lon": -64.99561,
+   "ndvi_before": 0.495,
+   "ndvi_after": 0.296,
+   "ndvi_drop": 0.361,
+   "bbox": [
+    -64.997083,
+    -9.759583,
+    -64.994167,
+    -9.75675
+   ],
+   "pixel_bbox": [
+    945,
+    1466,
+    979,
+    1501
+   ],
+   "context": {
+    "road_m": 5297,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 2731,
+    "river_name": null
+   }
+  },
+  {
+   "id": 73,
+   "area_ha": 3.66,
+   "lat": -9.67889,
+   "lon": -64.99489,
+   "ndvi_before": 0.658,
+   "ndvi_after": 0.444,
+   "ndvi_drop": 0.376,
+   "bbox": [
+    -64.996583,
+    -9.67975,
+    -64.9935,
+    -9.678
+   ],
+   "pixel_bbox": [
+    0,
+    1472,
+    21,
+    1509
+   ],
+   "context": {
+    "road_m": 2831,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 1647,
+    "river_name": null
+   }
+  },
+  {
+   "id": 74,
+   "area_ha": 3.56,
+   "lat": -9.72013,
+   "lon": -65.04815,
+   "ndvi_before": 0.677,
+   "ndvi_after": 0.476,
+   "ndvi_drop": 0.364,
+   "bbox": [
+    -65.049417,
+    -9.721667,
+    -65.047,
+    -9.718417
+   ],
+   "pixel_bbox": [
+    485,
+    838,
+    524,
+    867
+   ],
+   "context": {
+    "road_m": 2701,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 7407,
+    "river_name": null
+   }
+  },
+  {
+   "id": 75,
+   "area_ha": 3.5,
+   "lat": -9.81242,
+   "lon": -65.04097,
+   "ndvi_before": 0.58,
+   "ndvi_after": 0.29,
+   "ndvi_drop": 0.452,
+   "bbox": [
+    -65.042333,
+    -9.81375,
+    -65.039667,
+    -9.810667
+   ],
+   "pixel_bbox": [
+    1592,
+    923,
+    1629,
+    955
+   ],
+   "context": {
+    "road_m": 3257,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 9850,
+    "river_name": null
+   }
+  },
+  {
+   "id": 76,
+   "area_ha": 3.49,
+   "lat": -9.74378,
+   "lon": -64.94669,
+   "ndvi_before": 0.721,
+   "ndvi_after": 0.536,
+   "ndvi_drop": 0.347,
+   "bbox": [
+    -64.947833,
+    -9.745,
+    -64.94525,
+    -9.74225
+   ],
+   "pixel_bbox": [
+    771,
+    2057,
+    804,
+    2088
+   ],
+   "context": {
+    "road_m": 10811,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 1734,
+    "river_name": null
+   }
+  },
+  {
+   "id": 77,
+   "area_ha": 3.31,
+   "lat": -9.80448,
+   "lon": -64.98026,
+   "ndvi_before": 0.503,
+   "ndvi_after": 0.311,
+   "ndvi_drop": 0.355,
+   "bbox": [
+    -64.981417,
+    -9.805833,
+    -64.978917,
+    -9.80275
+   ],
+   "pixel_bbox": [
+    1497,
+    1654,
+    1534,
+    1684
+   ],
+   "context": {
+    "road_m": 6635,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 3143,
+    "river_name": null
+   }
+  },
+  {
+   "id": 78,
+   "area_ha": 3.25,
+   "lat": -9.72835,
+   "lon": -64.96428,
+   "ndvi_before": 0.489,
+   "ndvi_after": 0.325,
+   "ndvi_drop": 0.326,
+   "bbox": [
+    -64.9655,
+    -9.729833,
+    -64.962667,
+    -9.727333
+   ],
+   "pixel_bbox": [
+    592,
+    1845,
+    622,
+    1879
+   ],
+   "context": {
+    "road_m": 9096,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 1022,
+    "river_name": null
+   }
+  },
+  {
+   "id": 79,
+   "area_ha": 3.15,
+   "lat": -9.79648,
+   "lon": -65.00861,
+   "ndvi_before": 0.67,
+   "ndvi_after": 0.498,
+   "ndvi_drop": 0.334,
+   "bbox": [
+    -65.01075,
+    -9.797667,
+    -65.006583,
+    -9.795333
+   ],
+   "pixel_bbox": [
+    1408,
+    1302,
+    1436,
+    1352
+   ],
+   "context": {
+    "road_m": 3421,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 5968,
+    "river_name": null
+   }
+  },
+  {
+   "id": 80,
+   "area_ha": 3.09,
+   "lat": -9.84525,
+   "lon": -65.02964,
+   "ndvi_before": 0.688,
+   "ndvi_after": 0.516,
+   "ndvi_drop": 0.334,
+   "bbox": [
+    -65.031583,
+    -9.846833,
+    -65.02825,
+    -9.843667
+   ],
+   "pixel_bbox": [
+    1988,
+    1052,
+    2026,
+    1092
+   ],
+   "context": {
+    "road_m": 4079,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 9971,
+    "river_name": null
+   }
+  },
+  {
+   "id": 81,
+   "area_ha": 3.03,
+   "lat": -9.74828,
+   "lon": -65.08075,
+   "ndvi_before": 0.505,
+   "ndvi_after": 0.307,
+   "ndvi_drop": 0.361,
+   "bbox": [
+    -65.082,
+    -9.7495,
+    -65.079417,
+    -9.747
+   ],
+   "pixel_bbox": [
+    828,
+    447,
+    858,
+    478
+   ],
+   "context": {
+    "road_m": 1897,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 11256,
+    "river_name": null
+   }
+  },
+  {
+   "id": 82,
+   "area_ha": 2.82,
+   "lat": -9.78977,
+   "lon": -64.95902,
+   "ndvi_before": 0.502,
+   "ndvi_after": 0.315,
+   "ndvi_drop": 0.348,
+   "bbox": [
+    -64.9605,
+    -9.79125,
+    -64.9575,
+    -9.788333
+   ],
+   "pixel_bbox": [
+    1324,
+    1905,
+    1359,
+    1941
+   ],
+   "context": {
+    "road_m": 8568,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 874,
+    "river_name": null
+   }
+  },
+  {
+   "id": 83,
+   "area_ha": 2.79,
+   "lat": -9.71963,
+   "lon": -65.10206,
+   "ndvi_before": 0.55,
+   "ndvi_after": 0.38,
+   "ndvi_drop": 0.331,
+   "bbox": [
+    -65.1035,
+    -9.721333,
+    -65.100667,
+    -9.718417
+   ],
+   "pixel_bbox": [
+    485,
+    189,
+    520,
+    223
+   ],
+   "context": {
+    "road_m": 2234,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 13314,
+    "river_name": null
+   }
+  },
+  {
+   "id": 84,
+   "area_ha": 2.76,
+   "lat": -9.68965,
+   "lon": -64.96488,
+   "ndvi_before": 0.761,
+   "ndvi_after": 0.606,
+   "ndvi_drop": 0.317,
+   "bbox": [
+    -64.965917,
+    -9.691,
+    -64.964083,
+    -9.68825
+   ],
+   "pixel_bbox": [
+    123,
+    1840,
+    156,
+    1862
+   ],
+   "context": {
+    "road_m": 4963,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 1416,
+    "river_name": null
+   }
+  },
+  {
+   "id": 85,
+   "area_ha": 2.74,
+   "lat": -9.72529,
+   "lon": -64.99235,
+   "ndvi_before": 0.649,
+   "ndvi_after": 0.455,
+   "ndvi_drop": 0.356,
+   "bbox": [
+    -64.993833,
+    -9.726417,
+    -64.990583,
+    -9.724583
+   ],
+   "pixel_bbox": [
+    559,
+    1505,
+    581,
+    1544
+   ],
+   "context": {
+    "road_m": 7610,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 1263,
+    "river_name": null
+   }
+  },
+  {
+   "id": 86,
+   "area_ha": 2.64,
+   "lat": -9.75029,
+   "lon": -65.06163,
+   "ndvi_before": 0.573,
+   "ndvi_after": 0.309,
+   "ndvi_drop": 0.426,
+   "bbox": [
+    -65.063083,
+    -9.751417,
+    -65.060417,
+    -9.749083
+   ],
+   "pixel_bbox": [
+    853,
+    674,
+    881,
+    706
+   ],
+   "context": {
+    "road_m": 171,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 9282,
+    "river_name": null
+   }
+  },
+  {
+   "id": 87,
+   "area_ha": 2.6,
+   "lat": -9.84658,
+   "lon": -65.00329,
+   "ndvi_before": 0.75,
+   "ndvi_after": 0.56,
+   "ndvi_drop": 0.352,
+   "bbox": [
+    -65.004417,
+    -9.847917,
+    -65.002167,
+    -9.845417
+   ],
+   "pixel_bbox": [
+    2009,
+    1378,
+    2039,
+    1405
+   ],
+   "context": {
+    "road_m": 6878,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 7759,
+    "river_name": null
+   }
+  },
+  {
+   "id": 88,
+   "area_ha": 2.55,
+   "lat": -9.80658,
+   "lon": -65.04838,
+   "ndvi_before": 0.622,
+   "ndvi_after": 0.398,
+   "ndvi_drop": 0.386,
+   "bbox": [
+    -65.0495,
+    -9.80825,
+    -65.046833,
+    -9.804667
+   ],
+   "pixel_bbox": [
+    1520,
+    837,
+    1563,
+    869
+   ],
+   "context": {
+    "road_m": 2869,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 10468,
+    "river_name": null
+   }
+  },
+  {
+   "id": 89,
+   "area_ha": 2.5,
+   "lat": -9.72308,
+   "lon": -64.95505,
+   "ndvi_before": 0.86,
+   "ndvi_after": 0.68,
+   "ndvi_drop": 0.342,
+   "bbox": [
+    -64.955833,
+    -9.72425,
+    -64.95425,
+    -9.721833
+   ],
+   "pixel_bbox": [
+    526,
+    1961,
+    555,
+    1980
+   ],
+   "context": {
+    "road_m": 8837,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 2191,
+    "river_name": null
+   }
+  },
+  {
+   "id": 90,
+   "area_ha": 2.49,
+   "lat": -9.80743,
+   "lon": -65.02124,
+   "ndvi_before": 0.463,
+   "ndvi_after": 0.264,
+   "ndvi_drop": 0.361,
+   "bbox": [
+    -65.022333,
+    -9.808917,
+    -65.020083,
+    -9.806
+   ],
+   "pixel_bbox": [
+    1536,
+    1163,
+    1571,
+    1190
+   ],
+   "context": {
+    "road_m": 3172,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 7626,
+    "river_name": null
+   }
+  },
+  {
+   "id": 91,
+   "area_ha": 2.46,
+   "lat": -9.69239,
+   "lon": -65.00094,
+   "ndvi_before": 0.571,
+   "ndvi_after": 0.27,
+   "ndvi_drop": 0.463,
+   "bbox": [
+    -65.001667,
+    -9.693417,
+    -65.000167,
+    -9.691417
+   ],
+   "pixel_bbox": [
+    161,
+    1411,
+    185,
+    1429
+   ],
+   "context": {
+    "road_m": 4059,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 2258,
+    "river_name": null
+   }
+  },
+  {
+   "id": 92,
+   "area_ha": 2.4,
+   "lat": -9.73019,
+   "lon": -65.03382,
+   "ndvi_before": 0.685,
+   "ndvi_after": 0.548,
+   "ndvi_drop": 0.299,
+   "bbox": [
+    -65.035167,
+    -9.7315,
+    -65.032,
+    -9.728917
+   ],
+   "pixel_bbox": [
+    611,
+    1009,
+    642,
+    1047
+   ],
+   "context": {
+    "road_m": 3605,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 5838,
+    "river_name": null
+   }
+  },
+  {
+   "id": 93,
+   "area_ha": 2.37,
+   "lat": -9.81441,
+   "lon": -65.01917,
+   "ndvi_before": 0.533,
+   "ndvi_after": 0.326,
+   "ndvi_drop": 0.369,
+   "bbox": [
+    -65.02,
+    -9.815833,
+    -65.018333,
+    -9.81275
+   ],
+   "pixel_bbox": [
+    1617,
+    1191,
+    1654,
+    1211
+   ],
+   "context": {
+    "road_m": 3955,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 7552,
+    "river_name": null
+   }
+  },
+  {
+   "id": 94,
+   "area_ha": 2.31,
+   "lat": -9.80343,
+   "lon": -64.97053,
+   "ndvi_before": 0.483,
+   "ndvi_after": 0.303,
+   "ndvi_drop": 0.342,
+   "bbox": [
+    -64.971583,
+    -9.8045,
+    -64.969417,
+    -9.80225
+   ],
+   "pixel_bbox": [
+    1491,
+    1772,
+    1518,
+    1798
+   ],
+   "context": {
+    "road_m": 7608,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 2082,
+    "river_name": null
+   }
+  },
+  {
+   "id": 95,
+   "area_ha": 2.25,
+   "lat": -9.79551,
+   "lon": -65.05975,
+   "ndvi_before": 0.452,
+   "ndvi_after": 0.227,
+   "ndvi_drop": 0.387,
+   "bbox": [
+    -65.060833,
+    -9.7965,
+    -65.058583,
+    -9.7945
+   ],
+   "pixel_bbox": [
+    1398,
+    701,
+    1422,
+    728
+   ],
+   "context": {
+    "road_m": 2848,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 10895,
+    "river_name": null
+   }
+  },
+  {
+   "id": 96,
+   "area_ha": 2.24,
+   "lat": -9.73105,
+   "lon": -65.03666,
+   "ndvi_before": 0.685,
+   "ndvi_after": 0.512,
+   "ndvi_drop": 0.334,
+   "bbox": [
+    -65.03775,
+    -9.732,
+    -65.035167,
+    -9.730333
+   ],
+   "pixel_bbox": [
+    628,
+    978,
+    648,
+    1009
+   ],
+   "context": {
+    "road_m": 3290,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 6158,
+    "river_name": null
+   }
+  },
+  {
+   "id": 97,
+   "area_ha": 2.21,
+   "lat": -9.81375,
+   "lon": -65.02501,
+   "ndvi_before": 0.538,
+   "ndvi_after": 0.313,
+   "ndvi_drop": 0.387,
+   "bbox": [
+    -65.026,
+    -9.815167,
+    -65.024083,
+    -9.812583
+   ],
+   "pixel_bbox": [
+    1615,
+    1119,
+    1646,
+    1142
+   ],
+   "context": {
+    "road_m": 3615,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 8158,
+    "river_name": null
+   }
+  },
+  {
+   "id": 98,
+   "area_ha": 2.17,
+   "lat": -9.80522,
+   "lon": -64.98412,
+   "ndvi_before": 0.502,
+   "ndvi_after": 0.318,
+   "ndvi_drop": 0.346,
+   "bbox": [
+    -64.98525,
+    -9.80625,
+    -64.98325,
+    -9.804083
+   ],
+   "pixel_bbox": [
+    1513,
+    1608,
+    1539,
+    1632
+   ],
+   "context": {
+    "road_m": 6272,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 3574,
+    "river_name": null
+   }
+  },
+  {
+   "id": 99,
+   "area_ha": 2.07,
+   "lat": -9.81939,
+   "lon": -65.0714,
+   "ndvi_before": 0.555,
+   "ndvi_after": 0.385,
+   "ndvi_drop": 0.332,
+   "bbox": [
+    -65.072417,
+    -9.820417,
+    -65.070333,
+    -9.818417
+   ],
+   "pixel_bbox": [
+    1685,
+    562,
+    1709,
+    587
+   ],
+   "context": {
+    "road_m": 426,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 13272,
+    "river_name": null
+   }
+  },
+  {
+   "id": 100,
+   "area_ha": 2.06,
+   "lat": -9.72231,
+   "lon": -64.96218,
+   "ndvi_before": 0.708,
+   "ndvi_after": 0.525,
+   "ndvi_drop": 0.345,
+   "bbox": [
+    -64.962833,
+    -9.723583,
+    -64.961417,
+    -9.72125
+   ],
+   "pixel_bbox": [
+    519,
+    1877,
+    547,
+    1894
+   ],
+   "context": {
+    "road_m": 8523,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 1432,
+    "river_name": null
+   }
+  },
+  {
+   "id": 101,
+   "area_ha": 2.05,
+   "lat": -9.67871,
+   "lon": -65.01913,
+   "ndvi_before": 0.569,
+   "ndvi_after": 0.294,
+   "ndvi_drop": 0.437,
+   "bbox": [
+    -65.020083,
+    -9.679917,
+    -65.018167,
+    -9.678
+   ],
+   "pixel_bbox": [
+    0,
+    1190,
+    23,
+    1213
+   ],
+   "context": {
+    "road_m": 1996,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 4215,
+    "river_name": null
+   }
+  },
+  {
+   "id": 102,
+   "area_ha": 2.03,
+   "lat": -9.75823,
+   "lon": -65.06022,
+   "ndvi_before": 0.587,
+   "ndvi_after": 0.293,
+   "ndvi_drop": 0.456,
+   "bbox": [
+    -65.060917,
+    -9.759167,
+    -65.0595,
+    -9.757333
+   ],
+   "pixel_bbox": [
+    952,
+    700,
+    974,
+    717
+   ],
+   "context": {
+    "road_m": 544,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 9425,
+    "river_name": null
+   }
+  },
+  {
+   "id": 103,
+   "area_ha": 1.98,
+   "lat": -9.80635,
+   "lon": -64.98262,
+   "ndvi_before": 0.604,
+   "ndvi_after": 0.402,
+   "ndvi_drop": 0.363,
+   "bbox": [
+    -64.983667,
+    -9.80725,
+    -64.981417,
+    -9.805167
+   ],
+   "pixel_bbox": [
+    1526,
+    1627,
+    1551,
+    1654
+   ],
+   "context": {
+    "road_m": 6473,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 3446,
+    "river_name": null
+   }
+  },
+  {
+   "id": 104,
+   "area_ha": 1.97,
+   "lat": -9.81011,
+   "lon": -65.04551,
+   "ndvi_before": 0.64,
+   "ndvi_after": 0.412,
+   "ndvi_drop": 0.39,
+   "bbox": [
+    -65.046167,
+    -9.8115,
+    -65.044583,
+    -9.808917
+   ],
+   "pixel_bbox": [
+    1571,
+    877,
+    1602,
+    896
+   ],
+   "context": {
+    "road_m": 3116,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 10289,
+    "river_name": null
+   }
+  },
+  {
+   "id": 105,
+   "area_ha": 1.94,
+   "lat": -9.75327,
+   "lon": -64.94198,
+   "ndvi_before": 0.826,
+   "ndvi_after": 0.702,
+   "ndvi_drop": 0.286,
+   "bbox": [
+    -64.942583,
+    -9.75475,
+    -64.94125,
+    -9.751667
+   ],
+   "pixel_bbox": [
+    884,
+    2120,
+    921,
+    2136
+   ],
+   "context": {
+    "road_m": 10923,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 1817,
+    "river_name": null
+   }
+  },
+  {
+   "id": 106,
+   "area_ha": 1.93,
+   "lat": -9.76043,
+   "lon": -64.99444,
+   "ndvi_before": 0.46,
+   "ndvi_after": 0.273,
+   "ndvi_drop": 0.348,
+   "bbox": [
+    -64.99525,
+    -9.761583,
+    -64.993583,
+    -9.759583
+   ],
+   "pixel_bbox": [
+    979,
+    1488,
+    1003,
+    1508
+   ],
+   "context": {
+    "road_m": 5285,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 2780,
+    "river_name": null
+   }
+  },
+  {
+   "id": 107,
+   "area_ha": 1.89,
+   "lat": -9.70153,
+   "lon": -65.07096,
+   "ndvi_before": 0.507,
+   "ndvi_after": 0.322,
+   "ndvi_drop": 0.347,
+   "bbox": [
+    -65.071917,
+    -9.70225,
+    -65.07025,
+    -9.700667
+   ],
+   "pixel_bbox": [
+    272,
+    568,
+    291,
+    588
+   ],
+   "context": {
+    "road_m": 1531,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 9980,
+    "river_name": null
+   }
+  },
+  {
+   "id": 108,
+   "area_ha": 1.85,
+   "lat": -9.71861,
+   "lon": -65.00795,
+   "ndvi_before": 0.453,
+   "ndvi_after": 0.284,
+   "ndvi_drop": 0.331,
+   "bbox": [
+    -65.008667,
+    -9.719917,
+    -65.006917,
+    -9.717417
+   ],
+   "pixel_bbox": [
+    473,
+    1327,
+    503,
+    1348
+   ],
+   "context": {
+    "road_m": 6600,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 3056,
+    "river_name": null
+   }
+  },
+  {
+   "id": 109,
+   "area_ha": 1.83,
+   "lat": -9.68025,
+   "lon": -65.08365,
+   "ndvi_before": 0.613,
+   "ndvi_after": 0.379,
+   "ndvi_drop": 0.396,
+   "bbox": [
+    -65.085,
+    -9.681,
+    -65.082667,
+    -9.67925
+   ],
+   "pixel_bbox": [
+    15,
+    411,
+    36,
+    439
+   ],
+   "context": {
+    "road_m": 58,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 11235,
+    "river_name": null
+   }
+  },
+  {
+   "id": 110,
+   "area_ha": 1.81,
+   "lat": -9.85328,
+   "lon": -65.03613,
+   "ndvi_before": 0.727,
+   "ndvi_after": 0.546,
+   "ndvi_drop": 0.342,
+   "bbox": [
+    -65.037,
+    -9.854167,
+    -65.035,
+    -9.852333
+   ],
+   "pixel_bbox": [
+    2092,
+    987,
+    2114,
+    1011
+   ],
+   "context": {
+    "road_m": 3212,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 11052,
+    "river_name": null
+   }
+  },
+  {
+   "id": 111,
+   "area_ha": 1.73,
+   "lat": -9.75868,
+   "lon": -65.06736,
+   "ndvi_before": 0.529,
+   "ndvi_after": 0.362,
+   "ndvi_drop": 0.329,
+   "bbox": [
+    -65.0685,
+    -9.76,
+    -65.066333,
+    -9.757333
+   ],
+   "pixel_bbox": [
+    952,
+    609,
+    984,
+    635
+   ],
+   "context": {
+    "road_m": 1203,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 10174,
+    "river_name": null
+   }
+  },
+  {
+   "id": 112,
+   "area_ha": 1.7,
+   "lat": -9.70408,
+   "lon": -65.09716,
+   "ndvi_before": 0.67,
+   "ndvi_after": 0.474,
+   "ndvi_drop": 0.358,
+   "bbox": [
+    -65.098,
+    -9.705,
+    -65.096167,
+    -9.703083
+   ],
+   "pixel_bbox": [
+    301,
+    255,
+    324,
+    277
+   ],
+   "context": {
+    "road_m": 607,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 12862,
+    "river_name": null
+   }
+  },
+  {
+   "id": 113,
+   "area_ha": 1.68,
+   "lat": -9.833,
+   "lon": -65.00839,
+   "ndvi_before": 0.631,
+   "ndvi_after": 0.437,
+   "ndvi_drop": 0.356,
+   "bbox": [
+    -65.009167,
+    -9.834,
+    -65.0075,
+    -9.832083
+   ],
+   "pixel_bbox": [
+    1849,
+    1321,
+    1872,
+    1341
+   ],
+   "context": {
+    "road_m": 6338,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 7271,
+    "river_name": null
+   }
+  },
+  {
+   "id": 114,
+   "area_ha": 1.6,
+   "lat": -9.701,
+   "lon": -65.07243,
+   "ndvi_before": 0.494,
+   "ndvi_after": 0.344,
+   "ndvi_drop": 0.312,
+   "bbox": [
+    -65.073333,
+    -9.70175,
+    -65.071417,
+    -9.700083
+   ],
+   "pixel_bbox": [
+    265,
+    551,
+    285,
+    574
+   ],
+   "context": {
+    "road_m": 1447,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 10129,
+    "river_name": null
+   }
+  },
+  {
+   "id": 115,
+   "area_ha": 1.59,
+   "lat": -9.71396,
+   "lon": -65.09768,
+   "ndvi_before": 0.459,
+   "ndvi_after": 0.31,
+   "ndvi_drop": 0.311,
+   "bbox": [
+    -65.098417,
+    -9.715,
+    -65.09675,
+    -9.712917
+   ],
+   "pixel_bbox": [
+    419,
+    250,
+    444,
+    270
+   ],
+   "context": {
+    "road_m": 1482,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 12880,
+    "river_name": null
+   }
+  },
+  {
+   "id": 116,
+   "area_ha": 1.58,
+   "lat": -9.69695,
+   "lon": -64.94031,
+   "ndvi_before": 0.756,
+   "ndvi_after": 0.613,
+   "ndvi_drop": 0.305,
+   "bbox": [
+    -64.941083,
+    -9.698083,
+    -64.939583,
+    -9.695917
+   ],
+   "pixel_bbox": [
+    215,
+    2138,
+    241,
+    2156
+   ],
+   "context": {
+    "road_m": 6557,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 3798,
+    "river_name": null
+   }
+  },
+  {
+   "id": 117,
+   "area_ha": 1.52,
+   "lat": -9.75624,
+   "lon": -65.09626,
+   "ndvi_before": 0.527,
+   "ndvi_after": 0.352,
+   "ndvi_drop": 0.337,
+   "bbox": [
+    -65.097,
+    -9.756833,
+    -65.095417,
+    -9.7555
+   ],
+   "pixel_bbox": [
+    930,
+    267,
+    946,
+    286
+   ],
+   "context": {
+    "road_m": 2420,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 13121,
+    "river_name": null
+   }
+  },
+  {
+   "id": 118,
+   "area_ha": 1.48,
+   "lat": -9.85583,
+   "lon": -64.99292,
+   "ndvi_before": 0.715,
+   "ndvi_after": 0.519,
+   "ndvi_drop": 0.358,
+   "bbox": [
+    -64.994,
+    -9.856583,
+    -64.992,
+    -9.855083
+   ],
+   "pixel_bbox": [
+    2125,
+    1503,
+    2143,
+    1527
+   ],
+   "context": {
+    "road_m": 7942,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 7795,
+    "river_name": null
+   }
+  },
+  {
+   "id": 119,
+   "area_ha": 1.46,
+   "lat": -9.69443,
+   "lon": -64.95573,
+   "ndvi_before": 0.888,
+   "ndvi_after": 0.75,
+   "ndvi_drop": 0.3,
+   "bbox": [
+    -64.95625,
+    -9.695333,
+    -64.955167,
+    -9.693583
+   ],
+   "pixel_bbox": [
+    187,
+    1956,
+    208,
+    1969
+   ],
+   "context": {
+    "road_m": 5767,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 2221,
+    "river_name": null
+   }
+  },
+  {
+   "id": 120,
+   "area_ha": 1.45,
+   "lat": -9.71808,
+   "lon": -64.9918,
+   "ndvi_before": 0.611,
+   "ndvi_after": 0.441,
+   "ndvi_drop": 0.331,
+   "bbox": [
+    -64.992833,
+    -9.719167,
+    -64.991,
+    -9.717083
+   ],
+   "pixel_bbox": [
+    469,
+    1517,
+    494,
+    1539
+   ],
+   "context": {
+    "road_m": 7088,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 1401,
+    "river_name": null
+   }
+  },
+  {
+   "id": 121,
+   "area_ha": 1.45,
+   "lat": -9.77605,
+   "lon": -64.97061,
+   "ndvi_before": 0.475,
+   "ndvi_after": 0.273,
+   "ndvi_drop": 0.364,
+   "bbox": [
+    -64.971333,
+    -9.776667,
+    -64.96975,
+    -9.775417
+   ],
+   "pixel_bbox": [
+    1169,
+    1775,
+    1184,
+    1794
+   ],
+   "context": {
+    "road_m": 7314,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 1524,
+    "river_name": null
+   }
+  },
+  {
+   "id": 122,
+   "area_ha": 1.44,
+   "lat": -9.70403,
+   "lon": -65.09178,
+   "ndvi_before": 0.689,
+   "ndvi_after": 0.451,
+   "ndvi_drop": 0.4,
+   "bbox": [
+    -65.09325,
+    -9.70475,
+    -65.0905,
+    -9.70325
+   ],
+   "pixel_bbox": [
+    303,
+    312,
+    321,
+    345
+   ],
+   "context": {
+    "road_m": 213,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 12278,
+    "river_name": null
+   }
+  },
+  {
+   "id": 123,
+   "area_ha": 1.43,
+   "lat": -9.7027,
+   "lon": -65.08357,
+   "ndvi_before": 0.546,
+   "ndvi_after": 0.371,
+   "ndvi_drop": 0.337,
+   "bbox": [
+    -65.084333,
+    -9.70425,
+    -65.082833,
+    -9.70175
+   ],
+   "pixel_bbox": [
+    285,
+    419,
+    315,
+    437
+   ],
+   "context": {
+    "road_m": 478,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 11366,
+    "river_name": null
+   }
+  },
+  {
+   "id": 124,
+   "area_ha": 1.42,
+   "lat": -9.6862,
+   "lon": -65.0277,
+   "ndvi_before": 0.621,
+   "ndvi_after": 0.446,
+   "ndvi_drop": 0.337,
+   "bbox": [
+    -65.028917,
+    -9.68675,
+    -65.0265,
+    -9.68575
+   ],
+   "pixel_bbox": [
+    93,
+    1084,
+    105,
+    1113
+   ],
+   "context": {
+    "road_m": 2502,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 5080,
+    "river_name": null
+   }
+  },
+  {
+   "id": 125,
+   "area_ha": 1.4,
+   "lat": -9.75314,
+   "lon": -64.94458,
+   "ndvi_before": 0.515,
+   "ndvi_after": 0.295,
+   "ndvi_drop": 0.382,
+   "bbox": [
+    -64.945583,
+    -9.753917,
+    -64.943833,
+    -9.752333
+   ],
+   "pixel_bbox": [
+    892,
+    2084,
+    911,
+    2105
+   ],
+   "context": {
+    "road_m": 10656,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 1590,
+    "river_name": null
+   }
+  },
+  {
+   "id": 126,
+   "area_ha": 1.4,
+   "lat": -9.81174,
+   "lon": -65.04401,
+   "ndvi_before": 0.577,
+   "ndvi_after": 0.312,
+   "ndvi_drop": 0.427,
+   "bbox": [
+    -65.044917,
+    -9.812667,
+    -65.043,
+    -9.810667
+   ],
+   "pixel_bbox": [
+    1592,
+    892,
+    1616,
+    915
+   ],
+   "context": {
+    "road_m": 3246,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 10167,
+    "river_name": null
+   }
+  },
+  {
+   "id": 127,
+   "area_ha": 1.39,
+   "lat": -9.70355,
+   "lon": -65.09589,
+   "ndvi_before": 0.654,
+   "ndvi_after": 0.497,
+   "ndvi_drop": 0.319,
+   "bbox": [
+    -65.09675,
+    -9.7045,
+    -65.095,
+    -9.702833
+   ],
+   "pixel_bbox": [
+    298,
+    270,
+    318,
+    291
+   ],
+   "context": {
+    "road_m": 460,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 12715,
+    "river_name": null
+   }
+  },
+  {
+   "id": 128,
+   "area_ha": 1.38,
+   "lat": -9.71855,
+   "lon": -65.0185,
+   "ndvi_before": 0.444,
+   "ndvi_after": 0.278,
+   "ndvi_drop": 0.329,
+   "bbox": [
+    -65.019167,
+    -9.7195,
+    -65.017583,
+    -9.71775
+   ],
+   "pixel_bbox": [
+    477,
+    1201,
+    498,
+    1220
+   ],
+   "context": {
+    "road_m": 5679,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 4196,
+    "river_name": null
+   }
+  },
+  {
+   "id": 129,
+   "area_ha": 1.32,
+   "lat": -9.70161,
+   "lon": -65.06713,
+   "ndvi_before": 0.557,
+   "ndvi_after": 0.35,
+   "ndvi_drop": 0.37,
+   "bbox": [
+    -65.067917,
+    -9.702417,
+    -65.06625,
+    -9.7005
+   ],
+   "pixel_bbox": [
+    270,
+    616,
+    293,
+    636
+   ],
+   "context": {
+    "road_m": 1876,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 9568,
+    "river_name": null
+   }
+  },
+  {
+   "id": 130,
+   "area_ha": 1.31,
+   "lat": -9.73175,
+   "lon": -65.00135,
+   "ndvi_before": 0.492,
+   "ndvi_after": 0.286,
+   "ndvi_drop": 0.368,
+   "bbox": [
+    -65.002167,
+    -9.732417,
+    -65.000833,
+    -9.730917
+   ],
+   "pixel_bbox": [
+    635,
+    1405,
+    653,
+    1421
+   ],
+   "context": {
+    "road_m": 6393,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 2358,
+    "river_name": null
+   }
+  },
+  {
+   "id": 131,
+   "area_ha": 1.3,
+   "lat": -9.82096,
+   "lon": -65.05173,
+   "ndvi_before": 0.57,
+   "ndvi_after": 0.338,
+   "ndvi_drop": 0.394,
+   "bbox": [
+    -65.052583,
+    -9.82175,
+    -65.051083,
+    -9.820333
+   ],
+   "pixel_bbox": [
+    1708,
+    800,
+    1725,
+    818
+   ],
+   "context": {
+    "road_m": 2576,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 11195,
+    "river_name": null
+   }
+  },
+  {
+   "id": 132,
+   "area_ha": 1.29,
+   "lat": -9.81355,
+   "lon": -65.06188,
+   "ndvi_before": 0.705,
+   "ndvi_after": 0.477,
+   "ndvi_drop": 0.39,
+   "bbox": [
+    -65.06275,
+    -9.814583,
+    -65.060833,
+    -9.812667
+   ],
+   "pixel_bbox": [
+    1616,
+    678,
+    1639,
+    701
+   ],
+   "context": {
+    "road_m": 1637,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 12113,
+    "river_name": null
+   }
+  },
+  {
+   "id": 133,
+   "area_ha": 1.28,
+   "lat": -9.73407,
+   "lon": -64.96535,
+   "ndvi_before": 0.432,
+   "ndvi_after": 0.276,
+   "ndvi_drop": 0.317,
+   "bbox": [
+    -64.96625,
+    -9.734833,
+    -64.964333,
+    -9.733417
+   ],
+   "pixel_bbox": [
+    665,
+    1836,
+    682,
+    1859
+   ],
+   "context": {
+    "road_m": 9540,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 599,
+    "river_name": null
+   }
+  },
+  {
+   "id": 134,
+   "area_ha": 1.26,
+   "lat": -9.67849,
+   "lon": -65.0856,
+   "ndvi_before": 0.81,
+   "ndvi_after": 0.557,
+   "ndvi_drop": 0.416,
+   "bbox": [
+    -65.086333,
+    -9.679167,
+    -65.084917,
+    -9.678
+   ],
+   "pixel_bbox": [
+    0,
+    395,
+    14,
+    412
+   ],
+   "context": {
+    "road_m": 311,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 11461,
+    "river_name": null
+   }
+  },
+  {
+   "id": 135,
+   "area_ha": 1.26,
+   "lat": -9.71166,
+   "lon": -64.94107,
+   "ndvi_before": 0.877,
+   "ndvi_after": 0.756,
+   "ndvi_drop": 0.283,
+   "bbox": [
+    -64.94225,
+    -9.71275,
+    -64.9395,
+    -9.710917
+   ],
+   "pixel_bbox": [
+    395,
+    2124,
+    417,
+    2157
+   ],
+   "context": {
+    "road_m": 8072,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 3651,
+    "river_name": null
+   }
+  },
+  {
+   "id": 136,
+   "area_ha": 1.26,
+   "lat": -9.7251,
+   "lon": -65.03475,
+   "ndvi_before": 0.561,
+   "ndvi_after": 0.403,
+   "ndvi_drop": 0.319,
+   "bbox": [
+    -65.0355,
+    -9.72575,
+    -65.034167,
+    -9.724417
+   ],
+   "pixel_bbox": [
+    557,
+    1005,
+    573,
+    1021
+   ],
+   "context": {
+    "road_m": 3753,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 5915,
+    "river_name": null
+   }
+  },
+  {
+   "id": 137,
+   "area_ha": 1.24,
+   "lat": -9.74182,
+   "lon": -64.94986,
+   "ndvi_before": 0.595,
+   "ndvi_after": 0.419,
+   "ndvi_drop": 0.338,
+   "bbox": [
+    -64.950917,
+    -9.74275,
+    -64.948833,
+    -9.741083
+   ],
+   "pixel_bbox": [
+    757,
+    2020,
+    777,
+    2045
+   ],
+   "context": {
+    "road_m": 10585,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 1510,
+    "river_name": null
+   }
+  },
+  {
+   "id": 138,
+   "area_ha": 1.22,
+   "lat": -9.79058,
+   "lon": -64.96163,
+   "ndvi_before": 0.475,
+   "ndvi_after": 0.247,
+   "ndvi_drop": 0.39,
+   "bbox": [
+    -64.962667,
+    -9.791167,
+    -64.961,
+    -9.789917
+   ],
+   "pixel_bbox": [
+    1343,
+    1879,
+    1358,
+    1899
+   ],
+   "context": {
+    "road_m": 8290,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 1127,
+    "river_name": null
+   }
+  },
+  {
+   "id": 139,
+   "area_ha": 1.18,
+   "lat": -9.77139,
+   "lon": -64.97795,
+   "ndvi_before": 0.494,
+   "ndvi_after": 0.278,
+   "ndvi_drop": 0.378,
+   "bbox": [
+    -64.978667,
+    -9.772167,
+    -64.97725,
+    -9.7705
+   ],
+   "pixel_bbox": [
+    1110,
+    1687,
+    1130,
+    1704
+   ],
+   "context": {
+    "road_m": 6594,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 2312,
+    "river_name": null
+   }
+  },
+  {
+   "id": 140,
+   "area_ha": 1.17,
+   "lat": -9.70558,
+   "lon": -65.10857,
+   "ndvi_before": 0.506,
+   "ndvi_after": 0.327,
+   "ndvi_drop": 0.341,
+   "bbox": [
+    -65.10925,
+    -9.70625,
+    -65.107583,
+    -9.704833
+   ],
+   "pixel_bbox": [
+    322,
+    120,
+    339,
+    140
+   ],
+   "context": {
+    "road_m": 1786,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 14124,
+    "river_name": null
+   }
+  },
+  {
+   "id": 141,
+   "area_ha": 1.14,
+   "lat": -9.68593,
+   "lon": -65.02961,
+   "ndvi_before": 0.629,
+   "ndvi_after": 0.419,
+   "ndvi_drop": 0.372,
+   "bbox": [
+    -65.030083,
+    -9.68675,
+    -65.029,
+    -9.685
+   ],
+   "pixel_bbox": [
+    84,
+    1070,
+    105,
+    1083
+   ],
+   "context": {
+    "road_m": 2408,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 5289,
+    "river_name": null
+   }
+  },
+  {
+   "id": 142,
+   "area_ha": 1.09,
+   "lat": -9.69998,
+   "lon": -65.07822,
+   "ndvi_before": 0.464,
+   "ndvi_after": 0.311,
+   "ndvi_drop": 0.314,
+   "bbox": [
+    -65.079083,
+    -9.7005,
+    -65.077667,
+    -9.699333
+   ],
+   "pixel_bbox": [
+    256,
+    482,
+    270,
+    499
+   ],
+   "context": {
+    "road_m": 1076,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 10738,
+    "river_name": null
+   }
+  },
+  {
+   "id": 143,
+   "area_ha": 1.09,
+   "lat": -9.73262,
+   "lon": -65.00994,
+   "ndvi_before": 0.497,
+   "ndvi_after": 0.303,
+   "ndvi_drop": 0.356,
+   "bbox": [
+    -65.010667,
+    -9.733333,
+    -65.008917,
+    -9.732
+   ],
+   "pixel_bbox": [
+    648,
+    1303,
+    664,
+    1324
+   ],
+   "context": {
+    "road_m": 5546,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 3295,
+    "river_name": null
+   }
+  },
+  {
+   "id": 144,
+   "area_ha": 1.09,
+   "lat": -9.76289,
+   "lon": -65.07384,
+   "ndvi_before": 0.521,
+   "ndvi_after": 0.368,
+   "ndvi_drop": 0.315,
+   "bbox": [
+    -65.074583,
+    -9.763583,
+    -65.073,
+    -9.762083
+   ],
+   "pixel_bbox": [
+    1009,
+    536,
+    1027,
+    555
+   ],
+   "context": {
+    "road_m": 2054,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 11006,
+    "river_name": null
+   }
+  },
+  {
+   "id": 145,
+   "area_ha": 1.07,
+   "lat": -9.74969,
+   "lon": -65.00406,
+   "ndvi_before": 0.592,
+   "ndvi_after": 0.449,
+   "ndvi_drop": 0.305,
+   "bbox": [
+    -65.004667,
+    -9.75025,
+    -65.00325,
+    -9.749167
+   ],
+   "pixel_bbox": [
+    854,
+    1375,
+    867,
+    1392
+   ],
+   "context": {
+    "road_m": 5033,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 3213,
+    "river_name": null
+   }
+  },
+  {
+   "id": 146,
+   "area_ha": 1.04,
+   "lat": -9.69665,
+   "lon": -65.01545,
+   "ndvi_before": 0.629,
+   "ndvi_after": 0.413,
+   "ndvi_drop": 0.378,
+   "bbox": [
+    -65.016167,
+    -9.697583,
+    -65.014583,
+    -9.6955
+   ],
+   "pixel_bbox": [
+    210,
+    1237,
+    235,
+    1256
+   ],
+   "context": {
+    "road_m": 4021,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 3918,
+    "river_name": null
+   }
+  },
+  {
+   "id": 147,
+   "area_ha": 1.04,
+   "lat": -9.72545,
+   "lon": -65.0362,
+   "ndvi_before": 0.572,
+   "ndvi_after": 0.419,
+   "ndvi_drop": 0.314,
+   "bbox": [
+    -65.036833,
+    -9.726167,
+    -65.0355,
+    -9.72475
+   ],
+   "pixel_bbox": [
+    561,
+    989,
+    578,
+    1005
+   ],
+   "context": {
+    "road_m": 3591,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 6074,
+    "river_name": null
+   }
+  },
+  {
+   "id": 148,
+   "area_ha": 0.99,
+   "lat": -9.79156,
+   "lon": -64.9602,
+   "ndvi_before": 0.421,
+   "ndvi_after": 0.225,
+   "ndvi_drop": 0.357,
+   "bbox": [
+    -64.96075,
+    -9.792083,
+    -64.9595,
+    -9.791
+   ],
+   "pixel_bbox": [
+    1356,
+    1902,
+    1369,
+    1917
+   ],
+   "context": {
+    "road_m": 8458,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 1027,
+    "river_name": null
+   }
+  },
+  {
+   "id": 149,
+   "area_ha": 0.98,
+   "lat": -9.79705,
+   "lon": -65.06073,
+   "ndvi_before": 0.46,
+   "ndvi_after": 0.271,
+   "ndvi_drop": 0.351,
+   "bbox": [
+    -65.062,
+    -9.797917,
+    -65.059667,
+    -9.796417
+   ],
+   "pixel_bbox": [
+    1421,
+    687,
+    1439,
+    715
+   ],
+   "context": {
+    "road_m": 2806,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 11077,
+    "river_name": null
+   }
+  },
+  {
+   "id": 150,
+   "area_ha": 0.96,
+   "lat": -9.71753,
+   "lon": -65.00512,
+   "ndvi_before": 0.419,
+   "ndvi_after": 0.281,
+   "ndvi_drop": 0.3,
+   "bbox": [
+    -65.006,
+    -9.718083,
+    -65.004417,
+    -9.717
+   ],
+   "pixel_bbox": [
+    468,
+    1359,
+    481,
+    1378
+   ],
+   "context": {
+    "road_m": 6581,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 2785,
+    "river_name": null
+   }
+  },
+  {
+   "id": 151,
+   "area_ha": 0.96,
+   "lat": -9.83911,
+   "lon": -65.00875,
+   "ndvi_before": 0.648,
+   "ndvi_after": 0.482,
+   "ndvi_drop": 0.328,
+   "bbox": [
+    -65.0095,
+    -9.839667,
+    -65.008167,
+    -9.838333
+   ],
+   "pixel_bbox": [
+    1924,
+    1317,
+    1940,
+    1333
+   ],
+   "context": {
+    "road_m": 6471,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 7684,
+    "river_name": null
+   }
+  },
+  {
+   "id": 152,
+   "area_ha": 0.96,
+   "lat": -9.85744,
+   "lon": -64.993,
+   "ndvi_before": 0.765,
+   "ndvi_after": 0.616,
+   "ndvi_drop": 0.311,
+   "bbox": [
+    -64.99375,
+    -9.858,
+    -64.992083,
+    -9.856667
+   ],
+   "pixel_bbox": [
+    2144,
+    1506,
+    2160,
+    1526
+   ],
+   "context": {
+    "road_m": 7936,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 7947,
+    "river_name": null
+   }
+  },
+  {
+   "id": 153,
+   "area_ha": 0.95,
+   "lat": -9.82196,
+   "lon": -65.06788,
+   "ndvi_before": 0.699,
+   "ndvi_after": 0.508,
+   "ndvi_drop": 0.353,
+   "bbox": [
+    -65.0685,
+    -9.822417,
+    -65.06725,
+    -9.8215
+   ],
+   "pixel_bbox": [
+    1722,
+    609,
+    1733,
+    624
+   ],
+   "context": {
+    "road_m": 825,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 12948,
+    "river_name": null
+   }
+  },
+  {
+   "id": 154,
+   "area_ha": 0.94,
+   "lat": -9.75259,
+   "lon": -65.06694,
+   "ndvi_before": 0.499,
+   "ndvi_after": 0.348,
+   "ndvi_drop": 0.313,
+   "bbox": [
+    -65.0675,
+    -9.753583,
+    -65.066333,
+    -9.751917
+   ],
+   "pixel_bbox": [
+    887,
+    621,
+    907,
+    635
+   ],
+   "context": {
+    "road_m": 799,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 9913,
+    "river_name": null
+   }
+  },
+  {
+   "id": 155,
+   "area_ha": 0.92,
+   "lat": -9.71119,
+   "lon": -65.00301,
+   "ndvi_before": 0.525,
+   "ndvi_after": 0.355,
+   "ndvi_drop": 0.331,
+   "bbox": [
+    -65.003917,
+    -9.711583,
+    -65.00225,
+    -9.71075
+   ],
+   "pixel_bbox": [
+    393,
+    1384,
+    403,
+    1404
+   ],
+   "context": {
+    "road_m": 5980,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 2779,
+    "river_name": null
+   }
+  },
+  {
+   "id": 156,
+   "area_ha": 0.92,
+   "lat": -9.82211,
+   "lon": -65.06353,
+   "ndvi_before": 0.617,
+   "ndvi_after": 0.405,
+   "ndvi_drop": 0.374,
+   "bbox": [
+    -65.064083,
+    -9.822917,
+    -65.063,
+    -9.8215
+   ],
+   "pixel_bbox": [
+    1722,
+    662,
+    1739,
+    675
+   ],
+   "context": {
+    "road_m": 1297,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 12486,
+    "river_name": null
+   }
+  },
+  {
+   "id": 157,
+   "area_ha": 0.91,
+   "lat": -9.79496,
+   "lon": -65.03517,
+   "ndvi_before": 0.526,
+   "ndvi_after": 0.353,
+   "ndvi_drop": 0.335,
+   "bbox": [
+    -65.03575,
+    -9.79575,
+    -65.034583,
+    -9.794083
+   ],
+   "pixel_bbox": [
+    1393,
+    1002,
+    1413,
+    1016
+   ],
+   "context": {
+    "road_m": 1295,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 8666,
+    "river_name": null
+   }
+  },
+  {
+   "id": 158,
+   "area_ha": 0.91,
+   "lat": -9.8184,
+   "lon": -65.05723,
+   "ndvi_before": 0.829,
+   "ndvi_after": 0.592,
+   "ndvi_drop": 0.4,
+   "bbox": [
+    -65.058167,
+    -9.8195,
+    -65.056583,
+    -9.817167
+   ],
+   "pixel_bbox": [
+    1670,
+    733,
+    1698,
+    752
+   ],
+   "context": {
+    "road_m": 1981,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 11724,
+    "river_name": null
+   }
+  },
+  {
+   "id": 159,
+   "area_ha": 0.9,
+   "lat": -9.76696,
+   "lon": -65.05046,
+   "ndvi_before": 0.481,
+   "ndvi_after": 0.332,
+   "ndvi_drop": 0.311,
+   "bbox": [
+    -65.051667,
+    -9.767667,
+    -65.04975,
+    -9.76625
+   ],
+   "pixel_bbox": [
+    1059,
+    811,
+    1076,
+    834
+   ],
+   "context": {
+    "road_m": 82,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 8629,
+    "river_name": null
+   }
+  },
+  {
+   "id": 160,
+   "area_ha": 0.9,
+   "lat": -9.84393,
+   "lon": -65.06224,
+   "ndvi_before": 0.615,
+   "ndvi_after": 0.439,
+   "ndvi_drop": 0.339,
+   "bbox": [
+    -65.06425,
+    -9.845333,
+    -65.060167,
+    -9.842417
+   ],
+   "pixel_bbox": [
+    1973,
+    660,
+    2008,
+    709
+   ],
+   "context": {
+    "road_m": 1039,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 13094,
+    "river_name": null
+   }
+  },
+  {
+   "id": 161,
+   "area_ha": 0.88,
+   "lat": -9.70214,
+   "lon": -65.06861,
+   "ndvi_before": 0.558,
+   "ndvi_after": 0.386,
+   "ndvi_drop": 0.334,
+   "bbox": [
+    -65.069333,
+    -9.702583,
+    -65.068,
+    -9.7015
+   ],
+   "pixel_bbox": [
+    282,
+    599,
+    295,
+    615
+   ],
+   "context": {
+    "road_m": 1706,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 9739,
+    "river_name": null
+   }
+  },
+  {
+   "id": 162,
+   "area_ha": 0.87,
+   "lat": -9.79458,
+   "lon": -65.06135,
+   "ndvi_before": 0.448,
+   "ndvi_after": 0.203,
+   "ndvi_drop": 0.407,
+   "bbox": [
+    -65.061917,
+    -9.795333,
+    -65.060917,
+    -9.793833
+   ],
+   "pixel_bbox": [
+    1390,
+    688,
+    1408,
+    700
+   ],
+   "context": {
+    "road_m": 2917,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 10991,
+    "river_name": null
+   }
+  },
+  {
+   "id": 163,
+   "area_ha": 0.85,
+   "lat": -9.69581,
+   "lon": -65.10535,
+   "ndvi_before": 0.707,
+   "ndvi_after": 0.547,
+   "ndvi_drop": 0.323,
+   "bbox": [
+    -65.106,
+    -9.69675,
+    -65.104667,
+    -9.694833
+   ],
+   "pixel_bbox": [
+    202,
+    159,
+    225,
+    175
+   ],
+   "context": {
+    "road_m": 857,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 13644,
+    "river_name": null
+   }
+  },
+  {
+   "id": 164,
+   "area_ha": 0.85,
+   "lat": -9.69629,
+   "lon": -64.97687,
+   "ndvi_before": 0.789,
+   "ndvi_after": 0.479,
+   "ndvi_drop": 0.472,
+   "bbox": [
+    -64.977417,
+    -9.696917,
+    -64.976333,
+    -9.6955
+   ],
+   "pixel_bbox": [
+    210,
+    1702,
+    227,
+    1715
+   ],
+   "context": {
+    "road_m": 5276,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 68,
+    "river_name": null
+   }
+  },
+  {
+   "id": 165,
+   "area_ha": 0.84,
+   "lat": -9.70373,
+   "lon": -65.0849,
+   "ndvi_before": 0.522,
+   "ndvi_after": 0.322,
+   "ndvi_drop": 0.361,
+   "bbox": [
+    -65.08525,
+    -9.7045,
+    -65.0845,
+    -9.70275
+   ],
+   "pixel_bbox": [
+    297,
+    408,
+    318,
+    417
+   ],
+   "context": {
+    "road_m": 296,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 11529,
+    "river_name": null
+   }
+  },
+  {
+   "id": 166,
+   "area_ha": 0.84,
+   "lat": -9.83404,
+   "lon": -65.02396,
+   "ndvi_before": 0.53,
+   "ndvi_after": 0.348,
+   "ndvi_drop": 0.344,
+   "bbox": [
+    -65.024667,
+    -9.834833,
+    -65.023083,
+    -9.833333
+   ],
+   "pixel_bbox": [
+    1864,
+    1135,
+    1882,
+    1154
+   ],
+   "context": {
+    "road_m": 5132,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 8818,
+    "river_name": null
+   }
+  },
+  {
+   "id": 167,
+   "area_ha": 0.83,
+   "lat": -9.77086,
+   "lon": -65.00837,
+   "ndvi_before": 0.695,
+   "ndvi_after": 0.552,
+   "ndvi_drop": 0.306,
+   "bbox": [
+    -65.009083,
+    -9.771583,
+    -65.007333,
+    -9.770333
+   ],
+   "pixel_bbox": [
+    1108,
+    1322,
+    1123,
+    1343
+   ],
+   "context": {
+    "road_m": 3403,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 4699,
+    "river_name": null
+   }
+  },
+  {
+   "id": 168,
+   "area_ha": 0.83,
+   "lat": -9.77686,
+   "lon": -64.96952,
+   "ndvi_before": 0.452,
+   "ndvi_after": 0.303,
+   "ndvi_drop": 0.311,
+   "bbox": [
+    -64.970083,
+    -9.777417,
+    -64.968833,
+    -9.776333
+   ],
+   "pixel_bbox": [
+    1180,
+    1790,
+    1193,
+    1805
+   ],
+   "context": {
+    "road_m": 7423,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 1396,
+    "river_name": null
+   }
+  },
+  {
+   "id": 169,
+   "area_ha": 0.81,
+   "lat": -9.76736,
+   "lon": -64.95956,
+   "ndvi_before": 0.603,
+   "ndvi_after": 0.446,
+   "ndvi_drop": 0.319,
+   "bbox": [
+    -64.960417,
+    -9.76775,
+    -64.958667,
+    -9.767
+   ],
+   "pixel_bbox": [
+    1068,
+    1906,
+    1077,
+    1927
+   ],
+   "context": {
+    "road_m": 8661,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 253,
+    "river_name": null
+   }
+  },
+  {
+   "id": 170,
+   "area_ha": 0.81,
+   "lat": -9.8357,
+   "lon": -65.02615,
+   "ndvi_before": 0.519,
+   "ndvi_after": 0.335,
+   "ndvi_drop": 0.346,
+   "bbox": [
+    -65.027083,
+    -9.83625,
+    -65.025417,
+    -9.835167
+   ],
+   "pixel_bbox": [
+    1886,
+    1106,
+    1899,
+    1126
+   ],
+   "context": {
+    "road_m": 4833,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 9116,
+    "river_name": null
+   }
+  },
+  {
+   "id": 171,
+   "area_ha": 0.78,
+   "lat": -9.73999,
+   "lon": -64.93787,
+   "ndvi_before": 0.662,
+   "ndvi_after": 0.538,
+   "ndvi_drop": 0.286,
+   "bbox": [
+    -64.93875,
+    -9.740417,
+    -64.937167,
+    -9.7395
+   ],
+   "pixel_bbox": [
+    738,
+    2166,
+    749,
+    2185
+   ],
+   "context": {
+    "road_m": 11190,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 2787,
+    "river_name": null
+   }
+  },
+  {
+   "id": 172,
+   "area_ha": 0.77,
+   "lat": -9.69526,
+   "lon": -65.00894,
+   "ndvi_before": 0.554,
+   "ndvi_after": 0.32,
+   "ndvi_drop": 0.396,
+   "bbox": [
+    -65.009417,
+    -9.695833,
+    -65.008583,
+    -9.694417
+   ],
+   "pixel_bbox": [
+    197,
+    1318,
+    214,
+    1328
+   ],
+   "context": {
+    "road_m": 4093,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 3191,
+    "river_name": null
+   }
+  },
+  {
+   "id": 173,
+   "area_ha": 0.76,
+   "lat": -9.82625,
+   "lon": -65.06053,
+   "ndvi_before": 0.482,
+   "ndvi_after": 0.287,
+   "ndvi_drop": 0.357,
+   "bbox": [
+    -65.061,
+    -9.826833,
+    -65.060083,
+    -9.825667
+   ],
+   "pixel_bbox": [
+    1772,
+    699,
+    1786,
+    710
+   ],
+   "context": {
+    "road_m": 1740,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 12275,
+    "river_name": null
+   }
+  },
+  {
+   "id": 174,
+   "area_ha": 0.75,
+   "lat": -9.68838,
+   "lon": -64.94155,
+   "ndvi_before": 0.617,
+   "ndvi_after": 0.448,
+   "ndvi_drop": 0.33,
+   "bbox": [
+    -64.942,
+    -9.688917,
+    -64.940917,
+    -9.68775
+   ],
+   "pixel_bbox": [
+    117,
+    2127,
+    131,
+    2140
+   ],
+   "context": {
+    "road_m": 5625,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 2853,
+    "river_name": null
+   }
+  },
+  {
+   "id": 175,
+   "area_ha": 0.75,
+   "lat": -9.70625,
+   "lon": -65.09314,
+   "ndvi_before": 0.782,
+   "ndvi_after": 0.576,
+   "ndvi_drop": 0.369,
+   "bbox": [
+    -65.093583,
+    -9.707083,
+    -65.09275,
+    -9.705333
+   ],
+   "pixel_bbox": [
+    328,
+    308,
+    349,
+    318
+   ],
+   "context": {
+    "road_m": 500,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 12468,
+    "river_name": null
+   }
+  },
+  {
+   "id": 176,
+   "area_ha": 0.75,
+   "lat": -9.75119,
+   "lon": -65.11043,
+   "ndvi_before": 0.74,
+   "ndvi_after": 0.542,
+   "ndvi_drop": 0.361,
+   "bbox": [
+    -65.111167,
+    -9.75225,
+    -65.10975,
+    -9.750167
+   ],
+   "pixel_bbox": [
+    866,
+    97,
+    891,
+    114
+   ],
+   "context": {
+    "road_m": 1508,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 14506,
+    "river_name": null
+   }
+  },
+  {
+   "id": 177,
+   "area_ha": 0.7,
+   "lat": -9.69429,
+   "lon": -65.01406,
+   "ndvi_before": 0.614,
+   "ndvi_after": 0.419,
+   "ndvi_drop": 0.357,
+   "bbox": [
+    -65.014583,
+    -9.695,
+    -65.01375,
+    -9.693333
+   ],
+   "pixel_bbox": [
+    184,
+    1256,
+    204,
+    1266
+   ],
+   "context": {
+    "road_m": 3818,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 3702,
+    "river_name": null
+   }
+  },
+  {
+   "id": 178,
+   "area_ha": 0.7,
+   "lat": -9.71017,
+   "lon": -65.0017,
+   "ndvi_before": 0.559,
+   "ndvi_after": 0.407,
+   "ndvi_drop": 0.313,
+   "bbox": [
+    -65.00225,
+    -9.71075,
+    -65.001167,
+    -9.709667
+   ],
+   "pixel_bbox": [
+    380,
+    1404,
+    393,
+    1417
+   ],
+   "context": {
+    "road_m": 5916,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 2678,
+    "river_name": null
+   }
+  },
+  {
+   "id": 179,
+   "area_ha": 0.69,
+   "lat": -9.7492,
+   "lon": -65.04358,
+   "ndvi_before": 0.548,
+   "ndvi_after": 0.406,
+   "ndvi_drop": 0.304,
+   "bbox": [
+    -65.044,
+    -9.749833,
+    -65.043083,
+    -9.748583
+   ],
+   "pixel_bbox": [
+    847,
+    903,
+    862,
+    914
+   ],
+   "context": {
+    "road_m": 1497,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 7361,
+    "river_name": null
+   }
+  },
+  {
+   "id": 180,
+   "area_ha": 0.69,
+   "lat": -9.84872,
+   "lon": -65.00516,
+   "ndvi_before": 0.44,
+   "ndvi_after": 0.27,
+   "ndvi_drop": 0.332,
+   "bbox": [
+    -65.005833,
+    -9.84925,
+    -65.0045,
+    -9.848
+   ],
+   "pixel_bbox": [
+    2040,
+    1361,
+    2055,
+    1377
+   ],
+   "context": {
+    "road_m": 6643,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 8072,
+    "river_name": null
+   }
+  },
+  {
+   "id": 181,
+   "area_ha": 0.68,
+   "lat": -9.69724,
+   "lon": -65.11452,
+   "ndvi_before": 0.875,
+   "ndvi_after": 0.761,
+   "ndvi_drop": 0.276,
+   "bbox": [
+    -65.115167,
+    -9.697583,
+    -65.113667,
+    -9.69675
+   ],
+   "pixel_bbox": [
+    225,
+    49,
+    235,
+    67
+   ],
+   "context": {
+    "road_m": 703,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 14660,
+    "river_name": null
+   }
+  },
+  {
+   "id": 182,
+   "area_ha": 0.67,
+   "lat": -9.75472,
+   "lon": -64.96574,
+   "ndvi_before": 0.587,
+   "ndvi_after": 0.435,
+   "ndvi_drop": 0.314,
+   "bbox": [
+    -64.966333,
+    -9.755167,
+    -64.964917,
+    -9.754333
+   ],
+   "pixel_bbox": [
+    916,
+    1835,
+    926,
+    1852
+   ],
+   "context": {
+    "road_m": 8412,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 605,
+    "river_name": null
+   }
+  },
+  {
+   "id": 183,
+   "area_ha": 0.67,
+   "lat": -9.79153,
+   "lon": -65.00967,
+   "ndvi_before": 0.655,
+   "ndvi_after": 0.499,
+   "ndvi_drop": 0.318,
+   "bbox": [
+    -65.010333,
+    -9.792333,
+    -65.00925,
+    -9.791
+   ],
+   "pixel_bbox": [
+    1356,
+    1307,
+    1372,
+    1320
+   ],
+   "context": {
+    "road_m": 3115,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 5932,
+    "river_name": null
+   }
+  },
+  {
+   "id": 184,
+   "area_ha": 0.67,
+   "lat": -9.79402,
+   "lon": -65.03582,
+   "ndvi_before": 0.501,
+   "ndvi_after": 0.309,
+   "ndvi_drop": 0.354,
+   "bbox": [
+    -65.0365,
+    -9.794583,
+    -65.03525,
+    -9.7935
+   ],
+   "pixel_bbox": [
+    1386,
+    993,
+    1399,
+    1008
+   ],
+   "context": {
+    "road_m": 1182,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 8660,
+    "river_name": null
+   }
+  },
+  {
+   "id": 185,
+   "area_ha": 0.64,
+   "lat": -9.74631,
+   "lon": -65.05868,
+   "ndvi_before": 0.534,
+   "ndvi_after": 0.355,
+   "ndvi_drop": 0.341,
+   "bbox": [
+    -65.059583,
+    -9.747,
+    -65.057917,
+    -9.74575
+   ],
+   "pixel_bbox": [
+    813,
+    716,
+    828,
+    736
+   ],
+   "context": {
+    "road_m": 340,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 8852,
+    "river_name": null
+   }
+  },
+  {
+   "id": 186,
+   "area_ha": 0.64,
+   "lat": -9.75959,
+   "lon": -65.09552,
+   "ndvi_before": 0.647,
+   "ndvi_after": 0.441,
+   "ndvi_drop": 0.368,
+   "bbox": [
+    -65.096167,
+    -9.76,
+    -65.094833,
+    -9.759
+   ],
+   "pixel_bbox": [
+    972,
+    277,
+    984,
+    293
+   ],
+   "context": {
+    "road_m": 2261,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 13141,
+    "river_name": null
+   }
+  },
+  {
+   "id": 187,
+   "area_ha": 0.64,
+   "lat": -9.80026,
+   "lon": -65.00822,
+   "ndvi_before": 0.678,
+   "ndvi_after": 0.5,
+   "ndvi_drop": 0.34,
+   "bbox": [
+    -65.008583,
+    -9.800833,
+    -65.00775,
+    -9.799667
+   ],
+   "pixel_bbox": [
+    1460,
+    1328,
+    1474,
+    1338
+   ],
+   "context": {
+    "road_m": 3656,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 6074,
+    "river_name": null
+   }
+  },
+  {
+   "id": 188,
+   "area_ha": 0.63,
+   "lat": -9.79506,
+   "lon": -65.05806,
+   "ndvi_before": 0.548,
+   "ndvi_after": 0.322,
+   "ndvi_drop": 0.388,
+   "bbox": [
+    -65.058417,
+    -9.79575,
+    -65.05775,
+    -9.794417
+   ],
+   "pixel_bbox": [
+    1397,
+    730,
+    1413,
+    738
+   ],
+   "context": {
+    "road_m": 2662,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 10711,
+    "river_name": null
+   }
+  },
+  {
+   "id": 189,
+   "area_ha": 0.62,
+   "lat": -9.71328,
+   "lon": -64.94256,
+   "ndvi_before": 0.846,
+   "ndvi_after": 0.716,
+   "ndvi_drop": 0.292,
+   "bbox": [
+    -64.943167,
+    -9.713833,
+    -64.941833,
+    -9.712667
+   ],
+   "pixel_bbox": [
+    416,
+    2113,
+    430,
+    2129
+   ],
+   "context": {
+    "road_m": 8196,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 3467,
+    "river_name": null
+   }
+  },
+  {
+   "id": 190,
+   "area_ha": 0.61,
+   "lat": -9.78654,
+   "lon": -64.96028,
+   "ndvi_before": 0.459,
+   "ndvi_after": 0.218,
+   "ndvi_drop": 0.403,
+   "bbox": [
+    -64.96075,
+    -9.787,
+    -64.95975,
+    -9.786167
+   ],
+   "pixel_bbox": [
+    1298,
+    1902,
+    1308,
+    1914
+   ],
+   "context": {
+    "road_m": 8407,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 733,
+    "river_name": null
+   }
+  },
+  {
+   "id": 191,
+   "area_ha": 0.61,
+   "lat": -9.788,
+   "lon": -65.03654,
+   "ndvi_before": 0.455,
+   "ndvi_after": 0.328,
+   "ndvi_drop": 0.289,
+   "bbox": [
+    -65.036917,
+    -9.788583,
+    -65.036083,
+    -9.787333
+   ],
+   "pixel_bbox": [
+    1312,
+    988,
+    1327,
+    998
+   ],
+   "context": {
+    "road_m": 508,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 8315,
+    "river_name": null
+   }
+  },
+  {
+   "id": 192,
+   "area_ha": 0.61,
+   "lat": -9.8372,
+   "lon": -64.97667,
+   "ndvi_before": 0.589,
+   "ndvi_after": 0.445,
+   "ndvi_drop": 0.306,
+   "bbox": [
+    -64.977083,
+    -9.837833,
+    -64.976167,
+    -9.836667
+   ],
+   "pixel_bbox": [
+    1904,
+    1706,
+    1918,
+    1717
+   ],
+   "context": {
+    "road_m": 8910,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 5079,
+    "river_name": null
+   }
+  },
+  {
+   "id": 193,
+   "area_ha": 0.6,
+   "lat": -9.72513,
+   "lon": -65.08878,
+   "ndvi_before": 0.549,
+   "ndvi_after": 0.402,
+   "ndvi_drop": 0.309,
+   "bbox": [
+    -65.089333,
+    -9.72575,
+    -65.088333,
+    -9.72475
+   ],
+   "pixel_bbox": [
+    561,
+    359,
+    573,
+    371
+   ],
+   "context": {
+    "road_m": 1188,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 11842,
+    "river_name": null
+   }
+  },
+  {
+   "id": 194,
+   "area_ha": 0.59,
+   "lat": -9.70969,
+   "lon": -64.94152,
+   "ndvi_before": 0.844,
+   "ndvi_after": 0.729,
+   "ndvi_drop": 0.277,
+   "bbox": [
+    -64.942083,
+    -9.71025,
+    -64.940917,
+    -9.709
+   ],
+   "pixel_bbox": [
+    372,
+    2126,
+    387,
+    2140
+   ],
+   "context": {
+    "road_m": 7848,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 3631,
+    "river_name": null
+   }
+  },
+  {
+   "id": 195,
+   "area_ha": 0.59,
+   "lat": -9.76993,
+   "lon": -64.979,
+   "ndvi_before": 0.493,
+   "ndvi_after": 0.28,
+   "ndvi_drop": 0.374,
+   "bbox": [
+    -64.979417,
+    -9.7705,
+    -64.978583,
+    -9.76925
+   ],
+   "pixel_bbox": [
+    1095,
+    1678,
+    1110,
+    1688
+   ],
+   "context": {
+    "road_m": 6515,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 2401,
+    "river_name": null
+   }
+  },
+  {
+   "id": 196,
+   "area_ha": 0.59,
+   "lat": -9.78484,
+   "lon": -64.9797,
+   "ndvi_before": 0.428,
+   "ndvi_after": 0.291,
+   "ndvi_drop": 0.299,
+   "bbox": [
+    -64.98025,
+    -9.7855,
+    -64.979083,
+    -9.784083
+   ],
+   "pixel_bbox": [
+    1273,
+    1668,
+    1290,
+    1682
+   ],
+   "context": {
+    "road_m": 6272,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 2561,
+    "river_name": null
+   }
+  },
+  {
+   "id": 197,
+   "area_ha": 0.57,
+   "lat": -9.73111,
+   "lon": -64.98588,
+   "ndvi_before": 0.549,
+   "ndvi_after": 0.357,
+   "ndvi_drop": 0.354,
+   "bbox": [
+    -64.9865,
+    -9.7315,
+    -64.98525,
+    -9.730583
+   ],
+   "pixel_bbox": [
+    631,
+    1593,
+    642,
+    1608
+   ],
+   "context": {
+    "road_m": 7867,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 762,
+    "river_name": null
+   }
+  },
+  {
+   "id": 198,
+   "area_ha": 0.57,
+   "lat": -9.8033,
+   "lon": -65.05083,
+   "ndvi_before": 0.596,
+   "ndvi_after": 0.444,
+   "ndvi_drop": 0.313,
+   "bbox": [
+    -65.0515,
+    -9.804083,
+    -65.05025,
+    -9.802417
+   ],
+   "pixel_bbox": [
+    1493,
+    813,
+    1513,
+    828
+   ],
+   "context": {
+    "road_m": 2690,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 10593,
+    "river_name": null
+   }
+  },
+  {
+   "id": 199,
+   "area_ha": 0.54,
+   "lat": -9.72939,
+   "lon": -65.03487,
+   "ndvi_before": 0.599,
+   "ndvi_after": 0.466,
+   "ndvi_drop": 0.295,
+   "bbox": [
+    -65.035333,
+    -9.729833,
+    -65.034417,
+    -9.72875
+   ],
+   "pixel_bbox": [
+    609,
+    1007,
+    622,
+    1018
+   ],
+   "context": {
+    "road_m": 3550,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 5945,
+    "river_name": null
+   }
+  },
+  {
+   "id": 200,
+   "area_ha": 0.53,
+   "lat": -9.7206,
+   "lon": -65.04476,
+   "ndvi_before": 0.606,
+   "ndvi_after": 0.467,
+   "ndvi_drop": 0.301,
+   "bbox": [
+    -65.045417,
+    -9.721333,
+    -65.044083,
+    -9.720083
+   ],
+   "pixel_bbox": [
+    505,
+    886,
+    520,
+    902
+   ],
+   "context": {
+    "road_m": 2988,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 7032,
+    "river_name": null
+   }
+  },
+  {
+   "id": 201,
+   "area_ha": 0.53,
+   "lat": -9.73238,
+   "lon": -65.03691,
+   "ndvi_before": 0.698,
+   "ndvi_after": 0.556,
+   "ndvi_drop": 0.304,
+   "bbox": [
+    -65.03725,
+    -9.732917,
+    -65.0365,
+    -9.731917
+   ],
+   "pixel_bbox": [
+    647,
+    984,
+    659,
+    993
+   ],
+   "context": {
+    "road_m": 3188,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 6202,
+    "river_name": null
+   }
+  },
+  {
+   "id": 202,
+   "area_ha": 0.53,
+   "lat": -9.76174,
+   "lon": -65.07447,
+   "ndvi_before": 0.472,
+   "ndvi_after": 0.294,
+   "ndvi_drop": 0.34,
+   "bbox": [
+    -65.075,
+    -9.762167,
+    -65.074,
+    -9.76125
+   ],
+   "pixel_bbox": [
+    999,
+    531,
+    1010,
+    543
+   ],
+   "context": {
+    "road_m": 2037,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 11024,
+    "river_name": null
+   }
+  },
+  {
+   "id": 203,
+   "area_ha": 0.53,
+   "lat": -9.81062,
+   "lon": -65.06274,
+   "ndvi_before": 0.656,
+   "ndvi_after": 0.507,
+   "ndvi_drop": 0.311,
+   "bbox": [
+    -65.063083,
+    -9.81125,
+    -65.06225,
+    -9.80975
+   ],
+   "pixel_bbox": [
+    1581,
+    674,
+    1599,
+    684
+   ],
+   "context": {
+    "road_m": 1728,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 12106,
+    "river_name": null
+   }
+  },
+  {
+   "id": 204,
+   "area_ha": 0.52,
+   "lat": -9.79228,
+   "lon": -65.03682,
+   "ndvi_before": 0.516,
+   "ndvi_after": 0.353,
+   "ndvi_drop": 0.325,
+   "bbox": [
+    -65.037417,
+    -9.79275,
+    -65.03625,
+    -9.791833
+   ],
+   "pixel_bbox": [
+    1366,
+    982,
+    1377,
+    996
+   ],
+   "context": {
+    "road_m": 983,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 8626,
+    "river_name": null
+   }
+  },
+  {
+   "id": 205,
+   "area_ha": 0.51,
+   "lat": -9.70259,
+   "lon": -65.08748,
+   "ndvi_before": 0.595,
+   "ndvi_after": 0.422,
+   "ndvi_drop": 0.335,
+   "bbox": [
+    -65.088,
+    -9.703083,
+    -65.086917,
+    -9.701917
+   ],
+   "pixel_bbox": [
+    287,
+    375,
+    301,
+    388
+   ],
+   "context": {
+    "road_m": 204,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 11787,
+    "river_name": null
+   }
+  },
+  {
+   "id": 206,
+   "area_ha": 0.51,
+   "lat": -9.80293,
+   "lon": -65.00875,
+   "ndvi_before": 0.593,
+   "ndvi_after": 0.445,
+   "ndvi_drop": 0.31,
+   "bbox": [
+    -65.009083,
+    -9.8035,
+    -65.008167,
+    -9.802333
+   ],
+   "pixel_bbox": [
+    1492,
+    1322,
+    1506,
+    1333
+   ],
+   "context": {
+    "road_m": 3769,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 6207,
+    "river_name": null
+   }
+  },
+  {
+   "id": 207,
+   "area_ha": 0.5,
+   "lat": -9.71198,
+   "lon": -64.94457,
+   "ndvi_before": 0.837,
+   "ndvi_after": 0.691,
+   "ndvi_drop": 0.308,
+   "bbox": [
+    -64.945417,
+    -9.71225,
+    -64.943917,
+    -9.711667
+   ],
+   "pixel_bbox": [
+    404,
+    2086,
+    411,
+    2104
+   ],
+   "context": {
+    "road_m": 7993,
+    "road_type": "国道（幹線道路）",
+    "road_name": "Estrada do Pacífico",
+    "river_m": 3266,
+    "river_name": null
+   }
+  },
+  {
+   "id": 208,
+   "area_ha": 0.5,
+   "lat": -9.79475,
+   "lon": -65.01129,
+   "ndvi_before": 0.607,
+   "ndvi_after": 0.468,
+   "ndvi_drop": 0.301,
+   "bbox": [
+    -65.011917,
+    -9.795167,
+    -65.010833,
+    -9.794417
+   ],
+   "pixel_bbox": [
+    1397,
+    1288,
+    1406,
+    1301
+   ],
+   "context": {
+    "road_m": 3074,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 6193,
+    "river_name": null
+   }
+  },
+  {
+   "id": 209,
+   "area_ha": 0.5,
+   "lat": -9.80158,
+   "lon": -65.00859,
+   "ndvi_before": 0.614,
+   "ndvi_after": 0.458,
+   "ndvi_drop": 0.318,
+   "bbox": [
+    -65.008917,
+    -9.80225,
+    -65.00825,
+    -9.801083
+   ],
+   "pixel_bbox": [
+    1477,
+    1324,
+    1491,
+    1332
+   ],
+   "context": {
+    "road_m": 3700,
+    "road_type": "小さな道路",
+    "road_name": null,
+    "river_m": 6168,
+    "river_name": null
+   }
+  },
+  {
+   "id": 210,
+   "area_ha": 0.5,
+   "lat": -9.85041,
+   "lon": -64.99312,
+   "ndvi_before": 0.537,
+   "ndvi_after": 0.361,
+   "ndvi_drop": 0.339,
+   "bbox": [
+    -64.9935,
+    -9.850917,
+    -64.992833,
+    -9.849917
+   ],
+   "pixel_bbox": [
+    2063,
+    1509,
+    2075,
+    1517
+   ],
+   "context": {
+    "road_m": 7941,
+    "road_type": "未舗装の農道・林道",
+    "road_name": null,
+    "river_m": 7323,
+    "river_name": null
+   }
+  }
+ ],
+ "osm": {
+  "roads": 4,
+  "rivers": 1
+ }
+}

@@ -29,6 +29,15 @@ jobs:
       - run: pnpm build
       - run: pnpm lint
       - run: pnpm test
+  python:
+    # Python のデータ処理のテスト（uv で管理しているアプリ）
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: forest-change-detector
+        working-directory: advent-2026/forest-change-detector
+        run: uv run pytest -q
   secrets-check:
     runs-on: ubuntu-latest
     steps:
