@@ -14,8 +14,10 @@ export const sources: Source[] = [
     name: "Unpaywall（無料で読めるリンク）",
     provider: "OurResearch",
     url: "https://unpaywall.org/",
-    license: "利用条件は公式サイトを参照（要確認）",
+    license: "CC0 1.0（OpenAlex と同じデータベース）",
+    licenseUrl: "https://help.openalex.org/access/pricing",
     retrievedAt: "検索のたびに取得",
+    note: "2025年末から OpenAlex のデータベース上で運用。リクエストには連絡先メールアドレスを付ける",
   },
   {
     name: "arXiv（プレプリントへのリンク）",

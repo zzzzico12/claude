@@ -31,7 +31,7 @@ OpenAlexは無料のAPIキーが必要（2026年2月から必須）。検索は�
 
 ## 実装チェックリスト
 
-- [x] データの取得方法と利用条件（ライセンス・クレジット表記・非商用の有無）を確認し、下の「データと出典」に書いた（Unpaywall の利用条件は要確認）
+- [x] データの取得方法と利用条件（ライセンス・クレジット表記・非商用の有無）を確認し、下の「データと出典」に書いた
 - [x] 大きなデータは事前に取得して `data/`（Git管理外）に置いた。取得スクリプトは `scripts/` に置いた（事前データなし。評価の取得結果だけ `data/eval-cache/` に保存）
 - [x] 実装の計画をこのファイルの「実装メモ」に書いた
 - [x] 動くものができた（`src/`）
@@ -46,7 +46,7 @@ OpenAlexは無料のAPIキーが必要（2026年2月から必須）。検索は�
 | データ | 提供元 | ライセンス | 取得日 | 備考 |
 | --- | --- | --- | --- | --- |
 | [OpenAlex（論文・引用・抄録・参考文献）](https://openalex.org/) | OurResearch | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | 検索のたびに取得 |  |
-| [Unpaywall（無料で読めるリンク）](https://unpaywall.org/) | OurResearch | 利用条件は公式サイトを参照（要確認） | 検索のたびに取得 |  |
+| [Unpaywall（無料で読めるリンク）](https://unpaywall.org/) | OurResearch | [CC0 1.0（OpenAlex と同じデータベース）](https://help.openalex.org/access/pricing) | 検索のたびに取得 | 2025年末から OpenAlex のデータベース上で運用。リクエストには連絡先メールアドレスを付ける |
 | [arXiv（プレプリントへのリンク）](https://arxiv.org/) | Cornell University | リンクのみ（各論文のライセンスは論文ごとに異なる） | 検索のたびに取得 | 表記: Thank you to arXiv for use of its open access interoperability. |
 
 - 非商用条件のデータは使っていない
@@ -70,6 +70,14 @@ OpenAlexは無料のAPIキーが必要（2026年2月から必須）。検索は�
 - **AI は抄録にないことを補わなかった**：抄録が書誌情報だけの論文について「抄録からは内容を確認できない」と書いた。関係の薄い論文（RAG のテーマに画像生成の GLIGEN が混ざった）も「RAG そのものを扱っていない」と指摘した
 - **評価の締め切り日**：雑誌版の公開日を使うと、サーベイが引用しようのない新しい論文まで候補に入る。arXiv の第1版の日付を使うようにした
 - 1回のサーベイ：約40秒、本文 約6,700字、根拠の番号 約100か所
+
+### データの利用条件と無料枠（2026-11-23 確認）
+
+- **OpenAlex**：「Every record is released under a CC0 public-domain license」（[help.openalex.org/access/pricing](https://help.openalex.org/access/pricing)）。商用・非商用の制限なし
+- **Unpaywall**：「In late 2025 we moved Unpaywall onto the OpenAlex database」「We are not retiring Unpaywall」（[help.openalex.org/access/unpaywall](https://help.openalex.org/access/unpaywall)）。同じデータベースなので CC0 として扱う
+  - Unpaywall 公式サイト（利用規約・API の説明）は JavaScript で表示する作りで、プログラムからは読めなかった。Unpaywall API 固有の回数制限（よく引かれる「1日10万回」）は公式の記述を確認できていない。このアプリの利用は最大でも1日200回（20本×10回）なので、問題にならない
+- **OpenAlex の無料枠**：キーありで1日1ドル分（UTC 0時にリセット）。**検索は1,000回で1ドル**、ID での取得は無料（[help.openalex.org/access/example-costs](https://help.openalex.org/access/example-costs)）
+  - このアプリ：サーベイ1回で検索4回 → 上限の1日10回でも40回。評価（`pnpm eval --fresh`）は検索25回ほど＋参考文献の取得（一覧取得は1万回で1ドル）。無料枠で十分足りる
 
 ### 処理の流れ
 

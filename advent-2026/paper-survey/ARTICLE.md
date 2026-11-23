@@ -24,10 +24,10 @@ tags: [AI, オープンデータ, Claude, 論文, OpenAlex]
 | データ | 用途 | 提供元・ライセンス |
 | --- | --- | --- |
 | [OpenAlex](https://openalex.org/) | 論文の検索、引用数、抄録、評価用の参考文献 | OurResearch・CC0 |
-| [Unpaywall](https://unpaywall.org/) | 雑誌論文の無料で読めるリンク | OurResearch |
+| [Unpaywall](https://unpaywall.org/) | 雑誌論文の無料で読めるリンク | OurResearch・CC0（2025年末から OpenAlex と同じデータベース） |
 | [arXiv](https://arxiv.org/) | プレプリントへのリンク | Cornell University |
 
-OpenAlex は2億件以上の論文を持つ、無料の学術データベースです。2026年2月から無料のAPIキーが必須になりました。
+OpenAlex は2億件以上の論文を持つ、無料の学術データベースです。無料のAPIキーで1日1ドル分（検索なら1,000回）まで使えます。Unpaywall も2025年末から OpenAlex と同じデータベースで動いています。
 
 ## 仕組み
 
@@ -113,5 +113,5 @@ AIには「抄録に書かれていないことは書かない」「文末に根
 ## 出典
 
 - OpenAlex（https://openalex.org/）CC0 1.0
-- Unpaywall（https://unpaywall.org/）
+- Unpaywall（https://unpaywall.org/）CC0 1.0（OpenAlex と同じデータベース）
 - arXiv（https://arxiv.org/）Thank you to arXiv for use of its open access interoperability.
