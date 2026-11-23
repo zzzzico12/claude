@@ -1,0 +1,162 @@
+{
+  "$schema": "vscode://schemas/color-theme",
+  "name": "名画: 氷に閉ざされて（ジョン・ヘンリー・トワクトマン）",
+  "type": "light",
+  "semanticHighlighting": true,
+  "colors": {
+    "editor.background": "#eeefe6",
+    "editor.foreground": "#3e5554",
+    "editorLineNumber.foreground": "#5e706e",
+    "editorLineNumber.activeForeground": "#3e5554",
+    "editorCursor.foreground": "#286563",
+    "editor.selectionBackground": "#28656355",
+    "editor.lineHighlightBackground": "#dadbd2",
+    "editorWhitespace.foreground": "#5e706e66",
+    "editorIndentGuide.background1": "#5e706e33",
+    "editorWidget.background": "#e2e3db",
+    "editorWidget.foreground": "#3e5554",
+    "sideBar.background": "#e2e3db",
+    "sideBar.foreground": "#3e5554",
+    "sideBarTitle.foreground": "#3e5554",
+    "sideBarSectionHeader.background": "#e2e3db",
+    "sideBarSectionHeader.foreground": "#3e5554",
+    "activityBar.background": "#e2e3db",
+    "activityBar.foreground": "#3e5554",
+    "activityBar.inactiveForeground": "#576867",
+    "activityBarBadge.background": "#286563",
+    "activityBarBadge.foreground": "#ffffff",
+    "titleBar.activeBackground": "#e2e3db",
+    "titleBar.activeForeground": "#3e5554",
+    "titleBar.inactiveBackground": "#e2e3db",
+    "titleBar.inactiveForeground": "#576867",
+    "statusBar.background": "#286563",
+    "statusBar.foreground": "#ffffff",
+    "statusBar.noFolderBackground": "#286563",
+    "tab.activeBackground": "#eeefe6",
+    "tab.activeForeground": "#3e5554",
+    "tab.inactiveBackground": "#e2e3db",
+    "tab.inactiveForeground": "#576867",
+    "tab.activeBorderTop": "#286563",
+    "editorGroupHeader.tabsBackground": "#e2e3db",
+    "panel.background": "#e2e3db",
+    "panel.border": "#dadbd2",
+    "terminal.background": "#eeefe6",
+    "terminal.foreground": "#3e5554",
+    "input.background": "#dadbd2",
+    "input.foreground": "#3e5554",
+    "dropdown.background": "#dadbd2",
+    "dropdown.foreground": "#3e5554",
+    "button.background": "#286563",
+    "button.foreground": "#ffffff",
+    "focusBorder": "#286563",
+    "list.activeSelectionBackground": "#dadbd2",
+    "list.activeSelectionForeground": "#3e5554",
+    "list.hoverBackground": "#dadbd2",
+    "badge.background": "#286563",
+    "badge.foreground": "#ffffff"
+  },
+  "tokenColors": [
+    {
+      "scope": [
+        "comment",
+        "punctuation.definition.comment"
+      ],
+      "settings": {
+        "foreground": "#5e706e",
+        "fontStyle": "italic"
+      }
+    },
+    {
+      "scope": [
+        "keyword",
+        "storage",
+        "storage.type",
+        "keyword.operator.new",
+        "keyword.control"
+      ],
+      "settings": {
+        "foreground": "#286563"
+      }
+    },
+    {
+      "scope": [
+        "string",
+        "string.quoted",
+        "string.template",
+        "punctuation.definition.string"
+      ],
+      "settings": {
+        "foreground": "#88654d"
+      }
+    },
+    {
+      "scope": [
+        "constant.numeric",
+        "constant.language",
+        "constant.character",
+        "support.constant"
+      ],
+      "settings": {
+        "foreground": "#547271"
+      }
+    },
+    {
+      "scope": [
+        "entity.name.function",
+        "support.function",
+        "meta.function-call"
+      ],
+      "settings": {
+        "foreground": "#233937"
+      }
+    },
+    {
+      "scope": [
+        "entity.name.type",
+        "entity.name.class",
+        "support.type",
+        "support.class",
+        "entity.other.inherited-class"
+      ],
+      "settings": {
+        "foreground": "#061c1c"
+      }
+    },
+    {
+      "scope": [
+        "variable",
+        "meta.definition.variable",
+        "punctuation",
+        "meta.brace"
+      ],
+      "settings": {
+        "foreground": "#3e5554"
+      }
+    },
+    {
+      "scope": [
+        "entity.name.tag"
+      ],
+      "settings": {
+        "foreground": "#286563"
+      }
+    },
+    {
+      "scope": [
+        "entity.other.attribute-name"
+      ],
+      "settings": {
+        "foreground": "#233937"
+      }
+    },
+    {
+      "scope": [
+        "markup.heading"
+      ],
+      "settings": {
+        "foreground": "#286563",
+        "fontStyle": "bold"
+      }
+    }
+  ]
+}

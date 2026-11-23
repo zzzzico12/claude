@@ -1,0 +1,190 @@
+{
+  "name": "masterpiece-theme",
+  "displayName": "名画テーマ（Masterpiece Theme）",
+  "description": "パブリックドメインの名画の色から作った VS Code のテーマ。文字の読みやすさ（WCAG AA）を自動で保証し、天気と時間帯で絵が切り替わる",
+  "version": "0.1.0",
+  "publisher": "zzzzico12",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Themes"
+  ],
+  "main": "./dist/extension.cjs",
+  "scripts": {
+    "build": "esbuild src/extension.ts --bundle --platform=node --format=cjs --external:vscode --outfile=dist/extension.cjs",
+    "lint": "tsc --noEmit",
+    "test": "vitest run",
+    "themes": "tsx --env-file-if-exists=../.env scripts/build-themes.ts",
+    "eval": "tsx scripts/eval.ts",
+    "package": "pnpm build && vsce package --no-dependencies --readme-path EXTENSION.md --out dist/masterpiece-theme.vsix",
+    "themes:rebuild": "tsx scripts/rebuild-themes.ts"
+  },
+  "devDependencies": {
+    "@advent/ai": "workspace:^",
+    "@advent/attribution": "workspace:^",
+    "@advent/museum-data": "workspace:^",
+    "@types/vscode": "~1.90.0",
+    "@vscode/vsce": "^3",
+    "esbuild": "^0.25",
+    "jpeg-js": "^0.4",
+    "tsx": "^4",
+    "zod": "^4"
+  },
+  "contributes": {
+    "themes": [
+      {
+        "label": "名画: パリの通り、雨の日（ギュスターヴ・カイユボット）",
+        "uiTheme": "vs",
+        "path": "./themes/gustave-caillebotte-paris-street-rainy-day.json"
+      },
+      {
+        "label": "名画: グランド・ジャット島の日曜日の午後（ジョルジュ・スーラ）",
+        "uiTheme": "vs-dark",
+        "path": "./themes/georges-seurat-a-sunday-on-la-grande-jatte-1884.json"
+      },
+      {
+        "label": "名画: 寝室（フィンセント・ファン・ゴッホ）",
+        "uiTheme": "vs-dark",
+        "path": "./themes/vincent-van-gogh-the-bedroom.json"
+      },
+      {
+        "label": "名画: 睡蓮（クロード・モネ）",
+        "uiTheme": "vs-dark",
+        "path": "./themes/claude-monet-water-lilies.json"
+      },
+      {
+        "label": "名画: 積みわら(雪の効果、曇り空)（クロード・モネ）",
+        "uiTheme": "vs",
+        "path": "./themes/claude-monet-stack-of-wheat-snow-effect-overcast-day.json"
+      },
+      {
+        "label": "名画: 積みわら(日没、雪の効果)（クロード・モネ）",
+        "uiTheme": "vs-dark",
+        "path": "./themes/claude-monet-stacks-of-wheat-sunset-snow-effect.json"
+      },
+      {
+        "label": "名画: 積みわら(夏の終わり)（クロード・モネ）",
+        "uiTheme": "vs",
+        "path": "./themes/claude-monet-stacks-of-wheat-end-of-summer.json"
+      },
+      {
+        "label": "名画: 積みわら(日没、秋)（クロード・モネ）",
+        "uiTheme": "vs-dark",
+        "path": "./themes/claude-monet-stacks-of-wheat-end-of-day-autumn.json"
+      },
+      {
+        "label": "名画: 神奈川沖浪裏（葛飾北斎）",
+        "uiTheme": "vs",
+        "path": "./themes/katsushika-hokusai-under-the-wave-off-kanagawa-kanagawa-oki.json"
+      },
+      {
+        "label": "名画: 浜松（東海道五十三次 狂歌入東海道）（歌川広重）",
+        "uiTheme": "vs",
+        "path": "./themes/utagawa-hiroshige-hamamatsu-from-the-series-fifty-three-st.json"
+      },
+      {
+        "label": "名画: 夜想曲：青と金色――サウサンプトン湾（ジェームズ・マクニール・ホイッスラー）",
+        "uiTheme": "vs-dark",
+        "path": "./themes/james-mcneill-whistler-nocturne-blue-and-gold-southampton-wa.json"
+      },
+      {
+        "label": "名画: プールヴィルの断崖の散歩（クロード・モネ）",
+        "uiTheme": "vs",
+        "path": "./themes/claude-monet-cliff-walk-at-pourville.json"
+      },
+      {
+        "label": "名画: 海景（ピエール＝オーギュスト・ルノワール）",
+        "uiTheme": "vs",
+        "path": "./themes/pierre-auguste-renoir-seascape.json"
+      },
+      {
+        "label": "名画: 氷に閉ざされて（ジョン・ヘンリー・トワクトマン）",
+        "uiTheme": "vs",
+        "path": "./themes/john-henry-twachtman-icebound.json"
+      },
+      {
+        "label": "名画: 魚を値切る行商人のいる漁船（ジョゼフ・マラード・ウィリアム・ターナー）",
+        "uiTheme": "vs-dark",
+        "path": "./themes/joseph-mallord-william-turner-fishing-boats-with-hucksters-b.json"
+      },
+      {
+        "label": "名画: 凪の漁船（ヤン・ファン・デ・カペッレ）",
+        "uiTheme": "vs",
+        "path": "./themes/jan-van-de-cappelle-fishing-boats-in-a-calm.json"
+      },
+      {
+        "label": "名画: 窓辺の少女（エドヴァルド・ムンク）",
+        "uiTheme": "vs-dark",
+        "path": "./themes/edvard-munch-the-girl-by-the-window.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "masterpieceTheme.pick",
+        "title": "名画テーマ: 絵を選ぶ"
+      },
+      {
+        "command": "masterpieceTheme.about",
+        "title": "名画テーマ: いまの絵について"
+      },
+      {
+        "command": "masterpieceTheme.enableAutoSwitch",
+        "title": "名画テーマ: 天気と時間で自動で切り替える"
+      },
+      {
+        "command": "masterpieceTheme.disableAutoSwitch",
+        "title": "名画テーマ: 自動の切り替えを止める"
+      },
+      {
+        "command": "masterpieceTheme.switchNow",
+        "title": "名画テーマ: いまの天気で選び直す"
+      }
+    ],
+    "configuration": {
+      "title": "名画テーマ",
+      "properties": {
+        "masterpieceTheme.autoSwitch": {
+          "type": "boolean",
+          "default": false,
+          "description": "天気と時間帯に合わせて、名画のテーマを自動で切り替える（Open-Meteo に緯度・経度を送って天気を取得する）"
+        },
+        "masterpieceTheme.latitude": {
+          "type": "number",
+          "default": 35.68,
+          "description": "天気を調べる場所の緯度（既定は東京）"
+        },
+        "masterpieceTheme.longitude": {
+          "type": "number",
+          "default": 139.69,
+          "description": "天気を調べる場所の経度（既定は東京）"
+        },
+        "masterpieceTheme.intervalMinutes": {
+          "type": "number",
+          "default": 60,
+          "minimum": 15,
+          "description": "天気を確かめる間隔（分。15分以上）"
+        }
+      }
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zzzzico12/claude",
+    "directory": "advent-2026/masterpiece-vscode-theme"
+  },
+  "keywords": [
+    "theme",
+    "color theme",
+    "art",
+    "painting",
+    "accessibility",
+    "WCAG"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ]
+}

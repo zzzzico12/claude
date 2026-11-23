@@ -1,0 +1,162 @@
+{
+  "$schema": "vscode://schemas/color-theme",
+  "name": "名画: 神奈川沖浪裏（葛飾北斎）",
+  "type": "light",
+  "semanticHighlighting": true,
+  "colors": {
+    "editor.background": "#fcedce",
+    "editor.foreground": "#1b2941",
+    "editorLineNumber.foreground": "#686e69",
+    "editorLineNumber.activeForeground": "#1b2941",
+    "editorCursor.foreground": "#375d7f",
+    "editor.selectionBackground": "#375d7f55",
+    "editor.lineHighlightBackground": "#e8d9bb",
+    "editorWhitespace.foreground": "#686e6966",
+    "editorIndentGuide.background1": "#686e6933",
+    "editorWidget.background": "#f0e1c3",
+    "editorWidget.foreground": "#1b2941",
+    "sideBar.background": "#f0e1c3",
+    "sideBar.foreground": "#1b2941",
+    "sideBarTitle.foreground": "#1b2941",
+    "sideBarSectionHeader.background": "#f0e1c3",
+    "sideBarSectionHeader.foreground": "#1b2941",
+    "activityBar.background": "#f0e1c3",
+    "activityBar.foreground": "#1b2941",
+    "activityBar.inactiveForeground": "#616662",
+    "activityBarBadge.background": "#375d7f",
+    "activityBarBadge.foreground": "#ffffff",
+    "titleBar.activeBackground": "#f0e1c3",
+    "titleBar.activeForeground": "#1b2941",
+    "titleBar.inactiveBackground": "#f0e1c3",
+    "titleBar.inactiveForeground": "#616662",
+    "statusBar.background": "#375d7f",
+    "statusBar.foreground": "#ffffff",
+    "statusBar.noFolderBackground": "#375d7f",
+    "tab.activeBackground": "#fcedce",
+    "tab.activeForeground": "#1b2941",
+    "tab.inactiveBackground": "#f0e1c3",
+    "tab.inactiveForeground": "#616662",
+    "tab.activeBorderTop": "#375d7f",
+    "editorGroupHeader.tabsBackground": "#f0e1c3",
+    "panel.background": "#f0e1c3",
+    "panel.border": "#e8d9bb",
+    "terminal.background": "#fcedce",
+    "terminal.foreground": "#1b2941",
+    "input.background": "#e8d9bb",
+    "input.foreground": "#1b2941",
+    "dropdown.background": "#e8d9bb",
+    "dropdown.foreground": "#1b2941",
+    "button.background": "#375d7f",
+    "button.foreground": "#ffffff",
+    "focusBorder": "#375d7f",
+    "list.activeSelectionBackground": "#e8d9bb",
+    "list.activeSelectionForeground": "#1b2941",
+    "list.hoverBackground": "#e8d9bb",
+    "badge.background": "#375d7f",
+    "badge.foreground": "#ffffff"
+  },
+  "tokenColors": [
+    {
+      "scope": [
+        "comment",
+        "punctuation.definition.comment"
+      ],
+      "settings": {
+        "foreground": "#686e69",
+        "fontStyle": "italic"
+      }
+    },
+    {
+      "scope": [
+        "keyword",
+        "storage",
+        "storage.type",
+        "keyword.operator.new",
+        "keyword.control"
+      ],
+      "settings": {
+        "foreground": "#375d7f"
+      }
+    },
+    {
+      "scope": [
+        "string",
+        "string.quoted",
+        "string.template",
+        "punctuation.definition.string"
+      ],
+      "settings": {
+        "foreground": "#5c6973"
+      }
+    },
+    {
+      "scope": [
+        "constant.numeric",
+        "constant.language",
+        "constant.character",
+        "support.constant"
+      ],
+      "settings": {
+        "foreground": "#3d4d5c"
+      }
+    },
+    {
+      "scope": [
+        "entity.name.function",
+        "support.function",
+        "meta.function-call"
+      ],
+      "settings": {
+        "foreground": "#000d22"
+      }
+    },
+    {
+      "scope": [
+        "entity.name.type",
+        "entity.name.class",
+        "support.type",
+        "support.class",
+        "entity.other.inherited-class"
+      ],
+      "settings": {
+        "foreground": "#515657"
+      }
+    },
+    {
+      "scope": [
+        "variable",
+        "meta.definition.variable",
+        "punctuation",
+        "meta.brace"
+      ],
+      "settings": {
+        "foreground": "#1b2941"
+      }
+    },
+    {
+      "scope": [
+        "entity.name.tag"
+      ],
+      "settings": {
+        "foreground": "#375d7f"
+      }
+    },
+    {
+      "scope": [
+        "entity.other.attribute-name"
+      ],
+      "settings": {
+        "foreground": "#000d22"
+      }
+    },
+    {
+      "scope": [
+        "markup.heading"
+      ],
+      "settings": {
+        "foreground": "#375d7f",
+        "fontStyle": "bold"
+      }
+    }
+  ]
+}

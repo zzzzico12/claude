@@ -1,0 +1,3032 @@
+[
+  {
+    "id": "20684",
+    "slug": "gustave-caillebotte-paris-street-rainy-day",
+    "label": "名画: パリの通り、雨の日（ギュスターヴ・カイユボット）",
+    "titleJa": "パリの通り、雨の日",
+    "artistJa": "ギュスターヴ・カイユボット",
+    "title": "Paris Street; Rainy Day",
+    "artist": "Gustave Caillebotte",
+    "date": "1877",
+    "moods": [
+      "rain",
+      "cloudy"
+    ],
+    "explanation": "雨に濡れた石畳の広場を、傘をさした人々が行き交う都会の風景です。手前には大きく紳士と婦人が描かれ、奥には街並みが静かに伸びていきます。写真のように切り取られた構図と、落ち着いた空気感が印象的な作品です。",
+    "colorStory": "雨に濡れた石畳の灰色と、淡いベージュの空を背景にして、深い紺色の文字で読みやすくしました。街灯の深い緑をアクセントにし、服や建物のくすんだ赤茶を文字列の色に使いました。",
+    "imageUrl": "https://www.artic.edu/iiif/2/f8fd76e9-c396-5678-36ed-6a348c904d27/full/843,/0/default.jpg",
+    "pageUrl": "https://www.artic.edu/artworks/20684",
+    "credit": "The Art Institute of Chicago, Charles H. and Mary F. S. Worcester Collection",
+    "license": "CC0（パブリックドメイン）",
+    "palette": [
+      {
+        "hex": "#939491",
+        "share": 0.129,
+        "lightness": 0.664,
+        "chroma": 0.005
+      },
+      {
+        "hex": "#a5a49e",
+        "share": 0.117,
+        "lightness": 0.717,
+        "chroma": 0.008
+      },
+      {
+        "hex": "#b8b7b1",
+        "share": 0.115,
+        "lightness": 0.779,
+        "chroma": 0.008
+      },
+      {
+        "hex": "#d5ccbf",
+        "share": 0.106,
+        "lightness": 0.849,
+        "chroma": 0.02
+      },
+      {
+        "hex": "#7d8182",
+        "share": 0.083,
+        "lightness": 0.601,
+        "chroma": 0.005
+      },
+      {
+        "hex": "#2c343a",
+        "share": 0.075,
+        "lightness": 0.32,
+        "chroma": 0.016
+      },
+      {
+        "hex": "#1e242c",
+        "share": 0.075,
+        "lightness": 0.259,
+        "chroma": 0.017
+      },
+      {
+        "hex": "#696d6f",
+        "share": 0.074,
+        "lightness": 0.531,
+        "chroma": 0.006
+      },
+      {
+        "hex": "#53595d",
+        "share": 0.072,
+        "lightness": 0.459,
+        "chroma": 0.01
+      },
+      {
+        "hex": "#3e464c",
+        "share": 0.069,
+        "lightness": 0.389,
+        "chroma": 0.014
+      },
+      {
+        "hex": "#10171d",
+        "share": 0.046,
+        "lightness": 0.201,
+        "chroma": 0.015
+      },
+      {
+        "hex": "#8d665f",
+        "share": 0.038,
+        "lightness": 0.547,
+        "chroma": 0.052
+      },
+      {
+        "hex": "#114944",
+        "share": 0.002,
+        "lightness": 0.369,
+        "chroma": 0.057,
+        "accent": true
+      }
+    ],
+    "roles": {
+      "type": "light",
+      "background": "#d5ccbf",
+      "foreground": "#1e242c",
+      "accent": "#114944",
+      "keyword": "#114944",
+      "string": "#8d665f",
+      "number": "#53595d",
+      "function": "#3e464c",
+      "type_": "#2c343a",
+      "comment": "#939491"
+    },
+    "naiveRoles": {
+      "type": "light",
+      "background": "#d5ccbf",
+      "foreground": "#10171d",
+      "accent": "#114944",
+      "keyword": "#114944",
+      "string": "#8d665f",
+      "function": "#1e242c",
+      "type_": "#2c343a",
+      "number": "#3e464c",
+      "comment": "#7d8182"
+    },
+    "adjustments": [
+      {
+        "role": "background",
+        "original": "#d5ccbf",
+        "adjusted": "#f6ede0",
+        "deltaE": 7.4
+      },
+      {
+        "role": "comment",
+        "original": "#939491",
+        "adjusted": "#6c6c6a",
+        "deltaE": 15.1
+      },
+      {
+        "role": "foreground",
+        "original": "#1e242c",
+        "adjusted": "#1e242c",
+        "deltaE": 0
+      },
+      {
+        "role": "keyword",
+        "original": "#114944",
+        "adjusted": "#114944",
+        "deltaE": 0
+      },
+      {
+        "role": "string",
+        "original": "#8d665f",
+        "adjusted": "#8a635d",
+        "deltaE": 1.2
+      },
+      {
+        "role": "function",
+        "original": "#3e464c",
+        "adjusted": "#3e464c",
+        "deltaE": 0
+      },
+      {
+        "role": "type",
+        "original": "#2c343a",
+        "adjusted": "#02060b",
+        "deltaE": 12.8
+      },
+      {
+        "role": "number",
+        "original": "#53595d",
+        "adjusted": "#53595d",
+        "deltaE": 0
+      }
+    ],
+    "checks": {
+      "offPaletteRoles": [],
+      "unmatchedNumbers": []
+    }
+  },
+  {
+    "id": "27992",
+    "slug": "georges-seurat-a-sunday-on-la-grande-jatte-1884",
+    "label": "名画: グランド・ジャット島の日曜日の午後（ジョルジュ・スーラ）",
+    "titleJa": "グランド・ジャット島の日曜日の午後",
+    "artistJa": "ジョルジュ・スーラ",
+    "title": "A Sunday on La Grande Jatte — 1884",
+    "artist": "Georges Seurat",
+    "date": "1884–86, border added 1888–89",
+    "moods": [
+      "clear",
+      "dusk"
+    ],
+    "explanation": "パリ郊外のセーヌ川の島で、日曜の午後にくつろぐ人々を描いた点描の代表作です。草地や木陰に散らばる人物たちが、静かな横顔や傘とともに整然と配置されています。小さな色の点を並べる手法で、光と空気の揺らぎを表現しています。",
+    "colorStory": "面積の大きい木陰の深い緑灰色を背景にし、草地の黄緑やオリーブを keyword や function に使いました。アクセントには、人物の服や犬にある小さな赤茶を選び、落ち着いた画面に温かみを足しています。",
+    "imageUrl": "https://www.artic.edu/iiif/2/2d484387-2509-5e8e-2c43-22f9981972eb/full/843,/0/default.jpg",
+    "pageUrl": "https://www.artic.edu/artworks/27992",
+    "credit": "The Art Institute of Chicago, Helen Birch Bartlett Memorial Collection",
+    "license": "CC0（パブリックドメイン）",
+    "palette": [
+      {
+        "hex": "#4f5e52",
+        "share": 0.151,
+        "lightness": 0.465,
+        "chroma": 0.026
+      },
+      {
+        "hex": "#464b4a",
+        "share": 0.116,
+        "lightness": 0.407,
+        "chroma": 0.007
+      },
+      {
+        "hex": "#6b6169",
+        "share": 0.103,
+        "lightness": 0.506,
+        "chroma": 0.017
+      },
+      {
+        "hex": "#5b535e",
+        "share": 0.101,
+        "lightness": 0.453,
+        "chroma": 0.021
+      },
+      {
+        "hex": "#7b7170",
+        "share": 0.1,
+        "lightness": 0.557,
+        "chroma": 0.012
+      },
+      {
+        "hex": "#62705c",
+        "share": 0.088,
+        "lightness": 0.527,
+        "chroma": 0.035
+      },
+      {
+        "hex": "#969066",
+        "share": 0.075,
+        "lightness": 0.649,
+        "chroma": 0.06
+      },
+      {
+        "hex": "#878483",
+        "share": 0.067,
+        "lightness": 0.615,
+        "chroma": 0.004
+      },
+      {
+        "hex": "#999a9b",
+        "share": 0.066,
+        "lightness": 0.686,
+        "chroma": 0.002
+      },
+      {
+        "hex": "#a59e6f",
+        "share": 0.059,
+        "lightness": 0.694,
+        "chroma": 0.065
+      },
+      {
+        "hex": "#807d5d",
+        "share": 0.047,
+        "lightness": 0.585,
+        "chroma": 0.046
+      },
+      {
+        "hex": "#bab1a1",
+        "share": 0.027,
+        "lightness": 0.763,
+        "chroma": 0.025
+      },
+      {
+        "hex": "#97695b",
+        "share": 0.002,
+        "lightness": 0.565,
+        "chroma": 0.064,
+        "accent": true
+      }
+    ],
+    "roles": {
+      "type": "dark",
+      "background": "#464b4a",
+      "foreground": "#bab1a1",
+      "accent": "#97695b",
+      "keyword": "#a59e6f",
+      "string": "#62705c",
+      "number": "#97695b",
+      "function": "#969066",
+      "type_": "#999a9b",
+      "comment": "#7b7170"
+    },
+    "naiveRoles": {
+      "type": "dark",
+      "background": "#464b4a",
+      "foreground": "#bab1a1",
+      "accent": "#a59e6f",
+      "keyword": "#a59e6f",
+      "string": "#97695b",
+      "function": "#969066",
+      "type_": "#807d5d",
+      "number": "#62705c",
+      "comment": "#999a9b"
+    },
+    "adjustments": [
+      {
+        "role": "background",
+        "original": "#464b4a",
+        "adjusted": "#1c201f",
+        "deltaE": 13.8
+      },
+      {
+        "role": "comment",
+        "original": "#7b7170",
+        "adjusted": "#8e8482",
+        "deltaE": 7.4
+      },
+      {
+        "role": "foreground",
+        "original": "#bab1a1",
+        "adjusted": "#bab1a1",
+        "deltaE": 0
+      },
+      {
+        "role": "keyword",
+        "original": "#a59e6f",
+        "adjusted": "#a59e6f",
+        "deltaE": 0
+      },
+      {
+        "role": "string",
+        "original": "#62705c",
+        "adjusted": "#7c8a75",
+        "deltaE": 10.2
+      },
+      {
+        "role": "function",
+        "original": "#969066",
+        "adjusted": "#c2bc90",
+        "deltaE": 13.1
+      },
+      {
+        "role": "type",
+        "original": "#999a9b",
+        "adjusted": "#999a9b",
+        "deltaE": 0
+      },
+      {
+        "role": "number",
+        "original": "#97695b",
+        "adjusted": "#aa7b6c",
+        "deltaE": 7
+      }
+    ],
+    "checks": {
+      "offPaletteRoles": [],
+      "unmatchedNumbers": []
+    }
+  },
+  {
+    "id": "28560",
+    "slug": "vincent-van-gogh-the-bedroom",
+    "label": "名画: 寝室（フィンセント・ファン・ゴッホ）",
+    "titleJa": "寝室",
+    "artistJa": "フィンセント・ファン・ゴッホ",
+    "title": "The Bedroom",
+    "artist": "Vincent van Gogh",
+    "date": "1889",
+    "moods": [
+      "dawn",
+      "clear"
+    ],
+    "explanation": "ゴッホがアルルで暮らした自室を描いた作品です。黄色い木のベッドと椅子、青い壁、緑の窓が、傾いた遠近法で素朴にまとめられています。厚く平らな色の面が、休息の静けさを伝えます。",
+    "colorStory": "絵の中でいちばん暗い深い緑灰を背景にして、ベッドや椅子の黄色を文字と強調色に使いました。赤い掛け布団の色をキーワードに、青と緑を文字の色にして、コードの構造を見分けやすくしました。",
+    "imageUrl": "https://www.artic.edu/iiif/2/6644829f-f292-c5c4-a73c-0356a6fdbf0d/full/843,/0/default.jpg",
+    "pageUrl": "https://www.artic.edu/artworks/28560",
+    "credit": "The Art Institute of Chicago, Helen Birch Bartlett Memorial Collection",
+    "license": "CC0（パブリックドメイン）",
+    "palette": [
+      {
+        "hex": "#a3791c",
+        "share": 0.187,
+        "lightness": 0.603,
+        "chroma": 0.115
+      },
+      {
+        "hex": "#877e6e",
+        "share": 0.144,
+        "lightness": 0.598,
+        "chroma": 0.026
+      },
+      {
+        "hex": "#988d81",
+        "share": 0.136,
+        "lightness": 0.65,
+        "chroma": 0.021
+      },
+      {
+        "hex": "#6e859d",
+        "share": 0.107,
+        "lightness": 0.608,
+        "chroma": 0.045
+      },
+      {
+        "hex": "#7c95b0",
+        "share": 0.103,
+        "lightness": 0.66,
+        "chroma": 0.05
+      },
+      {
+        "hex": "#829a76",
+        "share": 0.094,
+        "lightness": 0.659,
+        "chroma": 0.059
+      },
+      {
+        "hex": "#80683e",
+        "share": 0.057,
+        "lightness": 0.531,
+        "chroma": 0.066
+      },
+      {
+        "hex": "#9da4a7",
+        "share": 0.055,
+        "lightness": 0.715,
+        "chroma": 0.01
+      },
+      {
+        "hex": "#55645d",
+        "share": 0.044,
+        "lightness": 0.488,
+        "chroma": 0.02
+      },
+      {
+        "hex": "#bcb984",
+        "share": 0.04,
+        "lightness": 0.775,
+        "chroma": 0.07
+      },
+      {
+        "hex": "#3c4c44",
+        "share": 0.023,
+        "lightness": 0.399,
+        "chroma": 0.023
+      },
+      {
+        "hex": "#a14128",
+        "share": 0.011,
+        "lightness": 0.501,
+        "chroma": 0.134
+      },
+      {
+        "hex": "#aa931d",
+        "share": 0.004,
+        "lightness": 0.663,
+        "chroma": 0.129,
+        "accent": true
+      },
+      {
+        "hex": "#b3a835",
+        "share": 0.001,
+        "lightness": 0.72,
+        "chroma": 0.133,
+        "accent": true
+      }
+    ],
+    "roles": {
+      "type": "dark",
+      "background": "#3c4c44",
+      "foreground": "#bcb984",
+      "accent": "#aa931d",
+      "keyword": "#a14128",
+      "string": "#829a76",
+      "number": "#b3a835",
+      "function": "#7c95b0",
+      "type_": "#a3791c",
+      "comment": "#877e6e"
+    },
+    "naiveRoles": {
+      "type": "light",
+      "background": "#bcb984",
+      "foreground": "#3c4c44",
+      "accent": "#a14128",
+      "keyword": "#a14128",
+      "string": "#b3a835",
+      "function": "#aa931d",
+      "type_": "#a3791c",
+      "number": "#80683e",
+      "comment": "#9da4a7"
+    },
+    "adjustments": [
+      {
+        "role": "background",
+        "original": "#3c4c44",
+        "adjusted": "#14231c",
+        "deltaE": 13.1
+      },
+      {
+        "role": "comment",
+        "original": "#877e6e",
+        "adjusted": "#8f8675",
+        "deltaE": 3
+      },
+      {
+        "role": "foreground",
+        "original": "#bcb984",
+        "adjusted": "#bcb984",
+        "deltaE": 0
+      },
+      {
+        "role": "keyword",
+        "original": "#a14128",
+        "adjusted": "#ce6a4f",
+        "deltaE": 15.5
+      },
+      {
+        "role": "string",
+        "original": "#829a76",
+        "adjusted": "#829a76",
+        "deltaE": 0
+      },
+      {
+        "role": "function",
+        "original": "#7c95b0",
+        "adjusted": "#7c95b0",
+        "deltaE": 0
+      },
+      {
+        "role": "type",
+        "original": "#a3791c",
+        "adjusted": "#aa8025",
+        "deltaE": 2.5
+      },
+      {
+        "role": "number",
+        "original": "#b3a835",
+        "adjusted": "#b3a835",
+        "deltaE": 0
+      }
+    ],
+    "checks": {
+      "offPaletteRoles": [],
+      "unmatchedNumbers": []
+    }
+  },
+  {
+    "id": "16568",
+    "slug": "claude-monet-water-lilies",
+    "label": "名画: 睡蓮（クロード・モネ）",
+    "titleJa": "睡蓮",
+    "artistJa": "クロード・モネ",
+    "title": "Water Lilies",
+    "artist": "Claude Monet",
+    "date": "1906",
+    "moods": [
+      "cloudy",
+      "dawn"
+    ],
+    "explanation": "モネが自宅の庭の池に浮かぶ睡蓮を描いた連作の一枚です。水面には空や木々の影が映り込み、蓮の葉や小さな赤い花が点々と浮かんでいます。岸や地平は描かれず、水面だけが画面いっぱいに広がっています。",
+    "colorStory": "池の深い青緑を背景にして、水面に映る空の青を keyword に使いました。葉の緑を string や accent に選び、静かな水辺の雰囲気を出しています。",
+    "imageUrl": "https://www.artic.edu/iiif/2/3c27b499-af56-f0d5-93b5-a7f2f1ad5813/full/843,/0/default.jpg",
+    "pageUrl": "https://www.artic.edu/artworks/16568",
+    "credit": "The Art Institute of Chicago, Mr. and Mrs. Martin A. Ryerson Collection",
+    "license": "CC0（パブリックドメイン）",
+    "palette": [
+      {
+        "hex": "#4f7794",
+        "share": 0.137,
+        "lightness": 0.552,
+        "chroma": 0.064
+      },
+      {
+        "hex": "#496783",
+        "share": 0.131,
+        "lightness": 0.501,
+        "chroma": 0.057
+      },
+      {
+        "hex": "#59717a",
+        "share": 0.123,
+        "lightness": 0.533,
+        "chroma": 0.032
+      },
+      {
+        "hex": "#486669",
+        "share": 0.123,
+        "lightness": 0.488,
+        "chroma": 0.036
+      },
+      {
+        "hex": "#6085a0",
+        "share": 0.113,
+        "lightness": 0.598,
+        "chroma": 0.059
+      },
+      {
+        "hex": "#3b5b74",
+        "share": 0.111,
+        "lightness": 0.456,
+        "chroma": 0.057
+      },
+      {
+        "hex": "#315c58",
+        "share": 0.064,
+        "lightness": 0.442,
+        "chroma": 0.049
+      },
+      {
+        "hex": "#6a867a",
+        "share": 0.052,
+        "lightness": 0.594,
+        "chroma": 0.036
+      },
+      {
+        "hex": "#879994",
+        "share": 0.051,
+        "lightness": 0.666,
+        "chroma": 0.022
+      },
+      {
+        "hex": "#4b775b",
+        "share": 0.042,
+        "lightness": 0.529,
+        "chroma": 0.066
+      },
+      {
+        "hex": "#224953",
+        "share": 0.031,
+        "lightness": 0.382,
+        "chroma": 0.047
+      },
+      {
+        "hex": "#a7b0aa",
+        "share": 0.023,
+        "lightness": 0.748,
+        "chroma": 0.013
+      },
+      {
+        "hex": "#77965e",
+        "share": 0.003,
+        "lightness": 0.635,
+        "chroma": 0.087,
+        "accent": true
+      },
+      {
+        "hex": "#30633a",
+        "share": 0.004,
+        "lightness": 0.453,
+        "chroma": 0.087,
+        "accent": true
+      }
+    ],
+    "roles": {
+      "type": "dark",
+      "background": "#224953",
+      "foreground": "#a7b0aa",
+      "accent": "#77965e",
+      "keyword": "#6085a0",
+      "string": "#77965e",
+      "number": "#879994",
+      "function": "#6a867a",
+      "type_": "#4b775b",
+      "comment": "#59717a"
+    },
+    "naiveRoles": {
+      "type": "dark",
+      "background": "#224953",
+      "foreground": "#a7b0aa",
+      "accent": "#77965e",
+      "keyword": "#77965e",
+      "string": "#30633a",
+      "function": "#4b775b",
+      "type_": "#4f7794",
+      "number": "#6085a0",
+      "comment": "#879994"
+    },
+    "adjustments": [
+      {
+        "role": "background",
+        "original": "#224953",
+        "adjusted": "#00242c",
+        "deltaE": 11.5
+      },
+      {
+        "role": "comment",
+        "original": "#59717a",
+        "adjusted": "#728b94",
+        "deltaE": 10.1
+      },
+      {
+        "role": "foreground",
+        "original": "#a7b0aa",
+        "adjusted": "#a7b0aa",
+        "deltaE": 0
+      },
+      {
+        "role": "keyword",
+        "original": "#6085a0",
+        "adjusted": "#7297b3",
+        "deltaE": 6.3
+      },
+      {
+        "role": "string",
+        "original": "#77965e",
+        "adjusted": "#77965e",
+        "deltaE": 0
+      },
+      {
+        "role": "function",
+        "original": "#6a867a",
+        "adjusted": "#708d80",
+        "deltaE": 2.5
+      },
+      {
+        "role": "type",
+        "original": "#4b775b",
+        "adjusted": "#76a385",
+        "deltaE": 16.1
+      },
+      {
+        "role": "number",
+        "original": "#879994",
+        "adjusted": "#bfd2cc",
+        "deltaE": 15.8
+      }
+    ],
+    "checks": {
+      "offPaletteRoles": [],
+      "unmatchedNumbers": []
+    }
+  },
+  {
+    "id": "16560",
+    "slug": "claude-monet-stack-of-wheat-snow-effect-overcast-day",
+    "label": "名画: 積みわら(雪の効果、曇り空)（クロード・モネ）",
+    "titleJa": "積みわら(雪の効果、曇り空)",
+    "artistJa": "クロード・モネ",
+    "title": "Stack of Wheat (Snow Effect, Overcast Day)",
+    "artist": "Claude Monet",
+    "date": "1890–91",
+    "moods": [
+      "cloudy",
+      "snow"
+    ],
+    "explanation": "雪におおわれた野原の中に、赤茶色の大きな積みわらがどっしりと立っている。遠くには青い丘と雪をかぶった家々が見え、空は低い雲に包まれている。同じ積みわらを光や天気を変えて描いた連作のひとつで、冬の曇った日の静けさが伝わってくる。",
+    "colorStory": "背景には雪と曇り空の淡い青灰色を使い、文字には積みわらの深い茶色を合わせて、冷たい空気の中の温かさを表した。キーワードには遠い丘の青、文字列にはわずかに見える草のオリーブ色を選び、見分けやすくしている。",
+    "imageUrl": "https://www.artic.edu/iiif/2/db36f74f-47d9-ad08-cdf9-b4b436e6d18c/full/843,/0/default.jpg",
+    "pageUrl": "https://www.artic.edu/artworks/16560",
+    "credit": "The Art Institute of Chicago, Mr. and Mrs. Martin A. Ryerson Collection",
+    "license": "CC0（パブリックドメイン）",
+    "palette": [
+      {
+        "hex": "#9e9da7",
+        "share": 0.159,
+        "lightness": 0.701,
+        "chroma": 0.014
+      },
+      {
+        "hex": "#b2a7a9",
+        "share": 0.15,
+        "lightness": 0.738,
+        "chroma": 0.012
+      },
+      {
+        "hex": "#6d4c41",
+        "share": 0.102,
+        "lightness": 0.45,
+        "chroma": 0.048
+      },
+      {
+        "hex": "#5a688b",
+        "share": 0.094,
+        "lightness": 0.52,
+        "chroma": 0.058
+      },
+      {
+        "hex": "#adb1bd",
+        "share": 0.093,
+        "lightness": 0.762,
+        "chroma": 0.017
+      },
+      {
+        "hex": "#b8bdc6",
+        "share": 0.079,
+        "lightness": 0.797,
+        "chroma": 0.014
+      },
+      {
+        "hex": "#746871",
+        "share": 0.067,
+        "lightness": 0.531,
+        "chroma": 0.021
+      },
+      {
+        "hex": "#755648",
+        "share": 0.066,
+        "lightness": 0.483,
+        "chroma": 0.046
+      },
+      {
+        "hex": "#767a93",
+        "share": 0.065,
+        "lightness": 0.584,
+        "chroma": 0.039
+      },
+      {
+        "hex": "#928f98",
+        "share": 0.064,
+        "lightness": 0.655,
+        "chroma": 0.013
+      },
+      {
+        "hex": "#c6c9cf",
+        "share": 0.03,
+        "lightness": 0.835,
+        "chroma": 0.01
+      },
+      {
+        "hex": "#867971",
+        "share": 0.03,
+        "lightness": 0.586,
+        "chroma": 0.02
+      },
+      {
+        "hex": "#807443",
+        "share": 0.001,
+        "lightness": 0.557,
+        "chroma": 0.069,
+        "accent": true
+      }
+    ],
+    "roles": {
+      "type": "light",
+      "background": "#c6c9cf",
+      "foreground": "#6d4c41",
+      "accent": "#5a688b",
+      "keyword": "#5a688b",
+      "string": "#807443",
+      "number": "#755648",
+      "function": "#767a93",
+      "type_": "#746871",
+      "comment": "#928f98"
+    },
+    "naiveRoles": {
+      "type": "light",
+      "background": "#c6c9cf",
+      "foreground": "#6d4c41",
+      "accent": "#807443",
+      "keyword": "#807443",
+      "string": "#5a688b",
+      "function": "#755648",
+      "type_": "#767a93",
+      "number": "#746871",
+      "comment": "#b2a7a9"
+    },
+    "adjustments": [
+      {
+        "role": "background",
+        "original": "#c6c9cf",
+        "adjusted": "#ebeef5",
+        "deltaE": 8.5
+      },
+      {
+        "role": "comment",
+        "original": "#928f98",
+        "adjusted": "#6e6b73",
+        "deltaE": 13.9
+      },
+      {
+        "role": "foreground",
+        "original": "#6d4c41",
+        "adjusted": "#6d4c41",
+        "deltaE": 0
+      },
+      {
+        "role": "keyword",
+        "original": "#5a688b",
+        "adjusted": "#5a688b",
+        "deltaE": 0
+      },
+      {
+        "role": "string",
+        "original": "#807443",
+        "adjusted": "#786c3c",
+        "deltaE": 3.1
+      },
+      {
+        "role": "function",
+        "original": "#767a93",
+        "adjusted": "#51546c",
+        "deltaE": 14.4
+      },
+      {
+        "role": "type",
+        "original": "#746871",
+        "adjusted": "#635760",
+        "deltaE": 6.3
+      },
+      {
+        "role": "number",
+        "original": "#755648",
+        "adjusted": "#523629",
+        "deltaE": 11.1
+      }
+    ],
+    "checks": {
+      "offPaletteRoles": [],
+      "unmatchedNumbers": []
+    }
+  },
+  {
+    "id": "81545",
+    "slug": "claude-monet-stacks-of-wheat-sunset-snow-effect",
+    "label": "名画: 積みわら(日没、雪の効果)（クロード・モネ）",
+    "titleJa": "積みわら(日没、雪の効果)",
+    "artistJa": "クロード・モネ",
+    "title": "Stacks of Wheat (Sunset, Snow Effect)",
+    "artist": "Claude Monet",
+    "date": "1890–91",
+    "moods": [
+      "dusk",
+      "snow"
+    ],
+    "explanation": "雪の積もった野原に、大きな積みわらが二つ並んでいる。空は夕日でオレンジに染まり、雪の上には紫や青の影が長く伸びている。同じ積みわらを時間や季節を変えて描いた連作のひとつで、光の移ろいが主題になっている。",
+    "colorStory": "背景には積みわらの影にある落ち着いた赤みのある暗い茶色を選んだ。夕空のオレンジと雪の青紫を、キーワードや関数の色に振り分けて、冬の夕暮れの冷たさとあたたかさを表した。",
+    "imageUrl": "https://www.artic.edu/iiif/2/be0d3e50-a600-6f33-ea8f-16a34d892442/full/843,/0/default.jpg",
+    "pageUrl": "https://www.artic.edu/artworks/81545",
+    "credit": "The Art Institute of Chicago, Potter Palmer Collection",
+    "license": "CC0（パブリックドメイン）",
+    "palette": [
+      {
+        "hex": "#8a88a1",
+        "share": 0.17,
+        "lightness": 0.638,
+        "chroma": 0.037
+      },
+      {
+        "hex": "#877e91",
+        "share": 0.158,
+        "lightness": 0.607,
+        "chroma": 0.03
+      },
+      {
+        "hex": "#998593",
+        "share": 0.117,
+        "lightness": 0.639,
+        "chroma": 0.032
+      },
+      {
+        "hex": "#9b91a7",
+        "share": 0.114,
+        "lightness": 0.672,
+        "chroma": 0.035
+      },
+      {
+        "hex": "#7581a3",
+        "share": 0.08,
+        "lightness": 0.606,
+        "chroma": 0.053
+      },
+      {
+        "hex": "#685458",
+        "share": 0.068,
+        "lightness": 0.468,
+        "chroma": 0.026
+      },
+      {
+        "hex": "#717490",
+        "share": 0.063,
+        "lightness": 0.567,
+        "chroma": 0.043
+      },
+      {
+        "hex": "#c1915a",
+        "share": 0.062,
+        "lightness": 0.69,
+        "chroma": 0.092
+      },
+      {
+        "hex": "#bc8371",
+        "share": 0.055,
+        "lightness": 0.662,
+        "chroma": 0.076
+      },
+      {
+        "hex": "#ae7e5a",
+        "share": 0.044,
+        "lightness": 0.633,
+        "chroma": 0.078
+      },
+      {
+        "hex": "#75646a",
+        "share": 0.037,
+        "lightness": 0.521,
+        "chroma": 0.024
+      },
+      {
+        "hex": "#5f6280",
+        "share": 0.032,
+        "lightness": 0.504,
+        "chroma": 0.048
+      },
+      {
+        "hex": "#5272ab",
+        "share": 0.001,
+        "lightness": 0.551,
+        "chroma": 0.097,
+        "accent": true
+      }
+    ],
+    "roles": {
+      "type": "dark",
+      "background": "#685458",
+      "foreground": "#9b91a7",
+      "accent": "#c1915a",
+      "keyword": "#bc8371",
+      "string": "#c1915a",
+      "number": "#5272ab",
+      "function": "#7581a3",
+      "type_": "#998593",
+      "comment": "#877e91"
+    },
+    "naiveRoles": {
+      "type": "light",
+      "background": "#c1915a",
+      "foreground": "#685458",
+      "accent": "#5272ab",
+      "keyword": "#5272ab",
+      "string": "#ae7e5a",
+      "function": "#bc8371",
+      "type_": "#7581a3",
+      "number": "#5f6280",
+      "comment": "#75646a"
+    },
+    "adjustments": [
+      {
+        "role": "background",
+        "original": "#685458",
+        "adjusted": "#2a1a1e",
+        "deltaE": 19.2
+      },
+      {
+        "role": "comment",
+        "original": "#877e91",
+        "adjusted": "#8b8295",
+        "deltaE": 1.5
+      },
+      {
+        "role": "foreground",
+        "original": "#9b91a7",
+        "adjusted": "#a79db4",
+        "deltaE": 3.8
+      },
+      {
+        "role": "keyword",
+        "original": "#bc8371",
+        "adjusted": "#bc8371",
+        "deltaE": 0
+      },
+      {
+        "role": "string",
+        "original": "#c1915a",
+        "adjusted": "#c1915a",
+        "deltaE": 0
+      },
+      {
+        "role": "function",
+        "original": "#7581a3",
+        "adjusted": "#7885a7",
+        "deltaE": 1.5
+      },
+      {
+        "role": "type",
+        "original": "#998593",
+        "adjusted": "#cbb6c5",
+        "deltaE": 14.8
+      },
+      {
+        "role": "number",
+        "original": "#5272ab",
+        "adjusted": "#7092cd",
+        "deltaE": 11.8
+      }
+    ],
+    "checks": {
+      "offPaletteRoles": [],
+      "unmatchedNumbers": []
+    }
+  },
+  {
+    "id": "64818",
+    "slug": "claude-monet-stacks-of-wheat-end-of-summer",
+    "label": "名画: 積みわら(夏の終わり)（クロード・モネ）",
+    "titleJa": "積みわら(夏の終わり)",
+    "artistJa": "クロード・モネ",
+    "title": "Stacks of Wheat (End of Summer)",
+    "artist": "Claude Monet",
+    "date": "1890–91",
+    "moods": [
+      "dusk",
+      "clear"
+    ],
+    "explanation": "夏の終わりの野原に、大きな積みわらが二つ並んでいる風景です。モネは同じ積みわらを時間や季節を変えて描き、光の移ろいを追いました。この作品では、淡い光が草地に長い影を落としています。",
+    "colorStory": "背景には画面全体を包む明るく柔らかな灰褐色を使いました。積みわらの赤茶、草の緑、遠景の青灰色を文字色に割り当て、やさしい光の空気感を出しています。",
+    "imageUrl": "https://www.artic.edu/iiif/2/a38e2828-ec6f-ece1-a30f-70243449197b/full/843,/0/default.jpg",
+    "pageUrl": "https://www.artic.edu/artworks/64818",
+    "credit": "The Art Institute of Chicago, Gift of Arthur M. Wood, Sr. in memory of Pauline Palmer Wood",
+    "license": "CC0（パブリックドメイン）",
+    "palette": [
+      {
+        "hex": "#b9b19b",
+        "share": 0.163,
+        "lightness": 0.761,
+        "chroma": 0.031
+      },
+      {
+        "hex": "#a7a9a6",
+        "share": 0.155,
+        "lightness": 0.732,
+        "chroma": 0.004
+      },
+      {
+        "hex": "#7c625a",
+        "share": 0.097,
+        "lightness": 0.52,
+        "chroma": 0.036
+      },
+      {
+        "hex": "#707b73",
+        "share": 0.079,
+        "lightness": 0.572,
+        "chroma": 0.018
+      },
+      {
+        "hex": "#a68f76",
+        "share": 0.071,
+        "lightness": 0.663,
+        "chroma": 0.045
+      },
+      {
+        "hex": "#81877f",
+        "share": 0.071,
+        "lightness": 0.615,
+        "chroma": 0.013
+      },
+      {
+        "hex": "#787e8c",
+        "share": 0.071,
+        "lightness": 0.592,
+        "chroma": 0.024
+      },
+      {
+        "hex": "#97888a",
+        "share": 0.07,
+        "lightness": 0.641,
+        "chroma": 0.019
+      },
+      {
+        "hex": "#605b50",
+        "share": 0.062,
+        "lightness": 0.471,
+        "chroma": 0.018
+      },
+      {
+        "hex": "#907e60",
+        "share": 0.062,
+        "lightness": 0.601,
+        "chroma": 0.048
+      },
+      {
+        "hex": "#676d75",
+        "share": 0.061,
+        "lightness": 0.533,
+        "chroma": 0.015
+      },
+      {
+        "hex": "#6a6f55",
+        "share": 0.039,
+        "lightness": 0.53,
+        "chroma": 0.039
+      }
+    ],
+    "roles": {
+      "type": "light",
+      "background": "#b9b19b",
+      "foreground": "#605b50",
+      "accent": "#7c625a",
+      "keyword": "#7c625a",
+      "string": "#6a6f55",
+      "number": "#907e60",
+      "function": "#787e8c",
+      "type_": "#97888a",
+      "comment": "#81877f"
+    },
+    "naiveRoles": {
+      "type": "light",
+      "background": "#b9b19b",
+      "foreground": "#605b50",
+      "accent": "#907e60",
+      "keyword": "#907e60",
+      "string": "#a68f76",
+      "function": "#6a6f55",
+      "type_": "#7c625a",
+      "number": "#787e8c",
+      "comment": "#a7a9a6"
+    },
+    "adjustments": [
+      {
+        "role": "background",
+        "original": "#b9b19b",
+        "adjusted": "#f7eed7",
+        "deltaE": 14.7
+      },
+      {
+        "role": "comment",
+        "original": "#81877f",
+        "adjusted": "#696e67",
+        "deltaE": 9.8
+      },
+      {
+        "role": "foreground",
+        "original": "#605b50",
+        "adjusted": "#605b50",
+        "deltaE": 0
+      },
+      {
+        "role": "keyword",
+        "original": "#7c625a",
+        "adjusted": "#7c625a",
+        "deltaE": 0
+      },
+      {
+        "role": "string",
+        "original": "#6a6f55",
+        "adjusted": "#64694f",
+        "deltaE": 2.3
+      },
+      {
+        "role": "function",
+        "original": "#787e8c",
+        "adjusted": "#676c7a",
+        "deltaE": 7.1
+      },
+      {
+        "role": "type",
+        "original": "#97888a",
+        "adjusted": "#615355",
+        "deltaE": 20.9
+      },
+      {
+        "role": "number",
+        "original": "#907e60",
+        "adjusted": "#7c6a4d",
+        "deltaE": 7.9
+      }
+    ],
+    "checks": {
+      "offPaletteRoles": [],
+      "unmatchedNumbers": []
+    }
+  },
+  {
+    "id": "14624",
+    "slug": "claude-monet-stacks-of-wheat-end-of-day-autumn",
+    "label": "名画: 積みわら(日没、秋)（クロード・モネ）",
+    "titleJa": "積みわら(日没、秋)",
+    "artistJa": "クロード・モネ",
+    "title": "Stacks of Wheat (End of Day, Autumn)",
+    "artist": "Claude Monet",
+    "date": "1890–91",
+    "moods": [
+      "dusk",
+      "clear"
+    ],
+    "explanation": "夕暮れの野原に、大きな積みわらと小さな積みわらが並んで立つ風景を描いた連作の一枚。空は黄色やピンク、緑がかった色が混ざり合い、遠くの丘は青紫にかすんでいる。細かな筆致で、日が沈むころの空気のやわらかさを写している。",
+    "colorStory": "背景には積みわらの影のような落ち着いた褐色を選び、文字には夕光に染まった明るいベージュを使った。キーワードや文字列には空のピンクと草色を割り当て、遠景の青灰色を型の色にして、夕暮れのやさしい雰囲気を残した。",
+    "imageUrl": "https://www.artic.edu/iiif/2/4c364c64-2108-4e19-5fc5-1ab26ba924a7/full/843,/0/default.jpg",
+    "pageUrl": "https://www.artic.edu/artworks/14624",
+    "credit": "The Art Institute of Chicago, Mr. and Mrs. Lewis Larned Coburn Memorial Collection",
+    "license": "CC0（パブリックドメイン）",
+    "palette": [
+      {
+        "hex": "#8c7a7d",
+        "share": 0.124,
+        "lightness": 0.597,
+        "chroma": 0.023
+      },
+      {
+        "hex": "#8b6761",
+        "share": 0.113,
+        "lightness": 0.549,
+        "chroma": 0.048
+      },
+      {
+        "hex": "#b9aa9c",
+        "share": 0.104,
+        "lightness": 0.746,
+        "chroma": 0.027
+      },
+      {
+        "hex": "#a7b2ab",
+        "share": 0.101,
+        "lightness": 0.752,
+        "chroma": 0.015
+      },
+      {
+        "hex": "#7d7074",
+        "share": 0.096,
+        "lightness": 0.559,
+        "chroma": 0.017
+      },
+      {
+        "hex": "#835c55",
+        "share": 0.089,
+        "lightness": 0.513,
+        "chroma": 0.052
+      },
+      {
+        "hex": "#b1af8e",
+        "share": 0.079,
+        "lightness": 0.747,
+        "chroma": 0.045
+      },
+      {
+        "hex": "#6f6860",
+        "share": 0.074,
+        "lightness": 0.522,
+        "chroma": 0.015
+      },
+      {
+        "hex": "#7a786a",
+        "share": 0.066,
+        "lightness": 0.569,
+        "chroma": 0.021
+      },
+      {
+        "hex": "#655b50",
+        "share": 0.061,
+        "lightness": 0.477,
+        "chroma": 0.021
+      },
+      {
+        "hex": "#5b6577",
+        "share": 0.049,
+        "lightness": 0.505,
+        "chroma": 0.031
+      },
+      {
+        "hex": "#b99c8e",
+        "share": 0.046,
+        "lightness": 0.714,
+        "chroma": 0.04
+      },
+      {
+        "hex": "#6b7848",
+        "share": 0,
+        "lightness": 0.549,
+        "chroma": 0.07,
+        "accent": true
+      }
+    ],
+    "roles": {
+      "type": "dark",
+      "background": "#655b50",
+      "foreground": "#b9aa9c",
+      "accent": "#6b7848",
+      "keyword": "#b99c8e",
+      "string": "#b1af8e",
+      "number": "#8b6761",
+      "function": "#a7b2ab",
+      "type_": "#5b6577",
+      "comment": "#7d7074"
+    },
+    "naiveRoles": {
+      "type": "light",
+      "background": "#a7b2ab",
+      "foreground": "#655b50",
+      "accent": "#6b7848",
+      "keyword": "#6b7848",
+      "string": "#835c55",
+      "function": "#8b6761",
+      "type_": "#b1af8e",
+      "number": "#b99c8e",
+      "comment": "#6f6860"
+    },
+    "adjustments": [
+      {
+        "role": "background",
+        "original": "#655b50",
+        "adjusted": "#261e14",
+        "deltaE": 20.1
+      },
+      {
+        "role": "comment",
+        "original": "#7d7074",
+        "adjusted": "#908387",
+        "deltaE": 7.4
+      },
+      {
+        "role": "foreground",
+        "original": "#b9aa9c",
+        "adjusted": "#b9aa9c",
+        "deltaE": 0
+      },
+      {
+        "role": "keyword",
+        "original": "#b99c8e",
+        "adjusted": "#d9bbad",
+        "deltaE": 8.7
+      },
+      {
+        "role": "string",
+        "original": "#b1af8e",
+        "adjusted": "#b1af8e",
+        "deltaE": 0
+      },
+      {
+        "role": "function",
+        "original": "#a7b2ab",
+        "adjusted": "#a7b2ab",
+        "deltaE": 0
+      },
+      {
+        "role": "type",
+        "original": "#5b6577",
+        "adjusted": "#7c8799",
+        "deltaE": 13.4
+      },
+      {
+        "role": "number",
+        "original": "#8b6761",
+        "adjusted": "#a37d77",
+        "deltaE": 8.8
+      }
+    ],
+    "checks": {
+      "offPaletteRoles": [],
+      "unmatchedNumbers": []
+    }
+  },
+  {
+    "id": "24645",
+    "slug": "katsushika-hokusai-under-the-wave-off-kanagawa-kanagawa-oki",
+    "label": "名画: 神奈川沖浪裏（葛飾北斎）",
+    "titleJa": "神奈川沖浪裏",
+    "artistJa": "葛飾北斎",
+    "title": "Under the Wave off Kanagawa (Kanagawa oki nami ura), also known as The Great Wave, from the series \"Thirty-Six Views of Mount Fuji (Fugaku sanjūrokkei)\"",
+    "artist": "Katsushika Hokusai",
+    "date": "1830/33",
+    "moods": [
+      "storm",
+      "cloudy"
+    ],
+    "explanation": "荒れる海に巨大な波が大きく立ち上がり、波頭が白い泡の爪のように砕けていく様子を描いた浮世絵の代表作です。小舟が波にもまれ、遠くには富士山が小さく静かに見えます。",
+    "colorStory": "面積の大きい和紙のような淡い黄土色を背景にして、波の濃い藍色を文字色にしました。アクセントには、プルシアンブルー由来の鮮やかな青を使っています。",
+    "imageUrl": "https://www.artic.edu/iiif/2/b3974542-b9b4-7568-fc4b-966738f61d78/full/843,/0/default.jpg",
+    "pageUrl": "https://www.artic.edu/artworks/24645",
+    "credit": "The Art Institute of Chicago, Clarence Buckingham Collection",
+    "license": "CC0（パブリックドメイン）",
+    "palette": [
+      {
+        "hex": "#c5b498",
+        "share": 0.243,
+        "lightness": 0.776,
+        "chroma": 0.043
+      },
+      {
+        "hex": "#d5c4a7",
+        "share": 0.171,
+        "lightness": 0.827,
+        "chroma": 0.044
+      },
+      {
+        "hex": "#e3d4b6",
+        "share": 0.144,
+        "lightness": 0.874,
+        "chroma": 0.043
+      },
+      {
+        "hex": "#a1a8a2",
+        "share": 0.061,
+        "lightness": 0.725,
+        "chroma": 0.012
+      },
+      {
+        "hex": "#293e58",
+        "share": 0.06,
+        "lightness": 0.358,
+        "chroma": 0.052
+      },
+      {
+        "hex": "#fdf1da",
+        "share": 0.056,
+        "lightness": 0.962,
+        "chroma": 0.034
+      },
+      {
+        "hex": "#425262",
+        "share": 0.05,
+        "lightness": 0.432,
+        "chroma": 0.033
+      },
+      {
+        "hex": "#1b2941",
+        "share": 0.049,
+        "lightness": 0.28,
+        "chroma": 0.049
+      },
+      {
+        "hex": "#afbab4",
+        "share": 0.049,
+        "lightness": 0.778,
+        "chroma": 0.014
+      },
+      {
+        "hex": "#90948f",
+        "share": 0.044,
+        "lightness": 0.662,
+        "chroma": 0.009
+      },
+      {
+        "hex": "#7a8181",
+        "share": 0.037,
+        "lightness": 0.598,
+        "chroma": 0.009
+      },
+      {
+        "hex": "#5c6973",
+        "share": 0.036,
+        "lightness": 0.514,
+        "chroma": 0.022
+      },
+      {
+        "hex": "#375d7f",
+        "share": 0.008,
+        "lightness": 0.464,
+        "chroma": 0.071,
+        "accent": true
+      }
+    ],
+    "roles": {
+      "type": "light",
+      "background": "#e3d4b6",
+      "foreground": "#1b2941",
+      "accent": "#375d7f",
+      "keyword": "#375d7f",
+      "string": "#5c6973",
+      "number": "#425262",
+      "function": "#293e58",
+      "type_": "#7a8181",
+      "comment": "#a1a8a2"
+    },
+    "naiveRoles": {
+      "type": "light",
+      "background": "#fdf1da",
+      "foreground": "#1b2941",
+      "accent": "#375d7f",
+      "keyword": "#375d7f",
+      "string": "#293e58",
+      "function": "#d5c4a7",
+      "type_": "#c5b498",
+      "number": "#e3d4b6",
+      "comment": "#7a8181"
+    },
+    "adjustments": [
+      {
+        "role": "background",
+        "original": "#e3d4b6",
+        "adjusted": "#fcedce",
+        "deltaE": 5.5
+      },
+      {
+        "role": "comment",
+        "original": "#a1a8a2",
+        "adjusted": "#686e69",
+        "deltaE": 20.6
+      },
+      {
+        "role": "foreground",
+        "original": "#1b2941",
+        "adjusted": "#1b2941",
+        "deltaE": 0
+      },
+      {
+        "role": "keyword",
+        "original": "#375d7f",
+        "adjusted": "#375d7f",
+        "deltaE": 0
+      },
+      {
+        "role": "string",
+        "original": "#5c6973",
+        "adjusted": "#5c6973",
+        "deltaE": 0
+      },
+      {
+        "role": "function",
+        "original": "#293e58",
+        "adjusted": "#000d22",
+        "deltaE": 14.8
+      },
+      {
+        "role": "type",
+        "original": "#7a8181",
+        "adjusted": "#515657",
+        "deltaE": 16.3
+      },
+      {
+        "role": "number",
+        "original": "#425262",
+        "adjusted": "#3d4d5c",
+        "deltaE": 1.8
+      }
+    ],
+    "checks": {
+      "offPaletteRoles": [],
+      "unmatchedNumbers": []
+    }
+  },
+  {
+    "id": "4371",
+    "slug": "utagawa-hiroshige-hamamatsu-from-the-series-fifty-three-st",
+    "label": "名画: 浜松（東海道五十三次 狂歌入東海道）（歌川広重）",
+    "titleJa": "浜松（東海道五十三次 狂歌入東海道）",
+    "artistJa": "歌川広重",
+    "title": "Hamamatsu, from the series \"Fifty-three Stations of the Tokaido (Tokaido gojusan tsugi),\" also known as the Tokaido with Poem (Kyoka iri Tokaido)",
+    "artist": "Utagawa Hiroshige",
+    "date": "c. 1837/42",
+    "moods": [
+      "dawn",
+      "clear"
+    ],
+    "explanation": "東海道の宿場町、浜松の町並みを描いた浮世絵です。黄色い屋根の家々が並ぶ通りを旅人や馬が行き交い、奥の松林の上には浜松城がそびえています。空には雁の群れが飛び、狂歌が添えられています。",
+    "colorStory": "空と屋根に使われた生成りと淡い黄土色を背景にして、明るく柔らかな紙の質感を出しました。松の濃い茶色を文字色にし、赤みのある色を差し色にして、色数の少ない版画らしい穏やかな雰囲気を残しました。",
+    "imageUrl": "https://www.artic.edu/iiif/2/cef4e5df-a749-090b-b897-7d5f40654685/full/843,/0/default.jpg",
+    "pageUrl": "https://www.artic.edu/artworks/4371",
+    "credit": "The Art Institute of Chicago, Clarence Buckingham Collection",
+    "license": "CC0（パブリックドメイン）",
+    "palette": [
+      {
+        "hex": "#ebe1c6",
+        "share": 0.281,
+        "lightness": 0.909,
+        "chroma": 0.037
+      },
+      {
+        "hex": "#e6d3a6",
+        "share": 0.129,
+        "lightness": 0.87,
+        "chroma": 0.062
+      },
+      {
+        "hex": "#d3c39f",
+        "share": 0.087,
+        "lightness": 0.82,
+        "chroma": 0.051
+      },
+      {
+        "hex": "#89ad97",
+        "share": 0.081,
+        "lightness": 0.716,
+        "chroma": 0.051
+      },
+      {
+        "hex": "#769c87",
+        "share": 0.065,
+        "lightness": 0.657,
+        "chroma": 0.052
+      },
+      {
+        "hex": "#3b362a",
+        "share": 0.064,
+        "lightness": 0.335,
+        "chroma": 0.022
+      },
+      {
+        "hex": "#766d54",
+        "share": 0.059,
+        "lightness": 0.536,
+        "chroma": 0.039
+      },
+      {
+        "hex": "#948565",
+        "share": 0.058,
+        "lightness": 0.621,
+        "chroma": 0.048
+      },
+      {
+        "hex": "#b6a381",
+        "share": 0.057,
+        "lightness": 0.723,
+        "chroma": 0.052
+      },
+      {
+        "hex": "#5f5743",
+        "share": 0.054,
+        "lightness": 0.458,
+        "chroma": 0.032
+      },
+      {
+        "hex": "#4b4434",
+        "share": 0.054,
+        "lightness": 0.388,
+        "chroma": 0.028
+      },
+      {
+        "hex": "#c2595a",
+        "share": 0.01,
+        "lightness": 0.595,
+        "chroma": 0.135
+      },
+      {
+        "hex": "#903d38",
+        "share": 0.004,
+        "lightness": 0.47,
+        "chroma": 0.114,
+        "accent": true
+      }
+    ],
+    "roles": {
+      "type": "light",
+      "background": "#ebe1c6",
+      "foreground": "#3b362a",
+      "accent": "#903d38",
+      "keyword": "#c2595a",
+      "string": "#769c87",
+      "number": "#948565",
+      "function": "#5f5743",
+      "type_": "#89ad97",
+      "comment": "#b6a381"
+    },
+    "naiveRoles": {
+      "type": "light",
+      "background": "#ebe1c6",
+      "foreground": "#3b362a",
+      "accent": "#c2595a",
+      "keyword": "#c2595a",
+      "string": "#903d38",
+      "function": "#e6d3a6",
+      "type_": "#769c87",
+      "number": "#b6a381",
+      "comment": "#4b4434"
+    },
+    "adjustments": [
+      {
+        "role": "background",
+        "original": "#ebe1c6",
+        "adjusted": "#f8eed3",
+        "deltaE": 2.8
+      },
+      {
+        "role": "comment",
+        "original": "#b6a381",
+        "adjusted": "#7c6a4a",
+        "deltaE": 20.3
+      },
+      {
+        "role": "foreground",
+        "original": "#3b362a",
+        "adjusted": "#3b362a",
+        "deltaE": 0
+      },
+      {
+        "role": "keyword",
+        "original": "#c2595a",
+        "adjusted": "#b34b4d",
+        "deltaE": 5.2
+      },
+      {
+        "role": "string",
+        "original": "#769c87",
+        "adjusted": "#507461",
+        "deltaE": 14.9
+      },
+      {
+        "role": "function",
+        "original": "#5f5743",
+        "adjusted": "#5f5743",
+        "deltaE": 0
+      },
+      {
+        "role": "type",
+        "original": "#89ad97",
+        "adjusted": "#3c5d4a",
+        "deltaE": 30.7
+      },
+      {
+        "role": "number",
+        "original": "#948565",
+        "adjusted": "#4d3f21",
+        "deltaE": 25.9
+      }
+    ],
+    "checks": {
+      "offPaletteRoles": [],
+      "unmatchedNumbers": []
+    }
+  },
+  {
+    "id": "56905",
+    "slug": "james-mcneill-whistler-nocturne-blue-and-gold-southampton-wa",
+    "label": "名画: 夜想曲：青と金色――サウサンプトン湾（ジェームズ・マクニール・ホイッスラー）",
+    "titleJa": "夜想曲：青と金色――サウサンプトン湾",
+    "artistJa": "ジェームズ・マクニール・ホイッスラー",
+    "title": "Nocturne: Blue and Gold—Southampton Water",
+    "artist": "James McNeill Whistler",
+    "date": "1872",
+    "moods": [
+      "night",
+      "dusk",
+      "cloudy"
+    ],
+    "explanation": "夕暮れから夜へ移る静かな湾を、霧に包まれたような灰緑の画面でとらえた夜景画。遠くの水平線には小さな船影が並び、低く浮かぶ橙色の光がかすかに水面を照らしている。ホイッスラーが音楽のように色の調和を追求した「夜想曲」の連作の一つである。",
+    "colorStory": "絵の大部分を占める霧がかった灰緑色を背景にして、静かな夜の湿った空気を再現した。文字の色は同じ系統の明るめの色で揃え、全体が溶け合うような穏やかな配色にしている。",
+    "imageUrl": "https://www.artic.edu/iiif/2/50034c7f-ce51-00f1-430e-a6f7efc233fc/full/843,/0/default.jpg",
+    "pageUrl": "https://www.artic.edu/artworks/56905",
+    "credit": "The Art Institute of Chicago, Stickney Fund",
+    "license": "CC0（パブリックドメイン）",
+    "palette": [
+      {
+        "hex": "#52554b",
+        "share": 0.165,
+        "lightness": 0.444,
+        "chroma": 0.017
+      },
+      {
+        "hex": "#56594f",
+        "share": 0.151,
+        "lightness": 0.459,
+        "chroma": 0.017
+      },
+      {
+        "hex": "#63675c",
+        "share": 0.106,
+        "lightness": 0.507,
+        "chroma": 0.018
+      },
+      {
+        "hex": "#595d53",
+        "share": 0.106,
+        "lightness": 0.472,
+        "chroma": 0.017
+      },
+      {
+        "hex": "#4f5247",
+        "share": 0.102,
+        "lightness": 0.432,
+        "chroma": 0.017
+      },
+      {
+        "hex": "#676b60",
+        "share": 0.089,
+        "lightness": 0.522,
+        "chroma": 0.018
+      },
+      {
+        "hex": "#5e6257",
+        "share": 0.082,
+        "lightness": 0.49,
+        "chroma": 0.018
+      },
+      {
+        "hex": "#4b4e43",
+        "share": 0.058,
+        "lightness": 0.418,
+        "chroma": 0.018
+      },
+      {
+        "hex": "#6b7065",
+        "share": 0.051,
+        "lightness": 0.538,
+        "chroma": 0.017
+      },
+      {
+        "hex": "#717669",
+        "share": 0.037,
+        "lightness": 0.557,
+        "chroma": 0.019
+      },
+      {
+        "hex": "#45483d",
+        "share": 0.031,
+        "lightness": 0.396,
+        "chroma": 0.017
+      },
+      {
+        "hex": "#7c7f6e",
+        "share": 0.021,
+        "lightness": 0.589,
+        "chroma": 0.025
+      }
+    ],
+    "roles": {
+      "type": "dark",
+      "background": "#45483d",
+      "foreground": "#7c7f6e",
+      "accent": "#7c7f6e",
+      "keyword": "#717669",
+      "string": "#6b7065",
+      "number": "#676b60",
+      "function": "#7c7f6e",
+      "type_": "#63675c",
+      "comment": "#56594f"
+    },
+    "naiveRoles": {
+      "type": "dark",
+      "background": "#45483d",
+      "foreground": "#7c7f6e",
+      "accent": "#717669",
+      "keyword": "#717669",
+      "string": "#63675c",
+      "function": "#676b60",
+      "type_": "#5e6257",
+      "number": "#4b4e43",
+      "comment": "#6b7065"
+    },
+    "adjustments": [
+      {
+        "role": "background",
+        "original": "#45483d",
+        "adjusted": "#1e2117",
+        "deltaE": 12.5
+      },
+      {
+        "role": "comment",
+        "original": "#56594f",
+        "adjusted": "#84887d",
+        "deltaE": 18.3
+      },
+      {
+        "role": "foreground",
+        "original": "#7c7f6e",
+        "adjusted": "#9da08f",
+        "deltaE": 11.4
+      },
+      {
+        "role": "keyword",
+        "original": "#717669",
+        "adjusted": "#bac1b2",
+        "deltaE": 23.9
+      },
+      {
+        "role": "string",
+        "original": "#6b7065",
+        "adjusted": "#e1e8db",
+        "deltaE": 35
+      },
+      {
+        "role": "function",
+        "original": "#7c7f6e",
+        "adjusted": "#858877",
+        "deltaE": 3.4
+      },
+      {
+        "role": "type",
+        "original": "#63675c",
+        "adjusted": "#84887c",
+        "deltaE": 13.1
+      },
+      {
+        "role": "number",
+        "original": "#676b60",
+        "adjusted": "#84887c",
+        "deltaE": 11.5
+      }
+    ],
+    "checks": {
+      "offPaletteRoles": [],
+      "unmatchedNumbers": []
+    }
+  },
+  {
+    "id": "14620",
+    "slug": "claude-monet-cliff-walk-at-pourville",
+    "label": "名画: プールヴィルの断崖の散歩（クロード・モネ）",
+    "titleJa": "プールヴィルの断崖の散歩",
+    "artistJa": "クロード・モネ",
+    "title": "Cliff Walk at Pourville",
+    "artist": "Claude Monet",
+    "date": "1882",
+    "moods": [
+      "clear",
+      "cloudy"
+    ],
+    "explanation": "ノルマンディーの海辺、風の吹く断崖の上に日傘をさした人物が立ち、青緑の海と空を見渡しています。モネは短い筆触を重ねて、草の揺れや光のきらめきを軽やかに描いています。",
+    "colorStory": "面積の大きい灰青色の空と海を土台にして、明るいライトテーマにしました。草の緑や崖の土色を文字色に散らして、爽やかな海風の雰囲気を出しています。",
+    "imageUrl": "https://www.artic.edu/iiif/2/b0effb1c-ff23-bbaa-f809-9fd94e31c1a0/full/843,/0/default.jpg",
+    "pageUrl": "https://www.artic.edu/artworks/14620",
+    "credit": "The Art Institute of Chicago, Mr. and Mrs. Lewis Larned Coburn Memorial Collection",
+    "license": "CC0（パブリックドメイン）",
+    "palette": [
+      {
+        "hex": "#919fb4",
+        "share": 0.171,
+        "lightness": 0.698,
+        "chroma": 0.035
+      },
+      {
+        "hex": "#7491b5",
+        "share": 0.161,
+        "lightness": 0.648,
+        "chroma": 0.063
+      },
+      {
+        "hex": "#978977",
+        "share": 0.107,
+        "lightness": 0.638,
+        "chroma": 0.031
+      },
+      {
+        "hex": "#869595",
+        "share": 0.102,
+        "lightness": 0.657,
+        "chroma": 0.017
+      },
+      {
+        "hex": "#a29b86",
+        "share": 0.097,
+        "lightness": 0.69,
+        "chroma": 0.031
+      },
+      {
+        "hex": "#7b8565",
+        "share": 0.073,
+        "lightness": 0.6,
+        "chroma": 0.049
+      },
+      {
+        "hex": "#afaeb0",
+        "share": 0.061,
+        "lightness": 0.753,
+        "chroma": 0.003
+      },
+      {
+        "hex": "#827768",
+        "share": 0.057,
+        "lightness": 0.575,
+        "chroma": 0.026
+      },
+      {
+        "hex": "#8e9467",
+        "share": 0.054,
+        "lightness": 0.65,
+        "chroma": 0.064
+      },
+      {
+        "hex": "#618395",
+        "share": 0.053,
+        "lightness": 0.59,
+        "chroma": 0.047
+      },
+      {
+        "hex": "#656a58",
+        "share": 0.039,
+        "lightness": 0.516,
+        "chroma": 0.029
+      },
+      {
+        "hex": "#4c4c4a",
+        "share": 0.026,
+        "lightness": 0.417,
+        "chroma": 0.004
+      },
+      {
+        "hex": "#647b44",
+        "share": 0.003,
+        "lightness": 0.551,
+        "chroma": 0.084,
+        "accent": true
+      }
+    ],
+    "roles": {
+      "type": "light",
+      "background": "#afaeb0",
+      "foreground": "#4c4c4a",
+      "accent": "#7491b5",
+      "keyword": "#647b44",
+      "string": "#978977",
+      "number": "#618395",
+      "function": "#7b8565",
+      "type_": "#827768",
+      "comment": "#869595"
+    },
+    "naiveRoles": {
+      "type": "light",
+      "background": "#afaeb0",
+      "foreground": "#4c4c4a",
+      "accent": "#647b44",
+      "keyword": "#647b44",
+      "string": "#8e9467",
+      "function": "#7491b5",
+      "type_": "#7b8565",
+      "number": "#618395",
+      "comment": "#869595"
+    },
+    "adjustments": [
+      {
+        "role": "background",
+        "original": "#afaeb0",
+        "adjusted": "#efeef0",
+        "deltaE": 15.5
+      },
+      {
+        "role": "comment",
+        "original": "#869595",
+        "adjusted": "#616f70",
+        "deltaE": 14.4
+      },
+      {
+        "role": "foreground",
+        "original": "#4c4c4a",
+        "adjusted": "#4c4c4a",
+        "deltaE": 0
+      },
+      {
+        "role": "keyword",
+        "original": "#647b44",
+        "adjusted": "#5d743d",
+        "deltaE": 2.7
+      },
+      {
+        "role": "string",
+        "original": "#978977",
+        "adjusted": "#786a59",
+        "deltaE": 12.1
+      },
+      {
+        "role": "function",
+        "original": "#7b8565",
+        "adjusted": "#5c6546",
+        "deltaE": 12.5
+      },
+      {
+        "role": "type",
+        "original": "#827768",
+        "adjusted": "#5f5447",
+        "deltaE": 13.2
+      },
+      {
+        "role": "number",
+        "original": "#618395",
+        "adjusted": "#507183",
+        "deltaE": 7
+      }
+    ],
+    "checks": {
+      "offPaletteRoles": [],
+      "unmatchedNumbers": []
+    }
+  },
+  {
+    "id": "81557",
+    "slug": "pierre-auguste-renoir-seascape",
+    "label": "名画: 海景（ピエール＝オーギュスト・ルノワール）",
+    "titleJa": "海景",
+    "artistJa": "ピエール＝オーギュスト・ルノワール",
+    "title": "Seascape",
+    "artist": "Pierre-Auguste Renoir",
+    "date": "1879",
+    "moods": [
+      "storm",
+      "cloudy"
+    ],
+    "explanation": "荒れ模様の海に白い波が砕け、暗い雲が空いっぱいに垂れこめる風景画。ルノワールが筆を細かく動かして、波しぶきと空の光を軽やかに描いている。人物のいない、海そのものを主役にした作品。",
+    "colorStory": "波の泡のような明るい灰白色を背景にして、空と海の深い青を文字に使った。青みがかった灰色を重ねて、湿った潮風の空気を表している。",
+    "imageUrl": "https://www.artic.edu/iiif/2/caf4fa39-e2e8-344a-542c-2d9a03ec9d4b/full/843,/0/default.jpg",
+    "pageUrl": "https://www.artic.edu/artworks/81557",
+    "credit": "The Art Institute of Chicago, Potter Palmer Collection",
+    "license": "CC0（パブリックドメイン）",
+    "palette": [
+      {
+        "hex": "#5a7596",
+        "share": 0.125,
+        "lightness": 0.555,
+        "chroma": 0.06
+      },
+      {
+        "hex": "#6a849c",
+        "share": 0.122,
+        "lightness": 0.6,
+        "chroma": 0.047
+      },
+      {
+        "hex": "#91a0aa",
+        "share": 0.107,
+        "lightness": 0.697,
+        "chroma": 0.023
+      },
+      {
+        "hex": "#a0acb6",
+        "share": 0.095,
+        "lightness": 0.738,
+        "chroma": 0.02
+      },
+      {
+        "hex": "#48668e",
+        "share": 0.092,
+        "lightness": 0.504,
+        "chroma": 0.073
+      },
+      {
+        "hex": "#adb7bf",
+        "share": 0.09,
+        "lightness": 0.774,
+        "chroma": 0.016
+      },
+      {
+        "hex": "#7c93ab",
+        "share": 0.085,
+        "lightness": 0.654,
+        "chroma": 0.044
+      },
+      {
+        "hex": "#b9c2c8",
+        "share": 0.08,
+        "lightness": 0.809,
+        "chroma": 0.013
+      },
+      {
+        "hex": "#82908e",
+        "share": 0.061,
+        "lightness": 0.642,
+        "chroma": 0.017
+      },
+      {
+        "hex": "#2d507e",
+        "share": 0.059,
+        "lightness": 0.429,
+        "chroma": 0.087
+      },
+      {
+        "hex": "#c6ced0",
+        "share": 0.054,
+        "lightness": 0.846,
+        "chroma": 0.009
+      },
+      {
+        "hex": "#d7dcd9",
+        "share": 0.03,
+        "lightness": 0.889,
+        "chroma": 0.006
+      }
+    ],
+    "roles": {
+      "type": "light",
+      "background": "#d7dcd9",
+      "foreground": "#2d507e",
+      "accent": "#48668e",
+      "keyword": "#48668e",
+      "string": "#82908e",
+      "number": "#5a7596",
+      "function": "#2d507e",
+      "type_": "#6a849c",
+      "comment": "#91a0aa"
+    },
+    "naiveRoles": {
+      "type": "light",
+      "background": "#d7dcd9",
+      "foreground": "#2d507e",
+      "accent": "#48668e",
+      "keyword": "#48668e",
+      "string": "#5a7596",
+      "function": "#6a849c",
+      "type_": "#7c93ab",
+      "number": "#91a0aa",
+      "comment": "#c6ced0"
+    },
+    "adjustments": [
+      {
+        "role": "background",
+        "original": "#d7dcd9",
+        "adjusted": "#ebf0ed",
+        "deltaE": 4.4
+      },
+      {
+        "role": "comment",
+        "original": "#91a0aa",
+        "adjusted": "#606f78",
+        "deltaE": 18
+      },
+      {
+        "role": "foreground",
+        "original": "#2d507e",
+        "adjusted": "#2d507e",
+        "deltaE": 0
+      },
+      {
+        "role": "keyword",
+        "original": "#48668e",
+        "adjusted": "#183459",
+        "deltaE": 16.8
+      },
+      {
+        "role": "string",
+        "original": "#82908e",
+        "adjusted": "#515e5d",
+        "deltaE": 19.7
+      },
+      {
+        "role": "function",
+        "original": "#2d507e",
+        "adjusted": "#001737",
+        "deltaE": 18.7
+      },
+      {
+        "role": "type",
+        "original": "#6a849c",
+        "adjusted": "#000c1c",
+        "deltaE": 39.1
+      },
+      {
+        "role": "number",
+        "original": "#5a7596",
+        "adjusted": "#546f8f",
+        "deltaE": 2.4
+      }
+    ],
+    "checks": {
+      "offPaletteRoles": [],
+      "unmatchedNumbers": []
+    }
+  },
+  {
+    "id": "72801",
+    "slug": "john-henry-twachtman-icebound",
+    "label": "名画: 氷に閉ざされて（ジョン・ヘンリー・トワクトマン）",
+    "titleJa": "氷に閉ざされて",
+    "artistJa": "ジョン・ヘンリー・トワクトマン",
+    "title": "Icebound",
+    "artist": "John Henry Twachtman",
+    "date": "c. 1889",
+    "moods": [
+      "snow",
+      "cloudy"
+    ],
+    "explanation": "雪に覆われた渓谷を、青緑色の水が流れる冬の風景です。岩や雪の斜面はやわらかい筆づかいで溶け合い、木々の枝先にはオレンジ色の葉がわずかに残っています。印象派のなかでも、静けさと詩情を重んじるトワクトマンらしい作品です。",
+    "colorStory": "背景には雪のやわらかな白を使い、文字には水辺の深い青緑を合わせました。アクセントには川面の鮮やかな青緑を選び、淡いオレンジを文字列の色にして枯れ葉の温かみを残しました。",
+    "imageUrl": "https://www.artic.edu/iiif/2/3ae75415-0551-ae17-c478-3b8687a6f246/full/843,/0/default.jpg",
+    "pageUrl": "https://www.artic.edu/artworks/72801",
+    "credit": "The Art Institute of Chicago, Friends of American Art Collection",
+    "license": "CC0（パブリックドメイン）",
+    "palette": [
+      {
+        "hex": "#dcded5",
+        "share": 0.21,
+        "lightness": 0.897,
+        "chroma": 0.013
+      },
+      {
+        "hex": "#d0d6ce",
+        "share": 0.171,
+        "lightness": 0.869,
+        "chroma": 0.013
+      },
+      {
+        "hex": "#e6e7de",
+        "share": 0.145,
+        "lightness": 0.924,
+        "chroma": 0.012
+      },
+      {
+        "hex": "#c2cdc5",
+        "share": 0.117,
+        "lightness": 0.837,
+        "chroma": 0.015
+      },
+      {
+        "hex": "#b2bfba",
+        "share": 0.078,
+        "lightness": 0.793,
+        "chroma": 0.016
+      },
+      {
+        "hex": "#9db0ae",
+        "share": 0.062,
+        "lightness": 0.741,
+        "chroma": 0.021
+      },
+      {
+        "hex": "#8aa09f",
+        "share": 0.056,
+        "lightness": 0.689,
+        "chroma": 0.025
+      },
+      {
+        "hex": "#779090",
+        "share": 0.049,
+        "lightness": 0.635,
+        "chroma": 0.029
+      },
+      {
+        "hex": "#61807e",
+        "share": 0.037,
+        "lightness": 0.575,
+        "chroma": 0.034
+      },
+      {
+        "hex": "#536a68",
+        "share": 0.036,
+        "lightness": 0.504,
+        "chroma": 0.027
+      },
+      {
+        "hex": "#3e5554",
+        "share": 0.023,
+        "lightness": 0.43,
+        "chroma": 0.028
+      },
+      {
+        "hex": "#d0aa90",
+        "share": 0.015,
+        "lightness": 0.765,
+        "chroma": 0.057
+      },
+      {
+        "hex": "#286563",
+        "share": 0.007,
+        "lightness": 0.466,
+        "chroma": 0.062,
+        "accent": true
+      }
+    ],
+    "roles": {
+      "type": "light",
+      "background": "#e6e7de",
+      "foreground": "#3e5554",
+      "accent": "#286563",
+      "keyword": "#286563",
+      "string": "#d0aa90",
+      "number": "#61807e",
+      "function": "#536a68",
+      "type_": "#779090",
+      "comment": "#9db0ae"
+    },
+    "naiveRoles": {
+      "type": "light",
+      "background": "#e6e7de",
+      "foreground": "#3e5554",
+      "accent": "#286563",
+      "keyword": "#286563",
+      "string": "#d0aa90",
+      "function": "#61807e",
+      "type_": "#779090",
+      "number": "#536a68",
+      "comment": "#d0d6ce"
+    },
+    "adjustments": [
+      {
+        "role": "background",
+        "original": "#e6e7de",
+        "adjusted": "#eeefe6",
+        "deltaE": 1.7
+      },
+      {
+        "role": "comment",
+        "original": "#9db0ae",
+        "adjusted": "#5e706e",
+        "deltaE": 22.3
+      },
+      {
+        "role": "foreground",
+        "original": "#3e5554",
+        "adjusted": "#3e5554",
+        "deltaE": 0
+      },
+      {
+        "role": "keyword",
+        "original": "#286563",
+        "adjusted": "#286563",
+        "deltaE": 0
+      },
+      {
+        "role": "string",
+        "original": "#d0aa90",
+        "adjusted": "#88654d",
+        "deltaE": 23.7
+      },
+      {
+        "role": "function",
+        "original": "#536a68",
+        "adjusted": "#233937",
+        "deltaE": 16.6
+      },
+      {
+        "role": "type",
+        "original": "#779090",
+        "adjusted": "#061c1c",
+        "deltaE": 39.7
+      },
+      {
+        "role": "number",
+        "original": "#61807e",
+        "adjusted": "#547271",
+        "deltaE": 5.5
+      }
+    ],
+    "checks": {
+      "offPaletteRoles": [],
+      "unmatchedNumbers": []
+    }
+  },
+  {
+    "id": "4796",
+    "slug": "joseph-mallord-william-turner-fishing-boats-with-hucksters-b",
+    "label": "名画: 魚を値切る行商人のいる漁船（ジョゼフ・マラード・ウィリアム・ターナー）",
+    "titleJa": "魚を値切る行商人のいる漁船",
+    "artistJa": "ジョゼフ・マラード・ウィリアム・ターナー",
+    "title": "Fishing Boats with Hucksters Bargaining for Fish",
+    "artist": "Joseph Mallord William Turner",
+    "date": "1837–38",
+    "moods": [
+      "storm",
+      "cloudy"
+    ],
+    "explanation": "荒れた海で、帆を張った漁船が波にもまれ、小舟では行商人たちが魚の取引をしている場面を描いた海景画。渦巻く雲と波が画面全体を大きくうねらせ、わずかに覗く青空が緊張感の中に光を添えている。ターナーらしい、光と大気の動きを重んじた作品である。",
+    "colorStory": "嵐の空と波に広がる茶色や黄土色を基調に、深い焦げ茶を背景にして荒々しい海の重みを出した。雲間の青灰色は唯一の冷たい色なので、アクセントと関数に使い、コードの中で際立たせた。",
+    "imageUrl": "https://www.artic.edu/iiif/2/8641479e-c93e-f1a8-9925-19be061706da/full/843,/0/default.jpg",
+    "pageUrl": "https://www.artic.edu/artworks/4796",
+    "credit": "The Art Institute of Chicago, Mr. and Mrs. W. W. Kimball Collection",
+    "license": "CC0（パブリックドメイン）",
+    "palette": [
+      {
+        "hex": "#524c40",
+        "share": 0.113,
+        "lightness": 0.417,
+        "chroma": 0.02
+      },
+      {
+        "hex": "#9f8a6d",
+        "share": 0.109,
+        "lightness": 0.644,
+        "chroma": 0.048
+      },
+      {
+        "hex": "#ae987b",
+        "share": 0.1,
+        "lightness": 0.692,
+        "chroma": 0.048
+      },
+      {
+        "hex": "#6f614e",
+        "share": 0.097,
+        "lightness": 0.5,
+        "chroma": 0.034
+      },
+      {
+        "hex": "#b9a88f",
+        "share": 0.097,
+        "lightness": 0.74,
+        "chroma": 0.041
+      },
+      {
+        "hex": "#7f6d57",
+        "share": 0.094,
+        "lightness": 0.546,
+        "chroma": 0.04
+      },
+      {
+        "hex": "#8f7c61",
+        "share": 0.087,
+        "lightness": 0.596,
+        "chroma": 0.045
+      },
+      {
+        "hex": "#605645",
+        "share": 0.085,
+        "lightness": 0.457,
+        "chroma": 0.029
+      },
+      {
+        "hex": "#d4b791",
+        "share": 0.073,
+        "lightness": 0.795,
+        "chroma": 0.061
+      },
+      {
+        "hex": "#83929a",
+        "share": 0.07,
+        "lightness": 0.65,
+        "chroma": 0.021
+      },
+      {
+        "hex": "#463925",
+        "share": 0.039,
+        "lightness": 0.353,
+        "chroma": 0.037
+      },
+      {
+        "hex": "#30271a",
+        "share": 0.035,
+        "lightness": 0.279,
+        "chroma": 0.026
+      }
+    ],
+    "roles": {
+      "type": "dark",
+      "background": "#30271a",
+      "foreground": "#d4b791",
+      "accent": "#83929a",
+      "keyword": "#d4b791",
+      "string": "#9f8a6d",
+      "number": "#b9a88f",
+      "function": "#83929a",
+      "type_": "#ae987b",
+      "comment": "#6f614e"
+    },
+    "naiveRoles": {
+      "type": "light",
+      "background": "#d4b791",
+      "foreground": "#30271a",
+      "accent": "#9f8a6d",
+      "keyword": "#9f8a6d",
+      "string": "#ae987b",
+      "function": "#8f7c61",
+      "type_": "#b9a88f",
+      "number": "#7f6d57",
+      "comment": "#524c40"
+    },
+    "adjustments": [
+      {
+        "role": "background",
+        "original": "#30271a",
+        "adjusted": "#261e11",
+        "deltaE": 2.9
+      },
+      {
+        "role": "comment",
+        "original": "#6f614e",
+        "adjusted": "#928470",
+        "deltaE": 13.9
+      },
+      {
+        "role": "foreground",
+        "original": "#d4b791",
+        "adjusted": "#d4b791",
+        "deltaE": 0
+      },
+      {
+        "role": "keyword",
+        "original": "#d4b791",
+        "adjusted": "#fcdeb7",
+        "deltaE": 9.4
+      },
+      {
+        "role": "string",
+        "original": "#9f8a6d",
+        "adjusted": "#b29c7f",
+        "deltaE": 5.9
+      },
+      {
+        "role": "function",
+        "original": "#83929a",
+        "adjusted": "#83929a",
+        "deltaE": 0
+      },
+      {
+        "role": "type",
+        "original": "#ae987b",
+        "adjusted": "#ae987b",
+        "deltaE": 0
+      },
+      {
+        "role": "number",
+        "original": "#b9a88f",
+        "adjusted": "#b9a88f",
+        "deltaE": 0
+      }
+    ],
+    "checks": {
+      "offPaletteRoles": [],
+      "unmatchedNumbers": []
+    }
+  },
+  {
+    "id": "16343",
+    "slug": "jan-van-de-cappelle-fishing-boats-in-a-calm",
+    "label": "名画: 凪の漁船（ヤン・ファン・デ・カペッレ）",
+    "titleJa": "凪の漁船",
+    "artistJa": "ヤン・ファン・デ・カペッレ",
+    "title": "Fishing Boats in a Calm",
+    "artist": "Jan van de Cappelle",
+    "date": "1651",
+    "moods": [
+      "cloudy",
+      "clear"
+    ],
+    "explanation": "風のない穏やかな海に、漁船や帆船が静かに浮かぶオランダ絵画の海景画。空には雲が大きく広がり、浅瀬を歩く人々の姿が水面に映っている。静けさと広い空気感が魅力の作品。",
+    "colorStory": "広い空と水面を占める灰色がかった明るい色を背景にし、手前の暗い茶色を文字色に使って落ち着いた読みやすさを出した。彩度の低い色でまとめ、凪の静けさを表した。",
+    "imageUrl": "https://www.artic.edu/iiif/2/b246d3eb-8bfe-a031-4848-e00c053546ea/full/843,/0/default.jpg",
+    "pageUrl": "https://www.artic.edu/artworks/16343",
+    "credit": "The Art Institute of Chicago, Mr. and Mrs. Martin A. Ryerson Collection",
+    "license": "CC0（パブリックドメイン）",
+    "palette": [
+      {
+        "hex": "#9f9f9c",
+        "share": 0.213,
+        "lightness": 0.702,
+        "chroma": 0.004
+      },
+      {
+        "hex": "#949492",
+        "share": 0.172,
+        "lightness": 0.667,
+        "chroma": 0.003
+      },
+      {
+        "hex": "#b0aea4",
+        "share": 0.15,
+        "lightness": 0.75,
+        "chroma": 0.014
+      },
+      {
+        "hex": "#898986",
+        "share": 0.109,
+        "lightness": 0.63,
+        "chroma": 0.005
+      },
+      {
+        "hex": "#7c7d77",
+        "share": 0.071,
+        "lightness": 0.587,
+        "chroma": 0.009
+      },
+      {
+        "hex": "#231d14",
+        "share": 0.049,
+        "lightness": 0.234,
+        "chroma": 0.019
+      },
+      {
+        "hex": "#6f6f67",
+        "share": 0.044,
+        "lightness": 0.541,
+        "chroma": 0.013
+      },
+      {
+        "hex": "#130f0a",
+        "share": 0.04,
+        "lightness": 0.172,
+        "chroma": 0.013
+      },
+      {
+        "hex": "#332d1f",
+        "share": 0.04,
+        "lightness": 0.299,
+        "chroma": 0.025
+      },
+      {
+        "hex": "#453e2d",
+        "share": 0.04,
+        "lightness": 0.364,
+        "chroma": 0.029
+      },
+      {
+        "hex": "#636156",
+        "share": 0.04,
+        "lightness": 0.49,
+        "chroma": 0.018
+      },
+      {
+        "hex": "#545041",
+        "share": 0.034,
+        "lightness": 0.431,
+        "chroma": 0.024
+      }
+    ],
+    "roles": {
+      "type": "light",
+      "background": "#b0aea4",
+      "foreground": "#130f0a",
+      "accent": "#545041",
+      "keyword": "#453e2d",
+      "string": "#636156",
+      "number": "#332d1f",
+      "function": "#6f6f67",
+      "type_": "#231d14",
+      "comment": "#898986"
+    },
+    "naiveRoles": {
+      "type": "light",
+      "background": "#b0aea4",
+      "foreground": "#130f0a",
+      "accent": "#453e2d",
+      "keyword": "#453e2d",
+      "string": "#332d1f",
+      "function": "#545041",
+      "type_": "#231d14",
+      "number": "#636156",
+      "comment": "#949492"
+    },
+    "adjustments": [
+      {
+        "role": "background",
+        "original": "#b0aea4",
+        "adjusted": "#f1efe4",
+        "deltaE": 15.7
+      },
+      {
+        "role": "comment",
+        "original": "#898986",
+        "adjusted": "#6d6d6a",
+        "deltaE": 11
+      },
+      {
+        "role": "foreground",
+        "original": "#130f0a",
+        "adjusted": "#130f0a",
+        "deltaE": 0
+      },
+      {
+        "role": "keyword",
+        "original": "#453e2d",
+        "adjusted": "#453e2d",
+        "deltaE": 0
+      },
+      {
+        "role": "string",
+        "original": "#636156",
+        "adjusted": "#58564b",
+        "deltaE": 4
+      },
+      {
+        "role": "function",
+        "original": "#6f6f67",
+        "adjusted": "#2d2c26",
+        "deltaE": 22.8
+      },
+      {
+        "role": "type",
+        "original": "#231d14",
+        "adjusted": "#231d14",
+        "deltaE": 0
+      },
+      {
+        "role": "number",
+        "original": "#332d1f",
+        "adjusted": "#332d1f",
+        "deltaE": 0
+      }
+    ],
+    "checks": {
+      "offPaletteRoles": [],
+      "unmatchedNumbers": []
+    }
+  },
+  {
+    "id": "154235",
+    "slug": "edvard-munch-the-girl-by-the-window",
+    "label": "名画: 窓辺の少女（エドヴァルド・ムンク）",
+    "titleJa": "窓辺の少女",
+    "artistJa": "エドヴァルド・ムンク",
+    "title": "The Girl by the Window",
+    "artist": "Edvard Munch",
+    "date": "1893",
+    "moods": [
+      "night",
+      "dusk"
+    ],
+    "explanation": "月明かりの差し込む夜の部屋で、白っぽい服の少女がカーテンを手で押さえ、窓の外をじっと見つめている場面です。ムンクらしい荒いタッチの線が、青い光と暗い室内の影を揺らすように重ねています。静けさの中に、不安やもの思いがただよう作品です。",
+    "colorStory": "背景には部屋の暗い紫がかった灰色を選び、夜の静けさを出しました。窓から差す月明かりの青を、キーワードや強調色に使い、暗がりの中の光を表しています。",
+    "imageUrl": "https://www.artic.edu/iiif/2/d7df2633-3b40-f570-c906-211503a37cde/full/843,/0/default.jpg",
+    "pageUrl": "https://www.artic.edu/artworks/154235",
+    "credit": "The Art Institute of Chicago, Searle Family Trust and Goldabelle McComb Finn endowments; Charles H. and Mary F. S. Worcester Collection",
+    "license": "CC0（パブリックドメイン）",
+    "palette": [
+      {
+        "hex": "#4c4042",
+        "share": 0.149,
+        "lightness": 0.384,
+        "chroma": 0.018
+      },
+      {
+        "hex": "#3f373c",
+        "share": 0.121,
+        "lightness": 0.346,
+        "chroma": 0.014
+      },
+      {
+        "hex": "#544e52",
+        "share": 0.113,
+        "lightness": 0.43,
+        "chroma": 0.01
+      },
+      {
+        "hex": "#798195",
+        "share": 0.108,
+        "lightness": 0.603,
+        "chroma": 0.032
+      },
+      {
+        "hex": "#8891a6",
+        "share": 0.106,
+        "lightness": 0.657,
+        "chroma": 0.032
+      },
+      {
+        "hex": "#5f5d68",
+        "share": 0.084,
+        "lightness": 0.484,
+        "chroma": 0.016
+      },
+      {
+        "hex": "#6f6f7d",
+        "share": 0.083,
+        "lightness": 0.547,
+        "chroma": 0.022
+      },
+      {
+        "hex": "#302d36",
+        "share": 0.061,
+        "lightness": 0.304,
+        "chroma": 0.017
+      },
+      {
+        "hex": "#92a6b9",
+        "share": 0.058,
+        "lightness": 0.715,
+        "chroma": 0.036
+      },
+      {
+        "hex": "#38435a",
+        "share": 0.055,
+        "lightness": 0.383,
+        "chroma": 0.042
+      },
+      {
+        "hex": "#231d24",
+        "share": 0.032,
+        "lightness": 0.241,
+        "chroma": 0.016
+      },
+      {
+        "hex": "#54769a",
+        "share": 0.029,
+        "lightness": 0.554,
+        "chroma": 0.068
+      },
+      {
+        "hex": "#648db5",
+        "share": 0.005,
+        "lightness": 0.63,
+        "chroma": 0.075,
+        "accent": true
+      },
+      {
+        "hex": "#3f628d",
+        "share": 0.006,
+        "lightness": 0.488,
+        "chroma": 0.081,
+        "accent": true
+      }
+    ],
+    "roles": {
+      "type": "dark",
+      "background": "#302d36",
+      "foreground": "#92a6b9",
+      "accent": "#648db5",
+      "keyword": "#648db5",
+      "string": "#8891a6",
+      "number": "#54769a",
+      "function": "#92a6b9",
+      "type_": "#798195",
+      "comment": "#5f5d68"
+    },
+    "naiveRoles": {
+      "type": "dark",
+      "background": "#231d24",
+      "foreground": "#92a6b9",
+      "accent": "#3f628d",
+      "keyword": "#3f628d",
+      "string": "#648db5",
+      "function": "#54769a",
+      "type_": "#38435a",
+      "number": "#798195",
+      "comment": "#544e52"
+    },
+    "adjustments": [
+      {
+        "role": "background",
+        "original": "#302d36",
+        "adjusted": "#201e26",
+        "deltaE": 4.9
+      },
+      {
+        "role": "comment",
+        "original": "#5f5d68",
+        "adjusted": "#878590",
+        "deltaE": 15.8
+      },
+      {
+        "role": "foreground",
+        "original": "#92a6b9",
+        "adjusted": "#92a6b9",
+        "deltaE": 0
+      },
+      {
+        "role": "keyword",
+        "original": "#648db5",
+        "adjusted": "#648db5",
+        "deltaE": 0
+      },
+      {
+        "role": "string",
+        "original": "#8891a6",
+        "adjusted": "#b3bdd3",
+        "deltaE": 12.9
+      },
+      {
+        "role": "function",
+        "original": "#92a6b9",
+        "adjusted": "#c4d9ed",
+        "deltaE": 13.3
+      },
+      {
+        "role": "type",
+        "original": "#798195",
+        "adjusted": "#ecf2ff",
+        "deltaE": 30.6
+      },
+      {
+        "role": "number",
+        "original": "#54769a",
+        "adjusted": "#96bbe1",
+        "deltaE": 22.4
+      }
+    ],
+    "checks": {
+      "offPaletteRoles": [],
+      "unmatchedNumbers": []
+    }
+  }
+]
