@@ -170,8 +170,9 @@ async function main() {
       requestAhead();
       return;
     }
-    inflight = Math.max(0, inflight - 1);
+    // 時間を戻す前に頼んだ分は捨てる（数えるのは今の世代だけ）
     if (m.id !== generation) return;
+    inflight = Math.max(0, inflight - 1);
     computeMs = computeMs ? computeMs * 0.9 + m.ms * 0.1 : m.ms;
     snaps.push({ t: m.t, p: m.positions });
     snaps.sort((a, b) => a.t - b.t);
@@ -189,13 +190,20 @@ async function main() {
     lastRequested = -Infinity;
     requestAhead();
   }
-  document.querySelectorAll<HTMLButtonElement>("[data-speed]").forEach((b) => {
+  const speedButtons = document.querySelectorAll<HTMLButtonElement>("[data-speed]");
+  const markSpeed = (v: number) => speedButtons.forEach((x) => x.classList.toggle("on", Number(x.dataset.speed) === v));
+  speedButtons.forEach((b) => {
     b.onclick = () => {
-      document.querySelectorAll("[data-speed]").forEach((x) => x.classList.toggle("on", x === b));
+      markSpeed(Number(b.dataset.speed));
       resetTime(Number(b.dataset.speed));
     };
   });
-  $("now").onclick = () => resetTime(speed, true);
+  // 「今」：今の時刻の実時間に戻す
+  $("now").onclick = () => {
+    markSpeed(1);
+    resetTime(1, true);
+    renderClock();
+  };
 
   // 毎フレーム：前後の計算結果のあいだを補間して、点を動かす
   let frames = 0;
@@ -230,7 +238,8 @@ async function main() {
       cur.set(selPos, state.selected * 3);
     }
     cloud.update(cur, (i) => visible[i] === 1);
-    if (snaps.length && snaps[0].t < t - 4 * stepMs()) requestAhead();
+    // 先読みが切れないよう、毎フレーム足りない分を頼む（届いたときだけだと、使い切って止まる）
+    requestAhead();
   });
   viewer.scene.postRender.addEventListener(() => {
     frames++;
