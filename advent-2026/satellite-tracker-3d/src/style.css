@@ -265,3 +265,10 @@ button:disabled {
     overflow: visible;
   }
 }
+
+/* 言語の切り替え（見出しの行の右端） */
+.top .lang {
+  margin-left: auto;
+  font-size: 0.85rem;
+  align-self: center;
+}

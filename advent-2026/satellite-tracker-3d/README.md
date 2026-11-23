@@ -26,6 +26,7 @@
 4. 点をクリックするか、「衛星を探す」に名前（ISS、HIMAWARI、QZS など）を入れると、その衛星の国・打ち上げ日・軌道・目的（UCS に載っていれば）と、今の位置が出る。白い輪は今の軌道
 5. 「AI に解説してもらう」で、Claude が「どこの国の、何のための衛星か」を3段落で解説する。数字は自動で照合し、合わないものに ⚠ を付ける
 6. URL の最後に `#25544` のように NORAD 番号を付けると、その衛星を選んだ状態で開く
+7. 右上の「English」で英語の画面に切り替わる（AI の解説も英語、時刻は UTC）。`?lang=en` を付けたリンクでも英語で開く。ブラウザの言語が日本語以外なら、最初から英語で開く
 
 ### 使用例
 
@@ -133,6 +134,7 @@ ISSなど位置が公表されている衛星で、計算した位置のずれ�
 - 地図は Cesium ion を使わず、CesiumJS に同梱の Natural Earth II にする（キーも使用量の上限もいらない。画質はそこそこ）
 - UCS に載っていない衛星（全体の7割）も、CelesTrak のカタログと名前から解説する。画面に「UCS は2023年5月で更新停止」と出す
 - AI の解説は全体で1日10回（IP ごとに3回）。衛星ごとに30日保存し、2回目からは料金がかからない
+- 日本語と英語の表示を用意する（2026-11-24 追加）。切り替えはページを読み込み直す（選んだ衛星は `#` で引き継ぐ）。英語の解説は英語用の事実（[lib/facts.ts](lib/facts.ts) の `factsEn`。数字は日本語と同じ計算）と英語のプロンプトで作り、日本語とは別に保存する。1日の上限は両方の言語で共通。英語の文では「about 550」の 550 まで名前の番号として外さないよう、照合から外す名前の決まりを言語ごとに分けた
 
 ### できたもの
 
@@ -142,7 +144,7 @@ ISSなど位置が公表されている衛星で、計算した位置のずれ�
 | 地球儀（共通。Cesium ion なし） | [packages/globe/src/index.ts](../packages/globe/src/index.ts)、Vite のプラグイン [vite.ts](../packages/globe/src/vite.ts) |
 | 軌道要素の配信（2時間に1回だけ取得） | [lib/gp-source.ts](lib/gp-source.ts)、[api/gp.ts](api/gp.ts) |
 | 衛星カタログ（種類・国・UCS） | [scripts/build-catalog.ts](scripts/build-catalog.ts)、[lib/category.ts](lib/category.ts)、[lib/owners.ts](lib/owners.ts) |
-| 画面 | [src/main.ts](src/main.ts)、位置の計算 [src/worker.ts](src/worker.ts) |
+| 画面 | [src/main.ts](src/main.ts)、位置の計算 [src/worker.ts](src/worker.ts)、日本語・英語 [src/i18n.ts](src/i18n.ts) |
 | AI の解説 | [lib/facts.ts](lib/facts.ts)（事実）、[lib/explain.ts](lib/explain.ts)、[api/explain.ts](api/explain.ts) |
 | 評価 | [scripts/eval.ts](scripts/eval.ts) → [eval/RESULTS.md](eval/RESULTS.md) |
 
@@ -214,7 +216,7 @@ Qiita の記事を書くための材料。下書きは [ARTICLE.md](ARTICLE.md) 
 - みちびき2号機：こちらの分類が「静止軌道」だったのに対し、「分類上は静止軌道ですが、真上の赤道に止まり続ける衛星とは少し違います」と書いた。それで分類の間違いに気づき、「傾斜対地同期軌道」を足した
 - Kuiper（UCS に載っていない）：「名前から衛星インターネット用と推測するにとどまり、細かい用途は公開情報からはわかりません」と、推測と事実を分けた
 - 遥感30号（軍事）：UCS の「電子情報収集」までを書き、「これ以上の具体的な任務は、公開情報からはわかりません」とした。一方で、製造元の CAST（中国空間技術研究院）を「科学院系の組織」と書いた。数字の照合では見つからない種類の誤り
-- ISS：「ボーイング747ほどの大きさ」と、渡していない一般知識を足したことがある（数字ではないので照合に掛からない）
+- ISS：「完成時はボーイング747ほどの大きさ」と書いた。一見、渡していない一般知識に見えるが、UCS の備考（`Final size of a Boeing 747`）にある事実だった。747 は事実の中の数字なので照合でも ⚠ にならない
 
 ### ハマったところ
 

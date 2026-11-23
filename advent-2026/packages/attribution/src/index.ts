@@ -46,8 +46,21 @@ export function toMarkdown(sources: Source[]): string {
   return ["| データ | 提供元 | ライセンス | 取得日 | 備考 |", "| --- | --- | --- | --- | --- |", ...rows].join("\n");
 }
 
+const LABELS = {
+  ja: { title: "データの出典", retrieved: "取得日 ", nonCommercial: "非商用", open: "（", close: "）", sep: "・" },
+  en: { title: "Data sources", retrieved: "retrieved ", nonCommercial: "Non-commercial", open: " (", close: ")", sep: " · " },
+};
+
+export interface HtmlOptions {
+  title?: string;
+  /** 画面の言語（既定は日本語）。Source の中身は呼び出し側でその言語のものを渡す */
+  lang?: "ja" | "en";
+}
+
 /** 画面用の HTML（<footer> 1 つ）。スタイルは各アプリで .attribution に当てる */
-export function toHtml(sources: Source[], { title = "データの出典" } = {}): string {
+export function toHtml(sources: Source[], { title, lang = "ja" }: HtmlOptions = {}): string {
+  const L = LABELS[lang];
+  title ??= L.title;
   check(sources);
   const items = sources.map((s) => {
     const license = s.licenseUrl
@@ -55,13 +68,13 @@ export function toHtml(sources: Source[], { title = "データの出典" } = {})
       : escapeHtml(s.license);
     const extras = [
       s.credit ? escapeHtml(s.credit) : "",
-      s.nonCommercial ? "<strong>非商用</strong>" : "",
+      s.nonCommercial ? `<strong>${L.nonCommercial}</strong>` : "",
       s.note ? escapeHtml(s.note) : "",
     ].filter(Boolean);
     return (
       `<li><a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${escapeHtml(s.name)}</a>` +
-      `（${escapeHtml(s.provider)}）・${license}・取得日 ${escapeHtml(s.retrievedAt)}` +
-      (extras.length ? `・${extras.join("・")}` : "") +
+      `${L.open}${escapeHtml(s.provider)}${L.close}${L.sep}${license}${L.sep}${L.retrieved}${escapeHtml(s.retrievedAt)}` +
+      (extras.length ? `${L.sep}${extras.join(L.sep)}` : "") +
       `</li>`
     );
   });
@@ -69,6 +82,6 @@ export function toHtml(sources: Source[], { title = "データの出典" } = {})
 }
 
 /** ブラウザで要素の中に出典を描く */
-export function mountAttribution(el: Element, sources: Source[], opts?: { title?: string }): void {
+export function mountAttribution(el: Element, sources: Source[], opts?: HtmlOptions): void {
   el.innerHTML = toHtml(sources, opts);
 }

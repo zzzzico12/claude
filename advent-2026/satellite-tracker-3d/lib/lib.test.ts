@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { categoryFromName, categoryFromUcs } from "./category.js";
-import { factsOf, type Catalog } from "./facts.js";
+import { NAME_NUMBER } from "./explain.js";
+import { factsEn, factsOf, type Catalog } from "./facts.js";
 
 describe("種類", () => {
   it("名前から決める", () => {
@@ -31,5 +32,28 @@ describe("AI に渡す事実", () => {
     expect(f["軌道要素の古さ_日"]).toBe(1);
     expect(f.同じ種類の稼働中の衛星の数).toBe(1);
     expect(f.UCS).toContain("載っていない");
+  });
+  it("英語版も同じ数字で、言葉だけ英語", () => {
+    const now = new Date("2026-11-24T04:53:05Z");
+    const ja = factsOf(ISS, catalog, undefined, now);
+    const en = factsEn(ISS, catalog, undefined, now);
+    expect(en.category).toBe("Space stations & crewed");
+    expect(en.owner).toBe("International Space Station (ISS)");
+    expect(en.orbit.regime).toBe("Low Earth orbit (LEO)");
+    expect(en.orbit.periodMinutes).toBe(ja.軌道["1周の時間_分"]);
+    expect(en.orbit.perigeeAltitudeKm).toBe(ja.軌道.高さ_近地点_km);
+    expect(en.activeSatellitesInSameCategory).toBe(1);
+  });
+});
+
+describe("照合から外す、衛星の名前の中の番号", () => {
+  const strip = (lang: "ja" | "en", s: string) => s.replace(NAME_NUMBER[lang], "_");
+  it("英語では名前だけを外し、「about 550」などの数字は残す", () => {
+    expect(strip("en", "STARLINK-1008 orbits at about 550 km")).toBe("_ orbits at about 550 km");
+    expect(strip("en", "NOAA 20 and Yaogan-30 circle every 95.6 minutes")).toBe("_ and _ circle every 95.6 minutes");
+    expect(strip("en", "one of 11,199 satellites")).toBe("one of 11,199 satellites");
+  });
+  it("日本語では英字に続く番号を外す", () => {
+    expect(strip("ja", "STARLINK-1008 は高さ550km")).toBe("_ は高さ550km");
   });
 });

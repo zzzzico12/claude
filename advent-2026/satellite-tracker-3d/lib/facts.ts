@@ -1,5 +1,5 @@
 // 衛星の事実（コードが用意する数字と項目）。画面の表示と、AI に渡す事実の両方に使う
-import { ageDays, orbitSummary, type Gp } from "@advent/orbit";
+import { ageDays, orbitSummary, type Gp, type Regime } from "@advent/orbit";
 import { CATEGORIES } from "./category.js";
 import { OWNER_JA } from "./owners.js";
 
@@ -52,5 +52,57 @@ export function factsOf(gp: Gp, catalog: Catalog, ucs: UcsRecord | undefined, no
           備考: ucs.comments,
         }
       : `載っていない（UCS は ${catalog.ucsVersion} 版で更新が止まっている。それ以降の打ち上げや、載せていない衛星）`,
+  };
+}
+
+/** 軌道の区分の英語名 */
+export const REGIME_EN: Record<Regime, string> = {
+  低軌道: "Low Earth orbit (LEO)",
+  中軌道: "Medium Earth orbit (MEO)",
+  静止軌道: "Geostationary orbit (GEO)",
+  傾斜対地同期軌道: "Inclined geosynchronous orbit (IGSO)",
+  長楕円軌道: "Highly elliptical orbit (HEO)",
+  その他: "Other",
+};
+
+/** 英語版の事実（AI に英語で解説させるとき用）。数字は factsOf と同じ計算 */
+export function factsEn(gp: Gp, catalog: Catalog, ucs: UcsRecord | undefined, now = new Date()) {
+  const c = catalog.sats[String(gp.NORAD_CAT_ID)];
+  const o = orbitSummary(gp);
+  const owner = c?.[1] ?? "";
+  return {
+    name: gp.OBJECT_NAME,
+    noradId: gp.NORAD_CAT_ID,
+    internationalDesignator: gp.OBJECT_ID,
+    category: c ? CATEGORIES[c[0]]?.en : "(launched after the catalog was built)",
+    activeSatellitesInSameCategory: c ? Object.values(catalog.sats).filter((v) => v[0] === c[0]).length : "unknown",
+    activeSatellitesInCatalog: Object.keys(catalog.sats).length,
+    owner: owner ? `${catalog.owners[owner] ?? owner} (${owner})` : "unknown",
+    launchDate: c?.[2] || "unknown",
+    orbit: {
+      regime: REGIME_EN[o.regime],
+      perigeeAltitudeKm: round(o.perigeeKm),
+      apogeeAltitudeKm: round(o.apogeeKm),
+      periodMinutes: round(o.periodMin, 1),
+      inclinationDeg: round(o.inclinationDeg, 1),
+      revolutionsPerDay: round(1440 / o.periodMin, 1),
+    },
+    elementsEpoch: gp.EPOCH.slice(0, 16).replace("T", " ") + " UTC",
+    elementsAgeDays: round(ageDays(gp, now), 1),
+    ucs: ucs
+      ? {
+          version: `${catalog.ucsVersion} (later changes are not reflected)`,
+          operatorCountry: ucs.country,
+          operator: ucs.operator,
+          users: ucs.users,
+          purpose: ucs.purpose,
+          detailedPurpose: ucs.detailedPurpose,
+          launchMassKg: ucs.launchMassKg,
+          expectedLifetimeYears: ucs.expectedLifetimeYears,
+          contractor: ucs.contractor && `${ucs.contractor} (${ucs.contractorCountry})`,
+          launchVehicle: ucs.launchVehicle,
+          comments: ucs.comments,
+        }
+      : `not listed (the UCS database stopped updating with the ${catalog.ucsVersion} edition)`,
   };
 }

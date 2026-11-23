@@ -8,12 +8,13 @@
   </head>
   <body>
     <header class="top">
-      <h1>人工衛星は今どこ？</h1>
-      <p id="status" class="status">軌道のデータを読み込み中…</p>
+      <h1 data-i18n="title">人工衛星は今どこ？</h1>
+      <p id="status" class="status" data-i18n="loading">軌道のデータを読み込み中…</p>
+      <button id="lang" class="lang" data-i18n="switchTo">English</button>
     </header>
 
     <main class="layout">
-      <div id="globe" class="globe" aria-label="人工衛星の位置を示す3Dの地球儀"></div>
+      <div id="globe" class="globe" aria-label="人工衛星の位置を示す3Dの地球儀" data-i18n-aria="globeLabel"></div>
 
       <aside class="panel">
         <section class="block">
@@ -22,37 +23,37 @@
               <div id="sim-time" class="sim-time">—</div>
               <div id="perf" class="muted small">—</div>
             </div>
-            <div class="speed" role="group" aria-label="時間の進み方">
-              <button data-speed="1" class="on">実時間</button>
-              <button data-speed="60">60倍</button>
-              <button data-speed="600">600倍</button>
-              <button id="now" title="今の時刻・実時間に戻す">今</button>
+            <div class="speed" role="group" aria-label="時間の進み方" data-i18n-aria="speedLabel">
+              <button data-speed="1" class="on" data-i18n="realtime">実時間</button>
+              <button data-speed="60" data-i18n="x60">60倍</button>
+              <button data-speed="600" data-i18n="x600">600倍</button>
+              <button id="now" title="今の時刻・実時間に戻す" data-i18n="now" data-i18n-title="nowTitle">今</button>
             </div>
           </div>
         </section>
 
         <section class="block">
           <label class="search">
-            <span>衛星を探す</span>
-            <input id="search" list="names" placeholder="例：ISS、HIMAWARI、QZS" autocomplete="off" />
+            <span data-i18n="search">衛星を探す</span>
+            <input id="search" list="names" placeholder="例：ISS、HIMAWARI、QZS" data-i18n-placeholder="searchPlaceholder" autocomplete="off" />
             <datalist id="names"></datalist>
           </label>
         </section>
 
         <section class="block">
-          <h2>種類</h2>
+          <h2 data-i18n="categories">種類</h2>
           <ul id="categories" class="categories"></ul>
           <div class="row-buttons">
-            <button id="all-on">すべて表示</button>
-            <button id="starlink-off">Starlink 以外</button>
+            <button id="all-on" data-i18n="allOn">すべて表示</button>
+            <button id="starlink-off" data-i18n="starlinkOff">Starlink 以外</button>
           </div>
         </section>
 
         <section class="block">
-          <h2>軌道</h2>
+          <h2 data-i18n="orbit">軌道</h2>
           <div id="regimes" class="chips"></div>
           <label class="owner">
-            <span>国・組織</span>
+            <span data-i18n="owner">国・組織</span>
             <select id="owner"></select>
           </label>
         </section>
@@ -60,29 +61,29 @@
         <section id="selected" class="block selected" hidden>
           <h2 id="sel-name"></h2>
           <dl id="sel-facts" class="facts"></dl>
-          <button id="explain" class="primary">AI に「何の衛星か」を解説してもらう</button>
-          <p class="muted small">AI の解説は全体で1日10回まで（同じ衛星の2回目からは保存した解説を出します）。</p>
+          <button id="explain" class="primary" data-i18n="explainButton">AI に「何の衛星か」を解説してもらう</button>
+          <p class="muted small" data-i18n="explainLimit">AI の解説は全体で1日10回まで（同じ衛星の2回目からは保存した解説を出します）。</p>
           <div id="explanation" class="explanation" hidden></div>
         </section>
       </aside>
     </main>
 
     <section class="below">
-      <h2>種類ごとの数</h2>
+      <h2 data-i18n="countsTitle">種類ごとの数</h2>
       <table id="counts" class="counts">
         <thead>
-          <tr><th>種類</th><th>稼働中</th><th>表示中</th></tr>
+          <tr><th data-i18n="colCategory">種類</th><th data-i18n="colActive">稼働中</th><th data-i18n="colShown">表示中</th></tr>
         </thead>
         <tbody></tbody>
       </table>
 
-      <h2>しくみ</h2>
+      <h2 data-i18n="methodTitle">しくみ</h2>
       <ul class="method">
-        <li>衛星の軌道要素（GP データ）は CelesTrak から、サーバーで2時間に1回だけまとめて取得し、全員で使い回します（CelesTrak は頻繁な取得を控えるよう求めています）。</li>
-        <li>位置はブラウザの中（Web Worker）で、SGP4 という軌道の計算方法で 0.25 秒ごとに全機分を計算し、そのあいだは補間して動かしています。</li>
-        <li>種類は CelesTrak の分類・UCS Satellite Database の目的・衛星の名前の順に決めています。UCS は 2023年5月で更新が止まっていて、それ以降の衛星（Starlink の半分以上など）は載っていません。</li>
-        <li>AI の解説には、カタログの項目と、コードが軌道要素から計算した高さ・周期・傾きだけを渡しています。解説の中の数字は自動で照合し、合わないものには ⚠ を付けます。</li>
-        <li>位置の精度：ISS では、NASA の公式の軌道データと比べたずれが数 km でした（評価の詳細は GitHub の eval/RESULTS.md）。</li>
+        <li data-i18n="method1">衛星の軌道要素（GP データ）は CelesTrak から、サーバーで2時間に1回だけまとめて取得し、全員で使い回します（CelesTrak は頻繁な取得を控えるよう求めています）。</li>
+        <li data-i18n="method2">位置はブラウザの中（Web Worker）で、SGP4 という軌道の計算方法で 0.25 秒ごとに全機分を計算し、そのあいだは補間して動かしています。</li>
+        <li data-i18n="method3">種類は CelesTrak の分類・UCS Satellite Database の目的・衛星の名前の順に決めています。UCS は 2023年5月で更新が止まっていて、それ以降の衛星（Starlink の半分以上など）は載っていません。</li>
+        <li data-i18n="method4">AI の解説には、カタログの項目と、コードが軌道要素から計算した高さ・周期・傾きだけを渡しています。解説の中の数字は自動で照合し、合わないものには ⚠ を付けます。</li>
+        <li data-i18n="method5">位置の精度：ISS では、NASA の公式の軌道データと比べたずれが数 km でした（評価の詳細は GitHub の eval/RESULTS.md）。</li>
       </ul>
 
       <div id="attribution"></div>

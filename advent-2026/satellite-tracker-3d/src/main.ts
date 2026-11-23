@@ -7,13 +7,18 @@ import { mountAttribution } from "@advent/attribution";
 import { expandGp, geodetic, orbitRingEcf, orbitSummary, positionsEcf, toSatrec, type CompactGp, type Gp, type Regime } from "@advent/orbit";
 import { CATEGORIES } from "../lib/category.js";
 import { categoryFromName, CATEGORY_INDEX } from "../lib/category.js";
-import { factsOf, type Catalog, type UcsRecord } from "../lib/facts.js";
+import { factsOf, REGIME_EN, type Catalog, type UcsRecord } from "../lib/facts.js";
 import { OWNER_JA } from "../lib/owners.js";
-import { sources } from "../lib/sources.js";
+import { sources, sourcesEn } from "../lib/sources.js";
+import { applyStatic, lang, switchLang, t } from "./i18n.js";
 import type { WorkerIn, WorkerOut } from "./worker.js";
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
-const fmt = new Intl.NumberFormat("ja-JP");
+const fmt = new Intl.NumberFormat(t.numLocale);
+const en = lang === "en";
+/** 種類・軌道の区分の表示名 */
+const catLabel = (i: number) => (en ? CATEGORIES[i].en : CATEGORIES[i].label);
+const regimeLabel = (r: Regime) => (en ? REGIME_EN[r] : r);
 
 // 種類の色（地球儀は暗い背景なので、暗い背景向けに検証した色。順番は lib/category.ts と同じ）
 const COLORS = ["#3987e5", "#d95926", "#199e70", "#c98500", "#d55181", "#0ca30c", "#9085e9", "#9a9a92"];
@@ -22,7 +27,9 @@ const REGIMES: Regime[] = ["低軌道", "中軌道", "静止軌道", "傾斜対�
 const STEP_REAL_SEC = 0.25;
 
 async function main() {
-  mountAttribution($("attribution"), sources);
+  applyStatic();
+  $("lang").onclick = () => switchLang(en ? "ja" : "en");
+  mountAttribution($("attribution"), en ? sourcesEn : sources, { lang });
   const [gpRes, catalog] = await Promise.all([
     fetch("/api/gp").then(async (r) => {
       if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error ?? `HTTP ${r.status}`);
@@ -74,7 +81,7 @@ async function main() {
   const ul = $("categories");
   CATEGORIES.forEach((c, i) => {
     const li = document.createElement("li");
-    li.innerHTML = `<label><input type="checkbox" checked data-cat="${i}" /><span class="swatch" style="--c:${COLORS[i]}"></span><span class="name">${c.label}</span><span class="num" data-num="${i}"></span></label>`;
+    li.innerHTML = `<label><input type="checkbox" checked data-cat="${i}" /><span class="swatch" style="--c:${COLORS[i]}"></span><span class="name">${catLabel(i)}</span><span class="num" data-num="${i}"></span></label>`;
     ul.append(li);
   });
   ul.addEventListener("change", (e) => {
@@ -98,7 +105,7 @@ async function main() {
     if (!regimeCount.get(r)) continue;
     const b = document.createElement("button");
     b.className = "chip on";
-    b.textContent = `${r} ${fmt.format(regimeCount.get(r)!)}`;
+    b.textContent = `${regimeLabel(r)} ${fmt.format(regimeCount.get(r)!)}`;
     b.onclick = () => {
       if (state.regimes.has(r)) state.regimes.delete(r);
       else state.regimes.add(r);
@@ -110,12 +117,12 @@ async function main() {
 
   const ownerCount = new Map<string, number>();
   owner.forEach((o) => o && ownerCount.set(o, (ownerCount.get(o) ?? 0) + 1));
-  const ownerName = (o: string) => OWNER_JA[o] ?? catalog.owners[o] ?? o;
+  const ownerName = (o: string) => (en ? undefined : OWNER_JA[o]) ?? catalog.owners[o] ?? o;
   $<HTMLSelectElement>("owner").innerHTML =
-    `<option value="">すべて（${ownerCount.size}）</option>` +
+    `<option value="">${t.all(ownerCount.size)}</option>` +
     [...ownerCount.entries()]
       .sort((a, b) => b[1] - a[1])
-      .map(([o, c]) => `<option value="${o}">${ownerName(o)}（${fmt.format(c)}）</option>`)
+      .map(([o, c]) => `<option value="${o}">${escapeHtml(t.ownerOption(ownerName(o), fmt.format(c)))}</option>`)
       .join("");
   $<HTMLSelectElement>("owner").onchange = (e) => {
     state.owner = (e.target as HTMLSelectElement).value;
@@ -129,10 +136,10 @@ async function main() {
     });
     $("counts").querySelector("tbody")!.innerHTML =
       CATEGORIES.map(
-        (c, i) =>
-          `<tr><td><span class="swatch" style="--c:${COLORS[i]}"></span>${c.label}</td><td class="r">${fmt.format(total[i])}</td><td class="r">${fmt.format(shown[i])}</td></tr>`,
+        (_, i) =>
+          `<tr><td><span class="swatch" style="--c:${COLORS[i]}"></span>${catLabel(i)}</td><td class="r">${fmt.format(total[i])}</td><td class="r">${fmt.format(shown[i])}</td></tr>`,
       ).join("") +
-      `<tr class="sum"><td>合計</td><td class="r">${fmt.format(n)}</td><td class="r">${fmt.format(shown.reduce((a, b) => a + b, 0))}</td></tr>`;
+      `<tr class="sum"><td>${t.total}</td><td class="r">${fmt.format(n)}</td><td class="r">${fmt.format(shown.reduce((a, b) => a + b, 0))}</td></tr>`;
   }
   applyFilter();
 
@@ -251,21 +258,21 @@ async function main() {
       fpsLog.push(fps);
       if (fpsLog.length > 10) fpsLog.shift();
       const avg = fpsLog.reduce((a, b) => a + b, 0) / fpsLog.length;
-      $("perf").textContent = `描画 ${fps.toFixed(0)} コマ/秒（10秒平均 ${avg.toFixed(0)}）・位置の計算 ${computeMs.toFixed(0)} ms/回`;
+      $("perf").textContent = t.perf(fps.toFixed(0), avg.toFixed(0), computeMs.toFixed(0));
       (window as unknown as { __perf: unknown }).__perf = { fps, avg10: avg, computeMs, satellites: n };
       renderClock();
     }
   });
   viewer.scene.requestRenderMode = false;
 
-  const jst = new Intl.DateTimeFormat("ja-JP", { timeZone: "Asia/Tokyo", dateStyle: "medium", timeStyle: "medium" });
+  // 日本語は日本時間、英語は UTC で出す
+  const clockFmt = new Intl.DateTimeFormat(t.numLocale, { timeZone: en ? "UTC" : "Asia/Tokyo", dateStyle: "medium", timeStyle: "medium" });
   function renderClock() {
-    const t = new Date(simNow());
-    $("sim-time").textContent = `${jst.format(t)}（日本時間）${speed === 1 ? "" : ` ・ ${speed}倍速`}`;
+    $("sim-time").textContent = t.clock(clockFmt.format(new Date(simNow())), speed);
   }
 
   const fetched = new Date(gpRes.fetchedAt);
-  $("status").textContent = `稼働中の人工衛星 ${fmt.format(n)} 機 ・ 軌道要素の取得：${jst.format(fetched)}${gpRes.stale ? "（取得の待ち中のため、少し古いデータ）" : ""}`;
+  $("status").textContent = t.status(fmt.format(n), clockFmt.format(fetched), Boolean(gpRes.stale));
 
   // ---------- 選択 ----------
   let ucs: Record<string, UcsRecord> | null = null;
@@ -313,27 +320,31 @@ async function main() {
     $<HTMLButtonElement>("explain").disabled = false;
     ucs ??= await fetch("/data/ucs.json").then((r) => r.json());
     if (state.selected !== i) return;
+    // 数字は factsOf（AI に渡すのと同じ計算）から取り、言葉だけ言語に合わせる
     const f = factsOf(gp, catalog, ucs![String(gp.NORAD_CAT_ID)]);
+    const c = catalog.sats[String(gp.NORAD_CAT_ID)];
+    const ownerCode = c?.[1] ?? "";
+    const R = t.rows;
     const rows: [string, string][] = [
-      ["種類", String(f.種類)],
-      ["国・組織", f.所有者],
-      ["打ち上げ日", f.打ち上げ日],
-      ["軌道", `${f.軌道.区分}・高さ ${fmt.format(f.軌道.高さ_近地点_km)}〜${fmt.format(f.軌道.高さ_遠地点_km)} km`],
-      ["1周", `${f.軌道["1周の時間_分"]} 分（1日 ${f.軌道["1日の周回数"]} 周）`],
-      ["軌道の傾き", `${f.軌道.軌道傾斜角_度} 度`],
-      ["今の位置", ""],
-      ["軌道要素", `${f.軌道要素の日時}（${f.軌道要素の古さ_日} 日前）`],
-      ["NORAD 番号", String(f.NORAD番号)],
+      [R.category, c ? catLabel(c[0]) : t.afterCatalog],
+      [R.owner, ownerCode ? `${ownerName(ownerCode)}${en ? ` (${ownerCode})` : `（${ownerCode}）`}` : t.unknown],
+      [R.launch, c?.[2] || t.unknown],
+      [R.orbit, t.orbitValue(regimeLabel(regime[i]), fmt.format(f.軌道.高さ_近地点_km), fmt.format(f.軌道.高さ_遠地点_km))],
+      [R.period, t.periodValue(f.軌道["1周の時間_分"], f.軌道["1日の周回数"])],
+      [R.inclination, t.degrees(f.軌道.軌道傾斜角_度)],
+      [R.position, ""],
+      [R.elements, t.elementsValue(f.軌道要素の日時, f.軌道要素の古さ_日)],
+      [R.norad, String(f.NORAD番号)],
     ];
     if (typeof f.UCS === "object") {
-      rows.push(["目的（UCS）", [f.UCS.目的, f.UCS.詳しい目的].filter(Boolean).join("・")]);
-      rows.push(["運用者（UCS）", `${f.UCS.運用者}（${f.UCS.運用者の国}）`]);
-      rows.push(["利用者（UCS）", f.UCS.利用者]);
+      rows.push([R.ucsPurpose, [f.UCS.目的, f.UCS.詳しい目的].filter(Boolean).join(en ? ", " : "・")]);
+      rows.push([R.ucsOperator, t.operatorValue(f.UCS.運用者, f.UCS.運用者の国)]);
+      rows.push([R.ucsUsers, f.UCS.利用者]);
     } else {
-      rows.push(["UCS", "載っていない（2023年5月で更新停止）"]);
+      rows.push([R.ucs, t.notInUcs]);
     }
     const dl = $("sel-facts");
-    dl.innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd${k === "今の位置" ? ' id="sel-pos"' : ""}>${escapeHtml(v)}</dd>`).join("");
+    dl.innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd${k === R.position ? ' id="sel-pos"' : ""}>${escapeHtml(v)}</dd>`).join("");
     renderPosition();
   }
 
@@ -342,12 +353,10 @@ async function main() {
     if (!el || !selSatrec) return;
     const g = geodetic(selSatrec, new Date(simNow()));
     if (!g) {
-      el.textContent = "計算できません（軌道要素が古いか、落下した可能性）";
+      el.textContent = t.positionFailed;
       return;
     }
-    const ns = g.lat >= 0 ? "北緯" : "南緯";
-    const ew = g.lon >= 0 ? "東経" : "西経";
-    el.textContent = `${ns} ${Math.abs(g.lat).toFixed(1)}°・${ew} ${Math.abs(g.lon).toFixed(1)}°・高さ ${fmt.format(Math.round(g.altKm))} km`;
+    el.textContent = t.position(g.lat, g.lon, fmt.format(Math.round(g.altKm)));
   }
   setInterval(renderPosition, 500);
 
@@ -384,23 +393,23 @@ async function main() {
     const box = $("explanation");
     btn.disabled = true;
     box.hidden = false;
-    box.textContent = "解説を作成中…（10秒ほどかかります）";
+    box.textContent = t.explaining;
     try {
       const r = await fetch("/api/explain", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ norad: gps[i].NORAD_CAT_ID }),
+        body: JSON.stringify({ norad: gps[i].NORAD_CAT_ID, lang }),
       });
       const j = await r.json();
       if (state.selected !== i) return;
-      if (!r.ok) throw new Error(j.error ?? `HTTP ${r.status}`);
+      if (!r.ok) throw new Error(t.apiError(r.status, j.error));
       const warn = j.unmatchedNumbers?.length
-        ? `<p class="warn">⚠ 事実と照合できなかった数字：${j.unmatchedNumbers.map(escapeHtml).join("、")}</p>`
-        : `<p class="ok">✓ 解説の中の数字は、すべてカタログか軌道の計算と一致しました</p>`;
+        ? `<p class="warn">${escapeHtml(t.unmatched(j.unmatchedNumbers.join(t.listSep)))}</p>`
+        : `<p class="ok">${t.allMatched}</p>`;
       box.innerHTML = `${j.text
         .split(/\n+/)
         .map((p: string) => `<p>${escapeHtml(p)}</p>`)
-        .join("")}${warn}<p class="muted small">Claude による解説${j.cached ? "（保存した解説）" : ""}。根拠はカタログと軌道の数字だけで、誤りを含むことがあります。</p>`;
+        .join("")}${warn}<p class="muted small">${t.aiNote(Boolean(j.cached))}</p>`;
     } catch (err) {
       box.textContent = (err as Error).message;
       btn.disabled = false;
@@ -421,7 +430,7 @@ function escapeHtml(s: string) {
 
 main().catch((err) => {
   console.error(err);
-  document.getElementById("status")!.textContent = `読み込みに失敗しました：${(err as Error).message}`;
+  document.getElementById("status")!.textContent = t.loadFailed((err as Error).message);
 });
 
 export type { Gp };

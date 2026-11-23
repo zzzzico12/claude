@@ -38,6 +38,42 @@ export const sources: Source[] = [
   },
 ];
 
+/** 英語の画面用（中身は sources と同じ） */
+export const sourcesEn: Source[] = [
+  {
+    name: "GP data (orbital elements of active satellites, GROUP=active)",
+    provider: "CelesTrak (original data: US Space Force 18th/19th SDS)",
+    url: "https://celestrak.org/NORAD/elements/",
+    license: "Free to use, with request-rate limits (usage policy)",
+    licenseUrl: "https://celestrak.org/usage-policy.php",
+    retrievedAt: "every 2 hours (fetch time shown at the top)",
+  },
+  {
+    name: "SATCAT (satellite catalog: owner, launch date) and GROUP lists",
+    provider: "CelesTrak",
+    url: "https://celestrak.org/satcat/",
+    license: "Free to use (usage policy)",
+    licenseUrl: "https://celestrak.org/usage-policy.php",
+    retrievedAt: CATALOG_BUILT_AT,
+  },
+  {
+    name: "UCS Satellite Database (purpose, users, operator; 1 May 2023 edition)",
+    provider: "Union of Concerned Scientists",
+    url: "https://www.ucs.org/resources/satellite-database",
+    license: "No explicit license (published for research; some fields used with attribution)",
+    retrievedAt: CATALOG_BUILT_AT,
+    note: "Updates stopped in May 2023, so later satellites are not listed",
+  },
+  {
+    name: "Natural Earth II (globe imagery bundled with CesiumJS)",
+    provider: "Natural Earth",
+    url: "https://www.naturalearthdata.com/",
+    license: "Public domain",
+    licenseUrl: "https://www.naturalearthdata.com/about/terms-of-use/",
+    retrievedAt: "version bundled with CesiumJS 1.147",
+  },
+];
+
 /** 評価だけに使うデータ（画面では使わない） */
 export const evalSources: Source[] = [
   {

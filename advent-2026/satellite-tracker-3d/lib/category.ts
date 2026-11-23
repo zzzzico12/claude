@@ -6,14 +6,14 @@
 // カタログを作ったあとに打ち上げられた衛星は、画面で 3 だけを使って決める
 
 export const CATEGORIES = [
-  { id: "starlink", label: "Starlink" },
-  { id: "constellation", label: "他の通信衛星群（OneWeb・Kuiper・千帆など）" },
-  { id: "comms", label: "通信・放送（その他）" },
-  { id: "navigation", label: "測位（GPS・みちびきなど）" },
-  { id: "weather", label: "気象" },
-  { id: "earth", label: "地球観測" },
-  { id: "station", label: "宇宙ステーション・有人" },
-  { id: "other", label: "科学・技術試験・その他" },
+  { id: "starlink", label: "Starlink", en: "Starlink" },
+  { id: "constellation", label: "他の通信衛星群（OneWeb・Kuiper・千帆など）", en: "Other constellations (OneWeb, Kuiper, Qianfan…)" },
+  { id: "comms", label: "通信・放送（その他）", en: "Communications & broadcasting (other)" },
+  { id: "navigation", label: "測位（GPS・みちびきなど）", en: "Navigation (GPS, QZSS…)" },
+  { id: "weather", label: "気象", en: "Weather" },
+  { id: "earth", label: "地球観測", en: "Earth observation" },
+  { id: "station", label: "宇宙ステーション・有人", en: "Space stations & crewed" },
+  { id: "other", label: "科学・技術試験・その他", en: "Science, technology demo & other" },
 ] as const;
 
 export type CategoryId = (typeof CATEGORIES)[number]["id"];

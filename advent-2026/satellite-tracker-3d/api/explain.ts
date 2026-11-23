@@ -1,10 +1,10 @@
-// POST /api/explain  { norad: 25544 }
+// POST /api/explain  { norad: 25544, lang?: "ja" | "en" }
 // 衛星の素性と軌道の数字はサーバーで用意し（画面から送られた数字は使わない）、AI の解説だけを返す
 import { expandGp } from "@advent/orbit";
 import { dailyLimit, getStore } from "@advent/store";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { explain, type Catalog, type UcsRecord } from "../lib/explain.js";
+import { explain, type Catalog, type Lang, type UcsRecord } from "../lib/explain.js";
 import { getGp } from "../lib/gp-source.js";
 
 const DAILY_LIMIT = 10; // 全体で1日10回
@@ -26,15 +26,19 @@ function load() {
 
 export async function POST(request: Request): Promise<Response> {
   let norad: number;
+  let lang: Lang = "ja";
   try {
-    norad = Number((await request.json()).norad);
+    const body = await request.json();
+    norad = Number(body.norad);
+    if (body.lang === "en") lang = "en";
   } catch {
     return json(400, { error: "JSON で送ってください" });
   }
   if (!Number.isInteger(norad) || norad <= 0 || norad > 999_999) return json(400, { error: "NORAD 番号が正しくありません" });
 
   const store = getStore();
-  const key = `satellite-tracker-3d:explain:${norad}`;
+  // 日本語は前からのキーのまま。英語は別に保存する（1日の上限は共通）
+  const key = `satellite-tracker-3d:explain:${lang === "en" ? "en:" : ""}${norad}`;
   const cached = await store.get(key);
   if (cached) return json(200, { ...JSON.parse(cached), cached: true });
 
@@ -44,11 +48,11 @@ export async function POST(request: Request): Promise<Response> {
 
   const ip = (request.headers.get("x-forwarded-for") ?? "local").split(",")[0].trim();
   const limited = await dailyLimit(store, { app: "satellite-tracker-3d", ip, total: DAILY_LIMIT, perIp: PER_IP_LIMIT });
-  if (limited) return json(429, { error: limited });
+  if (limited) return json(429, { error: limited, code: "limit" });
 
   try {
     const { catalog, ucs } = load();
-    const result = await explain(gp, catalog, ucs[String(norad)]);
+    const result = await explain(gp, catalog, ucs[String(norad)], lang);
     const out = { text: result.text, unmatchedNumbers: result.unmatchedNumbers, createdAt: new Date().toISOString() };
     await store.set(key, JSON.stringify(out), CACHE_TTL);
     return json(200, out);
