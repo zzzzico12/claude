@@ -2,18 +2,23 @@
 import L from "leaflet";
 import { decodeTile, FIRST_YEAR, LAST_YEAR, tileUrl } from "../lib/gfw.js";
 
-interface TileState {
-  canvas: HTMLCanvasElement;
-  src: Uint8ClampedArray;
-}
+/**
+ * 描いているタイルの元の画素。キーはタイルの canvas そのもの。
+ * 座標（z/x/y）をキーにすると、地図が横に繰り返して表示されたとき（アメリカ大陸が左右に2つ見えるなど）、
+ * 同じ座標の2枚が上書きし合い、片方が塗り直されずに最初の年の色のまま残った（試してもらって分かった）
+ */
+type States = Map<HTMLCanvasElement, Uint8ClampedArray>;
+type LossGridLayer = L.GridLayer & { _states: States };
 
 /** GFW のタイルを読み込み、年に合わせて塗り直すレイヤー */
 const LossLayer = L.GridLayer.extend({
-  initialize(this: L.GridLayer & { _states: Map<string, TileState> }, options: L.GridLayerOptions) {
+  initialize(this: LossGridLayer, options: L.GridLayerOptions) {
     L.setOptions(this, options);
     this._states = new Map();
+    // 画面から外れて捨てられたタイルは、覚えておく必要がない
+    this.on("tileunload", (e: L.TileEvent) => this._states.delete(e.tile as unknown as HTMLCanvasElement)); // GridLayer のタイルは createTile が返した canvas
   },
-  createTile(this: L.GridLayer & { _states: Map<string, TileState> }, coords: L.Coords, done: L.DoneCallback) {
+  createTile(this: LossGridLayer, coords: L.Coords, done: L.DoneCallback) {
     // Leaflet の 512px の格子では、表示の縮尺 Z のタイルの範囲が、256px のタイルの Z−1 の範囲と同じ。
     // GFW のタイルは「256px のタイルと同じ範囲を 512px で」描いたものなので、Z−1 を取る
     // （TileLayer の zoomOffset に当たる処理。GridLayer では zoomOffset が効かないので自分でずらす。最初はこれを忘れて位置がずれた）
@@ -26,8 +31,7 @@ const LossLayer = L.GridLayer.extend({
       const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
       ctx.drawImage(img, 0, 0);
       const data = ctx.getImageData(0, 0, 512, 512);
-      const key = `${z}/${coords.x}/${coords.y}`;
-      this._states.set(key, { canvas, src: new Uint8ClampedArray(data.data) });
+      this._states.set(canvas, new Uint8ClampedArray(data.data));
       paint(canvas, data.data);
       done(undefined, canvas);
     };
@@ -56,7 +60,7 @@ export function mountGlobalMap(opts: { focus: { west: number; south: number; eas
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   }).addTo(map);
   // GFW のタイルは 512px。取得する縮尺は createTile の中で1つ下げる
-  const loss = new (LossLayer as unknown as new (o: L.GridLayerOptions) => L.GridLayer & { _states: Map<string, TileState> })({
+  const loss = new (LossLayer as unknown as new (o: L.GridLayerOptions) => LossGridLayer)({
     tileSize: 512,
     minZoom: 2,
     maxNativeZoom: 12,
@@ -65,7 +69,7 @@ export function mountGlobalMap(opts: { focus: { west: number; south: number; eas
   } as L.GridLayerOptions).addTo(map);
 
   const redrawAll = () => {
-    for (const s of loss._states.values()) if (s.canvas.isConnected) paint(s.canvas, s.src);
+    for (const [canvas, src] of loss._states) paint(canvas, src);
     yearLabel.textContent = onlyThisYear ? `${currentYear}年に減った森` : `2001〜${currentYear}年に減った森`;
     slider.value = String(currentYear);
   };
