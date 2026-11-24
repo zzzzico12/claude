@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { apply, compactGp, expandGp, geodetic, j2000ToTeme, orbitSummary, positionsEcf, regimeOf, toSatrec, type Gp } from "./index.js";
+import { apply, compactGp, direction16, expandGp, findVisiblePasses, geodetic, isSunlit, j2000ToTeme, orbitSummary, positionsEcf, regimeOf, sunElevation, sunEci, toSatrec, type Gp } from "./index.js";
 
 const ISS = {"OBJECT_NAME": "ISS (ZARYA)", "OBJECT_ID": "1998-067A", "EPOCH": "2026-11-23T04:53:05.579520", "MEAN_MOTION": 15.49560282, "ECCENTRICITY": 0.00074255, "INCLINATION": 51.632, "RA_OF_ASC_NODE": 233.1644, "ARG_OF_PERICENTER": 56.0849, "MEAN_ANOMALY": 304.0845, "EPHEMERIS_TYPE": 0, "CLASSIFICATION_TYPE": "U", "NORAD_CAT_ID": 25544, "ELEMENT_SET_NO": 999, "REV_AT_EPOCH": 59640, "BSTAR": 0.00013417746, "MEAN_MOTION_DOT": 7.096e-05, "MEAN_MOTION_DDOT": 0};
 const HIMAWARI9 = {"OBJECT_NAME": "HIMAWARI-9", "OBJECT_ID": "2016-064A", "EPOCH": "2026-11-23T07:10:31.045152", "MEAN_MOTION": 1.00270437, "ECCENTRICITY": 0.00015441, "INCLINATION": 0.0265, "RA_OF_ASC_NODE": 14.2845, "ARG_OF_PERICENTER": 233.4298, "MEAN_ANOMALY": 62.9788, "EPHEMERIS_TYPE": 0, "CLASSIFICATION_TYPE": "U", "NORAD_CAT_ID": 41836, "ELEMENT_SET_NO": 999, "REV_AT_EPOCH": 3680, "BSTAR": 0, "MEAN_MOTION_DOT": -2.52e-06, "MEAN_MOTION_DDOT": 0};
@@ -72,5 +72,38 @@ describe("J2000 → TEME", () => {
     const deg = (Math.acos(v.z / 7000) * 180) / Math.PI;
     expect(deg).toBeGreaterThan(0.13);
     expect(deg).toBeLessThan(0.17);
+  });
+});
+
+describe("通過の予測", () => {
+  it("16方位", () => {
+    expect(direction16(0)).toBe("N");
+    expect(direction16(349)).toBe("N");
+    expect(direction16(348)).toBe("NNW");
+    expect(direction16(90)).toBe("E");
+    expect(direction16(-90)).toBe("W");
+  });
+  it("太陽の高さ：東京の正午ごろは高く、真夜中は低い", () => {
+    const tokyo = { lat: 35.68, lon: 139.69 };
+    expect(sunElevation(tokyo, new Date("2026-12-01T02:40:00Z"))).toBeGreaterThan(25); // 11:40 JST
+    expect(sunElevation(tokyo, new Date("2026-12-01T15:00:00Z"))).toBeLessThan(-60); // 0:00 JST
+  });
+  it("地球の影：太陽の反対側で地球のすぐ後ろは影、横にずれれば日なた", () => {
+    const d = new Date("2026-12-01T00:00:00Z");
+    const s = sunEci(d);
+    const n = Math.hypot(s.x, s.y, s.z);
+    const back = { x: (-s.x / n) * 6800, y: (-s.y / n) * 6800, z: (-s.z / n) * 6800 };
+    expect(isSunlit(back, d)).toBe(false);
+    expect(isSunlit({ x: (s.x / n) * 6800, y: (s.y / n) * 6800, z: (s.z / n) * 6800 }, d)).toBe(true);
+  });
+  it("ISS の見える通過は、見え始め ≤ いちばん高いとき ≤ 見え終わりで、高さ10度以上", () => {
+    const passes = findVisiblePasses(toSatrec(ISS)!, { lat: 35.68, lon: 139.69 }, new Date("2026-11-24T00:00Z"), new Date("2026-12-01T00:00Z"));
+    expect(passes.length).toBeGreaterThan(0);
+    for (const p of passes) {
+      expect(p.start.time.getTime()).toBeLessThanOrEqual(p.max.time.getTime());
+      expect(p.max.time.getTime()).toBeLessThanOrEqual(p.end.time.getTime());
+      expect(p.max.elevation).toBeGreaterThanOrEqual(9.9);
+      expect(p.durationSec).toBeGreaterThan(0);
+    }
   });
 });

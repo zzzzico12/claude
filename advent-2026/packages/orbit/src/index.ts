@@ -2,9 +2,11 @@
 // - CelesTrak の GP データ（OMM 形式の JSON）を、送る量を減らした形にしたり戻したりする
 // - satellite.js の SGP4 で、ある時刻の位置（地球に固定した座標・緯度経度高度）を計算する
 // - 軌道の形（高さ・周期・傾き）と、低軌道・中軌道・静止軌道などの区分をコードで出す
+// - 観測地から見える通過（見え始め・いちばん高いとき・見え終わり）を探す（passes.ts）
 import { degreesLat, degreesLong, eciToEcf, eciToGeodetic, gstime, json2satrec, propagate, type OMMJsonObject, type SatRec } from "satellite.js";
 
 export type { SatRec } from "satellite.js";
+export * from "./passes.js";
 
 /** 地球の赤道半径（km、WGS72。SGP4 と同じ値） */
 export const EARTH_RADIUS_KM = 6378.135;

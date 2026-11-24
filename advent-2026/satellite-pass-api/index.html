@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>衛星の通過予測API</title>
+    <meta name="description" content="場所を入れると、ISS などの人工衛星が見える時刻・方角・高さと、その時間の雲の予報を返す API です。" />
+  </head>
+  <body>
+    <header class="top">
+      <h1 data-i18n="title">衛星の通過予測API</h1>
+      <button id="lang" class="lang" data-i18n="switchTo">English</button>
+    </header>
+
+    <main class="page">
+      <p class="lead" data-i18n="lead">場所を入れると、ISS などが見える時刻・方角・高さと、その時間の雲の予報を返します。計算はすべてコードで行い、AI は質問の読み取りと答えの文章だけを担当します。</p>
+
+      <section class="card">
+        <h2 data-i18n="tryTitle">試してみる</h2>
+        <form id="form" class="form">
+          <label class="field grow">
+            <span data-i18n="place">場所</span>
+            <span class="row">
+              <input id="place" value="東京都" placeholder="例：札幌市、東京都、Tokyo" data-i18n-placeholder="placePlaceholder" autocomplete="off" />
+              <button type="button" id="here" data-i18n="here">現在地</button>
+            </span>
+          </label>
+          <label class="field">
+            <span data-i18n="satellite">衛星</span>
+            <select id="sat"></select>
+          </label>
+          <label class="field">
+            <span data-i18n="days">日数</span>
+            <select id="days">
+              <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option selected>7</option>
+            </select>
+          </label>
+          <button id="search" class="primary" data-i18n="search">調べる</button>
+        </form>
+
+        <div id="result" class="result" hidden>
+          <h3 id="result-title"></h3>
+          <p id="result-note" class="muted small"></p>
+          <div class="table-wrap">
+            <table id="passes" class="passes">
+              <thead>
+                <tr>
+                  <th data-i18n="colRank">見やすさ</th>
+                  <th data-i18n="colStart">見え始め</th>
+                  <th data-i18n="colMax">いちばん高いとき</th>
+                  <th data-i18n="colEnd">見え終わり</th>
+                  <th data-i18n="colDuration">見える時間</th>
+                  <th data-i18n="colCloud">雲量</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <p class="small"><a id="json-link" target="_blank" rel="noopener" data-i18n="jsonLink">この結果の JSON</a></p>
+          <figure id="sky" class="sky" hidden>
+            <figcaption id="sky-title"></figcaption>
+            <svg id="sky-svg" viewBox="-130 -130 260 260" role="img"></svg>
+            <p class="muted small" data-i18n="skyNote">円の外側が地平線、中心が真上。上が北。● が見え始め、◆ がいちばん高いとき、■ が見え終わり。</p>
+          </figure>
+        </div>
+        <p id="error" class="warn" hidden></p>
+      </section>
+
+      <section class="card">
+        <h2 data-i18n="askTitle">質問する（AI）</h2>
+        <div class="ask">
+          <textarea id="question" rows="2" maxlength="300" placeholder="例：札幌で今週いちばん見やすいのは？" data-i18n-placeholder="askPlaceholder"></textarea>
+          <button id="ask" class="primary" data-i18n="askButton">聞く</button>
+        </div>
+        <p class="muted small" data-i18n="askLimit">AI への質問は全体で1日10回まで。地名がない質問は、上で選んだ場所について答えます。</p>
+        <div id="answer" class="answer" hidden></div>
+      </section>
+
+      <section class="card docs">
+        <h2 data-i18n="docsTitle">API の使い方</h2>
+        <div id="docs"></div>
+        <h3 data-i18n="conditionsTitle">「見える」の条件</h3>
+        <p data-i18n="conditions"></p>
+        <h3 data-i18n="scoreTitle">見やすさの点数（100点満点）</h3>
+        <p data-i18n="score"></p>
+        <h3 data-i18n="accuracyTitle">精度</h3>
+        <p data-i18n="accuracy"></p>
+      </section>
+
+      <div id="attribution"></div>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
