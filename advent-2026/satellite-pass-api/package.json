@@ -15,9 +15,11 @@
     "@advent/attribution": "workspace:^",
     "@advent/orbit": "workspace:^",
     "@advent/store": "workspace:^",
+    "three": "^0.180",
     "zod": "^4"
   },
   "devDependencies": {
+    "@types/three": "^0.180",
     "tsx": "^4",
     "vite": "^7"
   }

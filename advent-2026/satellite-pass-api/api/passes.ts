@@ -1,4 +1,4 @@
-// GET /api/passes?lat=35.68&lon=139.69（または place=札幌市）&sat=25544&days=7&lang=ja
+// GET /api/passes?lat=35.68&lon=139.69（または place=札幌市）&sat=25544&days=7&lang=ja&path=1
 // 見える通過（見え始め・いちばん高いとき・見え終わりの時刻・方角・高さ）と、その時刻の雲量を返す
 import { errorResponse, json, loadSatellite, parseDays, resolveLocation } from "../lib/http.js";
 import { predict } from "../lib/predict.js";
@@ -13,7 +13,7 @@ export async function GET(request: Request): Promise<Response> {
     const loc = await resolveLocation(q, lang);
     const { gp, stale } = await loadSatellite(q.sat);
     const c = await clouds(loc.lat, loc.lon);
-    const p = predict(gp, loc.lat, loc.lon, days, c);
+    const p = predict(gp, loc.lat, loc.lon, days, c, new Date(), { path: q.path === "1" });
     return json(
       200,
       {

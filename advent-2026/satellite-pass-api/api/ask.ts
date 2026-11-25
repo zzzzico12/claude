@@ -41,7 +41,8 @@ export async function POST(request: Request): Promise<Response> {
     const days = Math.min(q.days ?? MAX_DAYS, MAX_DAYS);
 
     // 2. コードが通過を計算して順位を付ける
-    const p = predict(gp, loc.lat, loc.lon, days, await clouds(loc.lat, loc.lon));
+    // 画面のドームに描くので、通り道も付ける（AI には渡さない）
+    const p = predict(gp, loc.lat, loc.lon, days, await clouds(loc.lat, loc.lon), new Date(), { path: true });
     const placeName = loc.place ? [loc.place.name, loc.place.admin1, loc.place.country].filter(Boolean).join(", ") : null;
     const facts = factsFor(p, placeName, lang);
 

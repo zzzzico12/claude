@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { apply, compactGp, direction16, expandGp, findVisiblePasses, geodetic, isSunlit, j2000ToTeme, orbitSummary, positionsEcf, regimeOf, sunElevation, sunEci, toSatrec, type Gp } from "./index.js";
+import { apply, compactGp, direction16, expandGp, findVisiblePasses, geodetic, isSunlit, j2000ToTeme, passTrack, orbitSummary, positionsEcf, regimeOf, sunElevation, sunEci, toSatrec, type Gp } from "./index.js";
 
 const ISS = {"OBJECT_NAME": "ISS (ZARYA)", "OBJECT_ID": "1998-067A", "EPOCH": "2026-11-23T04:53:05.579520", "MEAN_MOTION": 15.49560282, "ECCENTRICITY": 0.00074255, "INCLINATION": 51.632, "RA_OF_ASC_NODE": 233.1644, "ARG_OF_PERICENTER": 56.0849, "MEAN_ANOMALY": 304.0845, "EPHEMERIS_TYPE": 0, "CLASSIFICATION_TYPE": "U", "NORAD_CAT_ID": 25544, "ELEMENT_SET_NO": 999, "REV_AT_EPOCH": 59640, "BSTAR": 0.00013417746, "MEAN_MOTION_DOT": 7.096e-05, "MEAN_MOTION_DDOT": 0};
 const HIMAWARI9 = {"OBJECT_NAME": "HIMAWARI-9", "OBJECT_ID": "2016-064A", "EPOCH": "2026-11-23T07:10:31.045152", "MEAN_MOTION": 1.00270437, "ECCENTRICITY": 0.00015441, "INCLINATION": 0.0265, "RA_OF_ASC_NODE": 14.2845, "ARG_OF_PERICENTER": 233.4298, "MEAN_ANOMALY": 62.9788, "EPHEMERIS_TYPE": 0, "CLASSIFICATION_TYPE": "U", "NORAD_CAT_ID": 41836, "ELEMENT_SET_NO": 999, "REV_AT_EPOCH": 3680, "BSTAR": 0, "MEAN_MOTION_DOT": -2.52e-06, "MEAN_MOTION_DDOT": 0};
@@ -105,5 +105,16 @@ describe("通過の予測", () => {
       expect(p.max.elevation).toBeGreaterThanOrEqual(9.9);
       expect(p.durationSec).toBeGreaterThan(0);
     }
+  });
+  it("通り道は、見え始めから見え終わりのあいだは見える（visible）で、前後は見えない", () => {
+    const sat = toSatrec(ISS)!;
+    const obs = { lat: 35.68, lon: 139.69 };
+    const p = findVisiblePasses(sat, obs, new Date("2026-11-24T00:00Z"), new Date("2026-12-01T00:00Z"))[0];
+    const track = passTrack(sat, obs, new Date(p.start.time.getTime() - 120_000), new Date(p.end.time.getTime() + 120_000), 5);
+    const inside = track.filter((x) => x.time > p.start.time && x.time < p.end.time);
+    expect(inside.length).toBeGreaterThan(0);
+    expect(inside.every((x) => x.visible)).toBe(true);
+    expect(track.filter((x) => x.time.getTime() < p.start.time.getTime() - 2000).every((x) => !x.visible)).toBe(true);
+    expect(track.every((x) => x.elevation >= 0)).toBe(true);
   });
 });

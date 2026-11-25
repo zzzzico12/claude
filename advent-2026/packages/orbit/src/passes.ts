@@ -190,3 +190,29 @@ function visiblePart(satrec: SatRec, observer: Observer, riseAt: number, setAt: 
     endsBy: best.endsBy,
   };
 }
+
+export interface TrackPoint {
+  time: Date;
+  azimuth: number;
+  elevation: number;
+  /** 見える条件（高さ・空の暗さ・日が当たっている）をすべて満たすか */
+  visible: boolean;
+}
+
+/**
+ * from から to までの空の通り道（stepSec 秒ごと）。地平線の下の点は除く。
+ * 図に描くためのもの。見えない部分（地球の影の中・低すぎる・空が明るい）も visible=false で返す
+ */
+export function passTrack(satrec: SatRec, observer: Observer, from: Date, to: Date, stepSec = 5, opts: PassOptions = {}): TrackPoint[] {
+  const minEl = opts.minElevationDeg ?? 10;
+  const maxSun = opts.maxSunElevationDeg ?? -6;
+  const out: TrackPoint[] = [];
+  for (let t = from.getTime(); t <= to.getTime(); t += stepSec * 1000) {
+    const d = new Date(t);
+    const s = sample(satrec, observer, d);
+    if (!s || s.elevation < 0) continue;
+    const visible = s.elevation >= minEl && isSunlit(s.eci, d) && sunElevation(observer, d) <= maxSun;
+    out.push({ time: d, azimuth: s.azimuth, elevation: s.elevation, visible });
+  }
+  return out;
+}

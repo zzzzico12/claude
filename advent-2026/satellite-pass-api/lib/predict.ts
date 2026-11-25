@@ -1,5 +1,5 @@
 // 通過の予測と順位付け（数字はすべてコードで出す。AI には計算させない）
-import { findVisiblePasses, toSatrec, type Gp, type LookPoint, type Pass } from "@advent/orbit";
+import { findVisiblePasses, passTrack, toSatrec, type Gp, type LookPoint, type Pass } from "@advent/orbit";
 import { cloudAt, type Clouds } from "./weather.js";
 
 export const MAX_DAYS = 7;
@@ -24,6 +24,11 @@ export interface PassOut {
   endsBy: Pass["endsBy"];
   /** いちばん高いときの雲量（%。予報の範囲外なら null） */
   cloudCover: number | null;
+  /**
+   * 空の通り道（path=1 のときだけ）。見え始めの2分前から見え終わりの2分後まで5秒ごと、地平線より上の点だけ。
+   * [見え始めからの秒, 方位角, 高さ, 見えるなら1]
+   */
+  path?: [number, number, number, 0 | 1][];
 }
 
 /**
@@ -65,12 +70,20 @@ export interface Prediction {
 }
 
 /** 見える通過を探し、雲量を付けて、点数の高い順に順位を付ける（並びは時刻順のまま） */
-export function predict(gp: Gp, lat: number, lon: number, days: number, c: Clouds, now = new Date()): Prediction {
+export function predict(gp: Gp, lat: number, lon: number, days: number, c: Clouds, now = new Date(), opts: { path?: boolean } = {}): Prediction {
   const satrec = toSatrec(gp);
   if (!satrec) throw new Error("この衛星の軌道要素は計算できません");
   const to = new Date(now.getTime() + days * 86400_000);
   const off = c.utcOffsetSeconds;
   const raw = findVisiblePasses(satrec, { lat, lon }, now, to);
+  const t0 = (p: Pass) => p.start.time.getTime();
+  const trackOf = (p: Pass): NonNullable<PassOut["path"]> =>
+    passTrack(satrec, { lat, lon }, new Date(t0(p) - 120_000), new Date(p.end.time.getTime() + 120_000), 5).map((x) => [
+      Math.round((x.time.getTime() - t0(p)) / 1000),
+      Math.round(x.azimuth * 10) / 10,
+      Math.round(x.elevation * 10) / 10,
+      x.visible ? 1 : 0,
+    ]);
   const passes: PassOut[] = raw.map((p) => {
     const cloudCover = cloudAt(c, p.max.time.getTime());
     return {
@@ -82,6 +95,7 @@ export function predict(gp: Gp, lat: number, lon: number, days: number, c: Cloud
       durationSec: p.durationSec,
       endsBy: p.endsBy,
       cloudCover,
+      ...(opts.path ? { path: trackOf(p) } : {}),
     };
   });
   // 点数が同じなら、早いほうを上に

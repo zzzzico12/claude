@@ -2,6 +2,7 @@ import "./style.css";
 import { mountAttribution } from "@advent/attribution";
 import { sources, sourcesEn } from "../lib/sources.js";
 import type { PassOut, Prediction } from "../lib/predict.js";
+import { Dome, fallbackPath, type DomeState } from "./dome.js";
 import { applyStatic, lang, switchLang, t } from "./i18n.js";
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -13,7 +14,107 @@ applyStatic();
 $("lang").onclick = () => switchLang(en ? "ja" : "en");
 mountAttribution($("attribution"), en ? sourcesEn : sources, { lang });
 if (en) $<HTMLInputElement>("place").value = "Tokyo";
-renderDocs();
+
+// ---------- この画面について（出典・条件・点数） ----------
+const about = $<HTMLDialogElement>("about");
+$("about-open").onclick = $("about-open2").onclick = () => about.showModal();
+about.addEventListener("click", (e) => {
+  if (e.target === about) about.close(); // 外側を押したら閉じる
+});
+
+// ---------- タブ ----------
+const tabs = [$("tab-search"), $("tab-ask")];
+function selectTab(i: number) {
+  tabs.forEach((tab, j) => {
+    tab.setAttribute("aria-selected", String(i === j));
+    tab.tabIndex = i === j ? 0 : -1;
+    $(tab.getAttribute("aria-controls")!).hidden = i !== j;
+  });
+}
+tabs.forEach((tab, i) => {
+  tab.onclick = () => selectTab(i);
+  tab.onkeydown = (e) => {
+    if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+      const j = (i + 1) % 2;
+      selectTab(j);
+      tabs[j].focus();
+    }
+  };
+});
+
+// ---------- 空のドーム ----------
+let tz = "UTC";
+const clock = () => new Intl.DateTimeFormat(en ? "en-GB" : "ja-JP", { timeZone: tz, hour: "2-digit", minute: "2-digit", hour12: false });
+const clockSec = () => new Intl.DateTimeFormat(en ? "en-GB" : "ja-JP", { timeZone: tz, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+const dayFmt = () => new Intl.DateTimeFormat(en ? "en-US" : "ja-JP", { timeZone: tz, month: en ? "short" : "numeric", day: "numeric", weekday: "short" });
+
+let dome: Dome | null = null;
+try {
+  dome = new Dome($("dome"), { compass: t.compass, ring: t.ring });
+} catch {
+  // WebGL が使えない環境では、表だけ使える
+  $("dome").textContent = en ? "3D view is not available in this browser." : "このブラウザでは3D表示が使えません。";
+}
+let shown: PassOut | null = null;
+const scrub = $<HTMLInputElement>("scrub");
+if (dome) {
+  dome.onChange = (s: DomeState) => {
+    if (!shown) return;
+    scrub.min = String(s.span[0]);
+    scrub.max = String(s.span[1]);
+    if (document.activeElement !== scrub) scrub.value = String(Math.round(s.sec));
+    const time = clockSec().format(new Date(Date.parse(shown.start.time) + s.sec * 1000));
+    $("now").textContent = t.nowText(time, t.dir(direction16(s.azimuth)), Math.round(s.elevation), s.visible ? t.visibleNow : t.hiddenNow(s.elevation));
+    $("now").classList.toggle("on", s.visible);
+    const play = $("play");
+    play.textContent = s.playing ? "❚❚" : "▶";
+    play.setAttribute("aria-label", s.playing ? t.pause : t.play);
+  };
+  $("play").onclick = () => dome!.togglePlaying();
+  scrub.oninput = () => {
+    dome!.setPlaying(false);
+    dome!.seek(Number(scrub.value));
+  };
+  const views = { outside: $("view-outside"), inside: $("view-inside") };
+  for (const [k, btn] of Object.entries(views)) {
+    btn.onclick = () => {
+      dome!.setView(k as "outside" | "inside");
+      for (const b of Object.values(views)) b.setAttribute("aria-pressed", String(b === btn));
+    };
+  }
+  // ?view=inside で、見上げる視点から始める
+  if (new URLSearchParams(location.search).get("view") === "inside") views.inside.click();
+}
+
+const DIRS = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+const direction16 = (az: number) => DIRS[Math.round((((az % 360) + 360) % 360) / 22.5) % 16];
+
+function showPass(p: PassOut | null) {
+  shown = p;
+  $("passes").querySelectorAll("tr[data-i]").forEach((tr) => tr.classList.toggle("on", !!p && last?.passes[Number((tr as HTMLElement).dataset.i)] === p));
+  $("sky-empty").hidden = !!p;
+  $("sky-empty").textContent = t.skyEmpty;
+  if (!p) {
+    $("sky-title").textContent = "";
+    $("sky-sub").textContent = "";
+    $("now").textContent = "";
+    dome?.setPass({ path: [], marks: [] });
+    return;
+  }
+  $("sky-title").textContent = t.skyTitle(p.rank, dayFmt().format(new Date(p.start.time)));
+  $("sky-sub").textContent = t.skySub;
+  const sec = (x: PassOut["start"]) => (Date.parse(x.time) - Date.parse(p.start.time)) / 1000;
+  const c = clock();
+  const marks = [
+    { sec: 0, azimuth: p.start.azimuth, elevation: p.start.elevation, label: t.markStart(c.format(new Date(p.start.time))) },
+    { sec: sec(p.max), azimuth: p.max.azimuth, elevation: p.max.elevation, label: t.markMax(c.format(new Date(p.max.time)), p.max.elevation) },
+    { sec: sec(p.end), azimuth: p.end.azimuth, elevation: p.end.elevation, label: t.markEnd(c.format(new Date(p.end.time)), t.endsByShort[p.endsBy] ?? "") },
+  ];
+  const path =
+    p.path ??
+    fallbackPath([0, p.start.azimuth, p.start.elevation], [sec(p.max), p.max.azimuth, p.max.elevation], [sec(p.end), p.end.azimuth, p.end.elevation]);
+  dome?.setPass({ path, marks });
+}
 
 // ---------- 衛星の一覧 ----------
 fetch("/api/sats")
@@ -69,7 +170,7 @@ $("form").addEventListener("submit", async (e) => {
     p.set("days", $<HTMLSelectElement>("days").value);
     if (en) p.set("lang", "en");
     const url = `/api/passes?${p}`;
-    const r = await fetch(url);
+    const r = await fetch(`${url}&path=1`);
     const j = await r.json();
     if (!r.ok) throw new Error(t.apiError(r.status, j.error));
     renderResult(j, url);
@@ -88,9 +189,9 @@ function showError(msg: string) {
 
 function renderResult(res: Result, url: string | null) {
   last = res;
-  const tz = res.location.timezone || "UTC";
+  tz = res.location.timezone || "UTC";
   const dateFmt = new Intl.DateTimeFormat(en ? "en-US" : "ja-JP", { timeZone: tz, month: en ? "short" : "numeric", day: "numeric", weekday: "short", hour: "2-digit", minute: "2-digit", hour12: false });
-  const timeFmt = new Intl.DateTimeFormat(en ? "en-US" : "ja-JP", { timeZone: tz, hour: "2-digit", minute: "2-digit", hour12: false });
+  const timeFmt = clock();
   const placeName = res.location.name ?? `${res.location.lat}, ${res.location.lon}`;
   $("result-title").textContent = t.resultTitle(placeName, res.satellite.name);
   $("result-note").textContent = t.timeNote(tz);
@@ -101,77 +202,36 @@ function renderResult(res: Result, url: string | null) {
   const tbody = $("passes").querySelector("tbody")!;
   if (!res.passes.length) {
     tbody.innerHTML = `<tr><td colspan="6">${t.noPass}</td></tr>`;
-    $("sky").hidden = true;
+    showPass(null);
   } else {
     tbody.innerHTML = res.passes
       .map(
         (p, i) => `<tr data-i="${i}" class="${p.rank === 1 ? "best" : ""}" tabindex="0">
-          <td class="r"><span class="rank">${p.rank}</span> <span class="muted small">${p.score}</span></td>
-          <td>${dateFmt.format(new Date(p.start.time))}<br><span class="muted small">${t.dir(p.start.direction)}・${t.elev(p.start.elevation)}</span></td>
-          <td>${timeFmt.format(new Date(p.max.time))}<br><span class="muted small">${t.dir(p.max.direction)}・${t.elev(p.max.elevation)}</span></td>
-          <td>${timeFmt.format(new Date(p.end.time))}<br><span class="muted small">${t.dir(p.end.direction)}・${t.endsBy[p.endsBy] ?? ""}</span></td>
+          <td><span class="rank">${t.rank(p.rank)}</span><br><span class="score"><i style="width:${p.score}%"></i></span><span class="muted small">${t.points(p.score)}</span></td>
+          <td>${dateFmt.format(new Date(p.start.time))}<br><span class="muted small">${t.dir(p.start.direction)}</span></td>
+          <td>${timeFmt.format(new Date(p.max.time))}<br><span class="muted small">${t.dir(p.max.direction)}・${p.max.elevation}°</span></td>
+          <td>${timeFmt.format(new Date(p.end.time))}<br><span class="muted small">${t.dir(p.end.direction)}・${t.endsByShort[p.endsBy] ?? ""}</span></td>
           <td class="r">${t.minutes((p.durationSec / 60).toFixed(1))}</td>
-          <td class="r">${p.cloudCover == null ? `<span class="muted">${t.noForecast}</span>` : `${p.cloudCover}%`}</td>
+          <td class="r">${p.cloudCover == null ? `<span class="muted small">${t.noForecast}</span>` : `${p.cloudCover}%`}</td>
         </tr>`,
       )
       .join("");
-    const best = res.passes.find((p) => p.rank === 1)!;
-    drawSky(best);
+    showPass(res.passes.find((p) => p.rank === 1)!);
   }
   $("result").hidden = false;
 }
 
 $("passes").addEventListener("click", (e) => {
   const tr = (e.target as HTMLElement).closest("tr[data-i]") as HTMLElement | null;
-  if (tr && last) drawSky(last.passes[Number(tr.dataset.i)]);
+  if (tr && last) showPass(last.passes[Number(tr.dataset.i)]);
 });
 $("passes").addEventListener("keydown", (e) => {
   const tr = (e.target as HTMLElement).closest("tr[data-i]") as HTMLElement | null;
   if (tr && last && (e.key === "Enter" || e.key === " ")) {
     e.preventDefault();
-    drawSky(last.passes[Number(tr.dataset.i)]);
+    showPass(last.passes[Number(tr.dataset.i)]);
   }
 });
-
-// ---------- 空の通り道（真上から見た図。上が北） ----------
-const R = 115;
-function xy(az: number, el: number): [number, number] {
-  const r = ((90 - Math.max(0, el)) / 90) * R;
-  const a = (az * Math.PI) / 180;
-  // 空を見上げた図なので、東は左（地図と逆）
-  return [-r * Math.sin(a), -r * Math.cos(a)];
-}
-
-function drawSky(p: PassOut) {
-  $("passes").querySelectorAll("tr[data-i]").forEach((tr) => tr.classList.toggle("on", last?.passes[Number((tr as HTMLElement).dataset.i)] === p));
-  const [sx, sy] = xy(p.start.azimuth, p.start.elevation);
-  const [mx, my] = xy(p.max.azimuth, p.max.elevation);
-  const [ex, ey] = xy(p.end.azimuth, p.end.elevation);
-  // 3点を通る2次曲線（中間で max を通るように制御点を置く）
-  const cx = 2 * mx - (sx + ex) / 2;
-  const cy = 2 * my - (sy + ey) / 2;
-  const labels = en ? ["N", "E", "S", "W"] : ["北", "東", "南", "西"];
-  $("sky-svg").innerHTML = `
-    <circle r="${R}" class="sky-bg" />
-    <circle r="${(60 / 90) * R}" class="sky-ring" /><circle r="${(30 / 90) * R}" class="sky-ring" />
-    <circle r="${(80 / 90) * R}" class="sky-limit" />
-    <line x1="0" y1="${-R}" x2="0" y2="${R}" class="sky-ring" /><line x1="${-R}" y1="0" x2="${R}" y2="0" class="sky-ring" />
-    <text x="0" y="${-R - 4}" class="sky-label" text-anchor="middle">${labels[0]}</text>
-    <text x="${-R - 4}" y="4" class="sky-label" text-anchor="end">${labels[1]}</text>
-    <text x="0" y="${R + 13}" class="sky-label" text-anchor="middle">${labels[2]}</text>
-    <text x="${R + 4}" y="4" class="sky-label" text-anchor="start">${labels[3]}</text>
-    <text x="3" y="${-(60 / 90) * R + 10}" class="sky-tick">30°</text><text x="3" y="${-(30 / 90) * R + 10}" class="sky-tick">60°</text>
-    <path d="M${sx},${sy} Q${cx},${cy} ${ex},${ey}" class="sky-path" />
-    <circle cx="${sx}" cy="${sy}" r="5" class="sky-mark" />
-    <rect x="${mx - 5}" y="${my - 5}" width="10" height="10" transform="rotate(45 ${mx} ${my})" class="sky-mark" />
-    <rect x="${ex - 4.5}" y="${ey - 4.5}" width="9" height="9" class="sky-mark" />`;
-  $("sky-svg").setAttribute(
-    "aria-label",
-    `${t.dir(p.start.direction)} → ${t.dir(p.max.direction)} ${t.elev(p.max.elevation)} → ${t.dir(p.end.direction)}`,
-  );
-  $("sky-title").textContent = t.skyTitle(p.rank);
-  $("sky").hidden = false;
-}
 
 // ---------- AI に質問する ----------
 $("ask").onclick = async () => {
@@ -202,6 +262,7 @@ $("ask").onclick = async () => {
       (j.unmatchedNumbers?.length ? `<p class="warn">${escapeHtml(t.unmatched(j.unmatchedNumbers.join(", ")))}</p>` : `<p class="ok">${t.allMatched}</p>`) +
       `<p class="muted small">${escapeHtml(t.understood(p.location.name ?? `${p.location.lat}, ${p.location.lon}`, u.days, p.satellite.name))}</p>` +
       `<p class="muted small">${t.aiNote(Boolean(j.cached))}</p>`;
+    // 表（「通過を調べる」タブ）と空のドームも、この答えの一覧にする
     renderResult(p, null);
   } catch (err) {
     box.textContent = (err as Error).message;
@@ -209,38 +270,6 @@ $("ask").onclick = async () => {
     btn.disabled = false;
   }
 };
-
-// ---------- API の説明 ----------
-function renderDocs() {
-  const o = location.origin;
-  const rows = en
-    ? [
-        ["lat, lon", "Latitude and longitude (degrees). Or use place"],
-        ["place", "Place name (e.g. Tokyo, 札幌市). Looked up with Open-Meteo"],
-        ["sat", "NORAD ID or name (ISS, Tiangong, Hubble …). Default: ISS. List: /api/sats"],
-        ["days", "1–7. Default: 7"],
-        ["lang", "ja or en (place-name language)"],
-      ]
-    : [
-        ["lat, lon", "緯度・経度（度）。place の代わり"],
-        ["place", "地名（例：札幌市、東京都、Tokyo）。Open-Meteo で緯度経度にする"],
-        ["sat", "NORAD 番号か名前（ISS・天宮・ハッブルなど）。既定は ISS。一覧は /api/sats"],
-        ["days", "1〜7。既定は 7"],
-        ["lang", "ja か en（地名の言語）"],
-      ];
-  $("docs").innerHTML = `
-    <h3>GET /api/passes</h3>
-    <p>${en ? "Visible passes with times (UTC and local), directions, elevations, cloud cover and score." : "見える通過の、時刻（UTC と観測地の時刻）・方角・高さ・雲量・見やすさの点数を返します。"}</p>
-    <table class="params"><tbody>${rows.map(([k, v]) => `<tr><th><code>${k}</code></th><td>${escapeHtml(v)}</td></tr>`).join("")}</tbody></table>
-    <pre><code>curl "${o}/api/passes?place=${en ? "Tokyo" : "%E6%9C%AD%E5%B9%8C%E5%B8%82"}&amp;days=3"
-curl "${o}/api/passes?lat=35.68&amp;lon=139.69&amp;sat=48274"</code></pre>
-    <h3>POST /api/ask</h3>
-    <p>${en ? "Answers a question in natural language. AI reads the place, days and satellite from the question; code computes and ranks the passes. Limited to 10 per day in total." : "質問に自然文で答えます。AI が質問から場所・日数・衛星を読み取り、通過の計算と順位付けはコードが行います。全体で1日10回まで。"}</p>
-    <pre><code>curl -X POST ${o}/api/ask -H "Content-Type: application/json" \\
-  -d '{"question": "${en ? "Best ISS pass in London this week?" : "札幌で今週いちばん見やすいのは？"}", "lang": "${lang}"}'</code></pre>
-    <h3>GET /api/sats</h3>
-    <p>${en ? "Satellites you can predict (CelesTrak stations and visual groups)." : "予測できる衛星の一覧（CelesTrak の stations と visual）。"}</p>`;
-}
 
 function escapeHtml(s: string) {
   return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
