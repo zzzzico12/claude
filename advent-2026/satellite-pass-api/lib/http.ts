@@ -3,6 +3,9 @@ import { expandGp, type Gp } from "@advent/orbit";
 import { findSatellite, getGp } from "./gp-source.js";
 import { geocode, type Place } from "./weather.js";
 
+/** 軌道要素がまだ1度も取れていないとき（CelesTrak が止まっているなど）の文 */
+export const GP_UNAVAILABLE = "軌道のデータを準備できていません。提供元の CelesTrak が一時的に応答していない可能性があります。数分後にもう一度試してください";
+
 export class HttpError extends Error {
   constructor(
     public status: number,
@@ -46,7 +49,7 @@ export async function resolveLocation(params: { lat?: unknown; lon?: unknown; pl
 
 export async function loadSatellite(query: unknown): Promise<{ gp: Gp; all: Gp[]; stale: boolean }> {
   const r = await getGp();
-  if (!r) throw new HttpError(503, "軌道のデータを準備できていません");
+  if (!r) throw new HttpError(503, GP_UNAVAILABLE);
   const all = expandGp(r.gp);
   const gp = findSatellite(all, typeof query === "string" || typeof query === "number" ? query : null);
   if (!gp) throw new HttpError(404, "その衛星は見つかりません（stations と visual の分類にある衛星だけ予測できます。/api/sats で一覧を見られます）");
