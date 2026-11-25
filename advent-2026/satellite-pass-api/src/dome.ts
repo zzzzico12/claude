@@ -109,8 +109,8 @@ export class Dome {
   private playing = true;
   private speed = 30; // 見えているあいだは実際の30倍の速さ（見えない前後は早送り）
   private range: [number, number] = [0, 0]; // 再生する範囲（見え始めの少し前〜見え終わりの少しあと）
-  private shine = 1; // 光の強さ（見える↔見えないで、急に変えずに少しずつ変える）
-  private lastEmit = 0;
+  private visibleSpan: [number, number] = [0, 0]; // 見え始め〜見え終わり（秒）
+  private hold = 0; // 終点で止まっている時間（秒）。止まったあと消えて、始点から出直す
   private tmp = new THREE.Vector3();
   private last = 0;
   private view: "outside" | "inside" = "outside";
@@ -135,6 +135,9 @@ export class Dome {
 
     this.sat = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture(), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
     this.sat.scale.setScalar(1.6);
+    // 文字や線より手前に描く（文字の裏に隠れないように）
+    (this.sat.material as THREE.SpriteMaterial).depthTest = false;
+    this.sat.renderOrder = 10;
     // 毎フレーム作り直さないよう、点の入れ物は最初に用意して中身だけ書き換える
     this.sight = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0.55, 0), new THREE.Vector3()]), new THREE.LineBasicMaterial({ color: 0xffd479, transparent: true, opacity: 0.3 }));
     this.drop = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]), new THREE.LineBasicMaterial({ color: 0x9fb4d8, transparent: true, opacity: 0.25 }));
@@ -276,11 +279,17 @@ export class Dome {
     // 見え始め・いちばん高いとき・見え終わりの印と文字
     p.marks.forEach((m, i) => {
       const v = dir(m.azimuth, m.elevation);
+      // 文字は通り道から外して置く（衛星が文字の裏を通らないように）
+      // 見え始めは進む向きの反対側、見え終わりは進む向き、いちばん高いときは天球の外側へ
+      const ahead = this.at(m.sec + 10, new THREE.Vector3()).v;
+      const behind = this.at(m.sec - 10, new THREE.Vector3()).v;
+      const along = ahead.clone().sub(behind).normalize();
+      const off = i === 0 ? along.clone().multiplyScalar(-1.15) : i === 2 ? along.clone().multiplyScalar(1.15) : v.clone().normalize().multiplyScalar(1.0);
       const dot = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 12), new THREE.MeshBasicMaterial({ color: i === 1 ? 0xffffff : 0xffd479 }));
       dot.position.copy(v);
       this.passGroup.add(dot);
       const s = textSprite(m.label, { size: 0.8, color: "#fff7e0", bg: "rgba(10,16,32,0.72)", weight: 600 });
-      s.position.copy(v.clone().multiplyScalar(1.0)).add(new THREE.Vector3(0, 0.75, 0));
+      s.position.copy(v).add(off);
       this.passGroup.add(s);
     });
 
@@ -292,8 +301,8 @@ export class Dome {
     this.range = [Math.max(a, -15), Math.min(b, endSec + 40)];
     this.sec = this.range[0];
     if (!this.playing) this.sec = p.marks[1]?.sec ?? this.sec; // 動かさない設定のときは、いちばん高いときを見せる
-    this.shine = this.at(this.sec).visible ? 1 : 0;
-    this.lastEmit = 0;
+    this.visibleSpan = [p.marks[0]?.sec ?? 0, endSec];
+    this.hold = 0;
     this.setView(this.view);
     this.update();
   }
@@ -311,8 +320,7 @@ export class Dome {
   }
   seek(sec: number) {
     this.sec = sec;
-    this.shine = this.at(sec).visible ? 1 : 0;
-    this.lastEmit = 0;
+    this.hold = 0;
     this.update();
   }
 
@@ -385,11 +393,17 @@ export class Dome {
     this.visibleNow = visible;
     this.sat.visible = this.sight.visible = this.drop.visible = true;
     this.sat.position.copy(v);
-    // 影の中や低いときは、暗く小さく（shine は frame() で少しずつ変える）
-    const k = this.shine;
-    (this.sat.material as THREE.SpriteMaterial).opacity = 0.28 + 0.72 * k;
+    // 光の強さは時刻だけで決める（見え始めの前後6秒で明るくなり、見え終わりの前後6秒で暗くなる）。
+    // 再生でもスライダーでも同じ明るさになり、急に消えたり点いたりしない
+    const [vs, ve] = this.visibleSpan;
+    const ramp = (x: number) => Math.min(1, Math.max(0, x));
+    const k = ramp((this.sec - vs + 6) / 12) * ramp((ve + 6 - this.sec) / 12);
+    // 終点で止まったあとは、全体を消してから始点に戻る
+    const fade = this.hold > 0 ? ramp(1 - (this.hold - 0.8) / 0.5) : 1;
+    (this.sat.material as THREE.SpriteMaterial).opacity = (0.28 + 0.72 * k) * fade;
     this.sat.scale.setScalar(0.8 + 0.9 * k);
-    (this.sight.material as THREE.LineBasicMaterial).opacity = 0.1 + 0.25 * k;
+    (this.sight.material as THREE.LineBasicMaterial).opacity = (0.1 + 0.25 * k) * fade;
+    (this.drop.material as THREE.LineBasicMaterial).opacity = 0.25 * fade;
     const sp = this.sight.geometry.getAttribute("position") as THREE.BufferAttribute;
     sp.setXYZ(1, v.x, v.y, v.z);
     sp.needsUpdate = true;
@@ -397,12 +411,8 @@ export class Dome {
     dp.setXYZ(0, v.x, v.y, v.z);
     dp.setXYZ(1, v.x, 0, v.z);
     dp.needsUpdate = true;
-    // 文字の更新は1秒に12回まで（毎フレーム書き換えると、画面全体の再計算で動きがカクつく）
-    const now = performance.now();
-    if (now - this.lastEmit > 80) {
-      this.lastEmit = now;
-      this.emit();
-    }
+    // つまみと時刻も、衛星と同じフレームで更新する（間引くと衛星とずれて見える）
+    this.emit();
   }
 
   private visibleNow = false;
@@ -419,14 +429,21 @@ export class Dome {
     this.last = t;
     if (this.playing && this.pts.length) {
       const [a, b] = this.range;
-      // 見えないあいだ（昇ってくる前・影に入ったあと）は3倍の早送り
-      this.sec += dt * this.speed * (this.visibleNow ? 1 : 3);
-      if (this.sec > b) {
-        this.sec = a;
-        this.shine = 0;
+      if (this.hold > 0) {
+        // 終点で0.8秒止まり、0.5秒で消えてから始点へ
+        this.hold += dt;
+        if (this.hold > 1.3) {
+          this.hold = 0;
+          this.sec = a;
+        }
+      } else {
+        // 速さは全区間で同じ（実際の30倍）
+        this.sec += dt * this.speed;
+        if (this.sec >= b) {
+          this.sec = b;
+          this.hold = 1e-6;
+        }
       }
-      // 光は0.4秒ほどかけて強く／弱くする
-      this.shine += ((this.visibleNow ? 1 : 0) - this.shine) * Math.min(1, dt * 6);
       this.update();
     }
     this.controls.update();

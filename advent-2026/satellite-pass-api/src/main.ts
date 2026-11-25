@@ -59,15 +59,24 @@ try {
 }
 let shown: PassOut | null = null;
 const scrub = $<HTMLInputElement>("scrub");
+scrub.step = "any";
+const nowBox = $("now");
+const [nowTime, nowPos, nowVis] = [$("now-time"), $("now-pos"), $("now-vis")];
+const setText = (el: HTMLElement, v: string) => {
+  if (el.textContent !== v) el.textContent = v;
+};
 if (dome) {
   dome.onChange = (s: DomeState) => {
     if (!shown) return;
     scrub.min = String(s.span[0]);
     scrub.max = String(s.span[1]);
-    if (document.activeElement !== scrub) scrub.value = String(Math.round(s.sec));
-    const time = secFmt.format(new Date(Date.parse(shown.start.time) + s.sec * 1000));
-    $("now").textContent = t.nowText(time, t.dir(direction16(s.azimuth)), Math.round(s.elevation), s.visible ? t.visibleNow : t.hiddenNow(s.elevation));
-    $("now").classList.toggle("on", s.visible);
+    if (document.activeElement !== scrub) scrub.value = String(s.sec);
+    // 毎フレーム呼ばれるので、文字が変わったときだけ書き換える
+    const sec = Math.floor(s.sec);
+    setText(nowTime, secFmt.format(new Date(Date.parse(shown.start.time) + sec * 1000)));
+    setText(nowPos, t.nowPos(t.dir(direction16(s.azimuth)), Math.round(s.elevation)));
+    setText(nowVis, s.visible ? t.visibleNow : t.hiddenNow(s.elevation));
+    nowBox.classList.toggle("on", s.visible);
     const play = $("play");
     play.textContent = s.playing ? "❚❚" : "▶";
     play.setAttribute("aria-label", s.playing ? t.pause : t.play);
@@ -99,7 +108,7 @@ function showPass(p: PassOut | null) {
   if (!p) {
     $("sky-title").textContent = "";
     $("sky-sub").textContent = "";
-    $("now").textContent = "";
+    for (const el of [nowTime, nowPos, nowVis]) el.textContent = "";
     dome?.setPass({ path: [], marks: [] });
     return;
   }

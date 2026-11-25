@@ -376,7 +376,9 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  display: flex;
+  /* 文字の欄は幅を固定し、中身が変わってもスライダーの長さが変わらないようにする */
+  display: grid;
+  grid-template-columns: auto minmax(80px, 1fr) auto;
   align-items: center;
   gap: 0.6rem;
   padding: 1.2rem 0.9rem 0.7rem;
@@ -391,21 +393,42 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.3);
   color: #fff;
   font-size: 0.8rem;
-  flex: none;
 }
 .sky-bar input[type="range"] {
-  flex: 1;
-  min-width: 80px;
+  width: 100%;
+  min-width: 0;
   accent-color: #ffd479;
   background: none;
   border: 0;
   padding: 0;
 }
 .now {
+  display: flex;
+  gap: 0.7em;
   font-size: 0.85rem;
   font-variant-numeric: tabular-nums;
   color: #9fb0cc;
   white-space: nowrap;
+}
+.now > span {
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.now-time {
+  width: 4.6em;
+}
+.now-pos {
+  width: 8.6em;
+}
+.now-vis {
+  width: 11em;
+}
+:lang(en) .now-pos {
+  width: 7.4em;
+}
+:lang(en) .now-vis {
+  width: 9.6em;
 }
 .now.on {
   color: #ffd479;
@@ -495,7 +518,10 @@ body {
     min-width: 0;
   }
   .sky-bar {
-    flex-wrap: wrap;
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .now {
+    grid-column: 1 / -1;
   }
   .sky {
     order: -1;
@@ -510,8 +536,5 @@ body {
   .brand p,
   .sky-top p {
     display: none;
-  }
-  .now {
-    white-space: normal;
   }
 }
