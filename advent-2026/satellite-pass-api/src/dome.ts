@@ -107,7 +107,11 @@ export class Dome {
   private pts: { sec: number; v: THREE.Vector3; visible: boolean }[] = [];
   private sec = 0;
   private playing = true;
-  private speed = 30; // 実際の30倍の速さ
+  private speed = 30; // 見えているあいだは実際の30倍の速さ（見えない前後は早送り）
+  private range: [number, number] = [0, 0]; // 再生する範囲（見え始めの少し前〜見え終わりの少しあと）
+  private shine = 1; // 光の強さ（見える↔見えないで、急に変えずに少しずつ変える）
+  private lastEmit = 0;
+  private tmp = new THREE.Vector3();
   private last = 0;
   private view: "outside" | "inside" = "outside";
   private maxAz = 180;
@@ -131,7 +135,8 @@ export class Dome {
 
     this.sat = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture(), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
     this.sat.scale.setScalar(1.6);
-    this.sight = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0.55, 0), new THREE.Vector3()]), new THREE.LineDashedMaterial({ color: 0xffd479, transparent: true, opacity: 0.35, dashSize: 0.25, gapSize: 0.2 }));
+    // 毎フレーム作り直さないよう、点の入れ物は最初に用意して中身だけ書き換える
+    this.sight = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0.55, 0), new THREE.Vector3()]), new THREE.LineBasicMaterial({ color: 0xffd479, transparent: true, opacity: 0.3 }));
     this.drop = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]), new THREE.LineBasicMaterial({ color: 0x9fb4d8, transparent: true, opacity: 0.25 }));
     this.scene.add(this.passGroup, this.sat, this.sight, this.drop);
 
@@ -281,14 +286,20 @@ export class Dome {
 
     this.maxAz = p.marks[1]?.azimuth ?? 180;
     this.maxEl = p.marks[1]?.elevation ?? 45;
-    this.sec = this.pts[0].sec;
+    // 再生は見え始めの15秒前から、見え終わりの40秒後まで（地球の影に入って暗くなるところまで）
+    const [a, b] = [this.pts[0].sec, this.pts[this.pts.length - 1].sec];
+    const endSec = p.marks[2]?.sec ?? b;
+    this.range = [Math.max(a, -15), Math.min(b, endSec + 40)];
+    this.sec = this.range[0];
     if (!this.playing) this.sec = p.marks[1]?.sec ?? this.sec; // 動かさない設定のときは、いちばん高いときを見せる
+    this.shine = this.at(this.sec).visible ? 1 : 0;
+    this.lastEmit = 0;
     this.setView(this.view);
     this.update();
   }
 
   get span(): [number, number] {
-    return this.pts.length ? [this.pts[0].sec, this.pts[this.pts.length - 1].sec] : [0, 0];
+    return this.pts.length ? this.range : [0, 0];
   }
 
   setPlaying(on: boolean) {
@@ -300,6 +311,8 @@ export class Dome {
   }
   seek(sec: number) {
     this.sec = sec;
+    this.shine = this.at(sec).visible ? 1 : 0;
+    this.lastEmit = 0;
     this.update();
   }
 
@@ -349,18 +362,18 @@ export class Dome {
     this.camera.updateProjectionMatrix();
   }
 
-  private at(sec: number): { v: THREE.Vector3; visible: boolean } {
+  /** sec 秒の位置を out に入れ、見えるかを返す（毎フレーム呼ぶので新しい物を作らない） */
+  private at(sec: number, out = this.tmp): { v: THREE.Vector3; visible: boolean } {
     const p = this.pts;
-    if (sec <= p[0].sec) return { v: p[0].v.clone(), visible: p[0].visible };
-    for (let i = 1; i < p.length; i++) {
-      if (sec <= p[i].sec) {
-        const f = (sec - p[i - 1].sec) / (p[i].sec - p[i - 1].sec || 1);
-        const v = p[i - 1].v.clone().lerp(p[i].v, f).setLength(R);
-        return { v, visible: f < 0.5 ? p[i - 1].visible : p[i].visible };
-      }
-    }
-    const l = p[p.length - 1];
-    return { v: l.v.clone(), visible: l.visible };
+    if (sec <= p[0].sec) return { v: out.copy(p[0].v), visible: p[0].visible };
+    // 点は5秒ごとに並んでいるので、番号は計算で出せる（地平線の下の点は除いてあるので、念のため前後を調べる）
+    let i = Math.min(p.length - 1, Math.max(1, Math.ceil((sec - p[0].sec) / 5)));
+    while (i < p.length - 1 && p[i].sec < sec) i++;
+    while (i > 1 && p[i - 1].sec > sec) i--;
+    if (sec > p[i].sec) return { v: out.copy(p[i].v), visible: p[i].visible };
+    const f = (sec - p[i - 1].sec) / (p[i].sec - p[i - 1].sec || 1);
+    out.copy(p[i - 1].v).lerp(p[i].v, f).setLength(R);
+    return { v: out, visible: f < 0.5 ? p[i - 1].visible : p[i].visible };
   }
 
   private update() {
@@ -369,32 +382,51 @@ export class Dome {
       return;
     }
     const { v, visible } = this.at(this.sec);
+    this.visibleNow = visible;
     this.sat.visible = this.sight.visible = this.drop.visible = true;
     this.sat.position.copy(v);
-    // 影の中や低いときは、暗く小さく
-    const m = this.sat.material as THREE.SpriteMaterial;
-    m.opacity = visible ? 1 : 0.28;
-    this.sat.scale.setScalar(visible ? 1.7 : 0.8);
-    (this.sight.material as THREE.LineDashedMaterial).opacity = visible ? 0.45 : 0.12;
-    this.sight.geometry.setFromPoints([new THREE.Vector3(0, 0.55, 0), v]);
-    this.sight.computeLineDistances();
-    this.drop.geometry.setFromPoints([v, new THREE.Vector3(v.x, 0, v.z)]);
-    this.emit(v, visible);
+    // 影の中や低いときは、暗く小さく（shine は frame() で少しずつ変える）
+    const k = this.shine;
+    (this.sat.material as THREE.SpriteMaterial).opacity = 0.28 + 0.72 * k;
+    this.sat.scale.setScalar(0.8 + 0.9 * k);
+    (this.sight.material as THREE.LineBasicMaterial).opacity = 0.1 + 0.25 * k;
+    const sp = this.sight.geometry.getAttribute("position") as THREE.BufferAttribute;
+    sp.setXYZ(1, v.x, v.y, v.z);
+    sp.needsUpdate = true;
+    const dp = this.drop.geometry.getAttribute("position") as THREE.BufferAttribute;
+    dp.setXYZ(0, v.x, v.y, v.z);
+    dp.setXYZ(1, v.x, 0, v.z);
+    dp.needsUpdate = true;
+    // 文字の更新は1秒に12回まで（毎フレーム書き換えると、画面全体の再計算で動きがカクつく）
+    const now = performance.now();
+    if (now - this.lastEmit > 80) {
+      this.lastEmit = now;
+      this.emit();
+    }
   }
 
-  private emit(v = this.sat.position, visible = (this.sat.material as THREE.SpriteMaterial).opacity > 0.5) {
+  private visibleNow = false;
+
+  private emit() {
+    const v = this.sat.position;
     const el = Math.asin(Math.max(-1, Math.min(1, v.y / R))) / DEG;
     const az = ((Math.atan2(v.x, -v.z) / DEG) + 360) % 360;
-    this.onChange({ sec: this.sec, azimuth: az, elevation: el, visible, playing: this.playing, span: this.span });
+    this.onChange({ sec: this.sec, azimuth: az, elevation: el, visible: this.visibleNow, playing: this.playing, span: this.span });
   }
 
   private frame(t: number) {
     const dt = this.last ? Math.min(0.1, (t - this.last) / 1000) : 0;
     this.last = t;
     if (this.playing && this.pts.length) {
-      const [a, b] = this.span;
-      this.sec += dt * this.speed;
-      if (this.sec > b) this.sec = a;
+      const [a, b] = this.range;
+      // 見えないあいだ（昇ってくる前・影に入ったあと）は3倍の早送り
+      this.sec += dt * this.speed * (this.visibleNow ? 1 : 3);
+      if (this.sec > b) {
+        this.sec = a;
+        this.shine = 0;
+      }
+      // 光は0.4秒ほどかけて強く／弱くする
+      this.shine += ((this.visibleNow ? 1 : 0) - this.shine) * Math.min(1, dt * 6);
       this.update();
     }
     this.controls.update();

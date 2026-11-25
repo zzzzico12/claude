@@ -48,6 +48,8 @@ const clock = () => new Intl.DateTimeFormat(en ? "en-GB" : "ja-JP", { timeZone: 
 const clockSec = () => new Intl.DateTimeFormat(en ? "en-GB" : "ja-JP", { timeZone: tz, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
 const dayFmt = () => new Intl.DateTimeFormat(en ? "en-US" : "ja-JP", { timeZone: tz, month: en ? "short" : "numeric", day: "numeric", weekday: "short" });
 
+// 時刻の書式は作るのが重いので、場所（時間帯）が変わったときだけ作り直す
+let secFmt = clockSec();
 let dome: Dome | null = null;
 try {
   dome = new Dome($("dome"), { compass: t.compass, ring: t.ring });
@@ -63,7 +65,7 @@ if (dome) {
     scrub.min = String(s.span[0]);
     scrub.max = String(s.span[1]);
     if (document.activeElement !== scrub) scrub.value = String(Math.round(s.sec));
-    const time = clockSec().format(new Date(Date.parse(shown.start.time) + s.sec * 1000));
+    const time = secFmt.format(new Date(Date.parse(shown.start.time) + s.sec * 1000));
     $("now").textContent = t.nowText(time, t.dir(direction16(s.azimuth)), Math.round(s.elevation), s.visible ? t.visibleNow : t.hiddenNow(s.elevation));
     $("now").classList.toggle("on", s.visible);
     const play = $("play");
@@ -190,6 +192,7 @@ function showError(msg: string) {
 function renderResult(res: Result, url: string | null) {
   last = res;
   tz = res.location.timezone || "UTC";
+  secFmt = clockSec();
   const dateFmt = new Intl.DateTimeFormat(en ? "en-US" : "ja-JP", { timeZone: tz, month: en ? "short" : "numeric", day: "numeric", weekday: "short", hour: "2-digit", minute: "2-digit", hour12: false });
   const timeFmt = clock();
   const placeName = res.location.name ?? `${res.location.lat}, ${res.location.lon}`;
