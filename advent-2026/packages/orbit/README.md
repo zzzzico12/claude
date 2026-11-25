@@ -10,6 +10,8 @@
 - `toSatrec(gp)`、`positionsEcf(satrecs, date, out)`：まとめて位置を計算（地球に固定した座標、km）
 - `geodetic(satrec, date)`：緯度・経度・高さ
 - `orbitSummary(gp)`：1周の時間・高さ・傾き・軌道の区分（低軌道・中軌道・静止軌道・長楕円軌道）
+- `findVisiblePasses(satrec, {lat, lon}, start, end)`：見える通過（見え始め・いちばん高いとき・見え終わりの時刻・方位角・高さ・16方位）。条件は NASA Spot the Station と同じ「高さ10度以上・太陽が −6 度以下・衛星に日が当たっている」（`minElevationDeg`・`maxSunElevationDeg` で変えられる）。地球の影は円柱で近似（半影なし）。ISS の14日分で約70ms
+- `sunEci(date)`・`sunElevation(observer, date)`・`isSunlit(satEci, date)`・`direction16(azimuth)`：通過の計算に使う部品（太陽の位置は satellite.js の `sunPos`。精度 0.01 度）
 - 答え合わせ用：`parseOem`（NASA の ISS 軌道データ）、`j2000ToTeme`（J2000 → SGP4 の座標 TEME。歳差と章動の大きい項）
 
 ## ハマったところ

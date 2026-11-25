@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>衛星の通過予測API</title>
+    <meta name="description" content="場所を入れると、ISS などの人工衛星が見える時刻・方角・高さと、その時間の雲の予報を返す API です。" />
+  </head>
+  <body>
+    <header class="top">
+      <div class="brand">
+        <h1 data-i18n="title">衛星の通過予測API</h1>
+        <p class="muted small" data-i18n="lead"></p>
+      </div>
+      <button id="about-open" class="ghost" data-i18n="aboutButton">この画面について</button>
+      <button id="lang" class="ghost" data-i18n="switchTo">English</button>
+    </header>
+
+    <main class="app">
+      <section class="panel">
+        <div class="tabs" role="tablist">
+          <button role="tab" id="tab-search" aria-controls="pane-search" aria-selected="true" data-i18n="tabSearch">通過を調べる</button>
+          <button role="tab" id="tab-ask" aria-controls="pane-ask" aria-selected="false" tabindex="-1" data-i18n="tabAsk">AI に聞く</button>
+        </div>
+
+        <div id="pane-search" class="pane" role="tabpanel" aria-labelledby="tab-search">
+          <form id="form" class="form">
+            <label class="field grow">
+              <span data-i18n="place">場所</span>
+              <span class="row">
+                <input id="place" value="東京都" placeholder="例：札幌市、東京都、Tokyo" data-i18n-placeholder="placePlaceholder" autocomplete="off" />
+                <button type="button" id="here" data-i18n="here">現在地</button>
+              </span>
+            </label>
+            <label class="field">
+              <span data-i18n="satellite">衛星</span>
+              <select id="sat"></select>
+            </label>
+            <label class="field">
+              <span data-i18n="days">日数</span>
+              <select id="days">
+                <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option selected>7</option>
+              </select>
+            </label>
+            <button id="search" class="primary" data-i18n="search">調べる</button>
+          </form>
+          <p id="error" class="warn small" hidden></p>
+
+          <div id="result" class="result" hidden>
+            <div class="result-head">
+              <h2 id="result-title"></h2>
+              <a id="json-link" class="small" target="_blank" rel="noopener" data-i18n="jsonLink">JSON</a>
+            </div>
+            <p id="result-note" class="muted small"></p>
+            <div class="table-wrap">
+              <table id="passes" class="passes">
+                <thead>
+                  <tr>
+                    <th data-i18n="colRank">順位</th>
+                    <th data-i18n="colStart">見え始め</th>
+                    <th data-i18n="colMax">いちばん高い</th>
+                    <th data-i18n="colEnd">見え終わり</th>
+                    <th class="r" data-i18n="colDuration">時間</th>
+                    <th class="r" data-i18n="colCloud">雲量</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="pane-ask" class="pane" role="tabpanel" aria-labelledby="tab-ask" hidden>
+          <div class="ask">
+            <textarea id="question" rows="3" maxlength="300" placeholder="例：札幌で今週いちばん見やすいのは？" data-i18n-placeholder="askPlaceholder"></textarea>
+            <button id="ask" class="primary" data-i18n="askButton">聞く</button>
+          </div>
+          <p class="muted small" data-i18n="askLimit"></p>
+          <div id="answer" class="answer" hidden></div>
+        </div>
+      </section>
+
+      <section class="sky" aria-labelledby="sky-title">
+        <div id="dome" class="dome"></div>
+        <div class="sky-top">
+          <h2 id="sky-title"></h2>
+          <p id="sky-sub" class="small"></p>
+        </div>
+        <div class="view-switch" role="group">
+          <button id="view-outside" aria-pressed="true" data-i18n="viewOutside">外から見る</button>
+          <button id="view-inside" aria-pressed="false" data-i18n="viewInside">見上げる</button>
+        </div>
+        <div class="sky-bar">
+          <button id="play" class="play" aria-label="再生"></button>
+          <input id="scrub" type="range" min="0" max="1" step="1" value="0" />
+          <output id="now" class="now"><span id="now-time" class="now-time"></span><span id="now-pos" class="now-pos"></span><span id="now-vis" class="now-vis"></span></output>
+        </div>
+        <p id="sky-empty" class="sky-empty" hidden></p>
+      </section>
+    </main>
+
+    <footer class="foot small muted">
+      <span data-i18n="footSources"></span>
+      <button id="about-open2" class="link" data-i18n="footMore">出典と詳しい説明</button>
+    </footer>
+
+    <dialog id="about" class="about">
+      <form method="dialog" class="about-close"><button aria-label="閉じる">✕</button></form>
+      <h2 data-i18n="aboutButton">この画面について</h2>
+      <p data-i18n="lead"></p>
+      <h3 data-i18n="conditionsTitle">「見える」の条件</h3>
+      <p data-i18n="conditions"></p>
+      <h3 data-i18n="scoreTitle">見やすさの点数（100点満点）</h3>
+      <p data-i18n="score"></p>
+      <h3 data-i18n="domeTitle">空のドーム</h3>
+      <p data-i18n="domeAbout"></p>
+      <h3 data-i18n="accuracyTitle">精度</h3>
+      <p data-i18n="accuracy"></p>
+      <div id="attribution"></div>
+    </dialog>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
