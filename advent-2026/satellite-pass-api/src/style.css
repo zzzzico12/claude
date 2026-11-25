@@ -467,6 +467,61 @@ body {
   margin: 0 0 0.5rem;
 }
 
+.pane-scroll {
+  overflow: auto;
+}
+.api-docs h3 {
+  margin: 1.1rem 0 0.2rem;
+  font-size: 0.95rem;
+}
+.api-docs h3:first-of-type {
+  margin-top: 0.6rem;
+}
+.api-docs h4 {
+  margin: 0.6rem 0 0.2rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.api-docs p {
+  margin: 0 0 0.4rem;
+  font-size: 0.88rem;
+}
+.cmd {
+  position: relative;
+}
+.cmd pre {
+  padding-right: 4.5rem;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.copy {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+}
+pre.json {
+  max-height: 18rem;
+  overflow: auto;
+  font-size: 0.78em;
+}
+.params {
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  margin: 0.2rem 0 0.5rem;
+}
+.params th,
+.params td {
+  padding: 0.2rem 0.6rem 0.2rem 0;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line);
+}
+.params th {
+  white-space: nowrap;
+}
+
 .about {
   max-width: min(640px, calc(100vw - 32px));
   max-height: calc(100dvh - 48px);

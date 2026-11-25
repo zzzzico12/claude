@@ -21,6 +21,7 @@
         <div class="tabs" role="tablist">
           <button role="tab" id="tab-search" aria-controls="pane-search" aria-selected="true" data-i18n="tabSearch">通過を調べる</button>
           <button role="tab" id="tab-ask" aria-controls="pane-ask" aria-selected="false" tabindex="-1" data-i18n="tabAsk">AI に聞く</button>
+          <button role="tab" id="tab-api" aria-controls="pane-api" aria-selected="false" tabindex="-1" data-i18n="tabApi">API の使い方</button>
         </div>
 
         <div id="pane-search" class="pane" role="tabpanel" aria-labelledby="tab-search">
@@ -77,6 +78,10 @@
           </div>
           <p class="muted small" data-i18n="askLimit"></p>
           <div id="answer" class="answer" hidden></div>
+        </div>
+
+        <div id="pane-api" class="pane pane-scroll" role="tabpanel" aria-labelledby="tab-api" hidden>
+          <div id="api-docs" class="api-docs"></div>
         </div>
       </section>
 

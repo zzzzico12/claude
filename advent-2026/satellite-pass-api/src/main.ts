@@ -2,6 +2,7 @@ import "./style.css";
 import { mountAttribution } from "@advent/attribution";
 import { sources, sourcesEn } from "../lib/sources.js";
 import type { PassOut, Prediction } from "../lib/predict.js";
+import { renderApiDocs, type ApiDocsState } from "./api-docs.js";
 import { Dome, fallbackPath, type DomeState } from "./dome.js";
 import { applyStatic, lang, switchLang, t } from "./i18n.js";
 
@@ -23,19 +24,20 @@ about.addEventListener("click", (e) => {
 });
 
 // ---------- タブ ----------
-const tabs = [$("tab-search"), $("tab-ask")];
+const tabs = [$("tab-search"), $("tab-ask"), $("tab-api")];
 function selectTab(i: number) {
   tabs.forEach((tab, j) => {
     tab.setAttribute("aria-selected", String(i === j));
     tab.tabIndex = i === j ? 0 : -1;
     $(tab.getAttribute("aria-controls")!).hidden = i !== j;
   });
+  if (tabs[i].id === "tab-api") showApiDocs();
 }
 tabs.forEach((tab, i) => {
   tab.onclick = () => selectTab(i);
   tab.onkeydown = (e) => {
     if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
-      const j = (i + 1) % 2;
+      const j = (i + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length;
       selectTab(j);
       tabs[j].focus();
     }
@@ -131,6 +133,7 @@ function showPass(p: PassOut | null) {
 fetch("/api/sats")
   .then((r) => r.json())
   .then((j: { satellites: { norad: number; name: string; ja?: string; en?: string }[] }) => {
+    apiState.sats = j;
     const famous = j.satellites.filter((s) => s.ja);
     const rest = j.satellites.filter((s) => !s.ja);
     $("sat").innerHTML =
@@ -184,7 +187,9 @@ $("form").addEventListener("submit", async (e) => {
     const r = await fetch(`${url}&path=1`);
     const j = await r.json();
     if (!r.ok) throw new Error(t.apiError(r.status, j.error));
+    apiState.passes = j;
     renderResult(j, url);
+    refreshApiDocs();
   } catch (err) {
     showError((err as Error).message);
   } finally {
@@ -266,6 +271,8 @@ $("ask").onclick = async () => {
     if (!r.ok) throw new Error(t.apiError(r.status, j.error));
     const u = j.understood;
     const p: Result = j.prediction;
+    apiState.ask = { question, response: j };
+    refreshApiDocs();
     box.innerHTML =
       j.answer
         .split(/\n+/)
@@ -283,8 +290,30 @@ $("ask").onclick = async () => {
   }
 };
 
+// ---------- API の使い方 ----------
+const apiState: ApiDocsState = { query: {}, passes: null, sats: null, ask: null };
+
+/** コマンドは、いま画面に入っている場所・衛星・日数で作る */
+function showApiDocs() {
+  const q = Object.fromEntries(locationParams());
+  q.sat = $<HTMLSelectElement>("sat").value || "25544";
+  q.days = $<HTMLSelectElement>("days").value;
+  apiState.query = q;
+  renderApiDocs($("api-docs"), apiState);
+}
+function refreshApiDocs() {
+  if (!$("pane-api").hidden) showApiDocs();
+}
+
 function escapeHtml(s: string) {
   return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+}
+
+// ?tab=api（ask）で、そのタブを開いた状態から始める
+{
+  const tab = new URLSearchParams(location.search).get("tab");
+  const i = tabs.findIndex((x) => x.id === `tab-${tab}`);
+  if (i > 0) selectTab(i);
 }
 
 // 開いたらすぐ、既定の場所で調べる
