@@ -15,6 +15,10 @@ const LOCK = "satellite-pass-api:gp:lock";
 const REFRESH_SEC = 2 * 60 * 60;
 const KEEP_SEC = 3 * 24 * 60 * 60;
 const LOCK_SEC = 10 * 60;
+/** 取得に失敗したら、この秒数たってから取り直す（CelesTrak が止まっているあいだ、何度も問い合わせない） */
+const RETRY_SEC = 60;
+/** 保存したものがまだないとき、ほかの人の取得が終わるのを待つ秒数 */
+const WAIT_SEC = 8;
 
 /** 2つの分類をまとめる（同じ衛星が両方にあれば1つにする） */
 function merge(lists: Record<string, unknown>[][]): Record<string, unknown>[] {
@@ -54,13 +58,24 @@ export async function getGp(): Promise<{ gp: CompactGp; stale: boolean } | null>
   if (cached && age < REFRESH_SEC) return { gp: cached, stale: false };
 
   const n = await store.incr(LOCK, LOCK_SEC);
-  if (n !== 1) return cached && { gp: cached, stale: true };
+  if (n !== 1) {
+    if (cached) return { gp: cached, stale: true };
+    // まだ1度も取れていない（公開した直後など）：ほかの人の取得が終わるのを少し待つ
+    for (let i = 0; i < WAIT_SEC; i++) {
+      await new Promise((r) => setTimeout(r, 1000));
+      const v = await store.get(KEY);
+      if (v) return { gp: JSON.parse(v) as CompactGp, stale: false };
+    }
+    return null;
+  }
   try {
     const gp = compactGp(await fetchAll(), `CelesTrak GP（GROUP=${GROUPS.join("・")}）`);
     await store.set(KEY, JSON.stringify(gp), KEEP_SEC);
     return { gp, stale: false };
   } catch (err) {
     console.error(err);
+    // 目印を10分残すと、CelesTrak が戻っても10分間取りに行かない。1分後に取り直せるようにする
+    await store.set(LOCK, "1", RETRY_SEC);
     return cached && { gp: cached, stale: true };
   }
 }

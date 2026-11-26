@@ -209,7 +209,7 @@ const en: Dict = {
   unmatched: (list) => `⚠ Numbers that could not be matched to the calculation: ${list}`,
   aiNote: (cached) => `Answer by Claude${cached ? " (saved)" : ""}. Ranks and numbers come from code; wording such as directions may contain mistakes.`,
   apiError: (status, message) =>
-    status === 429 ? "The daily limit for AI questions has been reached (10 per day in total, 3 per person). Please try again tomorrow." : (message && /^[\x00-\x7F]*$/.test(message) ? message : `Something went wrong (HTTP ${status}).`),
+    status === 503 ? "Orbital data is not ready. CelesTrak, the data provider, may be temporarily down. Please try again in a few minutes." : status === 429 ? "The daily limit for AI questions has been reached (10 per day in total, 3 per person). Please try again tomorrow." : (message && /^[\x00-\x7F]*$/.test(message) ? message : `Something went wrong (HTTP ${status}).`),
   geoFailed: "Could not get your location",
   hereLabel: "My location",
   conditionsTitle: "What counts as visible",
