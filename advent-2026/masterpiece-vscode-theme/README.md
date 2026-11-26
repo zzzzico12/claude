@@ -146,7 +146,7 @@ pnpm eval              # 評価（eval/RESULTS.md）
 
 ## 記事を書くときのメモ
 
-Qiita の記事を書くための材料。下書きは [ARTICLE.md](ARTICLE.md) にもある。
+Qiita の記事を書くための材料。下書きは手元の `ARTICLE.md`（Git 管理外）にもある。
 
 ### 一言でいうと
 

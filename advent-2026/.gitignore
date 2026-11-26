@@ -10,3 +10,6 @@ __pycache__/
 */data/*
 !*/data/.gitkeep
 .cache/
+
+# 記事の下書きは手元にだけ置く（GitHub には載せない）
+*/ARTICLE.md
