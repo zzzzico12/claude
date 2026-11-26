@@ -11,10 +11,10 @@ tags: [AI, オープンデータ, Claude, 宇宙, API]
 
 （スクリーンショット：通過の一覧と、空のドーム）
 
-デモ：（公開後に記入）
+デモ：https://advent26-satellite-pass-api.vercel.app/
 
 ```sh
-curl "https://（デモの URL）/api/passes?place=札幌市&days=7"
+curl -G https://advent26-satellite-pass-api.vercel.app/api/passes --data-urlencode 'place=札幌市' -d days=7
 ```
 
 ```json

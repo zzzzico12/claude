@@ -16,7 +16,7 @@
 
 ## 使い方
 
-デモ：（公開後に記入）
+デモ：https://advent26-satellite-pass-api.vercel.app/（API の使い方のタブ：https://advent26-satellite-pass-api.vercel.app/?tab=api）
 
 ### 画面
 
@@ -38,8 +38,8 @@
 | `GET /api/sats` | 予測できる衛星の一覧（CelesTrak の stations と visual。約170機） |
 
 ```sh
-curl "https://（デモの URL）/api/passes?place=札幌市&days=3"
-curl -X POST https://（デモの URL）/api/ask -H "Content-Type: application/json" -d '{"question": "札幌で今週いちばん見やすいのは？"}'
+curl -G https://advent26-satellite-pass-api.vercel.app/api/passes --data-urlencode 'place=札幌市' -d days=3
+curl -X POST https://advent26-satellite-pass-api.vercel.app/api/ask -H "Content-Type: application/json" -d '{"question": "札幌で今週いちばん見やすいのは？"}'
 ```
 
 時刻は UTC（`time`）と観測地の時刻（`localTime`、時差つき）の両方を返す。キーは不要で、ほかのサイトからも呼べる（CORS を許可）。
