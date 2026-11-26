@@ -1,6 +1,6 @@
 # Qiita記事のテンプレート
 
-各日の `ARTICLE.md` はこの形で作ってある。
+各日の `ARTICLE.md` はこの形で作る。`ARTICLE.md` は手元にだけ置き、GitHub には載せない（`.gitignore` 済み）。
 
 - タイトル：`【AI×オープンデータ DayNN】<タイトル>`
 - 冒頭にデモ（GIFかスクリーンショット）とURL

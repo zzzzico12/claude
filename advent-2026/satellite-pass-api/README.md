@@ -171,7 +171,7 @@ NASAの公式予測（Spot the Station）と、時刻と方角のずれを比べ
 
 ## 記事を書くときのメモ
 
-人が Qiita の記事を書くためのメモ。下書きは [ARTICLE.md](ARTICLE.md)。
+人が Qiita の記事を書くためのメモ。下書きは 手元の `ARTICLE.md`（Git 管理外）。
 
 ### 一言でいうと
 

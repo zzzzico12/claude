@@ -44,7 +44,7 @@ advent-2026/
 └── santa-route-optimizer/
 ```
 
-各アプリのフォルダ（`advent-2026/<アプリ名>/`）には、仕様書（README.md）、`src/`、`scripts/`、`data/`（Git管理外）、`eval/`（評価）、`ARTICLE.md`（記事の下書き）が入っています。
+各アプリのフォルダ（`advent-2026/<アプリ名>/`）には、仕様書（README.md）、`src/`、`scripts/`、`data/`（Git管理外）、`eval/`（評価）が入っています。記事の下書き（`ARTICLE.md`）は手元にだけ置き、Git には入れていません。
 
 ## 📱 アプリ一覧
 
