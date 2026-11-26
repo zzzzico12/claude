@@ -113,6 +113,28 @@ importers:
         specifier: ^4
         version: 4.6.7
 
+  nasa-tech-finder:
+    dependencies:
+      '@advent/ai':
+        specifier: workspace:^
+        version: link:../packages/ai
+      '@advent/attribution':
+        specifier: workspace:^
+        version: link:../packages/attribution
+      '@advent/store':
+        specifier: workspace:^
+        version: link:../packages/store
+      zod:
+        specifier: ^4
+        version: 4.6.7
+    devDependencies:
+      tsx:
+        specifier: ^4
+        version: 4.23.15
+      vite:
+        specifier: ^7
+        version: 7.3.8(@types/node@22.20.5)(lightningcss@1.33.0)(tsx@4.23.15)
+
   packages/ai:
     dependencies:
       '@anthropic-ai/sdk':

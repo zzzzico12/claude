@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NASAの特許から技術探し</title>
+    <meta name="description" content="課題を日本語で入れると、使えそうな NASA の特許と技術報告書を探し、仕組みをやさしく説明します。" />
+  </head>
+  <body>
+    <header class="top">
+      <h1>NASAの特許から技術探し</h1>
+      <p class="lead">課題を日本語で入れると、使えそうな NASA の特許と技術報告書を探して、仕組みをやさしく説明します。</p>
+    </header>
+
+    <main class="page">
+      <div class="tabs" role="tablist">
+        <button role="tab" id="tab-find" aria-controls="pane-find" aria-selected="true">技術を探す</button>
+        <button role="tab" id="tab-api" aria-controls="pane-api" aria-selected="false" tabindex="-1">API の使い方</button>
+      </div>
+
+      <section id="pane-find" role="tabpanel" aria-labelledby="tab-find">
+        <form id="form" class="ask">
+          <label for="problem" class="label">解決したい課題</label>
+          <textarea id="problem" rows="3" maxlength="500" placeholder="例：寒い場所でも電池を長持ちさせたい"></textarea>
+          <div class="examples" id="examples"></div>
+          <div class="row">
+            <button id="go" class="primary">探す</button>
+            <span class="muted small">AI を使う検索は全体で1日10回まで（同じ課題の結果は保存して使い回します）</span>
+          </div>
+        </form>
+        <p id="error" class="warn" hidden></p>
+        <p id="busy" class="muted" hidden>探しています…（20秒ほど）</p>
+
+        <div id="result" hidden>
+          <section class="card">
+            <h2>AI のまとめ</h2>
+            <p id="overview"></p>
+            <ol id="picks" class="picks"></ol>
+            <p id="caution" class="muted small"></p>
+            <p id="check" class="small"></p>
+            <details class="small">
+              <summary>AI が読み取った課題と検索語</summary>
+              <p id="understood"></p>
+            </details>
+          </section>
+
+          <section class="card">
+            <h2>近かった特許 <span class="muted small" id="patent-note"></span></h2>
+            <ul id="patents" class="list"></ul>
+          </section>
+
+          <section class="card">
+            <h2>近かった技術報告書 <span class="muted small" id="report-note"></span></h2>
+            <ul id="reports" class="list"></ul>
+          </section>
+        </div>
+      </section>
+
+      <section id="pane-api" role="tabpanel" aria-labelledby="tab-api" hidden>
+        <div id="api-docs" class="card"></div>
+      </section>
+
+      <div id="attribution"></div>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

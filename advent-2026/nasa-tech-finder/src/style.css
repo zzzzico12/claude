@@ -1,0 +1,258 @@
+:root {
+  --bg: #f6f7f4;
+  --surface: #ffffff;
+  --text: #1c1e1b;
+  --muted: #5e635b;
+  --line: #e1e1da;
+  --accent: #1f5fbf;
+  --patent: #8a4b08;
+  --report: #2f6f3a;
+  --warn: #9a5b00;
+  --ok: #1d7a3e;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121412;
+    --surface: #1a1d1a;
+    --text: #f0efea;
+    --muted: #b3b6ad;
+    --line: #2d302b;
+    --accent: #6ea4ef;
+    --patent: #e3a45c;
+    --report: #7fc48b;
+    --warn: #e0a54a;
+    --ok: #5cc285;
+    color-scheme: dark;
+  }
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif;
+  line-height: 1.7;
+}
+a {
+  color: var(--accent);
+}
+button,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+button {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+}
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  padding: 0.5rem 1.4rem;
+}
+button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+textarea {
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  resize: vertical;
+}
+code,
+pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85em;
+}
+pre {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.6rem 0.8rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+pre.json {
+  max-height: 22rem;
+  overflow: auto;
+  white-space: pre;
+  word-break: normal;
+}
+.muted {
+  color: var(--muted);
+}
+.small {
+  font-size: 0.84rem;
+}
+.warn {
+  color: var(--warn);
+}
+.ok {
+  color: var(--ok);
+}
+[hidden] {
+  display: none !important;
+}
+
+.top,
+.page {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+.top {
+  padding-top: 1.2rem;
+}
+.top h1 {
+  font-size: 1.4rem;
+  margin: 0;
+}
+.lead {
+  margin: 0.2rem 0 1rem;
+  color: var(--muted);
+}
+.page {
+  padding-bottom: 3rem;
+}
+.tabs {
+  display: flex;
+  gap: 0.2rem;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 1rem;
+}
+.tabs button {
+  border: 0;
+  border-radius: 0;
+  background: none;
+  padding: 0.55rem 1rem;
+  font-weight: 600;
+  color: var(--muted);
+  border-bottom: 3px solid transparent;
+}
+.tabs button[aria-selected="true"] {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
+.label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+.examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.5rem 0;
+}
+.chip {
+  border-radius: 999px;
+  font-size: 0.82rem;
+  padding: 0.2rem 0.7rem;
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 1rem 1.15rem;
+  margin: 1rem 0;
+}
+.card h2 {
+  font-size: 1.05rem;
+  margin: 0 0 0.5rem;
+}
+.card h3 {
+  font-size: 0.95rem;
+  margin: 1.1rem 0 0.3rem;
+}
+.card h4 {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin: 0.6rem 0 0.2rem;
+}
+.picks {
+  padding-left: 1.3rem;
+}
+.picks li {
+  margin-bottom: 0.9rem;
+}
+.picks p {
+  margin: 0.15rem 0;
+}
+.pick-title {
+  font-weight: 600;
+}
+.badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  padding: 0 0.35rem;
+  margin-right: 0.3rem;
+  vertical-align: 1px;
+}
+.b-patent {
+  color: var(--patent);
+}
+.b-report {
+  color: var(--report);
+}
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.list li {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.list li:last-child {
+  border-bottom: 0;
+}
+.list p {
+  margin: 0.1rem 0;
+}
+.li-head {
+  font-weight: 600;
+}
+.desc {
+  font-size: 0.88rem;
+}
+.sim {
+  display: inline-block;
+  width: 44px;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--line);
+  vertical-align: middle;
+  margin-right: 4px;
+  overflow: hidden;
+}
+.sim i {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+}
+.attribution {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
