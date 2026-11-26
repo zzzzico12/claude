@@ -5,7 +5,7 @@ import { errorResponse, HttpError, json, preflight } from "../lib/http.js";
 import { loadIndex } from "../lib/index-file.js";
 import { explain, findCandidates, understand } from "../lib/search.js";
 import { ATTRIBUTION } from "../lib/sources.js";
-import { VoyageKeyMissing } from "../lib/voyage.js";
+import { VoyageBusy, VoyageKeyMissing } from "../lib/voyage.js";
 
 const DAILY_LIMIT = 10; // 全体で1日10回
 const PER_IP_LIMIT = 3;
@@ -59,7 +59,7 @@ export async function POST(request: Request): Promise<Response> {
     await store.set(key, JSON.stringify(out), CACHE_TTL);
     return json(200, out);
   } catch (err) {
-    if (err instanceof VoyageKeyMissing) return json(503, { error: err.message });
+    if (err instanceof VoyageKeyMissing || err instanceof VoyageBusy) return json(503, { error: err.message, code: err instanceof VoyageBusy ? "busy" : "config" });
     return errorResponse(err);
   }
 }

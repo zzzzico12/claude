@@ -67,5 +67,5 @@ export async function searchNtrsMany(queries: string[], size = 25): Promise<Repo
   return [...all.values()];
 }
 
-/** ベクトルにする文（題名＋要約。長すぎる要約は先頭だけ） */
-export const reportText = (r: Report) => `${r.title}\n${r.abstract.slice(0, 2000)}`;
+/** ベクトルにする文（題名＋要約の先頭400字。検索のたびに送るので、無料の制限（1分に1万トークン）に収まるよう短くする） */
+export const reportText = (r: Report) => `${r.title}\n${r.abstract.slice(0, 400)}`;

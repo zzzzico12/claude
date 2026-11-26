@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { numberWords } from "./number-words.js";
 import { toReport } from "./ntrs.js";
 import { toPatent } from "./patents.js";
 import { verify } from "./search.js";
@@ -41,5 +42,18 @@ describe("AI の説明の照合", () => {
     expect(r.unmatchedNumbers).toEqual([]);
     const bad = verify("電力がほしい", { ...e, overview: "効率99%です。" }, candidates);
     expect(bad.unmatchedNumbers).toEqual(["99%"]);
+  });
+});
+
+describe("英語の数", () => {
+  it("seventy-two・One hundred eighteen・minus ninety を数にする", () => {
+    expect(numberWords("operates for at least seventy-two hours")).toEqual([72]);
+    expect(numberWords("One hundred eighteen specimens containing")).toEqual([118]);
+    expect(numberWords("two thousand and five")).toEqual([2005]);
+  });
+  it("評価で見つかった4件（英語の数・minus・範囲の 10-20）は照合を通る", () => {
+    const candidates = [{ id: "1", title: "t", text: "at least seventy-two hours from plus 20 degrees C to minus 90 degrees C. One hundred eighteen specimens. range 10-20 km", year: null }];
+    const e = { overview: "-90℃まで72時間動いた。118個の試験片。解像度は10〜20km。", caution: "", picks: [] };
+    expect(verify("課題", e, candidates).unmatchedNumbers).toEqual([]);
   });
 });

@@ -13,6 +13,8 @@ export interface IndexFile {
   fetchedAt: string;
   model: string;
   dim: number;
+  /** NASA に載っているがベクトルがまだない特許の数（手元で pnpm vectors を動かすと加わる） */
+  missingVectors: number;
   patents: (Patent & { vec: string })[];
 }
 

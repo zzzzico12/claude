@@ -4,13 +4,14 @@
 //   報告書：並べ直したあとの上位5件 ／ NTRS が返した順の上位5件
 //   AI が選んだもの（最大5件）
 // - 採点は Claude（課題ごとに1回、候補をまとめて 0・1・2 で採点）。人が2割を抜き取って確かめる（eval/judgments.csv の「人の判定」欄）
+// - Voyage の無料の制限に合わせて課題ごとに40秒あけるので、20問で20分ほどかかる
 // - 1回目の結果は data/eval-run.json に保存し、`pnpm eval --reuse` で API を呼ばずに表だけ作り直せる
 import { generateObject } from "@advent/ai";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { z } from "zod";
 import { loadIndex } from "../lib/index-file.js";
 import { searchT2, type Patent } from "../lib/patents.js";
-import { explain, findCandidates, understand, type Explanation } from "../lib/search.js";
+import { explain, findCandidates, understand, verify, type Explanation } from "../lib/search.js";
 
 const TOP = 5;
 const RUN = "data/eval-run.json";
@@ -104,12 +105,16 @@ async function run(): Promise<RunRow[]> {
       ms,
     });
     console.log(`${q.id} ${q.problem}：AI が選んだ ${rows.at(-1)!.picks.length}件、${(ms / 1000).toFixed(1)}秒`);
+    // Voyage の無料の制限（1分に3回・1万トークン）に合わせて、課題ごとに間をあける
+    await new Promise((r) => setTimeout(r, 40_000));
   }
   writeFileSync(RUN, JSON.stringify(rows, null, 1));
   return rows;
 }
 
 const rows = process.argv.includes("--reuse") && existsSync(RUN) ? (JSON.parse(readFileSync(RUN, "utf8")) as RunRow[]) : await run();
+// 数字の照合は、照合のしかたを直したときにやり直せるよう、保存した説明と候補からもう一度計算する
+for (const r of rows) if (r.explanation) r.unmatchedNumbers = verify(r.q.problem, r.explanation, r.items).unmatchedNumbers;
 
 // ---------- 集計 ----------
 const scoreOf = (r: RunRow, id: string) => r.judged[id]?.score ?? 0;
@@ -186,5 +191,9 @@ if (agree.length) {
   const rel = agree.filter((x) => (x.c >= 1) === (x.h >= 1)).length;
   lines.push(`- 人が判定した ${agree.length}件のうち、点数がぴったり一致 ${exact}件（${pct(exact / agree.length)}）、「関係あり（1以上）か」が一致 ${rel}件（${pct(rel / agree.length)}）`);
 } else lines.push(`- まだ人の判定がない。\`eval/judgments.csv\` の「抜き取り」が ○ の行に、人の判定（0・1・2）を入れて \`pnpm eval --reuse\` を動かすと、ここに一致の割合が出る`);
-writeFileSync("eval/RESULTS.md", lines.join("\n") + "\n");
+// 「気づいたこと」など手で書いた部分（目印より後ろ）は、作り直しても残す
+const MARK = "<!-- ここから下は手で書いた部分（pnpm eval で作り直しても残る） -->";
+const prevResults = existsSync("eval/RESULTS.md") ? readFileSync("eval/RESULTS.md", "utf8") : "";
+const handwritten = prevResults.includes(MARK) ? prevResults.slice(prevResults.indexOf(MARK)) : `${MARK}\n\n## 気づいたこと\n\n（結果を見て書く）\n`;
+writeFileSync("eval/RESULTS.md", lines.join("\n") + "\n" + handwritten);
 console.log(lines.join("\n"));

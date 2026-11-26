@@ -150,6 +150,15 @@ function render(j: SearchOut) {
   $("result").hidden = false;
 }
 
+// ?q=課題 で開くと、その課題で探す（結果を共有するリンクに使える。同じ課題は保存した結果が返るので回数を使わない）
+{
+  const q = new URLSearchParams(location.search).get("q");
+  if (q) {
+    $<HTMLTextAreaElement>("problem").value = q.slice(0, 500);
+    $<HTMLFormElement>("form").requestSubmit();
+  }
+}
+
 // ---------- API の使い方 ----------
 async function renderApiDocs() {
   const o = location.origin;

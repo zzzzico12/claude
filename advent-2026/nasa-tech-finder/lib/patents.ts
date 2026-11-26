@@ -72,5 +72,5 @@ export async function collectPatents(log: (s: string) => void = () => {}, gapMs 
   return [...all.values()].sort((a, b) => a.id.localeCompare(b.id));
 }
 
-/** ベクトルにする文（題名＋分野＋説明） */
-export const patentText = (p: Patent) => `${p.title}\nCategory: ${p.category}\n${p.description}`;
+/** ベクトルにする文（題名＋分野＋説明の先頭600字。無料の制限の中で送れるように短くする） */
+export const patentText = (p: Patent) => `${p.title}\nCategory: ${p.category}\n${p.description.slice(0, 600)}`;

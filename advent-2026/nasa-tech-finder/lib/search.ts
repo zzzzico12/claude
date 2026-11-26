@@ -6,9 +6,16 @@
 import { checkNumbers, extractNumbers, generateObject, ignoreYears } from "@advent/ai";
 import { z } from "zod";
 import type { Index } from "./index-file.js";
+import { allowedNumbers } from "./number-words.js";
 import { reportText, searchNtrsMany, type Report } from "./ntrs.js";
 import type { Patent } from "./patents.js";
 import { cosine, embed } from "./voyage.js";
+
+/** 並べ直すためにベクトルにする報告書の数の上限（検索語ごとに NTRS の上位8件、合わせて最大40件） */
+export const REPORTS_PER_QUERY = 8;
+export const REPORTS_TO_EMBED = 40;
+/** API の中で Voyage の制限を待てる長さ（Vercel Functions の上限 60秒の中で、Claude の時間も残す） */
+const EMBED_MAX_WAIT_MS = 25_000;
 
 export const PATENT_TOP = 8;
 export const REPORT_TOP = 6;
@@ -58,10 +65,10 @@ export function rankPatents(index: Index, q: Int8Array, top = PATENT_TOP): Score
 }
 
 export async function findCandidates(index: Index, problem: string, need: Need): Promise<Candidates> {
-  const [q] = await embed([queryText(problem, need)], "query");
+  const [q] = await embed([queryText(problem, need)], "query", { maxWaitMs: EMBED_MAX_WAIT_MS });
   const patents = rankPatents(index, q);
-  const found = await searchNtrsMany(need.queries, 20);
-  const vecs = found.length ? await embed(found.map(reportText), "document") : [];
+  const found = (await searchNtrsMany(need.queries, REPORTS_PER_QUERY)).slice(0, REPORTS_TO_EMBED);
+  const vecs = found.length ? await embed(found.map(reportText), "document", { maxWaitMs: EMBED_MAX_WAIT_MS }) : [];
   const reports = found
     .map((item, i) => ({ item, score: cosine(q, vecs[i]) }))
     .sort((a, b) => b.score - a.score)
@@ -121,7 +128,7 @@ export function verify(problem: string, e: Explanation, candidates: { id: string
   const ids = new Set(candidates.map((x) => x.id));
   const unknownIds = e.picks.filter((p) => !ids.has(p.id)).map((p) => p.id);
   const picks = e.picks.filter((p) => ids.has(p.id));
-  const allowed = [problem, ...candidates.map((x) => `${x.id} ${x.title} ${x.text} ${x.year ?? ""}`)].flatMap((t) => extractNumbers(t).map((n) => n.value));
+  const allowed = allowedNumbers([problem, ...candidates.map((x) => `${x.id} ${x.title} ${x.text} ${x.year ?? ""}`)], (t) => extractNumbers(t).map((n) => n.value));
   const text = [e.overview, e.caution, ...picks.flatMap((p) => [p.why, p.how])].join("\n");
   // 年号と、10以下の整数（「2つの方式」など）は照合しない
   const { unmatched } = checkNumbers(text, allowed, { ignore: (n) => ignoreYears(n) || (Number.isInteger(n.value) && Math.abs(n.value) <= 10) });
