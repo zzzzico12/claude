@@ -1,10 +1,10 @@
-// eval/judgments.csv の読み書き（評価のスクリプトと、手元の確認用ページの両方で使う）
-// 列：課題ID, 課題, 種類, ID, 題名, Claude の判定, 理由, 抜き取り, 人の判定（0・1・2）
+// eval/judgments.csv の読み書き
+// 列：課題ID, 課題, 種類, ID, 題名, Claude の判定, 理由, 抜き取り, 再確認の判定, 再確認の理由
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 
 export const JUDGMENTS = "eval/judgments.csv";
-export const HEADER = ["課題ID", "課題", "種類", "ID", "題名", "Claude の判定", "理由", "抜き取り", "人の判定（0・1・2）"];
-export const COL = { qid: 0, problem: 1, kind: 2, id: 3, title: 4, claude: 5, reason: 6, sample: 7, human: 8 } as const;
+export const HEADER = ["課題ID", "課題", "種類", "ID", "題名", "Claude の判定", "理由", "抜き取り", "再確認の判定（別のモデル）", "再確認の理由"];
+export const COL = { qid: 0, problem: 1, kind: 2, id: 3, title: 4, claude: 5, reason: 6, sample: 7, recheck: 8, recheckReason: 9 } as const;
 
 /** すべてのセルを "" で囲んだ CSV（このファイルの形）を読む */
 export function parseCsv(text: string): string[][] {
@@ -22,11 +22,4 @@ export function readJudgments(path = JUDGMENTS): string[][] {
 
 export function writeJudgments(rows: string[][], path = JUDGMENTS) {
   writeFileSync(path, toCsv([HEADER, ...rows]));
-}
-
-/** 人の判定（課題ID:候補ID → "0"・"1"・"2"） */
-export function readHuman(path = JUDGMENTS): Map<string, string> {
-  const m = new Map<string, string>();
-  for (const r of readJudgments(path)) if (r[COL.human]) m.set(`${r[COL.qid]}:${r[COL.id]}`, r[COL.human]);
-  return m;
 }
