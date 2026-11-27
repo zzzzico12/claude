@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>抜き取り確認</title>
+  </head>
+  <body>
+    <main class="page review">
+      <header class="rv-head">
+        <h1>抜き取り確認 <span class="muted small">（手元専用。本番には入らない）</span></h1>
+        <div class="rv-progress"><span id="count"></span><span class="rv-bar"><i id="bar"></i></span></div>
+      </header>
+
+      <section class="card rv-card" id="card" hidden>
+        <p class="muted small">課題 <span id="qid"></span></p>
+        <p class="rv-problem" id="problem"></p>
+        <hr />
+        <p class="rv-title"><span class="badge" id="kind"></span> <a id="title" target="_blank" rel="noopener"></a> <span class="muted small" id="cid"></span></p>
+        <p class="rv-text" id="text"></p>
+        <button type="button" class="link small" id="more">続きを読む</button>
+
+        <p class="small muted rv-q">この候補は、課題にどれくらい関係ありますか？</p>
+        <div class="rv-buttons">
+          <button data-v="0"><kbd>0</kbd> 関係ない</button>
+          <button data-v="1"><kbd>1</kbd> 一部に使える・近い分野</button>
+          <button data-v="2"><kbd>2</kbd> 直接使えそう</button>
+        </div>
+        <p class="small muted">キー：<kbd>0</kbd><kbd>1</kbd><kbd>2</kbd> で判定して次へ、<kbd>←</kbd><kbd>→</kbd> で前後に移動。判定はすぐ <code>eval/judgments.csv</code> に保存されます。</p>
+      </section>
+
+      <section class="card small" id="prev" hidden></section>
+
+      <section class="card" id="done" hidden>
+        <h2>全部終わりました</h2>
+        <p id="summary"></p>
+        <p>一致の割合を <code>eval/RESULTS.md</code> に出すには、Claude に「抜き取り確認が終わった」と伝えてください（<code>pnpm eval --reuse</code> を動かします。API は呼びません）。</p>
+        <button id="restart">最初から見直す</button>
+      </section>
+    </main>
+    <script type="module" src="/src/review.ts"></script>
+  </body>
+</html>

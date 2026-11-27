@@ -51,6 +51,7 @@ pnpm vectors   # 特許を集めてベクトルにする（ベクトルがない
 pnpm index     # 特許の本文とベクトルを結びつける → server-data/index.json
 pnpm dev       # http://localhost:5208
 pnpm eval      # 課題20問の評価（約20分）。--reuse で保存した結果から表だけ作り直す
+# 人の抜き取り確認：pnpm dev のあと http://localhost:5208/review.html（手元専用。0・1・2 のキーで判定し、eval/judgments.csv に保存）
 ```
 
 ## 必要な環境変数

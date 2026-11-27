@@ -12,6 +12,7 @@ import { z } from "zod";
 import { loadIndex } from "../lib/index-file.js";
 import { searchT2, type Patent } from "../lib/patents.js";
 import { explain, findCandidates, understand, verify, type Explanation } from "../lib/search.js";
+import { readHuman, writeJudgments } from "./judgments-csv.js";
 
 const TOP = 5;
 const RUN = "data/eval-run.json";
@@ -135,23 +136,10 @@ const pickVals = (min: number) => technical.map((r) => pickPrecision(r, min)).fi
 // 人の抜き取り：判定した候補の2割（決まった順で選ぶので、やり直しても同じものが選ばれる）
 const all = rows.flatMap((r) => r.items.map((it) => ({ r, it })));
 const sample = new Set(all.filter((_, i) => i % 5 === 2).map(({ r, it }) => `${r.q.id}:${it.id}`));
-const csvCell = (s: unknown) => `"${String(s ?? "").replace(/"/g, '""')}"`;
-const human = existsSync("eval/judgments.csv") ? readHuman("eval/judgments.csv") : new Map<string, string>();
-writeFileSync(
-  "eval/judgments.csv",
-  ["課題ID,課題,種類,ID,題名,Claude の判定,理由,抜き取り,人の判定（0・1・2）"]
-    .concat(all.map(({ r, it }) => [r.q.id, r.q.problem, it.kind === "patent" ? "特許" : "報告書", it.id, it.title, scoreOf(r, it.id), r.judged[it.id]?.reason, sample.has(`${r.q.id}:${it.id}`) ? "○" : "", human.get(`${r.q.id}:${it.id}`) ?? ""].map(csvCell).join(",")))
-    .join("\n") + "\n",
+const human = readHuman();
+writeJudgments(
+  all.map(({ r, it }) => [r.q.id, r.q.problem, it.kind === "patent" ? "特許" : "報告書", it.id, it.title, String(scoreOf(r, it.id)), r.judged[it.id]?.reason ?? "", sample.has(`${r.q.id}:${it.id}`) ? "○" : "", human.get(`${r.q.id}:${it.id}`) ?? ""]),
 );
-
-function readHuman(path: string): Map<string, string> {
-  const m = new Map<string, string>();
-  for (const line of readFileSync(path, "utf8").split("\n").slice(1)) {
-    const cells = [...line.matchAll(/"((?:[^"]|"")*)"/g)].map((x) => x[1].replace(/""/g, '"'));
-    if (cells.length >= 9 && cells[8] !== "") m.set(`${cells[0]}:${cells[3]}`, cells[8]);
-  }
-  return m;
-}
 
 // 人の判定との一致（入っていれば）
 const agree = all
