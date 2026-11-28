@@ -208,6 +208,10 @@ export class CompareScene {
       loadModel(PERSON_MODEL.file),
     ]);
     if (my !== this.token) return; // 読み込みのあいだに別のものが選ばれた
+    // ラベル（HTML）は、親ごと場面から外しても画面に残るので、先に消す（切り替えるたびにラベルが重なっていた）
+    this.content.traverse((o) => {
+      if (o instanceof CSS2DObject) o.element.remove();
+    });
     this.content.clear();
 
     // 小惑星（大きさはスライダーで変える。最初は推定の最大）
@@ -283,8 +287,14 @@ export class CompareScene {
     el.textContent = this.onAsteroidLabel(m);
   }
 
-  /** overview：全体が入る斜めの視点。human：人の目の高さから見上げる */
-  view(v: "overview" | "human") {
+  /** 比べる物が小惑星よりずっと小さく、全体を写すと点にしか見えないとき（8分の1未満）は、比べる物に寄る */
+  suggestedView(): "overview" | "object" {
+    if (!this.input?.compare) return "overview";
+    return this.input.compare.value * 8 < this.input.asteroid.max ? "object" : "overview";
+  }
+
+  /** overview：全体が入る斜めの視点。object：比べる物に寄り、うしろに小惑星。human：人の目の高さから見上げる */
+  view(v: "overview" | "human" | "object") {
     if (!this.input) return;
     const c = this.controls;
     const span = this.size;
@@ -296,6 +306,19 @@ export class CompareScene {
       this.camera.position.set(-dist * 0.2, h * 0.5 + dist * 0.25, dist);
       c.minDistance = 0.5;
       c.maxDistance = dist * 6;
+    } else if (v === "object" && this.input.compare) {
+      // 比べる物の手前（小惑星と反対側の斜め前）から見る。うしろに小惑星がそびえる
+      this.camera.fov = 50;
+      const o = this.positions.compare;
+      const a = this.positions.asteroid;
+      const h = this.input.compare.value;
+      const d = Math.max(h, 2) * 2.6;
+      // 小惑星が比べる物のちょうどうしろに来るように、小惑星と反対の向きから見る
+      const away = new THREE.Vector3(o.x - a.x, 0, o.z - a.z).normalize();
+      this.camera.position.set(o.x + away.x * d, Math.max(h * 0.45, 1.6), o.z + away.z * d + d * 0.35);
+      c.target.set(o.x - away.x * h * 0.6, h * 0.7, o.z);
+      c.minDistance = 0.5;
+      c.maxDistance = this.size * 6;
     } else {
       // 人のすぐ後ろ、目の高さ（1.6 m）から小惑星を見上げる
       this.camera.fov = 70;

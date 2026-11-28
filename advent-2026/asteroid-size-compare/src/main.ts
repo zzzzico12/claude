@@ -20,6 +20,7 @@ $("assumption").textContent = t.assumption;
 $("size-label").textContent = t.sizeSlider;
 $("v-over").textContent = t.viewOverview;
 $("v-human").textContent = t.viewHuman;
+$("v-obj").textContent = t.viewObject;
 $("v-note").textContent = t.vNote;
 $("ai-summary").textContent = t.aiMore;
 mountAttribution($("attribution"), en ? sourcesEn : sources, { lang });
@@ -210,15 +211,19 @@ async function updateScene() {
     sliderMeters(),
   );
   // URL の &view=human で、人の目線から始める（共有用）
-  setView(initial.view === "human" ? "human" : "overview");
+  // 比べる物が小惑星よりずっと小さいときは、比べる物に寄った視点から始める
+  setView(initial.view === "human" ? "human" : (scene.suggestedView() as View));
   initial.view = null;
 }
 
-function setView(v: "overview" | "human") {
+type View = "overview" | "human" | "object";
+function setView(v: View) {
   scene?.view(v);
   $("v-over").setAttribute("aria-pressed", String(v === "overview"));
+  $("v-obj").setAttribute("aria-pressed", String(v === "object"));
   $("v-human").setAttribute("aria-pressed", String(v === "human"));
 }
+$("v-obj").onclick = () => setView("object");
 $("v-over").onclick = () => setView("overview");
 $("v-human").onclick = () => setView("human");
 
