@@ -3,7 +3,7 @@ import { mountAttribution } from "@advent/attribution";
 import type { ModelComparison } from "../lib/compare.js";
 import type { Row } from "../lib/data.js";
 import { sources, sourcesEn } from "../lib/sources.js";
-import { fmt, lang, pctStr, switchLang, t } from "./i18n.js";
+import { fmt, lang, switchLang, t } from "./i18n.js";
 import { ASTEROID_MODEL, CompareScene, MODELS, PERSON_MODEL } from "./scene.js";
 
 const $ = (id: string) => document.getElementById(id) as HTMLElement;
@@ -21,7 +21,7 @@ $("v-over").textContent = t.viewOverview;
 $("v-human").textContent = t.viewHuman;
 $("v-obj").textContent = t.viewObject;
 $("v-note").textContent = t.vNote;
-$("ai-summary").textContent = t.aiMore;
+$("ai-title").textContent = t.aiTitle;
 mountAttribution($("attribution"), en ? sourcesEn : sources, { lang });
 const credits = [ASTEROID_MODEL, PERSON_MODEL, ...Object.values(MODELS)].map((m) => m.credit!);
 const LICENSE_URL = { "CC-BY": "https://creativecommons.org/licenses/by/3.0/", CC0: "https://creativecommons.org/publicdomain/zero/1.0/", NASA: "https://www.nasa.gov/nasa-brand-center/images-and-media/" };
@@ -141,27 +141,11 @@ function select(r: Row) {
 
   updateScene();
 
-  renderSizeTile(f.size.max);
-  $("t-dist").innerHTML = `<span class="t-label">${t.tileDist}</span><b class="t-big">${t.moonX(f.distance.moon)}</b><span class="t-sub">${esc(t.distDetail(f.distance.km, f.distance.moon, f.distance.earthDiameters))}</span>${distSvg(r)}`;
-  $("t-speed").innerHTML = `<span class="t-label">${t.tileSpeed}</span><b class="t-big">${t.speedX(f.speed.shinkansen)}</b><span class="t-sub">${t.kmps(f.speed.kmPerS)}${esc(t.paren(t.speedDetail(f.speed.kmPerH, f.speed.shinkansen, f.speed.earthOrbit)))}</span>`;
-  $("t-risk").className = `tile risk ${r.sentry && r.sentry.ts > 0 ? "watch" : "ok"}`;
-  $("t-risk").innerHTML = r.sentry
-    ? `<span class="t-label">${t.tileRisk}</span><b class="t-big">${t.riskListed(pctStr(r.sentry.ip), r.sentry.ts)}</b><span class="t-sub">${esc(t.riskListedSub(r.sentry.range, r.sentry.ts))}</span>`
-    : `<span class="t-label">${t.tileRisk}</span><b class="t-big">✓ ${t.riskNo}</b><span class="t-sub">${t.riskNoSub}</span>`;
-  ($("ai") as HTMLDetailsElement).open = false;
   $("ai-body").innerHTML = `<p class="muted">${t.aiLoading}</p>`;
   history.replaceState(null, "", `?${new URLSearchParams({ ...(new URLSearchParams(location.search).get("lang") ? { lang } : {}), des: r.des })}`);
   loadExplanation(r);
 }
 
-function renderSizeTile(m: number) {
-  const f = selected!.facts;
-  const c = compare;
-  const rel = c ? m / c.value : null;
-  $("t-size").innerHTML = `<span class="t-label">${t.tileSize}</span><b class="t-big">${t.meters(f.size.min, f.size.max)}</b>
-    <span class="t-sub">${f.size.measured ? t.measured : t.estimated}</span>
-    ${c && rel ? `<span class="t-cmp">${esc(c.name[lang])}${t.colon}${rel >= 0.9 && rel <= 1.1 ? t.same : rel >= 1 ? t.bigger(Number(rel.toPrecision(2))) : t.smaller(Number(rel.toPrecision(2)))}</span>` : ""}`;
-}
 
 function renderChips() {
   const f = selected!.facts;
@@ -176,7 +160,6 @@ function renderChips() {
           compare = f.modelComparisons.find((c) => c.qid === b.dataset.q) ?? null;
           renderChips();
           updateScene();
-          renderSizeTile(sliderMeters());
         }),
     );
 }
@@ -223,22 +206,4 @@ async function loadExplanation(r: Row) {
   } catch (err) {
     if (selected === r) $("ai-body").innerHTML = `<p class="warn">${esc((err as Error).message || t.error)}</p>`;
   }
-}
-
-// ---------- 距離の図（地球・月・小惑星。月までの距離の何倍） ----------
-function distSvg(r: Row): string {
-  const d = r.facts.distance;
-  const W = 300,
-    H = 54,
-    y = 26,
-    x0 = 12,
-    x1 = W - 10;
-  const maxLd = Math.max(d.moonMax, 1) * 1.12;
-  const x = (ld: number) => x0 + (ld / maxLd) * (x1 - x0);
-  const parts = [`<line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" class="axis"/>`];
-  parts.push(`<circle cx="${x0}" cy="${y}" r="6" class="earth"/><text x="${x0}" y="${y + 20}" class="lbl" text-anchor="start">${t.earth}</text>`);
-  parts.push(`<circle cx="${x(1)}" cy="${y}" r="3" class="moon"/><text x="${x(1)}" y="${y - 9}" class="lbl" text-anchor="middle">${t.moon}</text>`);
-  if (d.moonMax > d.moonMin) parts.push(`<line x1="${x(d.moonMin)}" y1="${y}" x2="${x(d.moonMax)}" y2="${y}" class="range"/>`);
-  parts.push(`<circle cx="${x(d.moon)}" cy="${y}" r="5" class="ast-dot"/>`);
-  return `<svg viewBox="0 0 ${W} ${H}" class="svg" role="img" aria-label="${esc(t.figDist)}">${parts.join("")}</svg>`;
 }

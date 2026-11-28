@@ -290,50 +290,12 @@ a {
   grid-column: 1;
   margin: -4px 0 0;
 }
-.tile.risk .t-big {
-  font-size: 1.15rem;
-}
 .side {
   grid-column: 2;
   grid-row: 1 / span 3;
   display: flex;
   flex-direction: column;
   gap: 10px;
-}
-.tile {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 0.7rem 0.9rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-}
-.t-label {
-  font-size: 0.78rem;
-  color: var(--muted);
-  font-weight: 600;
-}
-.t-big {
-  font-size: 1.45rem;
-  line-height: 1.25;
-  font-variant-numeric: tabular-nums;
-}
-.t-sub {
-  font-size: 0.78rem;
-  color: var(--muted);
-}
-.t-cmp {
-  margin-top: 0.3rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--ast);
-}
-.tile.risk.ok .t-big {
-  color: var(--ok);
-}
-.tile.risk.watch .t-big {
-  color: var(--warn);
 }
 .ai {
   background: var(--surface);
@@ -342,10 +304,9 @@ a {
   padding: 0.6rem 0.9rem;
   font-size: 0.88rem;
 }
-.ai summary {
-  cursor: pointer;
-  font-weight: 600;
-  color: var(--accent);
+.ai h3 {
+  margin: 0.1rem 0 0.4rem;
+  font-size: 0.95rem;
 }
 .ai p {
   margin: 0.4rem 0;
