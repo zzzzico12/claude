@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>地球に近づく小惑星を身近なサイズで</title>
+    <meta name="description" content="これから30日に地球に近づく小惑星を、東京タワーや月までの距離に置き換えて見せます。" />
+  </head>
+  <body>
+    <header class="top">
+      <div>
+        <h1 id="title"></h1>
+        <p class="lead" id="lead"></p>
+      </div>
+      <button id="lang" class="ghost"></button>
+    </header>
+
+    <main class="page">
+      <section class="strip-head">
+        <p id="summary" class="sum-main"></p>
+        <div class="sort" id="sort"></div>
+      </section>
+      <div class="strip" id="strip" role="listbox"></div>
+      <p id="status" class="muted small"></p>
+
+      <section class="stage" id="stage" hidden>
+        <div class="viewer">
+          <div id="three" class="three"></div>
+          <div class="v-top">
+            <h2 id="name"></h2>
+            <p id="headline" class="headline"></p>
+          </div>
+          <div class="v-ctl">
+            <div class="chips" id="chips" role="group"></div>
+            <div class="row">
+              <label class="slider"><span id="size-label"></span><input type="range" id="size" min="0" max="1" step="0.001" value="1" /><output id="size-out"></output></label>
+              <div class="views" role="group">
+                <button id="v-over" aria-pressed="true"></button>
+                <button id="v-human" aria-pressed="false"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="v-note muted small" id="v-note"></p>
+        <aside class="side">
+          <div class="tile" id="t-size"></div>
+          <div class="tile" id="t-dist"></div>
+          <div class="tile" id="t-speed"></div>
+          <div class="tile risk" id="t-risk"></div>
+          <details class="ai" id="ai">
+            <summary id="ai-summary"></summary>
+            <div id="ai-body"></div>
+          </details>
+        </aside>
+      </section>
+
+      <p class="muted small" id="assumption"></p>
+      <div id="credits" class="credits small muted"></div>
+      <div id="attribution"></div>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
