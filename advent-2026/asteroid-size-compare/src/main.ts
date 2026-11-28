@@ -47,7 +47,7 @@ const name = (r: Row) => r.fullname.replace(/^\((.*)\)$/, "$1");
 // URL の &cmp=・&view= は最初に開いたときだけ使う（select で URL を書き換えるので、先に読んでおく）
 const initial = { cmp: new URLSearchParams(location.search).get("cmp"), view: new URLSearchParams(location.search).get("view") };
 let rows: Row[] = [];
-let sort: "time" | "dist" | "size" = "dist";
+let sort: "time" | "size" = "time";
 let selected: Row | null = null;
 let compare: ModelComparison | null = null;
 let scene: CompareScene | null = null;
@@ -76,14 +76,13 @@ try {
 }
 
 function sorted() {
-  return [...rows].sort((a, b) => (sort === "time" ? a.time.localeCompare(b.time) : sort === "dist" ? a.dist - b.dist : b.facts.size.max - a.facts.size.max));
+  return [...rows].sort((a, b) => (sort === "time" ? a.time.localeCompare(b.time) : b.facts.size.max - a.facts.size.max));
 }
 
 function renderSort() {
   const opts: [typeof sort, string][] = [
-    ["dist", t.sortDist],
-    ["size", t.sortSize],
     ["time", t.sortTime],
+    ["size", t.sortSize],
   ];
   $("sort").innerHTML = opts.map(([k, l]) => `<button data-k="${k}" aria-pressed="${k === sort}">${l}</button>`).join("");
   $("sort")
