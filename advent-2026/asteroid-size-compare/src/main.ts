@@ -17,7 +17,6 @@ $("lead").textContent = t.lead;
 $("lang").textContent = t.switchTo;
 $("lang").onclick = () => switchLang(en ? "ja" : "en");
 $("assumption").textContent = t.assumption;
-$("size-label").textContent = t.sizeSlider;
 $("v-over").textContent = t.viewOverview;
 $("v-human").textContent = t.viewHuman;
 $("v-obj").textContent = t.viewObject;
@@ -54,7 +53,7 @@ let compare: ModelComparison | null = null;
 let scene: CompareScene | null = null;
 try {
   scene = new CompareScene($("three"));
-  scene.onAsteroidLabel = (m) => `${fmt(Math.round(m))} m`;
+  scene.onAsteroidLabel = (m) => (selected && selected.facts.size.min !== selected.facts.size.max ? t.maxEstimate(fmt(Math.round(m))) : `${fmt(Math.round(m))} m`);
 } catch {
   $("three").innerHTML = `<p class="muted">${en ? "3D is not available in this browser." : "このブラウザでは3D表示が使えません。"}</p>`;
 }
@@ -100,16 +99,10 @@ function renderSort() {
     );
 }
 
-/** 大きさの目安のアイコン（人・クジラ・塔・ビル・山） */
-function sizeIcon(m: number) {
-  return m < 20 ? "🧍" : m < 60 ? "🐋" : m < 400 ? "🗼" : m < 2000 ? "🏙️" : "🗻";
-}
-
 function renderStrip() {
   $("strip").innerHTML = sorted()
     .map(
       (r) => `<button class="card ${r === selected ? "on" : ""}" data-des="${esc(r.des)}" data-time="${r.time}" role="option" aria-selected="${r === selected}">
-        <span class="c-icon" aria-hidden="true">${sizeIcon(r.facts.size.max)}</span>
         <span class="c-date">${dateFmt.format(new Date(r.time))}</span>
         <b class="c-name">${esc(name(r))}</b>
         <span class="c-size">${t.meters(r.facts.size.min, r.facts.size.max)}</span>
@@ -125,9 +118,9 @@ function renderStrip() {
   $("strip").querySelector<HTMLElement>(".card.on")?.scrollIntoView({ block: "nearest", inline: "nearest" });
 }
 
+/** 3D は推定の最大の大きさで描く */
 function sliderMeters() {
-  const f = selected!.facts;
-  return f.size.min + (f.size.max - f.size.min) * Number(($("size") as HTMLInputElement).value);
+  return selected!.facts.size.max;
 }
 
 function select(r: Row) {
@@ -146,17 +139,6 @@ function select(r: Row) {
   compare = f.modelComparisons.find((c) => c.qid === want) ?? [...f.modelComparisons].sort((a, b) => Math.abs(Math.log(a.value / mid)) - Math.abs(Math.log(b.value / mid)))[0] ?? null;
   renderChips();
 
-  // スライダー：推定の最小〜最大（測られていれば動かさない）
-  const slider = $("size") as HTMLInputElement;
-  slider.disabled = f.size.min === f.size.max;
-  slider.value = "1";
-  $("size-out").textContent = `${fmt(f.size.max)} m`;
-  slider.oninput = () => {
-    const m = sliderMeters();
-    $("size-out").textContent = `${fmt(Math.round(m))} m`;
-    scene?.setAsteroidSize(m);
-    renderSizeTile(m);
-  };
   updateScene();
 
   renderSizeTile(f.size.max);

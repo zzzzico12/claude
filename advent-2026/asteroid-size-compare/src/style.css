@@ -136,10 +136,6 @@ a {
   border-color: var(--accent);
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent);
 }
-.c-icon {
-  font-size: 1.5rem;
-  line-height: 1.2;
-}
 .c-date {
   color: var(--muted);
   font-size: 0.75rem;
@@ -170,7 +166,7 @@ a {
 .stage {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
-  grid-template-rows: auto auto;
+  grid-template-rows: auto auto auto;
   gap: 12px;
   align-items: start;
 }
@@ -246,15 +242,12 @@ a {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 .v-ctl {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 1.4rem 0.8rem 0.7rem;
-  background: linear-gradient(rgba(16, 28, 48, 0), rgba(16, 28, 48, 0.6));
+  grid-column: 1;
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  align-items: center;
+  justify-content: space-between;
 }
 .chips {
   display: flex;
@@ -262,62 +255,35 @@ a {
   flex-wrap: wrap;
 }
 .chips button {
-  background: rgba(255, 255, 255, 0.88);
-  color: #1b1d22;
-  border: 0;
   border-radius: 999px;
   font-size: 0.8rem;
   padding: 0.2rem 0.7rem;
 }
 .chips button small {
   margin-left: 0.3rem;
-  color: #5d6270;
+  color: var(--muted);
 }
 .chips button[aria-pressed="true"] {
-  background: #c2562c;
+  background: var(--ast);
+  border-color: var(--ast);
   color: #fff;
 }
 .chips button[aria-pressed="true"] small {
   color: #ffe9df;
 }
-.v-ctl .row {
-  display: flex;
-  gap: 0.8rem;
-  align-items: center;
-  flex-wrap: wrap;
-}
-.slider {
-  flex: 1;
-  min-width: 240px;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  color: #fff;
-  font-size: 0.82rem;
-}
-.slider input {
-  flex: 1;
-  accent-color: #ee8a5e;
-}
-.slider output {
-  min-width: 4.5em;
-  font-variant-numeric: tabular-nums;
-  font-weight: 700;
-}
 .views {
   display: flex;
+  border: 1px solid var(--line);
   border-radius: 8px;
   overflow: hidden;
 }
 .views button {
   border: 0;
   border-radius: 0;
-  background: rgba(255, 255, 255, 0.85);
-  color: #1b1d22;
   font-size: 0.8rem;
 }
 .views button[aria-pressed="true"] {
-  background: #3a5fc8;
+  background: var(--accent);
   color: #fff;
 }
 .v-note {
@@ -329,7 +295,7 @@ a {
 }
 .side {
   grid-column: 2;
-  grid-row: 1 / span 2;
+  grid-row: 1 / span 3;
   display: flex;
   flex-direction: column;
   gap: 10px;
