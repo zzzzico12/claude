@@ -147,10 +147,6 @@ a {
   text-overflow: ellipsis;
   max-width: 100%;
 }
-.c-dist {
-  color: var(--accent);
-  font-weight: 600;
-}
 .c-flag {
   position: absolute;
   top: 0.5rem;

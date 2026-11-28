@@ -106,7 +106,6 @@ function renderStrip() {
         <span class="c-date">${dateFmt.format(new Date(r.time))}</span>
         <b class="c-name">${esc(name(r))}</b>
         <span class="c-size">${t.meters(r.facts.size.min, r.facts.size.max)}</span>
-        <span class="c-dist">${t.moonX(r.facts.distance.moon)}</span>
         ${r.sentry ? `<span class="c-flag">Sentry</span>` : ""}
       </button>`,
     )
