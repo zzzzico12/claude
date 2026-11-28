@@ -50,6 +50,17 @@ function loadModel(file: string): Promise<THREE.Object3D | null> {
           });
           for (const c of extra) c.removeFromParent();
           bakeSkinned(o);
+          if (file.endsWith(".fbx")) {
+            // FBX の書き出しで透明度が逆に入り、不透明度 0（透明）になっていた人のモデルを、不透明に直す
+            o.traverse((c) => {
+              for (const mt of [(c as THREE.Mesh).material ?? []].flat() as THREE.Material[]) {
+                mt.opacity = 1;
+                mt.transparent = false;
+                // 形を直したときに面の向きが裏返ることがあるので、両面を描く
+                mt.side = THREE.DoubleSide;
+              }
+            });
+          }
           return o;
         })
         .catch(() => null),
@@ -119,6 +130,9 @@ function bakeSkinned(root: THREE.Object3D) {
     g.deleteAttribute("skinIndex");
     g.deleteAttribute("skinWeight");
     g.computeVertexNormals();
+    // 写した形には元の（巨大な）外枠が残っているので、作り直す。残したままだと画面の外とみなされて描かれなかった
+    g.computeBoundingBox();
+    g.computeBoundingSphere();
     const mesh = new THREE.Mesh(g, m.material);
     mesh.position.copy(m.position);
     mesh.quaternion.copy(m.quaternion);
@@ -270,6 +284,7 @@ export class CompareScene {
     }
     // 人（身長 1.7 m）
     const person = normalize(personObj ?? fallbackShape("person"), PERSON_MODEL, 1.7);
+
     this.content.add(person);
     const pl = label(input.person.name, input.person.sub, "person");
     pl.position.set(0, 1.9, 0);
@@ -333,6 +348,8 @@ export class CompareScene {
     if (!this.input) return;
     const c = this.controls;
     const span = this.size;
+    // 見上げるときは、カメラが見る点より低くてよい（ほかの視点では地面の下に回り込まないよう、見る点より下に行かない）
+    c.maxPolarAngle = v === "human" ? Math.PI - 0.05 : Math.PI / 2 - 0.02;
     if (v === "overview") {
       this.camera.fov = 40;
       const h = Math.max(this.input.asteroid.max, this.input.compare?.value ?? 0);
@@ -355,13 +372,17 @@ export class CompareScene {
       c.minDistance = 0.5;
       c.maxDistance = this.size * 6;
     } else {
-      // 人のすぐ後ろ、目の高さ（1.6 m）から小惑星を見上げる
-      this.camera.fov = 70;
+      // 人の肩ごしに（少しうしろ・横、目の高さより少し上から）小惑星を見上げる。人も画面に入るように
+      this.camera.fov = 75;
       const p = this.positions.person;
       const a = this.positions.asteroid;
       const dir = new THREE.Vector3(a.x - p.x, 0, a.z - p.z).normalize();
-      this.camera.position.set(p.x - dir.x * 2.5, 1.6, p.z - dir.z * 2.5);
-      c.target.set(a.x, Math.min(this.input.asteroid.max * 0.5, 40 + this.input.asteroid.max * 0.3), a.z);
+      const side = new THREE.Vector3(-dir.z, 0, dir.x);
+      this.camera.position.set(p.x - dir.x * 3.6 + side.x * 1.1, 1.9, p.z - dir.z * 3.6 + side.z * 1.1);
+      // 見上げる角度は 12° まで（それ以上だと、手前の人が画面から外れる。大きな小惑星は上が切れるが、そのほうが大きさが伝わる）
+      const cam = this.camera.position;
+      const D = Math.hypot(a.x - cam.x, a.z - cam.z);
+      c.target.set(a.x, Math.min(this.input.asteroid.max * 0.5, cam.y + D * Math.tan((12 * Math.PI) / 180)), a.z);
     }
     this.camera.updateProjectionMatrix();
     c.update();
