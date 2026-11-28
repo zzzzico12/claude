@@ -26,7 +26,7 @@
 
 ## 使い方
 
-デモ：（公開後に記入）
+デモ：https://advent26-asteroid-size-compare.vercel.app/（例：https://advent26-asteroid-size-compare.vercel.app/?des=2011%20UE305&cmp=Q243&view=human）
 
 ### 画面
 
@@ -74,7 +74,7 @@ pnpm models    # 3D モデルを軽くする（1MB を超えるもの。--inspec
 - [x] 確かめ方のスクリプトを動かし、結果を `eval/RESULTS.md` に書いた
 - [x] 画面またはREADMEに出典を表示した
 - [ ] スマホなど実機での動作確認をした（必要な場合）
-- [ ] デプロイした
+- [x] デプロイした
 - [x] 記事の下書き `ARTICLE.md` を書いた（手元だけ）
 
 ## データと出典
