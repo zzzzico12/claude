@@ -49,6 +49,7 @@ function loadModel(file: string): Promise<THREE.Object3D | null> {
             if ((c as THREE.Light).isLight || (c as THREE.Camera).isCamera) extra.push(c);
           });
           for (const c of extra) c.removeFromParent();
+          bakeSkinned(o);
           return o;
         })
         .catch(() => null),
@@ -98,19 +99,53 @@ function fallbackShape(kind: ModelDef["fallback"]): THREE.Object3D {
  * 物を、実際の大きさ（m）にそろえ、底を地面（y=0）に、水平の中心を原点に置いた Group にする
  * length のときは、いちばん長い向きを x にそろえる
  */
+/**
+ * 骨格つきのモデル（人の FBX）を、今の姿勢のまま動かない形に直す。
+ * 骨格つきのままだと、拡大・縮小しても骨格の変形で元の大きさ（483 単位）のまま描かれ、巨大な人の影が落ちた
+ */
+function bakeSkinned(root: THREE.Object3D) {
+  root.updateMatrixWorld(true);
+  const skinned: THREE.SkinnedMesh[] = [];
+  root.traverse((c) => {
+    if ((c as THREE.SkinnedMesh).isSkinnedMesh) skinned.push(c as THREE.SkinnedMesh);
+  });
+  for (const m of skinned) {
+    m.skeleton.update();
+    const g = m.geometry.clone();
+    const pos = g.getAttribute("position") as THREE.BufferAttribute;
+    const v = new THREE.Vector3();
+    // 骨格で変形したあとの頂点（メッシュのローカル座標）
+    for (let i = 0; i < pos.count; i++) pos.setXYZ(i, ...m.getVertexPosition(i, v).toArray());
+    g.deleteAttribute("skinIndex");
+    g.deleteAttribute("skinWeight");
+    g.computeVertexNormals();
+    const mesh = new THREE.Mesh(g, m.material);
+    mesh.position.copy(m.position);
+    mesh.quaternion.copy(m.quaternion);
+    mesh.scale.copy(m.scale);
+    m.parent!.add(mesh);
+    m.removeFromParent();
+  }
+}
+
+function boxOf(o: THREE.Object3D): THREE.Box3 {
+  o.updateMatrixWorld(true);
+  return new THREE.Box3().setFromObject(o);
+}
+
 function normalize(obj: THREE.Object3D, def: ModelDef, meters: number): THREE.Group {
   const inner = new THREE.Group();
   inner.add(obj);
-  let box = new THREE.Box3().setFromObject(inner);
+  let box = boxOf(inner);
   let size = box.getSize(new THREE.Vector3());
   if (def.measure === "length" && size.z > size.x) {
     obj.rotation.y += Math.PI / 2;
-    box = new THREE.Box3().setFromObject(inner);
+    box = boxOf(inner);
     size = box.getSize(new THREE.Vector3());
   }
   const base = def.measure === "height" ? size.y : def.measure === "length" ? Math.max(size.x, size.z) : Math.max(size.x, size.y, size.z);
   inner.scale.setScalar(meters / (base || 1));
-  box = new THREE.Box3().setFromObject(inner);
+  box = boxOf(inner);
   const c = box.getCenter(new THREE.Vector3());
   inner.position.set(-c.x, -box.min.y, -c.z);
   inner.traverse((o) => {
@@ -226,7 +261,7 @@ export class CompareScene {
     if (input.compare) {
       const def = MODELS[input.compare.qid];
       cmp = normalize(cmpObj ?? fallbackShape(def?.fallback ?? "tower"), def ?? { file: "", measure: "height", fallback: "tower" }, input.compare.value);
-      const b = new THREE.Box3().setFromObject(cmp).getSize(new THREE.Vector3());
+      const b = boxOf(cmp).getSize(new THREE.Vector3());
       cmpWidth = Math.max(b.x, b.z);
       this.content.add(cmp);
       const l = label(input.compare.name, input.compare.sub);
