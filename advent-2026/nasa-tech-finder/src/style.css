@@ -256,3 +256,44 @@ pre.json {
   font-size: 0.85rem;
   color: var(--muted);
 }
+
+/* 1件を詳しく */
+.detail-btn {
+  margin-top: 0.4rem;
+  font-size: 0.82rem;
+  padding: 0.2rem 0.7rem;
+}
+.detail-btn[aria-expanded="true"] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.detail {
+  margin: 0.6rem 0 0.4rem;
+  padding: 0.8rem 1rem;
+  border-left: 3px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 5%, var(--surface));
+  border-radius: 0 8px 8px 0;
+  font-size: 0.92rem;
+}
+.detail h3 {
+  font-size: 0.95rem;
+  margin: 0.9rem 0 0.3rem;
+}
+.detail h3:first-child {
+  margin-top: 0;
+}
+.detail p {
+  margin: 0.25rem 0;
+}
+.detail ul,
+.detail ol {
+  margin: 0.2rem 0 0.4rem;
+  padding-left: 1.3rem;
+}
+.detail .one-line {
+  font-weight: 700;
+}
+.list .detail li {
+  border-bottom: 0;
+  padding: 0.1rem 0;
+}

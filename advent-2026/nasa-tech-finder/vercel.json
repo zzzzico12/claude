@@ -7,6 +7,7 @@
   "ignoreCommand": "git diff --quiet HEAD^ HEAD -- . ../packages ../pnpm-lock.yaml",
   "functions": {
     "api/search.ts": { "maxDuration": 60, "includeFiles": "server-data/index.json" },
-    "api/status.ts": { "includeFiles": "server-data/index.json" }
+    "api/status.ts": { "includeFiles": "server-data/index.json" },
+    "api/detail.ts": { "maxDuration": 60, "includeFiles": "server-data/index.json" }
   }
 }
