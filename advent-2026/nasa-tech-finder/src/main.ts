@@ -87,6 +87,9 @@ $("form").addEventListener("submit", async (e) => {
     if (!r.ok) throw new Error(j.error ?? `エラー（HTTP ${r.status}）`);
     last = j;
     render(j);
+    // &open=ID で、その候補の「詳しく」を開いた状態にする（共有用）
+    const open = new URLSearchParams(location.search).get("open");
+    if (open) document.querySelector<HTMLButtonElement>(`button.detail-btn[data-id="${CSS.escape(open)}"]`)?.click();
   } catch (err) {
     $("error").textContent = (err as Error).message;
     $("error").hidden = false;
@@ -113,6 +116,7 @@ function render(j: SearchOut) {
               <a href="${esc(c.item.url)}" target="_blank" rel="noopener">${esc(c.item.title)}</a> <span class="muted small">${esc(p.id)}</span></p>
             <p><b>使えそうな理由：</b>${esc(p.why)}</p>
             <p><b>仕組み：</b>${esc(p.how)}</p>
+            ${detailButton(c.kind === "特許" ? "patent" : "report", p.id)}
           </li>`;
         })
         .join("")
@@ -134,7 +138,7 @@ function render(j: SearchOut) {
     .map(
       (p) => `<li><div class="li-head">${bar(p.similarity)} <a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.title)}</a></div>
         <p class="muted small">${esc(p.category)}・${esc(p.center)}・${esc(p.id)}</p>
-        <p class="desc">${esc(p.description.slice(0, 220))}${p.description.length > 220 ? "…" : ""}</p></li>`,
+        <p class="desc">${esc(p.description.slice(0, 220))}${p.description.length > 220 ? "…" : ""}</p>${detailButton("patent", p.id)}</li>`,
     )
     .join("");
   $("report-note").textContent = `（NTRS で見つかった${j.reportsFound}件を、課題に近い順に並べ直した上位${j.reports.length}件）`;
@@ -143,12 +147,98 @@ function render(j: SearchOut) {
         .map(
           (r) => `<li><div class="li-head">${bar(r.similarity)} <a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a></div>
         <p class="muted small">${r.year ?? "年不明"}・${esc(r.type)}${r.center ? `・${esc(r.center)}` : ""}</p>
-        ${r.abstract ? `<p class="desc">${esc(r.abstract.slice(0, 220))}${r.abstract.length > 220 ? "…" : ""}</p>` : `<p class="muted small">要約は NTRS のページで読めます</p>`}</li>`,
+        ${r.abstract ? `<p class="desc">${esc(r.abstract.slice(0, 220))}${r.abstract.length > 220 ? "…" : ""}</p>` : `<p class="muted small">要約は NTRS のページで読めます</p>`}${detailButton("report", r.id)}</li>`,
         )
         .join("")
     : `<li class="muted">見つかりませんでした</li>`;
   $("result").hidden = false;
 }
+
+// ---------- 1件を詳しく（解説と活用プラン） ----------
+interface DetailOut {
+  problem: string;
+  kind: "patent" | "report";
+  id: string;
+  title: string;
+  url: string;
+  detail: {
+    oneLine: string;
+    analogy: string;
+    howItWorks: string[];
+    whatsNew: string;
+    everydayUses: string[];
+    limits: string[];
+    plan: { fit: string; questions: string[]; firstSteps: string[] };
+  };
+  check: { unmatchedNumbers: string[] };
+  nextSteps: { links: { label: string; url: string }[]; notes: string[] };
+  cached?: boolean;
+}
+let lastDetail: DetailOut | null = null;
+
+function detailButton(kind: "patent" | "report", id: string) {
+  return `<div class="detail-wrap"><button type="button" class="detail-btn" data-kind="${kind}" data-id="${esc(id)}" aria-expanded="false">詳しく・活用プラン</button><div class="detail" hidden></div></div>`;
+}
+
+const ul = (xs: string[]) => `<ul>${xs.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>`;
+const ol = (xs: string[]) => `<ol>${xs.map((x) => `<li>${esc(x)}</li>`).join("")}</ol>`;
+
+function renderDetail(j: DetailOut): string {
+  const d = j.detail;
+  return `
+    <h3>詳しい解説</h3>
+    <p class="one-line">${esc(d.oneLine)}</p>
+    <p><b>たとえると：</b>${esc(d.analogy)}</p>
+    <p><b>仕組み：</b></p>${ol(d.howItWorks)}
+    <p><b>新しいところ：</b>${esc(d.whatsNew)}</p>
+    ${d.everydayUses.length ? `<p><b>使い道の例：</b></p>${ul(d.everydayUses)}` : ""}
+    ${d.limits.length ? `<p><b>弱み・注意点：</b></p>${ul(d.limits)}` : ""}
+    <h3>あなたの課題への活用プラン</h3>
+    <p>${esc(d.plan.fit)}</p>
+    <p><b>確かめること：</b></p>${ul(d.plan.questions)}
+    <p><b>最初の一歩：</b></p>${ol(d.plan.firstSteps)}
+    <h3>使いたいときは</h3>
+    <ul class="links">${j.nextSteps.links.map((l) => `<li><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a></li>`).join("")}</ul>
+    <ul class="muted small">${j.nextSteps.notes.map((n) => `<li>${esc(n)}</li>`).join("")}</ul>
+    <p class="small">${
+      j.check.unmatchedNumbers.length
+        ? `<span class="warn">⚠ 説明文と照合できなかった数字：${esc(j.check.unmatchedNumbers.join("、"))}</span>`
+        : `<span class="ok">✓ 解説の中の数字は、すべて説明文にあるものでした</span>`
+    }<br><span class="muted">Claude による解説${j.cached ? "（保存した結果）" : ""}。説明文に書いていないことは「推測」「書かれていない」と分けています。「使いたいときは」は NASA のページの内容です。</span></p>`;
+}
+
+document.addEventListener("click", async (e) => {
+  const btn = (e.target as HTMLElement).closest<HTMLButtonElement>("button.detail-btn");
+  if (!btn || !last) return;
+  const box = btn.nextElementSibling as HTMLElement;
+  // 開いているものは閉じる。読み込んだものは、もう一度押したら開くだけ
+  if (btn.getAttribute("aria-expanded") === "true") {
+    box.hidden = true;
+    btn.setAttribute("aria-expanded", "false");
+    return;
+  }
+  btn.setAttribute("aria-expanded", "true");
+  box.hidden = false;
+  if (box.dataset.loaded) return;
+  btn.disabled = true;
+  box.innerHTML = `<p class="muted">解説を書いています…（15秒ほど）</p>`;
+  try {
+    const r = await fetch("/api/detail", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ problem: last.problem, kind: btn.dataset.kind, id: btn.dataset.id }),
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error ?? `エラー（HTTP ${r.status}）`);
+    lastDetail = j;
+    box.innerHTML = renderDetail(j);
+    box.dataset.loaded = "1";
+  } catch (err) {
+    box.innerHTML = `<p class="warn">${esc((err as Error).message)}</p>`;
+  } finally {
+    btn.disabled = false;
+  }
+});
 
 // ?q=課題 で開くと、その課題で探す（結果を共有するリンクに使える。同じ課題は保存した結果が返るので回数を使わない）
 {
@@ -175,6 +265,11 @@ async function renderApiDocs() {
     <pre><code>${esc(cmd)}</code></pre>
     <h4>実行結果</h4>
     ${trimmed ? `<pre class="json"><code>${esc(JSON.stringify(trimmed, null, 2))}</code></pre><p class="muted small">「技術を探す」で実際に受け取った応答。特許と報告書は1件ずつ、特許の説明文は先頭だけにしています。</p>` : `<p class="muted small">「技術を探す」で探すと、ここに実際の応答が出ます（回数に限りがあるので、このタブからは実行しません）。</p>`}
+    <h3><code>POST /api/detail</code></h3>
+    <p class="small">1件の特許（<code>kind: "patent"</code>）か報告書（<code>"report"</code>）を、課題に合わせて詳しく解説し、活用プラン（当てはめ方・確かめること・最初の一歩）と、NASA の問い合わせ・ライセンスのページへのリンクを返します。全体で1日30回・IP ごとに10回まで（同じ課題・同じ候補は保存した結果を返す）。</p>
+    <pre><code>${esc(`curl -X POST ${o}/api/detail \\\n  -H 'Content-Type: application/json' \\\n  -d '${JSON.stringify(lastDetail ? { problem: lastDetail.problem, kind: lastDetail.kind, id: lastDetail.id } : { problem: problem || EXAMPLES[0], kind: "patent", id: last?.patents[0]?.id ?? "LEW-TOPS-184" }).replace(/'/g, `'\\''`)}'`)}</code></pre>
+    <h4>実行結果</h4>
+    ${lastDetail ? `<pre class="json"><code>${esc(JSON.stringify(lastDetail, null, 2))}</code></pre><p class="muted small">「詳しく・活用プラン」で実際に受け取った応答。</p>` : `<p class="muted small">「詳しく・活用プラン」を押すと、ここに実際の応答が出ます。</p>`}
     <h3><code>GET /api/status</code></h3>
     <p class="small">探せる特許の件数・分野ごとの件数・データを集めた日時。</p>
     <pre><code>curl ${esc(o)}/api/status</code></pre>

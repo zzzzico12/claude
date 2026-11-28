@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { checkDetailNumbers, nextSteps } from "./detail.js";
 import { numberWords } from "./number-words.js";
 import { toReport } from "./ntrs.js";
 import { toPatent } from "./patents.js";
@@ -55,5 +56,29 @@ describe("英語の数", () => {
     const candidates = [{ id: "1", title: "t", text: "at least seventy-two hours from plus 20 degrees C to minus 90 degrees C. One hundred eighteen specimens. range 10-20 km", year: null }];
     const e = { overview: "-90℃まで72時間動いた。118個の試験片。解像度は10〜20km。", caution: "", picks: [] };
     expect(verify("課題", e, candidates).unmatchedNumbers).toEqual([]);
+  });
+});
+
+describe("1件を詳しく", () => {
+  const d = {
+    oneLine: "電解液を固体に閉じ込める技術",
+    analogy: "スポンジに水をしみこませるようなもの",
+    howItWorks: ["凍結点を-85.7℃まで下げる"],
+    whatsNew: "市販品は-40℃までが一般的",
+    everydayUses: [],
+    limits: [],
+    plan: { fit: "当てはまりそう", questions: ["低温で動く？"], firstSteps: ["問い合わせる"] },
+  };
+  const x = { problem: "寒い場所の電池", id: "20100001352", title: "Solvents with Liquid Range Below -80 C", text: "freezing point of -85.7 C. Commercial cells operate down to -40 C." };
+  it("解説の数字は説明文と照合する", () => {
+    expect(checkDetailNumbers(d, x)).toEqual([]);
+    expect(checkDetailNumbers({ ...d, whatsNew: "市販品は-50℃までが一般的" }, x)).toEqual(["-50"]);
+  });
+  it("使いたいときは：特許は質問・申し込み・PDF、報告書は NTRS と PDF（あれば）", () => {
+    const p = nextSteps("patent", "LEW-TOPS-184");
+    expect(p.links.map((l) => l.url)).toContain("https://technology.nasa.gov/session/?topid=LEW-TOPS-184");
+    expect(p.notes.some((n) => n.includes("2,500ドル"))).toBe(true);
+    expect(nextSteps("report", "20100001352").links).toHaveLength(1);
+    expect(nextSteps("report", "20100001352", "https://ntrs.nasa.gov/x.pdf").links).toHaveLength(2);
   });
 });

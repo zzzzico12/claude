@@ -54,6 +54,19 @@ export async function searchNtrs(q: string, size = 25): Promise<Report[]> {
   return j.results.map(toReport).filter((x): x is Report => x !== null);
 }
 
+/** 1件を ID で取る（詳しい解説で使う）。本文の PDF があればその URL も */
+export async function getReport(id: string): Promise<(Report & { pdfUrl: string | null }) | null> {
+  if (!/^\d{5,20}$/.test(id)) return null;
+  const res = await fetch(`https://ntrs.nasa.gov/api/citations/${id}`, { headers: { "User-Agent": UA } });
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`NTRS が HTTP ${res.status} を返しました`);
+  const raw = (await res.json()) as Raw & { downloads?: { links?: { pdf?: string } }[] };
+  const r = toReport(raw);
+  if (!r) return null;
+  const pdf = raw.downloads?.find((d) => d.links?.pdf)?.links?.pdf;
+  return { ...r, pdfUrl: pdf ? `https://ntrs.nasa.gov${pdf}` : null };
+}
+
 /** いくつかの検索語で集めて重複を除く（同時に投げず、順に） */
 export async function searchNtrsMany(queries: string[], size = 25): Promise<Report[]> {
   const all = new Map<string, Report>();
