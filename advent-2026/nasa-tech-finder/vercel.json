@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "installCommand": "cd .. && pnpm install --frozen-lockfile",
+  "buildCommand": "cd .. && pnpm --filter nasa-tech-finder index && pnpm --filter nasa-tech-finder... build",
+  "outputDirectory": "dist",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- . ../packages ../pnpm-lock.yaml",
+  "functions": {
+    "api/search.ts": { "maxDuration": 60, "includeFiles": "server-data/index.json" },
+    "api/status.ts": { "includeFiles": "server-data/index.json" }
+  }
+}
